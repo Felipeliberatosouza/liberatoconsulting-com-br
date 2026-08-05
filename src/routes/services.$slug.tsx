@@ -34,7 +34,7 @@ function ServiceDetailPage() {
   const { slug } = Route.useParams();
   const { t } = useLanguage();
   const L = t.serviceDetail.labels;
-  const page = t.serviceDetail.pages.find((p) => p.id === slug) ?? t.serviceDetail.pages[0];
+  const page = t.serviceDetail.pages.find((p) => p.id === slug) ?? t.serviceDetail.pages[0]!;
   const group = t.megaMenu.groups.find((g) => g.id === page.group);
   const related = t.serviceDetail.pages.filter((p) => p.group === page.group && p.id !== page.id);
 
