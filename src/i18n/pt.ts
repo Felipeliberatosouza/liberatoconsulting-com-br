@@ -9,6 +9,57 @@ export const pt = {
     contact: "Contato",
     cta: "Fale conosco",
   },
+  megaMenu: {
+    more: "ver todos os serviços",
+    groups: [
+      {
+        id: "estrategia",
+        title: "Estratégia",
+        anchor: "gestao",
+        items: [
+          "Desdobramento de Metas",
+          "Gestão de Projetos de Capital",
+          "Transformação Digital",
+        ],
+      },
+      {
+        id: "operacoes",
+        title: "Operações",
+        anchor: "gestao",
+        items: [
+          "Excelência Comercial",
+          "Excelência em Processos",
+          "Excelência Industrial",
+          "Gestão da Rotina",
+        ],
+      },
+      {
+        id: "empreendedorismo",
+        title: "Empreendedorismo",
+        anchor: "empreendedorismo",
+        items: [
+          "Modelagem de Negócio",
+          "Validação de Mercado",
+          "Precificação e Unit Economics",
+          "Captação e Materiais para Investidores",
+          "Estruturação da Operação Inicial",
+        ],
+      },
+      {
+        id: "pesquisas",
+        title: "Pesquisas de Mercado",
+        anchor: "pesquisas-brasil",
+        items: [
+          "Dimensionamento de Mercado",
+          "Análise Competitiva",
+          "Estudos Setoriais sobre o Brasil",
+          "Comportamento do Consumidor",
+          "Leitura Regulatória e Barreiras de Entrada",
+          "Mapeamento de Parceiros e Alvos Locais",
+        ],
+      },
+    ],
+  },
   hero: {
     eyebrow: "Consultoria em gestão empresarial",
     title: "Gestão que decide. Inteligência artificial que executa.",
