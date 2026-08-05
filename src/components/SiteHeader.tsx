@@ -162,13 +162,13 @@ export function SiteHeader() {
               </p>
               {g.items.map((item) => (
                 <Link
-                  key={item}
-                  to="/services"
-                  hash={g.anchor}
+                  key={item.id}
+                  to="/services/$slug"
+                  params={{ slug: item.id }}
                   onClick={closeAll}
                   className="block py-1.5 text-sm text-muted-foreground"
                 >
-                  {item}
+                  {item.label}
                 </Link>
               ))}
             </div>
