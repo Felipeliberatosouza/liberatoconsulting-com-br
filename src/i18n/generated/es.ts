@@ -1,118 +1,213 @@
 import type { Dict } from "../pt";
 
-export const sourceHash = "8dxfby";
+// Gerado automaticamente por scripts/translate-i18n.ts — não editar à mão.
+export const sourceHash = "11yd3e7";
 
 export const dict: Dict = {
-  nav: {
-    home: "Inicio",
-    services: "Servicios",
-    about: "Quiénes somos",
-    contact: "Contacto",
-    cta: "Hablemos",
+  "nav": {
+    "home": "Inicio",
+    "services": "Servicios",
+    "about": "Quiénes somos",
+    "contact": "Contacto",
+    "cta": "Hable con nosotros"
   },
-  hero: {
-    eyebrow: "Consultoría en gestión empresarial",
-    title: "Gestión que decide. Inteligencia artificial que ejecuta.",
-    body: "Liberato Consulting une método de gestión, visión emprendedora e inteligencia de mercado sobre Brasil — con IA en el centro de cada entrega.",
-    primary: "Conozca los servicios",
-    secondary: "Agendar una conversación",
+  "hero": {
+    "eyebrow": "Consultoría en gestión empresarial",
+    "title": "Gestión que decide. Inteligencia artificial que ejecuta.",
+    "body": "Liberato Consulting une método de gestión, visión emprendedora e inteligencia de mercado sobre Brasil — con IA en el centro de cada entrega.",
+    "primary": "Conozca los servicios",
+    "secondary": "Programar una reunión"
   },
-  stats: [
-    { value: "IA", label: "en el núcleo de todos los proyectos" },
-    { value: "3", label: "frentes de actuación integrados" },
-    { value: "BR", label: "inteligencia local para empresas globales" },
+  "stats": [
+    {
+      "value": "IA",
+      "label": "en el núcleo de todos los proyectos"
+    },
+    {
+      "value": "3",
+      "label": "frentes de actuación integrados"
+    },
+    {
+      "value": "BR",
+      "label": "inteligencia local para empresas globales"
+    }
   ],
-  purpose: {
-    eyebrow: "Nuestro propósito",
-    title: "Inteligencia artificial aplicada a la gestión, no a la moda",
-    body: "No tratamos la IA como un servicio aparte. Es el método: mapeamos dónde la inteligencia artificial genera valor real en cada proceso, definimos el uso responsable de los datos y capacitamos a los equipos para operar con autonomía después de que nos vamos.",
-    points: [
+  "purpose": {
+    "eyebrow": "Nuestro propósito",
+    "title": "Inteligencia artificial aplicada a la gestión, no a la moda",
+    "body": "No tratamos la IA como un servicio aparte. Es el método: mapeamos dónde la inteligencia artificial genera valor real en cada proceso, definimos el uso responsable de los datos y capacitamos a los equipos para operar con autonomía tras nuestra salida.",
+    "points": [
       "Diagnóstico de madurez en IA y priorización por retorno",
       "Diseño de procesos asistidos por IA y gobernanza de datos",
-      "Capacitación de líderes y equipos operativos",
-    ],
+      "Capacitación de liderazgos y equipos operativos"
+    ]
   },
-  services: {
-    eyebrow: "Servicios",
-    title: "Tres frentes, un método",
-    body: "Cada frente se entrega con inteligencia artificial incorporada — del diagnóstico a la ejecución.",
-    items: [
+  "services": {
+    "eyebrow": "Servicios",
+    "title": "Tres frentes, un método",
+    "body": "Cada frente se entrega con inteligencia artificial integrada — desde el diagnóstico hasta la ejecución.",
+    "labels": {
+      "scope": "Qué hacemos",
+      "ai": "Dónde entra la inteligencia artificial",
+      "deliverables": "Qué recibe usted",
+      "audience": "Para quién es",
+      "duration": "Duración típica"
+    },
+    "items": [
       {
-        title: "Gestión estratégica de negocios",
-        body: "Estrategia, despliegue de metas, eficiencia operativa y rutina de gestión. Traducimos la ambición en indicadores seguidos semana a semana, con análisis y previsiones apoyados por IA.",
-        bullets: [
-          "Planificación estratégica y despliegue de metas",
+        "id": "gestao",
+        "title": "Gestión estratégica de negocios",
+        "lead": "De la ambición a la rutina de gestión que sostiene el resultado.",
+        "body": "Estrategia, despliegue de metas, eficiencia operativa y rutina de gestión. Traducimos la ambición en indicadores monitoreados semana a semana, con análisis y predicciones apoyadas por IA.",
+        "audience": "Empresas con operación establecida que necesitan recuperar margen, acelerar el crecimiento o dar previsibilidad al resultado.",
+        "duration": "3 a 9 meses, con ciclos mensuales de revisión.",
+        "bullets": [
+          "Planeación estratégica y despliegue de metas",
           "Reducción de costos y eficiencia operativa",
-          "Paneles de gestión y previsión de demanda con IA",
+          "Rutina de gestión: reuniones, indicadores y planes de acción",
+          "Gobernanza de datos y estandarización de procesos"
         ],
+        "ai": {
+          "body": "La IA no sustituye la decisión del gestor: acorta el camino hacia la información confiable y anticipa lo que aún no aparece en el reporte.",
+          "items": [
+            "Predicción de demanda, ingresos y caja a partir del histórico de la propia empresa",
+            "Tableros con lectura automática de desviaciones y explicación de causa probable",
+            "Agentes que consolidan datos de ERP, CRM y planillas en un solo reporte de gestión",
+            "Simulación de escenarios de precio, costo y capacidad antes de comprometer inversión"
+          ]
+        },
+        "deliverables": [
+          "Mapa estratégico con metas desplegadas por área",
+          "Tablero de indicadores en operación, alimentado automáticamente",
+          "Cartera de proyectos de ganancia con retorno estimado",
+          "Equipo entrenado para conducir la rutina sin la consultoría"
+        ]
       },
       {
-        title: "Emprendimiento",
-        body: "Del modelo de negocio a la tracción. Estructuramos operación, precios y captación de capital para fundadores y empresas en crecimiento, usando IA para validar hipótesis más rápido y con menos capital.",
-        bullets: [
+        "id": "empreendedorismo",
+        "title": "Emprendimiento",
+        "lead": "Del modelo de negocio a la tracción, con menos capital quemado por hipótesis.",
+        "body": "Estructuramos operación, fijación de precios y captación para fundadores y empresas en crecimiento, utilizando IA para validar hipótesis más rápido y con menos capital.",
+        "audience": "Fundadores, negocios en early stage y nuevas unidades de negocio dentro de empresas establecidas.",
+        "duration": "6 a 16 semanas, en sprints de validación.",
+        "bullets": [
           "Modelado de negocio y validación de mercado",
-          "Estructuración financiera y material para inversores",
-          "Automatización y productividad con IA desde el primer día",
+          "Pricing, unit economics y estructura financiera",
+          "Material para inversores y preparación de rondas",
+          "Diseño de la operación mínima viable y de las primeras contrataciones"
         ],
+        "ai": {
+          "body": "Usamos IA para reducir el costo de aprender: cada hipótesis se prueba con evidencia real antes de convertirse en estructura fija.",
+          "items": [
+            "Investigación de mercado y análisis competitivo acelerado por modelos de lenguaje",
+            "Pruebas de propuesta de valor y mensaje con síntesis automática de respuestas",
+            "Modelo financiero con escenarios generados y estresados por IA",
+            "Automatización de ventas, atención y back office desde el día uno, sin inflar el equipo"
+          ]
+        },
+        "deliverables": [
+          "Modelo de negocio validado, con hipótesis probadas y descartadas documentadas",
+          "Modelo financiero y política de precios",
+          "Deck y materiales de captación listos para el inversor",
+          "Stack inicial de automatización e IA en funcionamiento"
+        ]
       },
       {
-        title: "Investigación de mercado sobre Brasil",
-        body: "Inteligencia de mercado para empresas internacionales que quieren entender, entrar o expandirse en Brasil: sector, competencia, regulación, cultura de consumo y escenarios de entrada.",
-        bullets: [
+        "id": "pesquisas-brasil",
+        "title": "Investigaciones de mercado sobre Brasil",
+        "lead": "Inteligencia local para quienes deciden sobre Brasil desde fuera de Brasil.",
+        "body": "Inteligencia de mercado para empresas internacionales que buscan entender, entrar o expandirse en Brasil: sector, competencia, regulación, cultura de consumo y escenarios de entrada.",
+        "audience": "Empresas internacionales, fondos y áreas corporativas de expansión evaluando el mercado brasileño.",
+        "duration": "4 a 12 semanas, según la profundidad sectorial.",
+        "bullets": [
           "Estudios sectoriales y dimensionamiento de mercado",
-          "Mapeo competitivo y de socios locales",
-          "Análisis de datos a escala con modelos de IA",
+          "Mapeo competitivo, de canales y de socios locales",
+          "Análisis regulatorio, tributario y de barreras de entrada",
+          "Escenarios de entrada: orgánico, alianza o adquisición"
         ],
-      },
-    ],
+        "ai": {
+          "body": "Brasil produce gran cantidad de datos públicos en portugués. La IA nos permite procesar todo a escala y entregar conclusiones en el idioma del cliente.",
+          "items": [
+            "Lectura automatizada de bases públicas, licitaciones, balances y noticias en portugués",
+            "Monitoreo continuo de competidores, precios y movimientos del mercado",
+            "Análisis de sentimiento y cultura de consumo a partir de datos sociales y reseñas",
+            "Reportes entregados en inglés, español o mandarín con trazabilidad de fuentes"
+          ]
+        },
+        "deliverables": [
+          "Reporte sectorial con dimensionamiento y proyecciones",
+          "Mapa competitivo y shortlist de socios u objetivos locales",
+          "Evaluación de riesgo regulatorio y operativo",
+          "Recomendación de entrada con plan de 12 meses"
+        ]
+      }
+    ]
   },
-  approach: {
-    eyebrow: "Cómo trabajamos",
-    title: "Un método en cuatro tiempos",
-    steps: [
-      { n: "01", t: "Diagnóstico", d: "Datos, entrevistas y lectura del contexto competitivo." },
-      { n: "02", t: "Diseño", d: "Prioridades, metas y dónde entra la IA en cada proceso." },
-      { n: "03", t: "Implementación", d: "Trabajo lado a lado con el equipo, en la rutina real." },
-      { n: "04", t: "Autonomía", d: "Capacitación y transferencia del método al cliente." },
-    ],
-  },
-  about: {
-    eyebrow: "Quiénes somos",
-    title: "Consultoría brasileña con lectura global",
-    body: "Liberato Consulting nació de la convicción de que la buena gestión es disciplina, y de que la inteligencia artificial solo crea valor cuando está anclada en procesos, datos confiables y personas preparadas.",
-    body2:
-      "Trabajamos junto a empresas brasileñas que quieren crecer con método y a empresas internacionales que necesitan entender Brasil antes de invertir. En todos los casos entregamos claridad: qué hacer, en qué orden y cómo medirlo.",
-    values: [
+  "approach": {
+    "eyebrow": "Cómo trabajamos",
+    "title": "Método en cuatro tiempos",
+    "steps": [
       {
-        t: "Método antes que herramienta",
-        d: "La tecnología sirve a la decisión, nunca al contrario.",
+        "n": "01",
+        "t": "Diagnóstico",
+        "d": "Datos, entrevistas y lectura del contexto competitivo."
       },
-      { t: "Resultado medido", d: "Cada proyecto tiene indicadores acordados al inicio." },
       {
-        t: "Transferencia de conocimiento",
-        d: "El cliente termina el proyecto más capaz que cuando empezó.",
+        "n": "02",
+        "t": "Diseño",
+        "d": "Prioridades, metas y dónde entra la IA en cada proceso."
       },
-    ],
+      {
+        "n": "03",
+        "t": "Implantación",
+        "d": "Trabajo codo a codo con el equipo, en la rutina real."
+      },
+      {
+        "n": "04",
+        "t": "Autonomía",
+        "d": "Capacitación y transferencia de método al cliente."
+      }
+    ]
   },
-  contact: {
-    eyebrow: "Contacto",
-    title: "Hablemos de su próximo ciclo",
-    body: "Cuéntenos el desafío de su empresa. Respondemos en hasta dos días hábiles.",
-    name: "Nombre",
-    email: "Correo electrónico",
-    company: "Empresa",
-    message: "¿Cómo podemos ayudar?",
-    submit: "Enviar mensaje",
-    sent: "Mensaje registrado. ¡Gracias por el contacto!",
-    info: "O escriba directamente a",
+  "about": {
+    "eyebrow": "Quién somos",
+    "title": "Consultoría brasileña con visión global",
+    "body": "Liberato Consulting nació de la convicción de que la buena gestión es disciplina, y que la inteligencia artificial solo crea valor cuando está anclada en procesos, datos confiables y personas preparadas.",
+    "body2": "Trabajamos junto a empresas brasileñas que buscan crecer con método y empresas internacionales que necesitan entender Brasil antes de invertir. En todos los casos, entregamos claridad: qué hacer, en qué orden y cómo medir.",
+    "values": [
+      {
+        "t": "Método antes que herramienta",
+        "d": "La tecnología sirve a la decisión, nunca al revés."
+      },
+      {
+        "t": "Resultado medido",
+        "d": "Cada proyecto tiene indicadores acordados desde el inicio."
+      },
+      {
+        "t": "Transferencia de conocimiento",
+        "d": "El cliente termina el proyecto con mayores capacidades de las que inició."
+      }
+    ]
   },
-  cta: {
-    title: "¿Listo para poner la IA al servicio de su gestión?",
-    body: "Una conversación inicial de 45 minutos suele ser suficiente para mapear las primeras oportunidades.",
-    button: "Hablar con Liberato",
+  "contact": {
+    "eyebrow": "Contacto",
+    "title": "Hablemos sobre su próximo ciclo",
+    "body": "Cuéntenos el desafío de su empresa. Respondemos en hasta dos días hábiles.",
+    "name": "Nombre",
+    "email": "E-mail",
+    "company": "Empresa",
+    "message": "¿Cómo podemos ayudar?",
+    "submit": "Enviar mensaje",
+    "sent": "Mensaje registrado. ¡Gracias por contactarnos!",
+    "info": "O escriba directamente a"
   },
-  footer: {
-    tagline: "Consultoría en gestión empresarial con inteligencia artificial en el centro.",
-    rights: "Todos los derechos reservados.",
+  "cta": {
+    "title": "¿Listo para poner la IA al servicio de su gestión?",
+    "body": "Una charla inicial de 45 minutos suele ser suficiente para mapear las primeras oportunidades.",
+    "button": "Hablar con Liberato"
   },
+  "footer": {
+    "tagline": "Consultoría en gestión empresarial con inteligencia artificial en el centro.",
+    "rights": "Todos los derechos reservados."
+  }
 };
