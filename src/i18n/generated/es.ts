@@ -1,7 +1,7 @@
 import type { Dict } from "../pt";
 
 // Gerado automaticamente por scripts/translate-i18n.ts — não editar à mão.
-export const sourceHash = "11yd3e7";
+export const sourceHash = "afxe3s";
 
 export const dict: Dict = {
   "nav": {
@@ -11,12 +11,63 @@ export const dict: Dict = {
     "contact": "Contacto",
     "cta": "Hable con nosotros"
   },
+  "megaMenu": {
+    "more": "ver todos los servicios",
+    "groups": [
+      {
+        "id": "estrategia",
+        "title": "Estrategia",
+        "anchor": "gestao",
+        "items": [
+          "Despliegue de Metas",
+          "Gestión de Proyectos de Capital",
+          "Transformación Digital"
+        ]
+      },
+      {
+        "id": "operacoes",
+        "title": "Operaciones",
+        "anchor": "gestao",
+        "items": [
+          "Excelencia Comercial",
+          "Excelencia en Procesos",
+          "Excelencia Industrial",
+          "Gestión de la Rutina"
+        ]
+      },
+      {
+        "id": "empreendedorismo",
+        "title": "Emprendimiento",
+        "anchor": "empreendedorismo",
+        "items": [
+          "Modelado de Negocio",
+          "Validación de Mercado",
+          "Precios y Unit Economics",
+          "Captación y Materiales para Inversores",
+          "Estructuración de la Operación Inicial"
+        ]
+      },
+      {
+        "id": "pesquisas",
+        "title": "Investigación de Mercado",
+        "anchor": "pesquisas-brasil",
+        "items": [
+          "Dimensionamiento de Mercado",
+          "Análisis Competitivo",
+          "Estudios Sectoriales sobre Brasil",
+          "Comportamiento del Consumidor",
+          "Lectura Regulatoria y Barreras de Entrada",
+          "Mapeo de Socios y Objetivos Locales"
+        ]
+      }
+    ]
+  },
   "hero": {
     "eyebrow": "Consultoría en gestión empresarial",
     "title": "Gestión que decide. Inteligencia artificial que ejecuta.",
     "body": "Liberato Consulting une método de gestión, visión emprendedora e inteligencia de mercado sobre Brasil — con IA en el centro de cada entrega.",
     "primary": "Conozca los servicios",
-    "secondary": "Programar una reunión"
+    "secondary": "Agendar reunión"
   },
   "stats": [
     {
@@ -58,7 +109,7 @@ export const dict: Dict = {
         "id": "gestao",
         "title": "Gestión estratégica de negocios",
         "lead": "De la ambición a la rutina de gestión que sostiene el resultado.",
-        "body": "Estrategia, despliegue de metas, eficiencia operativa y rutina de gestión. Traducimos la ambición en indicadores monitoreados semana a semana, con análisis y predicciones apoyadas por IA.",
+        "body": "Estrategia, despliegue de metas, eficiencia operativa y rutina de gestión. Traducimos ambición en indicadores monitoreados semana a semana, con análisis y previsiones apoyados por IA.",
         "audience": "Empresas con operación establecida que necesitan recuperar margen, acelerar el crecimiento o dar previsibilidad al resultado.",
         "duration": "3 a 9 meses, con ciclos mensuales de revisión.",
         "bullets": [
@@ -70,15 +121,15 @@ export const dict: Dict = {
         "ai": {
           "body": "La IA no sustituye la decisión del gestor: acorta el camino hacia la información confiable y anticipa lo que aún no aparece en el reporte.",
           "items": [
-            "Predicción de demanda, ingresos y caja a partir del histórico de la propia empresa",
-            "Tableros con lectura automática de desviaciones y explicación de causa probable",
-            "Agentes que consolidan datos de ERP, CRM y planillas en un solo reporte de gestión",
+            "Previsión de demanda, ingresos y caja a partir del histórico de la propia empresa",
+            "Paneles con lectura automática de desviaciones y explicación de causa probable",
+            "Agentes que consolidan datos de ERP, CRM y planillas en un único reporte de gestión",
             "Simulación de escenarios de precio, costo y capacidad antes de comprometer inversión"
           ]
         },
         "deliverables": [
           "Mapa estratégico con metas desplegadas por área",
-          "Tablero de indicadores en operación, alimentado automáticamente",
+          "Panel de indicadores en operación, alimentado automáticamente",
           "Cartera de proyectos de ganancia con retorno estimado",
           "Equipo entrenado para conducir la rutina sin la consultoría"
         ]
@@ -87,22 +138,22 @@ export const dict: Dict = {
         "id": "empreendedorismo",
         "title": "Emprendimiento",
         "lead": "Del modelo de negocio a la tracción, con menos capital quemado por hipótesis.",
-        "body": "Estructuramos operación, fijación de precios y captación para fundadores y empresas en crecimiento, utilizando IA para validar hipótesis más rápido y con menos capital.",
-        "audience": "Fundadores, negocios en early stage y nuevas unidades de negocio dentro de empresas establecidas.",
+        "body": "Estructuramos operación, precios y captación para fundadores y empresas en crecimiento, usando IA para validar hipótesis más rápido y con menos capital.",
+        "audience": "Fundadores, negocios en etapa temprana (early stage) y nuevas unidades de negocio dentro de empresas ya establecidas.",
         "duration": "6 a 16 semanas, en sprints de validación.",
         "bullets": [
           "Modelado de negocio y validación de mercado",
-          "Pricing, unit economics y estructura financiera",
+          "Precios, unit economics y estructura financiera",
           "Material para inversores y preparación de rondas",
-          "Diseño de la operación mínima viable y de las primeras contrataciones"
+          "Diseño de la operación mínima viable y primeras contrataciones"
         ],
         "ai": {
           "body": "Usamos IA para reducir el costo de aprender: cada hipótesis se prueba con evidencia real antes de convertirse en estructura fija.",
           "items": [
-            "Investigación de mercado y análisis competitivo acelerado por modelos de lenguaje",
+            "Investigación de mercado y análisis competitivo acelerados por modelos de lenguaje",
             "Pruebas de propuesta de valor y mensaje con síntesis automática de respuestas",
             "Modelo financiero con escenarios generados y estresados por IA",
-            "Automatización de ventas, atención y back office desde el día uno, sin inflar el equipo"
+            "Automatización de ventas, atención y back office desde el primer día, sin inflar el equipo"
           ]
         },
         "deliverables": [
@@ -114,19 +165,19 @@ export const dict: Dict = {
       },
       {
         "id": "pesquisas-brasil",
-        "title": "Investigaciones de mercado sobre Brasil",
-        "lead": "Inteligencia local para quienes deciden sobre Brasil desde fuera de Brasil.",
+        "title": "Investigación de mercado sobre Brasil",
+        "lead": "Inteligencia local para quien decide sobre Brasil desde fuera de Brasil.",
         "body": "Inteligencia de mercado para empresas internacionales que buscan entender, entrar o expandirse en Brasil: sector, competencia, regulación, cultura de consumo y escenarios de entrada.",
         "audience": "Empresas internacionales, fondos y áreas corporativas de expansión evaluando el mercado brasileño.",
         "duration": "4 a 12 semanas, según la profundidad sectorial.",
         "bullets": [
           "Estudios sectoriales y dimensionamiento de mercado",
           "Mapeo competitivo, de canales y de socios locales",
-          "Análisis regulatorio, tributario y de barreras de entrada",
+          "Lectura regulatoria, tributaria y de barreras de entrada",
           "Escenarios de entrada: orgánico, alianza o adquisición"
         ],
         "ai": {
-          "body": "Brasil produce gran cantidad de datos públicos en portugués. La IA nos permite procesar todo a escala y entregar conclusiones en el idioma del cliente.",
+          "body": "Brasil produce muchos datos públicos en portugués. La IA nos permite procesar todo a escala y entregar la conclusión en el idioma del cliente.",
           "items": [
             "Lectura automatizada de bases públicas, licitaciones, balances y noticias en portugués",
             "Monitoreo continuo de competidores, precios y movimientos del mercado",
@@ -160,7 +211,7 @@ export const dict: Dict = {
       {
         "n": "03",
         "t": "Implantación",
-        "d": "Trabajo codo a codo con el equipo, en la rutina real."
+        "d": "Trabajo hombro con hombro con el equipo, en la rutina real."
       },
       {
         "n": "04",
@@ -170,10 +221,10 @@ export const dict: Dict = {
     ]
   },
   "about": {
-    "eyebrow": "Quién somos",
+    "eyebrow": "Quiénes somos",
     "title": "Consultoría brasileña con visión global",
-    "body": "Liberato Consulting nació de la convicción de que la buena gestión es disciplina, y que la inteligencia artificial solo crea valor cuando está anclada en procesos, datos confiables y personas preparadas.",
-    "body2": "Trabajamos junto a empresas brasileñas que buscan crecer con método y empresas internacionales que necesitan entender Brasil antes de invertir. En todos los casos, entregamos claridad: qué hacer, en qué orden y cómo medir.",
+    "body": "Liberato Consulting nació de la convicción de que la buena gestión es disciplina, y que la inteligencia artificial solo crea valor cuando está anclada en procesos, datos confiables y gente preparada.",
+    "body2": "Trabajamos junto a empresas brasileñas que quieren crecer con método y empresas internacionales que necesitan entender Brasil antes de invertir. En todos los casos, entregamos claridad: qué hacer, en qué orden y cómo medir.",
     "values": [
       {
         "t": "Método antes que herramienta",
@@ -185,7 +236,7 @@ export const dict: Dict = {
       },
       {
         "t": "Transferencia de conocimiento",
-        "d": "El cliente termina el proyecto con mayores capacidades de las que inició."
+        "d": "El cliente termina el proyecto más capaz de lo que empezó."
       }
     ]
   },
@@ -203,7 +254,7 @@ export const dict: Dict = {
   },
   "cta": {
     "title": "¿Listo para poner la IA al servicio de su gestión?",
-    "body": "Una charla inicial de 45 minutos suele ser suficiente para mapear las primeras oportunidades.",
+    "body": "Una conversación inicial de 45 minutos suele ser suficiente para mapear las primeras oportunidades.",
     "button": "Hablar con Liberato"
   },
   "footer": {
