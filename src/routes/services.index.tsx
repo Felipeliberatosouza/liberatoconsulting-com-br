@@ -3,7 +3,7 @@ import { ArrowDown, Check, Sparkles } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
 
-export const Route = createFileRoute("/services")({
+export const Route = createFileRoute("/services/")({
   head: () => ({
     meta: [
       { title: "Serviços | Services — Liberato Consulting" },
