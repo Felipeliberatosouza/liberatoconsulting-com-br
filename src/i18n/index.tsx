@@ -119,7 +119,7 @@ const pt = {
     tagline: "Consultoria em gestão empresarial com inteligência artificial no centro.",
     rights: "Todos os direitos reservados.",
   },
-} as const;
+};
 
 const en: Dict = {
   nav: {
