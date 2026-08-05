@@ -1,6 +1,6 @@
 import type { Dict } from "../pt";
 
-export const sourceHash = "__PT_HASH__";
+export const sourceHash = "8dxfby";
 
 export const dict: Dict = {
   nav: {

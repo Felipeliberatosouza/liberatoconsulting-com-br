@@ -2,7 +2,7 @@ import type { Dict } from "../pt";
 
 // Baseline gerado a partir do português. Se o conteúdo em PT mudar,
 // a tradução é regenerada automaticamente por IA em tempo de execução.
-export const sourceHash = "__PT_HASH__";
+export const sourceHash = "8dxfby";
 
 export const dict: Dict = {
   nav: {

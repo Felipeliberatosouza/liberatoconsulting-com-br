@@ -1,6 +1,6 @@
 import type { Dict } from "../pt";
 
-export const sourceHash = "__PT_HASH__";
+export const sourceHash = "8dxfby";
 
 export const dict: Dict = {
   nav: {
@@ -45,7 +45,7 @@ export const dict: Dict = {
       {
         title: "创业与创新",
         body: "从商业模式到市场牵引。我们为创始人和成长型企业搭建运营、定价与融资体系，并借助人工智能更快、更省资本地验证假设。",
-        bullets: ["商业模式设计与市场验证", "财务架构与投资人materials", "第一天起即引入人工智能自动化与效率提升"],
+        bullets: ["商业模式设计与市场验证", "财务架构与投资人材料", "第一天起即引入人工智能自动化与效率提升"],
       },
       {
         title: "巴西市场研究",
