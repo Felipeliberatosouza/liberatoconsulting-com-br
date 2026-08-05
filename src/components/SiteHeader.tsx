@@ -126,13 +126,13 @@ export function SiteHeader() {
             <div className="mt-6 grid gap-x-10 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
               {active.items.map((item) => (
                 <Link
-                  key={item}
-                  to="/services"
-                  hash={active.anchor}
+                  key={item.id}
+                  to="/services/$slug"
+                  params={{ slug: item.id }}
                   onClick={() => setMega(false)}
                   className="text-sm text-muted-foreground transition-colors hover:text-accent"
                 >
-                  {item}
+                  {item.label}
                 </Link>
               ))}
             </div>
