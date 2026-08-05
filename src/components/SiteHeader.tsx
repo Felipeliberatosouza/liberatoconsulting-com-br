@@ -188,6 +188,3 @@ export function SiteHeader() {
     </header>
   );
 }
-    </header>
-  );
-}
