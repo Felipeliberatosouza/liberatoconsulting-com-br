@@ -1,27 +1,25 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { useLanguage, type Lang } from "@/i18n";
+import { useLanguage, LANGS, LANG_LABELS, LANG_SHORT } from "@/i18n";
 
-function LangSwitch({ compact = false }: { compact?: boolean }) {
+function LangSwitch() {
   const { lang, setLang } = useLanguage();
-  const options: Lang[] = ["pt", "en"];
   return (
-    <div
-      className={`inline-flex items-center gap-1 rounded-full border border-border p-0.5 ${compact ? "" : ""}`}
-    >
-      {options.map((o) => (
+    <div className="inline-flex items-center gap-0.5 rounded-full border border-border p-0.5">
+      {LANGS.map((o) => (
         <button
           key={o}
           onClick={() => setLang(o)}
-          aria-label={o === "pt" ? "Português" : "English"}
-          className={`rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-widest transition-colors ${
+          aria-label={LANG_LABELS[o]}
+          title={LANG_LABELS[o]}
+          className={`rounded-full px-2 py-1 text-xs font-semibold uppercase tracking-widest transition-colors ${
             lang === o
               ? "bg-ink text-ink-foreground"
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          {o}
+          {LANG_SHORT[o]}
         </button>
       ))}
     </div>
