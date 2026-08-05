@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useLanguage, LANGS, LANG_LABELS, LANG_SHORT } from "@/i18n";
 
@@ -29,18 +29,28 @@ function LangSwitch() {
 export function SiteHeader() {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
+  const [mega, setMega] = useState(false);
+  const groups = t.megaMenu.groups;
+  const [tab, setTab] = useState(groups[0]?.id ?? "");
+  const active = groups.find((g) => g.id === tab) ?? groups[0];
 
   const links = [
-    { to: "/", label: t.nav.home },
-    { to: "/services", label: t.nav.services },
     { to: "/about", label: t.nav.about },
     { to: "/contact", label: t.nav.contact },
   ] as const;
 
+  const closeAll = () => {
+    setOpen(false);
+    setMega(false);
+  };
+
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur">
+    <header
+      className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur"
+      onMouseLeave={() => setMega(false)}
+    >
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between gap-6 px-6 py-4">
-        <Link to="/" className="flex items-baseline gap-2" onClick={() => setOpen(false)}>
+        <Link to="/" className="flex items-baseline gap-2" onClick={closeAll}>
           <span className="font-display text-lg font-bold tracking-tight">LIBERATO</span>
           <span className="text-xs font-medium uppercase tracking-[0.25em] text-accent">
             Consulting
@@ -48,13 +58,26 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
+          <div onMouseEnter={() => setMega(true)}>
+            <Link
+              to="/services"
+              className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground" }}
+              onClick={() => setMega(false)}
+            >
+              {t.nav.services}
+              <ChevronDown
+                className={`size-3.5 transition-transform ${mega ? "rotate-180" : ""}`}
+              />
+            </Link>
+          </div>
           {links.map((l) => (
             <Link
               key={l.to}
               to={l.to}
+              onMouseEnter={() => setMega(false)}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               activeProps={{ className: "text-sm font-medium text-foreground" }}
-              activeOptions={{ exact: l.to === "/" }}
             >
               {l.label}
             </Link>
@@ -80,20 +103,91 @@ export function SiteHeader() {
         </div>
       </div>
 
+      {mega && active && (
+        <div className="hidden border-t border-border bg-background shadow-lg md:block">
+          <div className="mx-auto max-w-7xl px-6 py-8">
+            <div className="flex flex-wrap gap-1 border-b border-border">
+              {groups.map((g) => (
+                <button
+                  key={g.id}
+                  onMouseEnter={() => setTab(g.id)}
+                  onFocus={() => setTab(g.id)}
+                  className={`-mb-px border-b-2 px-4 py-3 text-sm font-semibold transition-colors ${
+                    g.id === active.id
+                      ? "border-accent text-foreground"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {g.title}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-6 grid gap-x-10 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+              {active.items.map((item) => (
+                <Link
+                  key={item}
+                  to="/services"
+                  hash={active.anchor}
+                  onClick={() => setMega(false)}
+                  className="text-sm text-muted-foreground transition-colors hover:text-accent"
+                >
+                  {item}
+                </Link>
+              ))}
+            </div>
+
+            <div className="mt-8 text-right">
+              <Link
+                to="/services"
+                onClick={() => setMega(false)}
+                className="text-xs font-semibold uppercase tracking-[0.2em] text-accent"
+              >
+                {t.megaMenu.more}
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
+          <Link to="/services" onClick={closeAll} className="block py-2.5 text-base font-medium">
+            {t.nav.services}
+          </Link>
+          {groups.map((g) => (
+            <div key={g.id} className="border-l border-border pl-3">
+              <p className="pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+                {g.title}
+              </p>
+              {g.items.map((item) => (
+                <Link
+                  key={item}
+                  to="/services"
+                  hash={g.anchor}
+                  onClick={closeAll}
+                  className="block py-1.5 text-sm text-muted-foreground"
+                >
+                  {item}
+                </Link>
+              ))}
+            </div>
+          ))}
           {links.map((l) => (
             <Link
               key={l.to}
               to={l.to}
-              onClick={() => setOpen(false)}
-              className="block py-2.5 text-base font-medium"
+              onClick={closeAll}
+              className="mt-1 block py-2.5 text-base font-medium"
             >
               {l.label}
             </Link>
           ))}
         </nav>
       )}
+    </header>
+  );
+}
     </header>
   );
 }
