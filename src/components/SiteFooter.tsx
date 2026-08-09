@@ -43,11 +43,14 @@ export function SiteFooter() {
             </Link>
 
             <a
-              href="mailto:parceria@liberato.com?subject=LinkedIn"
+              href="https://www.linkedin.com/company/liberatoglobal"
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-2 block text-ink-foreground/70 hover:text-ink-foreground"
             >
               {t.footer.careersLinkedin}
             </a>
+
           </div>
         </nav>
 
