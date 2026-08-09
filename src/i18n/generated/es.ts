@@ -1,7 +1,7 @@
 import type { Dict } from "../pt";
 
 // Gerado automaticamente por scripts/translate-i18n.ts — não editar à mão.
-export const sourceHash = "1tlkxme";
+export const sourceHash = "1ahpyk5";
 
 export const dict: Dict = {
   "nav": {
@@ -71,7 +71,7 @@ export const dict: Dict = {
           },
           {
             "id": "precificacao-unit-economics",
-            "label": "Fijación de Precios y Unit Economics"
+            "label": "Precios y Unit Economics"
           },
           {
             "id": "captacao-investidores",
@@ -150,7 +150,7 @@ export const dict: Dict = {
   "services": {
     "eyebrow": "Servicios",
     "title": "Tres frentes, un método",
-    "body": "Cada frente se entrega con inteligencia artificial integrada — desde el diagnóstico hasta la ejecución.",
+    "body": "Cada frente se entrega con inteligencia artificial integrada, desde el diagnóstico hasta la ejecución.",
     "labels": {
       "scope": "Qué hacemos",
       "ai": "Dónde entra la inteligencia artificial",
@@ -167,7 +167,7 @@ export const dict: Dict = {
         "audience": "Empresas con operación establecida que necesitan recuperar margen, acelerar el crecimiento o dar previsibilidad al resultado.",
         "duration": "3 a 9 meses, con ciclos mensuales de revisión.",
         "bullets": [
-          "Planeación estratégica y despliegue de metas",
+          "Planificación estratégica y despliegue de metas",
           "Reducción de costos y eficiencia operativa",
           "Rutina de gestión: reuniones, indicadores y planes de acción",
           "Gobernanza de datos y estandarización de procesos"
@@ -175,9 +175,9 @@ export const dict: Dict = {
         "ai": {
           "body": "La IA no sustituye la decisión del gestor: acorta el camino hacia la información confiable y anticipa lo que aún no aparece en el reporte.",
           "items": [
-            "Previsión de demanda, ingresos y caja a partir del histórico de la empresa",
+            "Previsión de demanda, ingresos y caja basada en el histórico de la propia empresa",
             "Paneles con lectura automática de desviaciones y explicación de causa probable",
-            "Agentes que consolidan datos de ERP, CRM y hojas de cálculo en un solo reporte de gestión",
+            "Agentes que consolidan datos de ERP, CRM y planillas en un único reporte de gestión",
             "Simulación de escenarios de precio, costo y capacidad antes de comprometer inversión"
           ]
         },
@@ -192,22 +192,22 @@ export const dict: Dict = {
         "id": "empreendedorismo",
         "title": "Emprendimiento",
         "lead": "Del modelo de negocio a la tracción, con menos capital quemado por hipótesis.",
-        "body": "Estructuramos operación, fijación de precios y captación para fundadores y empresas en crecimiento, usando IA para validar hipótesis más rápido y con menos capital.",
+        "body": "Estructuramos operación, precios y captación para fundadores y empresas en crecimiento, usando IA para validar hipótesis más rápido y con menos capital.",
         "audience": "Fundadores, negocios en early stage y nuevas unidades de negocio dentro de empresas establecidas.",
         "duration": "6 a 16 semanas, en sprints de validación.",
         "bullets": [
           "Modelado de negocio y validación de mercado",
-          "Fijación de precios, unit economics y estructura financiera",
+          "Precios, unit economics y estructura financiera",
           "Material para inversores y preparación de rondas",
           "Diseño de la operación mínima viable y primeras contrataciones"
         ],
         "ai": {
-          "body": "Usamos IA para reducir el costo del aprendizaje: cada hipótesis se prueba con evidencia real antes de convertirse en estructura fija.",
+          "body": "Usamos IA para reducir el costo de aprendizaje: cada hipótesis se prueba con evidencia real antes de convertirse en estructura fija.",
           "items": [
             "Investigación de mercado y análisis competitivo acelerados por modelos de lenguaje",
             "Pruebas de propuesta de valor y mensaje con síntesis automática de respuestas",
             "Modelo financiero con escenarios generados y estresados por IA",
-            "Automatización de ventas, atención y back office desde el día uno, sin inflar el equipo"
+            "Automatización de ventas, atención y back office desde el primer día"
           ]
         },
         "deliverables": [
@@ -231,9 +231,9 @@ export const dict: Dict = {
           "Escenarios de entrada: orgánico, alianza o adquisición"
         ],
         "ai": {
-          "body": "Brasil produce muchos datos públicos en portugués. La IA nos permite leer todo esto a escala y entregar la conclusión en el idioma del cliente.",
+          "body": "Brasil produce muchos datos públicos en portugués. La IA nos permite procesar todo esto a escala y entregar conclusiones en el idioma del cliente.",
           "items": [
-            "Lectura automatizada de bases públicas, edictos, balances y noticias en portugués",
+            "Lectura automatizada de bases públicas, licitaciones, balances y noticias en portugués",
             "Monitoreo continuo de competidores, precios y movimientos del mercado",
             "Análisis de sentimiento y cultura de consumo a partir de datos sociales y reseñas",
             "Reportes entregados en inglés, español o mandarín con trazabilidad de fuentes"
@@ -265,7 +265,7 @@ export const dict: Dict = {
       {
         "n": "03",
         "t": "Implantación",
-        "d": "Trabajo codo a codo con el equipo, en la rutina real."
+        "d": "Trabajo hombro a hombro con el equipo, en la rutina real."
       },
       {
         "n": "04",
@@ -277,7 +277,7 @@ export const dict: Dict = {
   "about": {
     "eyebrow": "Quiénes somos",
     "title": "Consultoría brasileña con lectura global",
-    "body": "Liberato Consulting nació de la convicción de que la buena gestión es disciplina, y que la inteligencia artificial solo crea valor cuando está anclada en procesos, datos confiables y personas preparadas.",
+    "body": "Liberato Consulting nació de la convicción de que la buena gestión es disciplina, y que la inteligencia artificial solo crea valor cuando está anclada en procesos, datos confiables y gente preparada.",
     "body2": "Trabajamos junto a empresas brasileñas que quieren crecer con método y empresas internacionales que necesitan entender Brasil antes de invertir. En todos los casos, entregamos claridad: qué hacer, en qué orden y cómo medirlo.",
     "values": [
       {
@@ -330,14 +330,32 @@ export const dict: Dict = {
       "back": "Ver todos los servicios",
       "related": "Otros servicios de este frente"
     },
+    "form": {
+      "title": "Hable con nuestro equipo",
+      "body": "Complete los datos a continuación y volveremos en hasta dos días hábiles.",
+      "name": "Nombre",
+      "company": "Empresa",
+      "country": "País",
+      "email": "E-mail (opcional)",
+      "service": "Servicio de interés",
+      "message": "Mensaje (opcional)",
+      "captcha": "Verificación anti-spam: cuánto es",
+      "submit": "Enviar",
+      "sending": "Enviando...",
+      "success": "Recibimos su contacto. Nuestro equipo responderá pronto.",
+      "errorCaptcha": "Resultado incorrecto. Intente de nuevo.",
+      "errorTooFast": "Envío muy rápido. Revise los datos e intente de nuevo.",
+      "errorRate": "Demasiados envíos en poco tiempo. Intente de nuevo más tarde.",
+      "errorGeneric": "No fue posible enviar ahora. Intente de nuevo en unos instantes."
+    },
     "pages": [
       {
         "id": "desdobramento-de-metas",
         "group": "estrategia",
         "title": "Despliegue de Metas",
-        "lead": "Transformamos la meta de la compañía en metas de área, de equipo y de persona.",
-        "body": "Traducimos el objetivo estratégico en indicadores claros, con responsable, plazo y plan de acción para cada nivel de la organización. El resultado es una cadena de metas coherente: cuando cada área cumple su parte, la meta de la empresa se alcanza.",
-        "audience": "Empresas con meta anual definida que no logran conectarla con la rutina de las áreas.",
+        "lead": "Transformamos la meta de la compañía en metas de área, equipo y persona.",
+        "body": "Traducimos el objetivo estratégico en indicadores claros, con responsable, plazo y plan de acción para cada nivel. El resultado es una cadena de metas coherente: cuando cada área cumple, la meta de la empresa se alcanza.",
+        "audience": "Empresas con meta anual definida que no logran conectarla a la rutina de las áreas.",
         "duration": "8 a 12 semanas.",
         "bullets": [
           "Árbol de metas desde el consejo hasta la operación",
@@ -345,7 +363,7 @@ export const dict: Dict = {
           "Planes de acción con responsables y plazos",
           "Ritual de seguimiento mensual"
         ],
-        "ai": "Modelos predictivos estiman el alcance de la meta basados en el histórico y alertan desviaciones antes del cierre del mes."
+        "ai": "Modelos predictivos estiman el alcance de la meta basándose en el histórico y alertan desviaciones antes del cierre de mes."
       },
       {
         "id": "projetos-de-capital",
@@ -353,22 +371,22 @@ export const dict: Dict = {
         "title": "Gestión de Proyectos de Capital",
         "lead": "Grandes inversiones entregadas en plazo, presupuesto y alcance.",
         "body": "Estructuramos la gobernanza de proyectos de capital: priorización de cartera, hitos, control de costos y gestión de riesgos. Damos visibilidad real del avance físico y financiero a los tomadores de decisiones.",
-        "audience": "Empresas con cartera relevante de CAPEX — industria, energía, infraestructura y agro.",
-        "duration": "4 a 12 meses, acompañando el ciclo del proyecto.",
+        "audience": "Empresas con cartera relevante de CAPEX: industria, energía, infraestructura y agro.",
+        "duration": "4 a 12 meses, siguiendo el ciclo del proyecto.",
         "bullets": [
           "Priorización de cartera por retorno y riesgo",
           "Cronograma físico-financiero integrado",
           "Control de desviaciones y gestión de cambios",
-          "Sala de gestión del proyecto con rutina definida"
+          "Sala de gestión de proyecto con rutina definida"
         ],
-        "ai": "Análisis automático de cronograma y costos señala los hitos con mayor probabilidad de retraso y el impacto financiero estimado."
+        "ai": "El análisis automático de cronograma y costos señala los hitos con mayor probabilidad de retraso e impacto financiero estimado."
       },
       {
         "id": "transformacao-digital",
         "group": "estrategia",
         "title": "Transformación Digital",
         "lead": "Tecnología guiada por prioridad de negocio, no por moda.",
-        "body": "Mapeamos la madurez digital de la empresa, elegimos dónde la tecnología genera retorno más rápido y conducimos la implantación junto con el equipo. Sistemas, datos y procesos trabajan a favor de la decisión.",
+        "body": "Mapeamos la madurez digital de la empresa, elegimos dónde la tecnología genera retorno más rápido y conducimos la implantación. Sistemas, datos y procesos trabajan a favor de la decisión.",
         "audience": "Empresas con procesos manuales, datos dispersos o sistemas que no se comunican entre sí.",
         "duration": "3 a 9 meses.",
         "bullets": [
@@ -384,7 +402,7 @@ export const dict: Dict = {
         "group": "operacoes",
         "title": "Excelencia Comercial",
         "lead": "Más conversión, mejor precio y previsibilidad en el embudo.",
-        "body": "Revisamos el proceso comercial de punta a punta: segmentación, abordaje, política de precios, embudo y rutina de gestión del equipo de ventas. Cada etapa pasa a tener meta, indicador y ritual de seguimiento.",
+        "body": "Revisamos el proceso comercial de punta a punta: segmentación, abordaje, política de precios, embudo y rutina de gestión. Cada etapa pasa a tener meta, indicador y ritual de seguimiento.",
         "audience": "Empresas B2B y B2C con equipo de ventas y resultados por debajo de su potencial.",
         "duration": "3 a 6 meses.",
         "bullets": [
@@ -399,9 +417,9 @@ export const dict: Dict = {
         "id": "excelencia-em-processos",
         "group": "operacoes",
         "title": "Excelencia en Procesos",
-        "lead": "Procesos más rápidos, económicos y con menos reprocesos.",
-        "body": "Mapeamos los procesos que más consumen tiempo y dinero, eliminamos desperdicios y rediseñamos el flujo con estándares documentados. La ganancia se mide antes y después, sin estimaciones vagas.",
-        "audience": "Áreas administrativas, back office y operaciones de servicio con cuellos de botella y reprocesos.",
+        "lead": "Procesos más rápidos, económicos y con menos rebrotes de trabajo.",
+        "body": "Mapeamos los procesos que más consumen tiempo y dinero, eliminamos desperdicios y rediseñamos el flujo con estándares documentados. La ganancia se mide antes y después.",
+        "audience": "Áreas administrativas, back office y operaciones de servicio con cuellos de botella.",
         "duration": "8 a 16 semanas por frente de proceso.",
         "bullets": [
           "Mapeo y medición del proceso actual",
@@ -415,15 +433,15 @@ export const dict: Dict = {
         "id": "excelencia-industrial",
         "group": "operacoes",
         "title": "Excelencia Industrial",
-        "lead": "Más producción con el mismo activo y menor costo por unidad.",
-        "body": "Actuamos en la planta para aumentar disponibilidad, rendimiento y calidad. Trabajamos pérdidas, mantenimiento, setup y rutina de gestión de la producción junto con los líderes de turno.",
+        "lead": "Más producción con el mismo activo y menos costo por unidad.",
+        "body": "Actuamos en la planta para aumentar disponibilidad, rendimiento y calidad. Trabajamos pérdidas, mantenimiento, configuración y rutina de gestión junto a los líderes de turno.",
         "audience": "Industrias que necesitan ganar capacidad, reducir pérdidas o estabilizar la calidad.",
         "duration": "4 a 9 meses.",
         "bullets": [
           "Diagnóstico de pérdidas y árbol de causas",
           "Ganancia de OEE: disponibilidad, desempeño y calidad",
-          "Mantenimiento planeado y reducción de setup",
-          "Rutina de gestión de la producción por turno"
+          "Mantenimiento planificado y reducción de setup",
+          "Rutina de gestión de producción por turno"
         ],
         "ai": "Sensores e histórico de mantenimiento alimentan modelos que anticipan fallas y sugieren el mejor momento de parada."
       },
@@ -432,8 +450,8 @@ export const dict: Dict = {
         "group": "operacoes",
         "title": "Gestión de la Rutina",
         "lead": "La disciplina diaria que sostiene el resultado después del proyecto.",
-        "body": "Implantamos el sistema de gestión del día a día: indicadores por área, reuniones cortas y objetivas, tratamiento de anomalías y plan de acción vivo. Es lo que evita que el resultado regrese al nivel anterior.",
-        "audience": "Empresas que obtienen resultados en proyectos puntuales pero no sostienen la mejora.",
+        "body": "Implantamos el sistema de gestión del día a día: indicadores por área, reuniones cortas y objetivas, tratamiento de anomalías y plan de acción vivo.",
+        "audience": "Empresas que logran resultados en proyectos puntuales, pero no sostienen la mejora.",
         "duration": "3 a 6 meses de implantación asistida.",
         "bullets": [
           "Panel de indicadores por área",
@@ -441,15 +459,15 @@ export const dict: Dict = {
           "Método de tratamiento de anomalías",
           "Formación de líderes para conducir la rutina"
         ],
-        "ai": "Los reportes se consolidan automáticamente y la IA entrega la lectura de la desviación antes de que comience la reunión."
+        "ai": "Los reportes se consolidan automáticamente y la IA entrega la lectura de la desviación antes de iniciar la reunión."
       },
       {
         "id": "modelagem-de-negocio",
         "group": "empreendedorismo",
         "title": "Modelado de Negocio",
-        "lead": "Del concepto al modelo que se sostiene financieramente.",
-        "body": "Estructuramos propuesta de valor, público, canales, fuentes de ingresos y estructura de costos. Al final, el negocio tiene un modelo explícito, con las hipótesis críticas identificadas y listas para prueba.",
-        "audience": "Fundadores en fase inicial y empresas creando una nueva unidad de negocio.",
+        "lead": "Del concepto al modelo financieramente sostenible.",
+        "body": "Estructuramos la propuesta de valor, público, canales, fuentes de ingresos y estructura de costos. Al final, el negocio tiene un modelo explícito con hipótesis críticas listas para prueba.",
+        "audience": "Fundadores en fase inicial y empresas creando nuevas unidades de negocio.",
         "duration": "4 a 8 semanas.",
         "bullets": [
           "Propuesta de valor y definición de público",
@@ -465,12 +483,12 @@ export const dict: Dict = {
         "title": "Validación de Mercado",
         "lead": "Evidencia real antes de comprometer capital.",
         "body": "Diseñamos y ejecutamos pruebas de mercado rápidas: entrevistas, ofertas piloto y experimentos de demanda. Cada hipótesis se aprueba o descarta con datos, no con opiniones.",
-        "audience": "Negocios early stage y nuevos productos antes de la inversión a escala.",
+        "audience": "Negocios en etapa temprana y nuevos productos antes de la inversión a escala.",
         "duration": "6 a 10 semanas, en sprints de prueba.",
         "bullets": [
           "Guion y ejecución de entrevistas con clientes",
           "Pruebas de oferta y disposición a pagar",
-          "Análisis de resultados y decisión de continuar o pivotar",
+          "Análisis de resultados y decisión de pivotar",
           "Documentación de hipótesis descartadas"
         ],
         "ai": "Modelos de lenguaje sintetizan entrevistas y respuestas abiertas en horas, revelando patrones que pasarían desapercibidos."
@@ -478,10 +496,10 @@ export const dict: Dict = {
       {
         "id": "precificacao-unit-economics",
         "group": "empreendedorismo",
-        "title": "Fijación de Precios y Unit Economics",
-        "lead": "Saber cuánto cobrar y si cada venta genera utilidad.",
-        "body": "Construimos la estructura de precios y el modelo de unit economics: costo de adquisición, margen por cliente, punto de equilibrio y retorno en el tiempo. La decisión de crecer pasa a tener base numérica.",
-        "audience": "Empresas en crecimiento con margen ajustado o precio definido por intuición.",
+        "title": "Precios y Unit Economics",
+        "lead": "Saber cuánto cobrar y si cada venta genera ganancia.",
+        "body": "Construimos la estructura de precios y el modelo de unit economics: costo de adquisición, margen por cliente, punto de equilibrio y retorno en el tiempo.",
+        "audience": "Empresas en crecimiento con margen ajustado o precios definidos por intuición.",
         "duration": "4 a 8 semanas.",
         "bullets": [
           "Estructura de costos y margen de contribución",
@@ -495,40 +513,40 @@ export const dict: Dict = {
         "id": "captacao-investidores",
         "group": "empreendedorismo",
         "title": "Captación y Materiales para Inversores",
-        "lead": "Historia, números y material listos para la ronda.",
-        "body": "Organizamos la narrativa del negocio, el modelo financiero y los documentos que el inversor solicitará. Preparamos al equipo para la conversación y para la debida diligencia.",
+        "lead": "Historia, números y materiales listos para la ronda.",
+        "body": "Organizamos la narrativa del negocio, el modelo financiero y los documentos que el inversor solicitará. Preparamos al equipo para la conversación y la debida diligencia.",
         "audience": "Fundadores preparando rondas ángel, seed o Serie A.",
         "duration": "6 a 10 semanas.",
         "bullets": [
           "Deck de captación y one-pager",
           "Modelo financiero proyectado y defendible",
-          "Data room y preparación para auditoría",
+          "Data room y preparación para diligencia",
           "Entrenamiento de pitch y anticipación de preguntas"
         ],
-        "ai": "La IA compara su narrativa y sus múltiplos con rondas recientes del sector y señala los puntos débiles."
+        "ai": "La IA compara su narrativa y múltiplos con rondas recientes del sector y señala los puntos débiles."
       },
       {
         "id": "operacao-inicial",
         "group": "empreendedorismo",
         "title": "Estructuración de la Operación Inicial",
-        "lead": "Una operación esbelta que soporte a los primeros clientes.",
-        "body": "Definimos procesos mínimos, sistemas, indicadores y las primeras contrataciones. El objetivo es crecer sin inflar la estructura ni improvisar con cada nuevo cliente.",
-        "audience": "Negocios saliendo de la validación y comenzando a vender de forma recurrente.",
+        "lead": "Una operación eficiente que soporta a los primeros clientes.",
+        "body": "Definimos procesos mínimos, sistemas, indicadores y las primeras contrataciones para crecer sin inflar la estructura innecesariamente.",
+        "audience": "Negocios saliendo de validación que comienzan a vender de forma recurrente.",
         "duration": "6 a 12 semanas.",
         "bullets": [
           "Diseño de procesos esenciales",
           "Stack de sistemas y automatizaciones",
           "Plan de contratación y diseño de roles",
-          "Indicadores de operación desde el día uno"
+          "Indicadores de operación desde el primer día"
         ],
-        "ai": "Automatización y agentes de IA cubren atención, ventas y back office antes de que la empresa necesite contratar."
+        "ai": "Automatización y agentes de IA cubren atención, ventas y back office antes de que la empresa necesite contratar personal."
       },
       {
         "id": "dimensionamento-de-mercado",
         "group": "pesquisas",
         "title": "Dimensionamiento de Mercado",
         "lead": "Cuánto vale el mercado brasileño que desea atacar.",
-        "body": "Calculamos tamaño, crecimiento y segmentación del mercado con fuentes públicas, datos sectoriales y entrevistas. Entregamos TAM, SAM y SOM con metodología transparente y trazable.",
+        "body": "Calculamos tamaño, crecimiento y segmentación del mercado con fuentes públicas y entrevistas. Entregamos TAM, SAM y SOM con metodología transparente.",
         "audience": "Empresas internacionales y fondos evaluando el potencial de Brasil.",
         "duration": "4 a 8 semanas.",
         "bullets": [
@@ -543,40 +561,40 @@ export const dict: Dict = {
         "id": "analise-competitiva",
         "group": "pesquisas",
         "title": "Análisis Competitivo",
-        "lead": "Quiénes ya operan en Brasil, cómo cobran y dónde son vulnerables.",
-        "body": "Mapeamos a los competidores relevantes: portafolio, precios, canales, posicionamiento y desempeño. Usted entra sabiendo contra quién compite y dónde es posible diferenciarse.",
+        "lead": "Quiénes operan en Brasil, cómo cobran y dónde son vulnerables.",
+        "body": "Mapeamos competidores relevantes: portafolio, precios, canales y posicionamiento. Usted entra sabiendo contra quién compite y cómo diferenciarse.",
         "audience": "Empresas planeando entrada o expansión en el mercado brasileño.",
         "duration": "4 a 8 semanas.",
         "bullets": [
           "Mapa competitivo y participación estimada",
           "Comparativo de precios y propuesta de valor",
-          "Canales y estrategia de go-to-market de los jugadores",
+          "Canales y estrategia de go-to-market de los players",
           "Oportunidades de diferenciación"
         ],
-        "ai": "Monitoreo continuo de precios, comunicación y movimientos de competidores, con resumen periódico automático."
+        "ai": "Monitoreo continuo de precios, comunicación y movimientos de competidores con resumen periódico automático."
       },
       {
         "id": "estudos-setoriais-brasil",
         "group": "pesquisas",
         "title": "Estudios Sectoriales sobre Brasil",
-        "lead": "El sector brasileño explicado para quienes deciden desde fuera.",
-        "body": "Producimos estudios completos sobre un sector en Brasil: cadena de valor, jugadores, márgenes, tendencias, riesgos y perspectivas. Escrito en el idioma del cliente, con contexto local que los datos brutos no muestran.",
-        "audience": "Matrices internacionales, fondos y áreas de expansión corporativa.",
-        "duration": "6 a 12 semanas, según la profundidad.",
+        "lead": "El sector brasileño explicado para tomadores de decisiones externos.",
+        "body": "Estudios completos sobre un sector en Brasil: cadena de valor, actores, márgenes y riesgos. Escrito en el idioma del cliente con contexto local profundo.",
+        "audience": "Casas matrices internacionales, fondos y áreas de expansión corporativa.",
+        "duration": "6 a 12 semanas.",
         "bullets": [
           "Cadena de valor y estructura del sector",
           "Dinámica de márgenes y costos en Brasil",
           "Tendencias y movimientos recientes",
-          "Riesgos sectoriales y perspectiva a mediano plazo"
+          "Riesgos sectoriales y perspectiva a medio plazo"
         ],
-        "ai": "Noticias, balances, edictos y reportes en portugués son leídos y sintetizados por IA, con trazabilidad de las fuentes."
+        "ai": "Noticias, balances y reportes en portugués son sintetizados por IA con trazabilidad total."
       },
       {
         "id": "comportamento-do-consumidor",
         "group": "pesquisas",
         "title": "Comportamiento del Consumidor",
-        "lead": "Cómo decide, compra y recompra el brasileño.",
-        "body": "Investigamos hábitos, criterios de elección, sensibilidad al precio y cultura de consumo por región y perfil. Traducimos esto en recomendaciones de producto, canal y comunicación.",
+        "lead": "Cómo decide, compra y recompra el consumidor brasileño.",
+        "body": "Investigamos hábitos, criterios de elección y sensibilidad al precio por región. Traducimos esto en recomendaciones de producto y comunicación.",
         "audience": "Marcas internacionales adaptando producto y posicionamiento a Brasil.",
         "duration": "5 a 10 semanas.",
         "bullets": [
@@ -585,15 +603,15 @@ export const dict: Dict = {
           "Diferencias regionales relevantes",
           "Recomendaciones de producto y comunicación"
         ],
-        "ai": "Análisis de sentimiento en redes sociales, reseñas y marketplaces complementa la investigación tradicional."
+        "ai": "El análisis de sentimiento en redes sociales y marketplaces complementa la investigación tradicional."
       },
       {
         "id": "leitura-regulatoria",
         "group": "pesquisas",
         "title": "Lectura Regulatoria y Barreras de Entrada",
-        "lead": "Qué exige la normativa brasileña antes de operar.",
-        "body": "Mapeamos exigencias regulatorias, carga tributaria, licencias, normas laborales y barreras prácticas del sector. Entregamos el camino crítico y el costo real de cumplimiento.",
-        "audience": "Empresas extranjeras evaluando viabilidad de operación en Brasil.",
+        "lead": "Lo que la normativa brasileña exige antes de operar.",
+        "body": "Mapeamos exigencias regulatorias, carga tributaria, licencias y normas laborales. Entregamos el camino crítico y el costo real de cumplimiento.",
+        "audience": "Empresas extranjeras evaluando la viabilidad de operar en Brasil.",
         "duration": "4 a 8 semanas.",
         "bullets": [
           "Exigencias regulatorias y licencias aplicables",
@@ -601,23 +619,23 @@ export const dict: Dict = {
           "Barreras prácticas y plazos típicos",
           "Checklist de cumplimiento para la entrada"
         ],
-        "ai": "La IA monitorea normas, consultas públicas y cambios legislativos en portugués y señala lo que afecta su caso."
+        "ai": "La IA monitorea normas, consultas públicas y cambios legislativos en portugués señalando impactos específicos."
       },
       {
         "id": "parceiros-e-alvos-locais",
         "group": "pesquisas",
         "title": "Mapeo de Socios y Objetivos Locales",
-        "lead": "Con quién aliarse — o a quién comprar — para entrar más rápido.",
-        "body": "Identificamos y calificamos distribuidores, proveedores, socios comerciales y objetivos de adquisición. Entregamos una shortlist con criterios objetivos y lectura de ajuste estratégico.",
-        "audience": "Empresas que prefieren entrar a Brasil mediante alianza o adquisición.",
+        "lead": "Con quién aliarse —o a quién comprar— para entrar más rápido.",
+        "body": "Identificamos y calificamos distribuidores, proveedores y objetivos de adquisición. Entregamos una shortlist con criterios objetivos y ajuste estratégico.",
+        "audience": "Empresas que prefieren entrar en Brasil mediante alianza o adquisición.",
         "duration": "6 a 10 semanas.",
         "bullets": [
           "Universo de candidatos y criterios de filtrado",
-          "Shortlist calificada con perfil de cada objetivo",
+          "Shortlist cualificada con perfil de cada objetivo",
           "Lectura de ajuste estratégico y riesgos",
           "Apoyo en el abordaje inicial"
         ],
-        "ai": "Cruce automatizado de bases públicas y financieras acelera el triaje de cientos de empresas a unas pocas decenas."
+        "ai": "El cruce automatizado de bases públicas y financieras acelera el filtrado de cientos de empresas a una selección final."
       }
     ]
   }
