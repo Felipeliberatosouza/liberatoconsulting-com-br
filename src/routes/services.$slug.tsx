@@ -105,6 +105,9 @@ function ServiceDetailPage() {
             </Link>
           </div>
 
+          <ServiceLeadForm serviceSlug={page.id} serviceTitle={page.title} />
+
+
           {related.length > 0 && (
             <div className="mt-14 border-t border-border pt-8">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
