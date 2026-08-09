@@ -221,14 +221,15 @@ export const saveArticle = createServerFn({ method: "POST" })
       body: data.body,
     });
 
+    const { id, ...rest } = data;
     const row = {
-      ...data,
+      ...rest,
       link_url: data.link_url || null,
       translations: { en: t.en, es: t.es, zh: t.zh },
     };
 
-    const { error } = data.id
-      ? await context.supabase.from("content_articles").update(row).eq("id", data.id)
+    const { error } = id
+      ? await context.supabase.from("content_articles").update(row).eq("id", id)
       : await context.supabase.from("content_articles").insert(row);
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
