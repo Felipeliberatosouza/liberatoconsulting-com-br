@@ -10,6 +10,8 @@ const NAV: Array<{ to: string; label: string; exact?: boolean }> = [
   { to: "/admin/theme", label: "Cores" },
   { to: "/admin/texts", label: "Textos" },
   { to: "/admin/content", label: "Conteúdo" },
+  { to: "/admin/leads", label: "Leads" },
+  { to: "/admin/applications", label: "Candidaturas" },
 ];
 
 export function AdminShell({
