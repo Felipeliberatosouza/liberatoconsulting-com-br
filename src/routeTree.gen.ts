@@ -15,7 +15,9 @@ import { Route as CareersRouteImport } from './routes/careers'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContentRouteImport } from './routes/content'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminApplicationsRouteImport } from './routes/admin.applications'
 import { Route as AdminContentRouteImport } from './routes/admin.content'
+import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminTextsRouteImport } from './routes/admin.texts'
 import { Route as AdminThemeRouteImport } from './routes/admin.theme'
@@ -52,9 +54,19 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminApplicationsRoute = AdminApplicationsRouteImport.update({
+  id: '/admin/applications',
+  path: '/admin/applications',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminContentRoute = AdminContentRouteImport.update({
   id: '/admin/content',
   path: '/admin/content',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLeadsRoute = AdminLeadsRouteImport.update({
+  id: '/admin/leads',
+  path: '/admin/leads',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
@@ -89,7 +101,9 @@ export interface FileRoutesByFullPath {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/admin/applications': typeof AdminApplicationsRoute
   '/admin/content': typeof AdminContentRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
@@ -103,7 +117,9 @@ export interface FileRoutesByTo {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/admin/applications': typeof AdminApplicationsRoute
   '/admin/content': typeof AdminContentRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
@@ -118,7 +134,9 @@ export interface FileRoutesById {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/admin/applications': typeof AdminApplicationsRoute
   '/admin/content': typeof AdminContentRoute
+  '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
@@ -134,7 +152,9 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/admin/applications'
     | '/admin/content'
+    | '/admin/leads'
     | '/admin/login'
     | '/admin/texts'
     | '/admin/theme'
@@ -148,7 +168,9 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/admin/applications'
     | '/admin/content'
+    | '/admin/leads'
     | '/admin/login'
     | '/admin/texts'
     | '/admin/theme'
@@ -162,7 +184,9 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/admin/applications'
     | '/admin/content'
+    | '/admin/leads'
     | '/admin/login'
     | '/admin/texts'
     | '/admin/theme'
@@ -177,7 +201,9 @@ export interface RootRouteChildren {
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   ContentRoute: typeof ContentRoute
+  AdminApplicationsRoute: typeof AdminApplicationsRoute
   AdminContentRoute: typeof AdminContentRoute
+  AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminTextsRoute: typeof AdminTextsRoute
   AdminThemeRoute: typeof AdminThemeRoute
@@ -230,11 +256,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/applications': {
+      id: '/admin/applications'
+      path: '/admin/applications'
+      fullPath: '/admin/applications'
+      preLoaderRoute: typeof AdminApplicationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/content': {
       id: '/admin/content'
       path: '/admin/content'
       fullPath: '/admin/content'
       preLoaderRoute: typeof AdminContentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/leads': {
+      id: '/admin/leads'
+      path: '/admin/leads'
+      fullPath: '/admin/leads'
+      preLoaderRoute: typeof AdminLeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/login': {
@@ -281,7 +321,9 @@ const rootRouteChildren: RootRouteChildren = {
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   ContentRoute: ContentRoute,
+  AdminApplicationsRoute: AdminApplicationsRoute,
   AdminContentRoute: AdminContentRoute,
+  AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminTextsRoute: AdminTextsRoute,
   AdminThemeRoute: AdminThemeRoute,

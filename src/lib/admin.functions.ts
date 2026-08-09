@@ -244,3 +244,48 @@ export const deleteArticle = createServerFn({ method: "POST" })
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });
+
+/** Leads capturados nos formulários das páginas de serviço. */
+export const listLeads = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
+      .from("leads")
+      .select("id, name, company, country, email, service_slug, service_title, message, language, source_path, created_at")
+      .order("created_at", { ascending: false })
+      .limit(500);
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+/** Candidaturas recebidas pelo formulário de currículo. */
+export const listApplications = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
+      .from("job_applications")
+      .select("id, full_name, phone, email, interest_area, linkedin_url, resume_path, resume_filename, language, source_path, created_at")
+      .order("created_at", { ascending: false })
+      .limit(500);
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+/** Link temporário para baixar o currículo anexado a uma candidatura. */
+export const getResumeUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ path: z.string().min(1).max(500) }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: signed, error } = await supabaseAdmin.storage
+      .from("resumes")
+      .createSignedUrl(data.path, 300);
+    if (error || !signed) return { ok: false as const, error: error?.message ?? "Falha ao gerar link." };
+    return { ok: true as const, url: signed.signedUrl };
+  });
+

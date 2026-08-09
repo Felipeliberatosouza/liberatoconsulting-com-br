@@ -36,6 +36,16 @@ const CARDS = [
     title: "Conteúdos",
     text: "Publique artigos, guias e estudos que aparecem na seção Conteúdo.",
   },
+  {
+    to: "/admin/leads",
+    title: "Leads recebidos",
+    text: "Veja os contatos enviados pelos formulários das páginas de serviço.",
+  },
+  {
+    to: "/admin/applications",
+    title: "Candidaturas",
+    text: "Consulte os currículos enviados pelo formulário Trabalhe Conosco.",
+  },
 ];
 
 function AdminHome() {
