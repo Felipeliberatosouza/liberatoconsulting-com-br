@@ -16,6 +16,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContentRouteImport } from './routes/content'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminTextsRouteImport } from './routes/admin.texts'
 import { Route as AdminThemeRouteImport } from './routes/admin.theme'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
@@ -55,6 +56,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminTextsRoute = AdminTextsRouteImport.update({
+  id: '/admin/texts',
+  path: '/admin/texts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminThemeRoute = AdminThemeRouteImport.update({
   id: '/admin/theme',
   path: '/admin/theme',
@@ -78,6 +84,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin': typeof AdminIndexRoute
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
@@ -117,6 +126,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/admin/login'
+    | '/admin/texts'
     | '/admin/theme'
     | '/services/$slug'
     | '/admin/'
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/admin/login'
+    | '/admin/texts'
     | '/admin/theme'
     | '/services/$slug'
     | '/admin'
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/admin/login'
+    | '/admin/texts'
     | '/admin/theme'
     | '/services/$slug'
     | '/admin/'
@@ -154,6 +166,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ContentRoute: typeof ContentRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminTextsRoute: typeof AdminTextsRoute
   AdminThemeRoute: typeof AdminThemeRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -211,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/texts': {
+      id: '/admin/texts'
+      path: '/admin/texts'
+      fullPath: '/admin/texts'
+      preLoaderRoute: typeof AdminTextsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/theme': {
       id: '/admin/theme'
       path: '/admin/theme'
@@ -242,6 +262,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ContentRoute: ContentRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminTextsRoute: AdminTextsRoute,
   AdminThemeRoute: AdminThemeRoute,
   ServicesSlugRoute: ServicesSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
