@@ -7,6 +7,7 @@ export const pt = {
     services: "Serviços",
     about: "Quem somos",
     contact: "Contato",
+    content: "Conteúdo",
     cta: "Fale conosco",
   },
   megaMenu: {
@@ -225,6 +226,91 @@ export const pt = {
     title: "Pronto para colocar IA a serviço da sua gestão?",
     body: "Uma conversa inicial de 45 minutos costuma ser suficiente para mapear as primeiras oportunidades.",
     button: "Falar com a Liberato",
+  },
+  content: {
+    eyebrow: "Conteúdo",
+    title: "Conhecimento aplicado em gestão e inteligência artificial",
+    lead: "Artigos, guias e estudos produzidos pelo nosso time, organizados pelas frentes de serviço da Liberato Consulting. Conteúdo objetivo, com exemplos reais de como a IA entra na execução.",
+    metaDescription:
+      "Artigos, guias e estudos da Liberato Consulting sobre gestão estratégica, operações, empreendedorismo, pesquisas de mercado no Brasil e uso de inteligência artificial.",
+    readMore: "Ler conteúdo",
+    relatedService: "Serviço relacionado",
+    allLabel: "Todos",
+    emptyNote: "Novos conteúdos são publicados todos os meses.",
+    items: [
+      {
+        id: "metas-que-saem-do-papel",
+        group: "estrategia",
+        kind: "Artigo",
+        title: "Metas que saem do papel: como desdobrar estratégia até a rotina",
+        summary:
+          "Um método simples para transformar objetivos anuais em metas por área, com indicadores que a liderança consegue acompanhar semanalmente.",
+        service: "desdobramento-de-metas",
+      },
+      {
+        id: "ia-na-priorizacao-de-capital",
+        group: "estrategia",
+        kind: "Guia",
+        title: "IA na priorização de projetos de capital",
+        summary:
+          "Como usar modelos preditivos para comparar cenários de investimento, estimar risco de prazo e escolher o portfólio com maior retorno.",
+        service: "projetos-de-capital",
+      },
+      {
+        id: "rotina-que-sustenta-resultado",
+        group: "operacoes",
+        kind: "Artigo",
+        title: "A rotina que sustenta o resultado depois do projeto",
+        summary:
+          "Por que ganhos operacionais se perdem em seis meses e quais rituais de gestão evitam a regressão.",
+        service: "gestao-da-rotina",
+      },
+      {
+        id: "analytics-em-processos",
+        group: "operacoes",
+        kind: "Estudo",
+        title: "Process mining e IA: encontrando perdas invisíveis",
+        summary:
+          "O que os dados de sistema revelam sobre gargalos, retrabalho e desvios de padrão que a observação em campo não captura.",
+        service: "excelencia-em-processos",
+      },
+      {
+        id: "unit-economics-antes-de-escalar",
+        group: "empreendedorismo",
+        kind: "Guia",
+        title: "Unit economics antes de escalar",
+        summary:
+          "Como montar a conta por cliente, por pedido e por canal para descobrir se o crescimento aumenta ou destrói margem.",
+        service: "precificacao-unit-economics",
+      },
+      {
+        id: "validar-mercado-em-8-semanas",
+        group: "empreendedorismo",
+        kind: "Artigo",
+        title: "Validar mercado em 8 semanas com apoio de IA",
+        summary:
+          "Um roteiro enxuto de entrevistas, testes e análise assistida por IA para confirmar demanda antes de investir pesado.",
+        service: "validacao-de-mercado",
+      },
+      {
+        id: "entrar-no-brasil",
+        group: "pesquisas",
+        kind: "Estudo",
+        title: "Entrar no Brasil: o que empresas estrangeiras subestimam",
+        summary:
+          "Tributos, logística, cultura de negociação e ciclo de venda: os fatores que mais alteram o business case de entrada.",
+        service: "estudos-setoriais-brasil",
+      },
+      {
+        id: "dimensionar-mercado-com-dados-publicos",
+        group: "pesquisas",
+        kind: "Guia",
+        title: "Dimensionar mercado com dados públicos brasileiros",
+        summary:
+          "Como combinar bases oficiais e IA para estimar TAM, SAM e SOM com transparência sobre premissas.",
+        service: "dimensionamento-de-mercado",
+      },
+    ],
   },
   footer: {
     tagline: "Consultoria em gestão empresarial com inteligência artificial no centro.",

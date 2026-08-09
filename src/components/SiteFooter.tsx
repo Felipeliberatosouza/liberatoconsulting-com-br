@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { Linkedin, Youtube } from "lucide-react";
 import { useLanguage } from "@/i18n";
 
 export function SiteFooter() {
@@ -20,7 +21,30 @@ export function SiteFooter() {
           >
             contato@liberato.com
           </a>
+          <div className="mt-6 flex items-center gap-3">
+            <a
+              href="https://www.linkedin.com/company/liberatoglobal"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="LinkedIn"
+              title="LinkedIn"
+              className="inline-flex size-10 items-center justify-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-accent hover:bg-accent hover:text-accent-foreground"
+            >
+              <Linkedin className="size-4" />
+            </a>
+            <a
+              href="https://www.youtube.com/@LiberatoConsulting"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+              title="YouTube"
+              className="inline-flex size-10 items-center justify-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-accent hover:bg-accent hover:text-accent-foreground"
+            >
+              <Youtube className="size-4" />
+            </a>
+          </div>
         </div>
+
         <nav className="flex flex-col gap-3 text-sm">
           <Link to="/services" className="text-ink-foreground/70 hover:text-ink-foreground">
             {t.nav.services}

@@ -36,7 +36,7 @@ export function SiteHeader() {
 
   const links = [
     { to: "/about", label: t.nav.about },
-    { to: "/contact", label: t.nav.contact },
+    { to: "/content", label: t.nav.content },
   ] as const;
 
   const closeAll = () => {
