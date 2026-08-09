@@ -5,12 +5,12 @@ import { useEffect, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { getAdminSession } from "@/lib/admin.functions";
 
-const NAV = [
+const NAV: Array<{ to: string; label: string; exact?: boolean }> = [
   { to: "/admin", label: "Visão geral", exact: true },
   { to: "/admin/theme", label: "Cores" },
   { to: "/admin/texts", label: "Textos" },
   { to: "/admin/content", label: "Conteúdo" },
-] as const;
+];
 
 export function AdminShell({
   title,
