@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      job_applications: {
+        Row: {
+          created_at: string
+          email: string
+          emailed: boolean
+          full_name: string
+          id: string
+          interest_area: string
+          ip_hash: string | null
+          language: string | null
+          linkedin_url: string | null
+          phone: string
+          resume_filename: string | null
+          resume_path: string | null
+          source_path: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          emailed?: boolean
+          full_name: string
+          id?: string
+          interest_area: string
+          ip_hash?: string | null
+          language?: string | null
+          linkedin_url?: string | null
+          phone: string
+          resume_filename?: string | null
+          resume_path?: string | null
+          source_path?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          emailed?: boolean
+          full_name?: string
+          id?: string
+          interest_area?: string
+          ip_hash?: string | null
+          language?: string | null
+          linkedin_url?: string | null
+          phone?: string
+          resume_filename?: string | null
+          resume_path?: string | null
+          source_path?: string | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           company: string
