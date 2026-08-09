@@ -50,11 +50,8 @@ export function SiteHeader() {
       onMouseLeave={() => setMega(false)}
     >
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between gap-6 px-6 py-4">
-        <Link to="/" className="flex items-baseline gap-2" onClick={closeAll}>
-          <span className="font-display text-lg font-bold tracking-tight">LIBERATO</span>
-          <span className="text-xs font-medium uppercase tracking-[0.25em] text-accent">
-            Consulting
-          </span>
+        <Link to="/" className="flex items-center" onClick={closeAll}>
+          <img src="/logo.png" alt="Liberato Consulting" className="h-10 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
