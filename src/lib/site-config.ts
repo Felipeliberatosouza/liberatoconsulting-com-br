@@ -1,0 +1,113 @@
+import type { Dict } from "@/i18n/pt";
+import type { Lang } from "@/i18n/config";
+
+/** Campos de cor editáveis no painel (paleta principal). */
+export const THEME_FIELDS = [
+  { key: "primary", label: "Primária (botões e destaques escuros)", fallback: "#1b2436" },
+  { key: "accent", label: "Destaque (laranja da marca)", fallback: "#e2751f" },
+  { key: "ink", label: "Fundo escuro (faixas e rodapé)", fallback: "#14192a" },
+  { key: "background", label: "Fundo do site", fallback: "#faf9f7" },
+  { key: "foreground", label: "Texto principal", fallback: "#1d2333" },
+] as const;
+
+export type ThemeKey = (typeof THEME_FIELDS)[number]["key"];
+export type Theme = Partial<Record<ThemeKey, string>>;
+
+export type TextOverride = Partial<Record<Lang, string>>;
+export type TextOverrides = Record<string, TextOverride>;
+
+export type ArticleRecord = {
+  id: string;
+  slug: string;
+  group_id: string;
+  kind: string;
+  title: string;
+  summary: string;
+  body: string;
+  service: string;
+  link_url: string | null;
+  position: number;
+  published: boolean;
+  translations: Record<string, { kind?: string; title?: string; summary?: string; body?: string }>;
+};
+
+export type SiteConfig = {
+  theme: Theme;
+  texts: TextOverrides;
+  articles: ArticleRecord[];
+};
+
+export const EMPTY_CONFIG: SiteConfig = { theme: {}, texts: {}, articles: [] };
+
+/** Lista todos os caminhos de texto (folhas string) do dicionário PT. */
+export function flattenTexts(value: unknown, prefix = ""): Array<{ path: string; value: string }> {
+  const out: Array<{ path: string; value: string }> = [];
+  if (typeof value === "string") {
+    if (prefix) out.push({ path: prefix, value });
+    return out;
+  }
+  if (Array.isArray(value)) {
+    value.forEach((v, i) => out.push(...flattenTexts(v, `${prefix}[${i}]`)));
+    return out;
+  }
+  if (value && typeof value === "object") {
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      out.push(...flattenTexts(v, prefix ? `${prefix}.${k}` : k));
+    }
+  }
+  return out;
+}
+
+function tokens(path: string): Array<string | number> {
+  return path
+    .replace(/\[(\d+)\]/g, ".$1")
+    .split(".")
+    .map((p) => (/^\d+$/.test(p) ? Number(p) : p));
+}
+
+export function getByPath(obj: unknown, path: string): unknown {
+  let cur: unknown = obj;
+  for (const key of tokens(path)) {
+    if (cur == null || typeof cur !== "object") return undefined;
+    cur = (cur as Record<string | number, unknown>)[key];
+  }
+  return cur;
+}
+
+function setByPath(obj: unknown, path: string, value: string) {
+  const parts = tokens(path);
+  let cur: any = obj;
+  for (let i = 0; i < parts.length - 1; i++) {
+    if (cur == null || typeof cur !== "object") return;
+    cur = cur[parts[i]!];
+  }
+  const last = parts[parts.length - 1]!;
+  if (cur && typeof cur === "object" && last in cur) cur[last] = value;
+}
+
+/** Aplica os textos personalizados do painel sobre o dicionário do idioma atual. */
+export function applyTextOverrides(dict: Dict, overrides: TextOverrides, lang: Lang): Dict {
+  const entries = Object.entries(overrides ?? {});
+  if (entries.length === 0) return dict;
+  const clone = structuredClone(dict) as Dict;
+  for (const [path, values] of entries) {
+    const text = values?.[lang] ?? values?.pt;
+    if (typeof text === "string" && text.length > 0) setByPath(clone, path, text);
+  }
+  return clone;
+}
+
+/** Converte hex/rgb informado no painel para valor aplicável em CSS var. */
+export function applyTheme(theme: Theme) {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  for (const field of THEME_FIELDS) {
+    const value = theme?.[field.key];
+    if (!value) {
+      root.style.removeProperty(`--${field.key}`);
+      continue;
+    }
+    root.style.setProperty(`--${field.key}`, value);
+    if (field.key === "accent") root.style.setProperty("--ring", value);
+  }
+}
