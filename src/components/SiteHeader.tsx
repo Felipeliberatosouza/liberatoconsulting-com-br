@@ -35,9 +35,7 @@ export function SiteHeader() {
   const [tab, setTab] = useState(groups[0]?.id ?? "");
   const active = groups.find((g) => g.id === tab) ?? groups[0];
 
-  const links = [
-    { to: "/content", label: t.nav.content },
-  ] as const;
+  const links = [{ to: "/content", label: t.nav.content }] as const;
 
   const closeAll = () => {
     setOpen(false);
@@ -45,20 +43,20 @@ export function SiteHeader() {
   };
 
   return (
-    <header
-      className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur"
-      onMouseLeave={() => setMega(null)}
-    >
+    <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur">
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between gap-6 px-6 py-4">
         <Link to="/" className="flex items-center" onClick={closeAll}>
           <img src="/logo.png" alt="Liberato Consulting" className="h-10 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          <div onMouseEnter={() => setMega("services")}>
+          <div
+            className="relative"
+            onMouseEnter={() => setMega("services")}
+            onMouseLeave={() => setMega(null)}
+          >
             <Link
               to="/services"
-              onMouseEnter={() => setMega("services")}
               className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
               activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
               onClick={() => setMega(null)}
@@ -68,12 +66,63 @@ export function SiteHeader() {
                 className={`size-3.5 transition-transform ${mega === "services" ? "rotate-180" : ""}`}
               />
             </Link>
+
+            {mega === "services" && active && (
+              <div className="absolute left-0 right-0 top-full z-50 w-screen border-b border-border bg-background shadow-lg"
+                   style={{ left: "50%", transform: "translateX(-50%)" }}>
+                <div className="mx-auto max-w-7xl px-6 py-8">
+                  <div className="flex flex-wrap gap-1 border-b border-border">
+                    {groups.map((g) => (
+                      <button
+                        key={g.id}
+                        onMouseEnter={() => setTab(g.id)}
+                        onFocus={() => setTab(g.id)}
+                        className={`-mb-px border-b-2 px-4 py-3 text-sm font-semibold transition-colors ${
+                          g.id === active.id
+                            ? "border-accent text-foreground"
+                            : "border-transparent text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {g.title}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 grid gap-x-10 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {active.items.map((item) => (
+                      <Link
+                        key={item.id}
+                        to="/services/$slug"
+                        params={{ slug: item.id }}
+                        onClick={() => setMega(null)}
+                        className="text-sm text-muted-foreground transition-colors hover:text-accent"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+
+                  <div className="mt-8 text-right">
+                    <Link
+                      to="/services"
+                      onClick={() => setMega(null)}
+                      className="text-xs font-semibold uppercase tracking-[0.2em] text-accent"
+                    >
+                      {t.megaMenu.more}
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          <div onMouseEnter={() => setMega("about")}>
+          <div
+            className="relative"
+            onMouseEnter={() => setMega("about")}
+            onMouseLeave={() => setMega(null)}
+          >
             <Link
               to="/about"
-              onMouseEnter={() => setMega("about")}
               className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
               activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
               onClick={() => setMega(null)}
@@ -83,13 +132,43 @@ export function SiteHeader() {
                 className={`size-3.5 transition-transform ${mega === "about" ? "rotate-180" : ""}`}
               />
             </Link>
+
+            {mega === "about" && (
+              <div className="absolute left-0 right-0 top-full z-50 w-screen border-b border-border bg-background shadow-lg"
+                   style={{ left: "50%", transform: "translateX(-50%)" }}>
+                <div className="mx-auto max-w-7xl px-6 py-8">
+                  <div className="grid gap-x-10 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {aboutItems.map((item) => (
+                      <Link
+                        key={item.id}
+                        to="/about"
+                        hash={item.id}
+                        onClick={() => setMega(null)}
+                        className="text-sm text-muted-foreground transition-colors hover:text-accent"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+
+                  <div className="mt-8 text-right">
+                    <Link
+                      to="/about"
+                      onClick={() => setMega(null)}
+                      className="text-xs font-semibold uppercase tracking-[0.2em] text-accent"
+                    >
+                      {t.aboutMenu.more}
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {links.map((l) => (
             <Link
               key={l.to}
               to={l.to}
-              onMouseEnter={() => setMega(null)}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
               activeProps={{ className: "text-sm font-medium text-foreground hover:text-accent" }}
             >
@@ -116,83 +195,6 @@ export function SiteHeader() {
           </button>
         </div>
       </div>
-
-      {mega === "services" && active && (
-        <div className="hidden border-t border-border bg-background shadow-lg md:block">
-          <div className="mx-auto max-w-7xl px-6 py-8">
-            <div className="flex flex-wrap gap-1 border-b border-border">
-              {groups.map((g) => (
-                <button
-                  key={g.id}
-                  onMouseEnter={() => setTab(g.id)}
-                  onFocus={() => setTab(g.id)}
-                  className={`-mb-px border-b-2 px-4 py-3 text-sm font-semibold transition-colors ${
-                    g.id === active.id
-                      ? "border-accent text-foreground"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {g.title}
-                </button>
-              ))}
-            </div>
-
-            <div className="mt-6 grid gap-x-10 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
-              {active.items.map((item) => (
-                <Link
-                  key={item.id}
-                  to="/services/$slug"
-                  params={{ slug: item.id }}
-                  onClick={() => setMega(null)}
-                  className="text-sm text-muted-foreground transition-colors hover:text-accent"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-
-            <div className="mt-8 text-right">
-              <Link
-                to="/services"
-                onClick={() => setMega(null)}
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-accent"
-              >
-                {t.megaMenu.more}
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {mega === "about" && (
-        <div className="hidden border-t border-border bg-background shadow-lg md:block">
-          <div className="mx-auto max-w-7xl px-6 py-8">
-            <div className="grid gap-x-10 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
-              {aboutItems.map((item) => (
-                <Link
-                  key={item.id}
-                  to="/about"
-                  hash={item.id}
-                  onClick={() => setMega(null)}
-                  className="text-sm text-muted-foreground transition-colors hover:text-accent"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-
-            <div className="mt-8 text-right">
-              <Link
-                to="/about"
-                onClick={() => setMega(null)}
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-accent"
-              >
-                {t.aboutMenu.more}
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
 
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
