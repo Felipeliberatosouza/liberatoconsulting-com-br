@@ -229,6 +229,9 @@ export const pt = {
   footer: {
     tagline: "Consultoria em gestão empresarial com inteligência artificial no centro.",
     rights: "Todos os direitos reservados.",
+    careers: "Trabalhe Conosco",
+    careersResume: "Enviar currículo",
+    careersLinkedin: "LinkedIn",
   },
   serviceDetail: {
     labels: {

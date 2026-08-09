@@ -15,16 +15,13 @@ export function SiteFooter() {
           </div>
           <p className="mt-4 max-w-md text-sm text-ink-foreground/70">{t.footer.tagline}</p>
           <a
-            href="mailto:contato@liberatoconsulting.com"
+            href="mailto:contato@liberato.com"
             className="mt-6 inline-block text-sm font-medium text-accent hover:underline"
           >
-            contato@liberatoconsulting.com
+            contato@liberato.com
           </a>
         </div>
         <nav className="flex flex-col gap-3 text-sm">
-          <Link to="/" className="text-ink-foreground/70 hover:text-ink-foreground">
-            {t.nav.home}
-          </Link>
           <Link to="/services" className="text-ink-foreground/70 hover:text-ink-foreground">
             {t.nav.services}
           </Link>
@@ -34,7 +31,25 @@ export function SiteFooter() {
           <Link to="/contact" className="text-ink-foreground/70 hover:text-ink-foreground">
             {t.nav.contact}
           </Link>
+          <div className="mt-4 border-t border-ink-foreground/10 pt-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+              {t.footer.careers}
+            </p>
+            <a
+              href="mailto:parceria@liberato.com?subject=Curr%C3%ADculo"
+              className="mt-3 block text-ink-foreground/70 hover:text-ink-foreground"
+            >
+              {t.footer.careersResume}
+            </a>
+            <a
+              href="mailto:parceria@liberato.com?subject=LinkedIn"
+              className="mt-2 block text-ink-foreground/70 hover:text-ink-foreground"
+            >
+              {t.footer.careersLinkedin}
+            </a>
+          </div>
         </nav>
+
       </div>
       <div className="border-t border-ink-foreground/10">
         <div className="mx-auto max-w-7xl px-6 py-6 text-xs text-ink-foreground/50">
