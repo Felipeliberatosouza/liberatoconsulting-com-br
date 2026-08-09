@@ -289,3 +289,33 @@ export const getResumeUrl = createServerFn({ method: "POST" })
     return { ok: true as const, url: signed.signedUrl };
   });
 
+
+const DEFAULT_ALERT_EMAIL = "felipesza@yahoo.com.br";
+
+/** E-mail que recebe os alertas de novos leads e candidaturas. */
+export const getAlertEmail = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { data } = await context.supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "alerts")
+      .maybeSingle();
+    const value = (data?.value ?? {}) as { email?: string };
+    return { email: value.email || DEFAULT_ALERT_EMAIL };
+  });
+
+export const saveAlertEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ email: z.string().trim().email().max(255) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("site_settings")
+      .upsert({ key: "alerts", value: { email: data.email } }, { onConflict: "key" });
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
