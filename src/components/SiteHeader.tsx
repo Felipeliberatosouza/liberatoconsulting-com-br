@@ -58,6 +58,7 @@ export function SiteHeader() {
           <div onMouseEnter={() => setMega("services")}>
             <Link
               to="/services"
+              onMouseEnter={() => setMega("services")}
               className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
               activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
               onClick={() => setMega(null)}
@@ -72,6 +73,7 @@ export function SiteHeader() {
           <div onMouseEnter={() => setMega("about")}>
             <Link
               to="/about"
+              onMouseEnter={() => setMega("about")}
               className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
               activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
               onClick={() => setMega(null)}
