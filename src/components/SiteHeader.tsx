@@ -184,11 +184,12 @@ export function SiteHeader() {
               key={l.to}
               to={l.to}
               onClick={closeAll}
-              className="mt-1 block py-2.5 text-base font-medium"
+              className="mt-1 block py-2.5 text-base font-medium transition-colors hover:text-accent"
             >
               {l.label}
             </Link>
           ))}
+
         </nav>
       )}
     </header>
