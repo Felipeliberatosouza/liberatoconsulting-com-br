@@ -144,7 +144,7 @@ export const saveTexts = createServerFn({ method: "POST" })
       .select("value")
       .eq("key", "texts")
       .maybeSingle();
-    const overrides: TextOverrides = ((current.data?.value ?? {}) as TextOverrides) ?? {};
+    const overrides: TextOverrides = (current.data?.value ?? {}) as TextOverrides;
 
     const toTranslate: Record<string, string> = {};
     data.changes.forEach((c, i) => {
