@@ -19,7 +19,7 @@ export const Route = createFileRoute("/admin/texts")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  component: AdminTexts;
+  component: AdminTexts,
 });
 
 const SECTION_LABELS: Record<string, string> = {
