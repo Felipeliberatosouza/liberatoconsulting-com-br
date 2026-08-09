@@ -35,18 +35,22 @@ export function SiteFooter() {
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
               {t.footer.careers}
             </p>
-            <a
-              href="mailto:parceria@liberato.com?subject=Curr%C3%ADculo"
+            <Link
+              to="/careers"
               className="mt-3 block text-ink-foreground/70 hover:text-ink-foreground"
             >
               {t.footer.careersResume}
-            </a>
+            </Link>
+
             <a
-              href="mailto:parceria@liberato.com?subject=LinkedIn"
+              href="https://www.linkedin.com/company/liberatoglobal"
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-2 block text-ink-foreground/70 hover:text-ink-foreground"
             >
               {t.footer.careersLinkedin}
             </a>
+
           </div>
         </nav>
 
