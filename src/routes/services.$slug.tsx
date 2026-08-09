@@ -2,6 +2,8 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Check, Clock, Sparkles, Users } from "lucide-react";
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
+import { ServiceLeadForm } from "@/components/ServiceLeadForm";
+
 
 const SLUGS = pt.serviceDetail.pages.map((p) => p.id);
 
