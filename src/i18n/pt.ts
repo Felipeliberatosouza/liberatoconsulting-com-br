@@ -61,6 +61,18 @@ export const pt = {
       },
     ],
   },
+  aboutMenu: {
+    more: "ver página completa",
+    items: [
+      { id: "sobre", label: "Sobre" },
+      { id: "o-que-fazemos", label: "O que fazemos" },
+      { id: "equipe", label: "Equipe" },
+      { id: "sustentabilidade-e-inclusao", label: "Sustentabilidade e Inclusão" },
+      { id: "etica", label: "Ética" },
+      { id: "trabalhe-conosco", label: "Trabalhe Conosco" },
+      { id: "fale-conosco", label: "Fale Conosco" },
+    ],
+  },
   hero: {
     eyebrow: "Consultoria em gestão empresarial",
     title: "Gestão que decide. Inteligência artificial que executa.",
