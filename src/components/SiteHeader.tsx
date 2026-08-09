@@ -29,25 +29,25 @@ function LangSwitch() {
 export function SiteHeader() {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
-  const [mega, setMega] = useState(false);
+  const [mega, setMega] = useState<null | "services" | "about">(null);
   const groups = t.megaMenu.groups;
+  const aboutItems = t.aboutMenu.items;
   const [tab, setTab] = useState(groups[0]?.id ?? "");
   const active = groups.find((g) => g.id === tab) ?? groups[0];
 
   const links = [
-    { to: "/about", label: t.nav.about },
     { to: "/content", label: t.nav.content },
   ] as const;
 
   const closeAll = () => {
     setOpen(false);
-    setMega(false);
+    setMega(null);
   };
 
   return (
     <header
       className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur"
-      onMouseLeave={() => setMega(false)}
+      onMouseLeave={() => setMega(null)}
     >
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between gap-6 px-6 py-4">
         <Link to="/" className="flex items-center" onClick={closeAll}>
@@ -55,31 +55,45 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          <div onMouseEnter={() => setMega(true)}>
+          <div onMouseEnter={() => setMega("services")}>
             <Link
               to="/services"
               className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
               activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
-              onClick={() => setMega(false)}
+              onClick={() => setMega(null)}
             >
               {t.nav.services}
               <ChevronDown
-                className={`size-3.5 transition-transform ${mega ? "rotate-180" : ""}`}
+                className={`size-3.5 transition-transform ${mega === "services" ? "rotate-180" : ""}`}
               />
             </Link>
           </div>
+
+          <div onMouseEnter={() => setMega("about")}>
+            <Link
+              to="/about"
+              className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
+              activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
+              onClick={() => setMega(null)}
+            >
+              {t.nav.about}
+              <ChevronDown
+                className={`size-3.5 transition-transform ${mega === "about" ? "rotate-180" : ""}`}
+              />
+            </Link>
+          </div>
+
           {links.map((l) => (
             <Link
               key={l.to}
               to={l.to}
-              onMouseEnter={() => setMega(false)}
+              onMouseEnter={() => setMega(null)}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
               activeProps={{ className: "text-sm font-medium text-foreground hover:text-accent" }}
             >
               {l.label}
             </Link>
           ))}
-
         </nav>
 
         <div className="flex items-center gap-3">
@@ -101,7 +115,7 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {mega && active && (
+      {mega === "services" && active && (
         <div className="hidden border-t border-border bg-background shadow-lg md:block">
           <div className="mx-auto max-w-7xl px-6 py-8">
             <div className="flex flex-wrap gap-1 border-b border-border">
@@ -127,7 +141,7 @@ export function SiteHeader() {
                   key={item.id}
                   to="/services/$slug"
                   params={{ slug: item.id }}
-                  onClick={() => setMega(false)}
+                  onClick={() => setMega(null)}
                   className="text-sm text-muted-foreground transition-colors hover:text-accent"
                 >
                   {item.label}
@@ -138,10 +152,40 @@ export function SiteHeader() {
             <div className="mt-8 text-right">
               <Link
                 to="/services"
-                onClick={() => setMega(false)}
+                onClick={() => setMega(null)}
                 className="text-xs font-semibold uppercase tracking-[0.2em] text-accent"
               >
                 {t.megaMenu.more}
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {mega === "about" && (
+        <div className="hidden border-t border-border bg-background shadow-lg md:block">
+          <div className="mx-auto max-w-7xl px-6 py-8">
+            <div className="grid gap-x-10 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+              {aboutItems.map((item) => (
+                <Link
+                  key={item.id}
+                  to="/about"
+                  hash={item.id}
+                  onClick={() => setMega(null)}
+                  className="text-sm text-muted-foreground transition-colors hover:text-accent"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="mt-8 text-right">
+              <Link
+                to="/about"
+                onClick={() => setMega(null)}
+                className="text-xs font-semibold uppercase tracking-[0.2em] text-accent"
+              >
+                {t.aboutMenu.more}
               </Link>
             </div>
           </div>
@@ -176,6 +220,29 @@ export function SiteHeader() {
               ))}
             </div>
           ))}
+
+          <Link
+            to="/about"
+            onClick={closeAll}
+            className="mt-2 block py-2.5 text-base font-medium transition-colors hover:text-accent"
+          >
+            {t.nav.about}
+          </Link>
+
+          <div className="border-l border-border pl-3">
+            {aboutItems.map((item) => (
+              <Link
+                key={item.id}
+                to="/about"
+                hash={item.id}
+                onClick={closeAll}
+                className="block py-1.5 text-sm text-muted-foreground"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+
           {links.map((l) => (
             <Link
               key={l.to}
@@ -186,7 +253,6 @@ export function SiteHeader() {
               {l.label}
             </Link>
           ))}
-
         </nav>
       )}
     </header>
