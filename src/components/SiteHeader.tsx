@@ -67,7 +67,7 @@ export function SiteHeader() {
                       onMouseEnter={() => setTab(g.id)}
                       onFocus={() => setTab(g.id)}
                       className={`-mb-px border-b-2 px-4 py-3 text-sm font-semibold transition-colors ${
-                        g.id === active.id
+                        g.id === active?.id
                           ? "border-accent text-foreground"
                           : "border-transparent text-muted-foreground hover:text-foreground"
                       }`}
