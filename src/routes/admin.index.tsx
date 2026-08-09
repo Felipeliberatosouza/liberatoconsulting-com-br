@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
-import { inviteAdmin } from "@/lib/admin.functions";
+import { getAlertEmail, inviteAdmin, saveAlertEmail } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({
