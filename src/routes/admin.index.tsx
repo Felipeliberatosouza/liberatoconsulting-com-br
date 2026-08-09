@@ -1,0 +1,117 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
+
+import { AdminShell } from "@/components/AdminShell";
+import { inviteAdmin } from "@/lib/admin.functions";
+
+export const Route = createFileRoute("/admin/")({
+  head: () => ({
+    meta: [
+      { title: "Painel administrativo — Liberato Consulting" },
+      { name: "description", content: "Gerencie cores, textos e conteúdos do site." },
+      { name: "robots", content: "noindex, nofollow" },
+      { property: "og:title", content: "Painel administrativo — Liberato Consulting" },
+      { property: "og:description", content: "Gerencie cores, textos e conteúdos do site." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
+  component: AdminHome,
+});
+
+const CARDS = [
+  {
+    to: "/admin/theme",
+    title: "Cores do site",
+    text: "Ajuste a paleta principal: cor primária, laranja de destaque, fundos e texto.",
+  },
+  {
+    to: "/admin/texts",
+    title: "Textos do site",
+    text: "Edite qualquer texto em português. As versões EN, ES e ZH são traduzidas automaticamente.",
+  },
+  {
+    to: "/admin/content",
+    title: "Conteúdos",
+    text: "Publique artigos, guias e estudos que aparecem na seção Conteúdo.",
+  },
+];
+
+function AdminHome() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  return (
+    <AdminShell
+      title="Painel administrativo"
+      description="Tudo que você alterar aqui vale para o site publicado, em todos os idiomas."
+    >
+      <div className="grid gap-6 md:grid-cols-3">
+        {CARDS.map((c) => (
+          <Link
+            key={c.to}
+            to={c.to}
+            className="rounded-lg border border-border bg-background p-6 transition-colors hover:border-accent"
+          >
+            <h2 className="font-display text-lg font-bold">{c.title}</h2>
+            <p className="mt-2 text-sm text-muted-foreground">{c.text}</p>
+          </Link>
+        ))}
+      </div>
+
+      <div className="mt-10 max-w-md rounded-lg border border-border bg-background p-6">
+        <h2 className="font-display text-lg font-bold">Convidar administrador</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Crie o acesso de outra pessoa da equipe. Ela já entra com o e-mail e senha definidos aqui.
+        </p>
+        <form
+          className="mt-4 space-y-3"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setBusy(true);
+            try {
+              const r = await inviteAdmin({ data: { email, password } });
+              if (!r.ok) toast.error(r.error);
+              else {
+                toast.success("Administrador criado.");
+                setEmail("");
+                setPassword("");
+              }
+            } catch {
+              toast.error("Não foi possível criar o acesso.");
+            } finally {
+              setBusy(false);
+            }
+          }}
+        >
+          <input
+            type="email"
+            required
+            placeholder="email@liberato.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+          />
+          <input
+            type="password"
+            required
+            minLength={8}
+            placeholder="Senha (mín. 8 caracteres)"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+          />
+          <button
+            type="submit"
+            disabled={busy}
+            className="rounded-md bg-ink px-4 py-2 text-sm font-semibold text-ink-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
+          >
+            {busy ? "Criando…" : "Criar acesso"}
+          </button>
+        </form>
+      </div>
+    </AdminShell>
+  );
+}
