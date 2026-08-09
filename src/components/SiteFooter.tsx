@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { Linkedin, Youtube } from "lucide-react";
 import { useLanguage } from "@/i18n";
 
 export function SiteFooter() {
