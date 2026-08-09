@@ -54,6 +54,19 @@ function AdminHome() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
+  const [alertEmail, setAlertEmail] = useState("");
+  const [savingAlert, setSavingAlert] = useState(false);
+  const alert = useQuery({
+    queryKey: ["admin-alert-email"],
+    queryFn: () => getAlertEmail(),
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (alert.data?.email) setAlertEmail(alert.data.email);
+  }, [alert.data]);
+
+
   return (
     <AdminShell
       title="Painel administrativo"
