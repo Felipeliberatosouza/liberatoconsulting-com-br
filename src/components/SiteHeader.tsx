@@ -61,8 +61,8 @@ export function SiteHeader() {
           <div onMouseEnter={() => setMega(true)}>
             <Link
               to="/services"
-              className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground" }}
+              className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
+              activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
               onClick={() => setMega(false)}
             >
               {t.nav.services}
@@ -76,12 +76,13 @@ export function SiteHeader() {
               key={l.to}
               to={l.to}
               onMouseEnter={() => setMega(false)}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-sm font-medium text-foreground" }}
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
+              activeProps={{ className: "text-sm font-medium text-foreground hover:text-accent" }}
             >
               {l.label}
             </Link>
           ))}
+
         </nav>
 
         <div className="flex items-center gap-3">
