@@ -23,6 +23,14 @@ import { dict as enDict, sourceHash as enHash } from "./generated/en";
 import { dict as esDict, sourceHash as esHash } from "./generated/es";
 import { dict as zhDict, sourceHash as zhHash } from "./generated/zh";
 import { detectLanguage, getTranslations } from "@/lib/i18n.functions";
+import { getSiteConfig } from "@/lib/admin.functions";
+import {
+  EMPTY_CONFIG,
+  applyTextOverrides,
+  applyTheme,
+  type ArticleRecord,
+  type SiteConfig,
+} from "@/lib/site-config";
 
 export type { Lang };
 export { LANGS, LANG_LABELS, LANG_SHORT, LANG_HTML };
@@ -40,6 +48,8 @@ type LanguageContextValue = {
   toggle: () => void;
   t: Dict;
   translating: boolean;
+  /** Conteúdos cadastrados no painel administrativo (já traduzidos). */
+  articles: ArticleRecord[];
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -50,6 +60,22 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("pt");
   const [dicts, setDicts] = useState<Partial<Record<Lang, Dict>>>({});
   const [translating, setTranslating] = useState(false);
+  const [config, setConfig] = useState<SiteConfig>(EMPTY_CONFIG);
+
+  // Configuração do painel administrativo: cores, textos e conteúdos.
+  useEffect(() => {
+    let cancelled = false;
+    getSiteConfig()
+      .then((c) => {
+        if (cancelled) return;
+        setConfig(c);
+        applyTheme(c.theme);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // 1. Idioma inicial: escolha salva > país de origem do acesso > idioma do navegador.
   useEffect(() => {
@@ -105,10 +131,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       lang,
       setLang,
       toggle: () => setLang(lang === "pt" ? "en" : "pt"),
-      t: dicts[lang] ?? baseline[lang].dict,
+      t: applyTextOverrides(dicts[lang] ?? baseline[lang].dict, config.texts, lang),
       translating,
+      articles: config.articles,
     }),
-    [lang, setLang, dicts, translating],
+    [lang, setLang, dicts, translating, config],
   );
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
