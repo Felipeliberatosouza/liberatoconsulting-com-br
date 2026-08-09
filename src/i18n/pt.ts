@@ -209,6 +209,64 @@ export const pt = {
         d: "O cliente termina o projeto mais capaz do que começou.",
       },
     ],
+    nav: [
+      { id: "sobre", label: "Sobre" },
+      { id: "o-que-fazemos", label: "O que fazemos" },
+      { id: "equipe", label: "Equipe" },
+      { id: "sustentabilidade-e-inclusao", label: "Sustentabilidade e Inclusão" },
+      { id: "etica", label: "Ética" },
+      { id: "trabalhe-conosco", label: "Trabalhe Conosco" },
+      { id: "fale-conosco", label: "Fale Conosco" },
+    ],
+    sections: {
+      sobre: {
+        title: "Sobre",
+        body: "A Liberato Consulting é uma consultoria de gestão empresarial que une método, empreendedorismo e inteligência de mercado sobre o Brasil. Nosso trabalho é traduzir ambição em resultado mensurável, com IA como propósito central em cada projeto.",
+      },
+      oQueFazemos: {
+        title: "O que fazemos",
+        body: "Atuamos em três frentes integradas: gestão estratégica de negócios, empreendedorismo e pesquisas de mercado sobre o Brasil para empresas internacionais. Em cada uma, a inteligência artificial acelera diagnósticos, prioriza decisões e automatiza entregas repetitivas.",
+        items: [
+          "Gestão estratégica: planejamento, desdobramento de metas, eficiência operacional e rotina de gestão.",
+          "Empreendedorismo: modelagem de negócio, validação de mercado, precificação, captação e estruturação da operação inicial.",
+          "Pesquisas de mercado: estudos setoriais, dimensionamento, análise competitiva, comportamento do consumidor e leitura regulatória no Brasil.",
+        ],
+      },
+      equipe: {
+        title: "Equipe",
+        body: "Nosso time reúne consultores experientes em estratégia, operações, empreendedorismo e pesquisa de mercado, além de especialistas em inteligência artificial e dados. Trabalhamos em squads leves, lado a lado com o cliente, com foco em transferência de método.",
+        members: [
+          { role: "Sócios e líderes estratégicos", desc: "Orientam o direcionamento dos projetos e a relação com clientes globais." },
+          { role: "Consultores sênior", desc: "Conduzem diagnósticos, desenhos e implantações nas frentes de gestão e operações." },
+          { role: "Especialistas em IA e dados", desc: "Desenvolvem modelos, painéis e agentes que aceleram a entrega de valor." },
+          { role: "Analistas de pesquisa", desc: "Mapeiam mercados brasileiros, competidores, regulação e comportamento do consumidor." },
+        ],
+      },
+      sustentabilidadeEInclusao: {
+        title: "Sustentabilidade e Inclusão",
+        body: "Acreditamos que resultados duradouros dependem de práticas responsáveis. Nossos projetos consideram impacto social e ambiental, e buscamos ampliar o acesso a oportunidades dentro dos times e nas comunidades onde atuamos. A IA é usada para reduzir desperdício, otimizar recursos e tornar informação acessível em mais idiomas.",
+      },
+      etica: {
+        title: "Ética",
+        body: "Trabalhamos com dados e decisões que afetam pessoas, empresas e mercados. Por isso, nosso uso de inteligência artificial segue princípios claros:",
+        items: [
+          "Transparência: explicamos como os modelos chegam às recomendações.",
+          "Privacidade: dados dos clientes são tratados com segurança e sem reutilização não autorizada.",
+          "Responsabilidade humana: a IA auxilia a decisão, mas quem decide continua sendo o cliente.",
+          "Rastreabilidade: fontes, premissas e limitações são documentadas em cada entrega.",
+        ],
+      },
+      trabalheConosco: {
+        title: "Trabalhe Conosco",
+        body: "Buscamos profissionais que unem rigor de gestão, curiosidade por inteligência artificial e vontade de construir resultados reais ao lado dos clientes. Candidate-se enviando currículo e informando a área de interesse.",
+        cta: "Enviar currículo",
+      },
+      faleConosco: {
+        title: "Fale Conosco",
+        body: "Quer entender como a Liberato Consulting pode ajudar a sua empresa? Conte o seu desafio e retornamos em até dois dias úteis.",
+        cta: "Falar com a gente",
+      },
+    },
   },
   contact: {
     eyebrow: "Contato",
