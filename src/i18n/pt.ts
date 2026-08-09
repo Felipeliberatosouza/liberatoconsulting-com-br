@@ -245,6 +245,25 @@ export const pt = {
       back: "Ver todos os serviços",
       related: "Outros serviços desta frente",
     },
+    form: {
+      title: "Fale com a nossa equipe",
+      body: "Preencha os dados abaixo e retornamos em até dois dias úteis.",
+      name: "Nome",
+      company: "Empresa",
+      country: "País",
+      email: "E-mail (opcional)",
+      service: "Serviço de interesse",
+      message: "Mensagem (opcional)",
+      captcha: "Verificação anti-spam: quanto é",
+      submit: "Enviar",
+      sending: "Enviando...",
+      success: "Recebemos o seu contato. Nossa equipe responderá em breve.",
+      errorCaptcha: "Resultado incorreto. Tente novamente.",
+      errorTooFast: "Envio muito rápido. Confira os dados e tente novamente.",
+      errorRate: "Muitos envios em pouco tempo. Tente novamente mais tarde.",
+      errorGeneric: "Não foi possível enviar agora. Tente novamente em instantes.",
+    },
+
     pages: [
       {
         id: "desdobramento-de-metas",

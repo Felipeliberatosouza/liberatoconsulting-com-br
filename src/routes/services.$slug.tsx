@@ -2,6 +2,8 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Check, Clock, Sparkles, Users } from "lucide-react";
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
+import { ServiceLeadForm } from "@/components/ServiceLeadForm";
+
 
 const SLUGS = pt.serviceDetail.pages.map((p) => p.id);
 
@@ -104,6 +106,9 @@ function ServiceDetailPage() {
               <ArrowRight className="size-4" />
             </Link>
           </div>
+
+          <ServiceLeadForm serviceSlug={page.id} serviceTitle={page.title} />
+
 
           {related.length > 0 && (
             <div className="mt-14 border-t border-border pt-8">

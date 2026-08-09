@@ -61,8 +61,8 @@ export function SiteHeader() {
           <div onMouseEnter={() => setMega(true)}>
             <Link
               to="/services"
-              className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground" }}
+              className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
+              activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
               onClick={() => setMega(false)}
             >
               {t.nav.services}
@@ -76,12 +76,13 @@ export function SiteHeader() {
               key={l.to}
               to={l.to}
               onMouseEnter={() => setMega(false)}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-              activeProps={{ className: "text-sm font-medium text-foreground" }}
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
+              activeProps={{ className: "text-sm font-medium text-foreground hover:text-accent" }}
             >
               {l.label}
             </Link>
           ))}
+
         </nav>
 
         <div className="flex items-center gap-3">
@@ -152,9 +153,14 @@ export function SiteHeader() {
 
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
-          <Link to="/services" onClick={closeAll} className="block py-2.5 text-base font-medium">
+          <Link
+            to="/services"
+            onClick={closeAll}
+            className="block py-2.5 text-base font-medium transition-colors hover:text-accent"
+          >
             {t.nav.services}
           </Link>
+
           {groups.map((g) => (
             <div key={g.id} className="border-l border-border pl-3">
               <p className="pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
@@ -178,11 +184,12 @@ export function SiteHeader() {
               key={l.to}
               to={l.to}
               onClick={closeAll}
-              className="mt-1 block py-2.5 text-base font-medium"
+              className="mt-1 block py-2.5 text-base font-medium transition-colors hover:text-accent"
             >
               {l.label}
             </Link>
           ))}
+
         </nav>
       )}
     </header>
