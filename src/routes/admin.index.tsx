@@ -86,6 +86,47 @@ function AdminHome() {
       </div>
 
       <div className="mt-10 max-w-md rounded-lg border border-border bg-background p-6">
+        <h2 className="font-display text-lg font-bold">E-mail para alertas</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Endereço que recebe o aviso de cada novo lead e de cada currículo enviado pelo site.
+        </p>
+        <form
+          className="mt-4 space-y-3"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setSavingAlert(true);
+            try {
+              const r = await saveAlertEmail({ data: { email: alertEmail } });
+              if (!r.ok) toast.error(r.error);
+              else toast.success("E-mail de alertas atualizado.");
+            } catch {
+              toast.error("Não foi possível salvar o e-mail.");
+            } finally {
+              setSavingAlert(false);
+            }
+          }}
+        >
+          <input
+            type="email"
+            required
+            value={alertEmail}
+            onChange={(e) => setAlertEmail(e.target.value)}
+            placeholder="felipesza@yahoo.com.br"
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+          />
+          <button
+            type="submit"
+            disabled={savingAlert || alert.isLoading}
+            className="rounded-md bg-ink px-4 py-2 text-sm font-semibold text-ink-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
+          >
+            {savingAlert ? "Salvando…" : "Salvar e-mail"}
+          </button>
+        </form>
+      </div>
+
+
+
+      <div className="mt-10 max-w-md rounded-lg border border-border bg-background p-6">
         <h2 className="font-display text-lg font-bold">Convidar administrador</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Crie o acesso de outra pessoa da equipe. Ela já entra com o e-mail e senha definidos aqui.
