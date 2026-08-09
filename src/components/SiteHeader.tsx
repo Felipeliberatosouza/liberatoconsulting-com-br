@@ -153,9 +153,14 @@ export function SiteHeader() {
 
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
-          <Link to="/services" onClick={closeAll} className="block py-2.5 text-base font-medium">
+          <Link
+            to="/services"
+            onClick={closeAll}
+            className="block py-2.5 text-base font-medium transition-colors hover:text-accent"
+          >
             {t.nav.services}
           </Link>
+
           {groups.map((g) => (
             <div key={g.id} className="border-l border-border pl-3">
               <p className="pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
