@@ -83,15 +83,13 @@ export function SiteFooter() {
 
       </div>
       <div className="border-t border-ink-foreground/10">
-        <div className="mx-auto max-w-7xl px-6 py-6 text-xs text-ink-foreground/50">
-          © {new Date().getFullYear()} Liberato Consulting. {t.footer.rights}
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-6 text-xs text-ink-foreground/50">
+          <span>© {new Date().getFullYear()} Liberato Consulting. {t.footer.rights}</span>
           <Link
             to="/admin"
-            aria-label="Área restrita"
-            title="Área restrita"
-            className="ml-2 text-ink-foreground/25 transition-colors hover:text-accent"
+            className="text-ink-foreground/30 transition-colors hover:text-accent"
           >
-            ·
+            Área administrativa
           </Link>
         </div>
       </div>
