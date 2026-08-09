@@ -77,18 +77,20 @@ export function SiteHeader() {
                   ))}
                 </div>
 
-                <div className="mt-6 grid gap-x-10 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {active.items.map((item) => (
-                    <Link
-                      key={item.id}
-                      to="/services/$slug"
-                      params={{ slug: item.id }}
-                      className="text-sm text-muted-foreground transition-colors hover:text-accent"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </div>
+                {active && (
+                  <div className="mt-6 grid gap-x-10 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {active.items.map((item) => (
+                      <Link
+                        key={item.id}
+                        to="/services/$slug"
+                        params={{ slug: item.id }}
+                        className="text-sm text-muted-foreground transition-colors hover:text-accent"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
 
                 <div className="mt-8 text-right">
                   <Link
