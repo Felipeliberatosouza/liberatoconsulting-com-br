@@ -25,7 +25,7 @@ export const Route = createFileRoute("/content")({
 });
 
 function ContentPage() {
-  const { t } = useLanguage();
+  const { t, lang, articles } = useLanguage();
   const c = t.content;
   const groups = t.megaMenu.groups;
   const [filter, setFilter] = useState<string>("all");
@@ -36,7 +36,24 @@ function ContentPage() {
     return map;
   }, [groups]);
 
-  const items = c.items.filter((i) => filter === "all" || i.group === filter);
+  // Conteúdos cadastrados no painel têm prioridade sobre os conteúdos padrão.
+  const all =
+    articles.length > 0
+      ? articles.map((a) => {
+          const tr = (lang === "pt" ? undefined : a.translations?.[lang]) ?? {};
+          return {
+            id: a.slug,
+            group: a.group_id,
+            kind: tr.kind ?? a.kind,
+            title: tr.title ?? a.title,
+            summary: tr.summary ?? a.summary,
+            service: a.service,
+            link: a.link_url ?? null,
+          };
+        })
+      : c.items.map((i) => ({ ...i, link: null as string | null }));
+
+  const items = all.filter((i) => filter === "all" || i.group === filter);
 
   return (
     <div>
@@ -86,6 +103,16 @@ function ContentPage() {
               </p>
               <h2 className="mt-3 font-display text-xl font-bold leading-snug">{item.title}</h2>
               <p className="mt-3 flex-1 text-sm text-muted-foreground">{item.summary}</p>
+              {item.link && (
+                <a
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 text-sm font-semibold text-accent hover:underline"
+                >
+                  {c.readMore}
+                </a>
+              )}
               {serviceLabel[item.service] && (
                 <p className="mt-5 text-xs text-muted-foreground">
                   {c.relatedService}:{" "}

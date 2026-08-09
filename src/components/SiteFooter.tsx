@@ -82,6 +82,14 @@ export function SiteFooter() {
       <div className="border-t border-ink-foreground/10">
         <div className="mx-auto max-w-7xl px-6 py-6 text-xs text-ink-foreground/50">
           © {new Date().getFullYear()} Liberato Consulting. {t.footer.rights}
+          <Link
+            to="/admin"
+            aria-label="Área restrita"
+            title="Área restrita"
+            className="ml-2 text-ink-foreground/25 transition-colors hover:text-accent"
+          >
+            ·
+          </Link>
         </div>
       </div>
     </footer>
