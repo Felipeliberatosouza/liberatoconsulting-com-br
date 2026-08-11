@@ -17,6 +17,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsent } from "@/components/CookieConsent";
+import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 
 
 function NotFoundComponent() {
@@ -158,6 +159,7 @@ function RootComponent() {
           <SiteFooter />
         </div>
         <CookieConsent />
+        <WhatsAppFloat />
         <Toaster />
       </LanguageProvider>
     </QueryClientProvider>

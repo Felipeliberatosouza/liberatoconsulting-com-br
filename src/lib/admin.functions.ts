@@ -431,6 +431,48 @@ export const resetLogo = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+const whatsappSchema = z.object({
+  number: z
+    .string()
+    .trim()
+    .max(40)
+    .regex(/^[\d\s\-+()]*$/, "Use apenas números, espaços, hífen, + e parênteses")
+    .optional(),
+});
+
+/** Número de WhatsApp exibido no botão flutuante do site. */
+export const getWhatsApp = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { data } = await context.supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "branding")
+      .maybeSingle();
+    const value = (data?.value ?? {}) as { whatsapp?: string };
+    return { number: value.whatsapp ?? "" };
+  });
+
+export const saveWhatsApp = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => whatsappSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const current = await context.supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "branding")
+      .maybeSingle();
+    const value = (current.data?.value ?? {}) as { logoUrl?: string; whatsapp?: string };
+    const number = data.number?.trim() || undefined;
+    const { error } = await context.supabase
+      .from("site_settings")
+      .upsert({ key: "branding", value: { ...value, whatsapp: number } }, { onConflict: "key" });
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
 
 const heroSchema = z.object({
   autoplayMs: z.number().int().min(0).max(30000),

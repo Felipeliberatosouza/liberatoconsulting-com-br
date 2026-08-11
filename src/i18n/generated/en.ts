@@ -907,6 +907,10 @@ export const dict: Dict = {
     "careersResume": "Submit resume",
     "careersLinkedin": "LinkedIn"
   },
+  "whatsapp": {
+    "label": "Talk on WhatsApp",
+    "title": "Open WhatsApp conversation in a new tab"
+  },
   "careers": {
     "eyebrow": "Careers",
     "title": "Send your resume",

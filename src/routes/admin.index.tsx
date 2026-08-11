@@ -7,10 +7,12 @@ import { AdminShell } from "@/components/AdminShell";
 import {
   getAlertEmail,
   getSiteConfig,
+  getWhatsApp,
   inviteAdmin,
   resetLogo,
   saveAlertEmail,
   saveLogo,
+  saveWhatsApp,
 } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin/")({
@@ -72,6 +74,18 @@ function AdminHome() {
   useEffect(() => {
     if (alert.data?.email) setAlertEmail(alert.data.email);
   }, [alert.data]);
+
+  const [whatsapp, setWhatsApp] = useState("");
+  const [savingWhatsApp, setSavingWhatsApp] = useState(false);
+  const whatsappQuery = useQuery({
+    queryKey: ["admin-whatsapp"],
+    queryFn: () => getWhatsApp(),
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (whatsappQuery.data?.number != null) setWhatsApp(whatsappQuery.data.number);
+  }, [whatsappQuery.data]);
 
   const config = useQuery({ queryKey: ["site-config-admin"], queryFn: () => getSiteConfig() });
   const currentLogo = config.data?.branding?.logoUrl || "/logo.png";
@@ -205,7 +219,45 @@ function AdminHome() {
         </form>
       </div>
 
-
+      <div className="mt-10 max-w-md rounded-lg border border-border bg-background p-6">
+        <h2 className="font-display text-lg font-bold">WhatsApp flutuante</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Número que aparece no botão fixo do site. Deixe em branco para ocultar o botão. Use o
+          formato internacional, por exemplo: +55 11 99999-9999.
+        </p>
+        <form
+          className="mt-4 space-y-3"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            setSavingWhatsApp(true);
+            try {
+              const r = await saveWhatsApp({ data: { number: whatsapp } });
+              if (!r.ok) toast.error(r.error);
+              else toast.success("Número do WhatsApp atualizado.");
+            } catch {
+              toast.error("Não foi possível salvar o número.");
+            } finally {
+              setSavingWhatsApp(false);
+            }
+          }}
+        >
+          <input
+            type="text"
+            inputMode="tel"
+            value={whatsapp}
+            onChange={(e) => setWhatsApp(e.target.value)}
+            placeholder="+55 11 99999-9999"
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+          />
+          <button
+            type="submit"
+            disabled={savingWhatsApp || whatsappQuery.isLoading}
+            className="rounded-md bg-ink px-4 py-2 text-sm font-semibold text-ink-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
+          >
+            {savingWhatsApp ? "Salvando…" : "Salvar WhatsApp"}
+          </button>
+        </form>
+      </div>
 
       <div className="mt-10 max-w-md rounded-lg border border-border bg-background p-6">
         <h2 className="font-display text-lg font-bold">Convidar administrador</h2>
