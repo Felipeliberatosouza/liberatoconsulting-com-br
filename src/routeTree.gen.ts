@@ -17,6 +17,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContentRouteImport } from './routes/content'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminApplicationsRouteImport } from './routes/admin.applications'
+import { Route as AdminBrasilRouteImport } from './routes/admin.brasil'
 import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
@@ -65,6 +66,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const AdminApplicationsRoute = AdminApplicationsRouteImport.update({
   id: '/admin/applications',
   path: '/admin/applications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminBrasilRoute = AdminBrasilRouteImport.update({
+  id: '/admin/brasil',
+  path: '/admin/brasil',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminContentRoute = AdminContentRouteImport.update({
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRouteWithChildren
   '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/brasil': typeof AdminBrasilRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRouteWithChildren
   '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/brasil': typeof AdminBrasilRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRouteWithChildren
   '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/brasil': typeof AdminBrasilRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/leads': typeof AdminLeadsRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/admin/applications'
+    | '/admin/brasil'
     | '/admin/content'
     | '/admin/hero'
     | '/admin/leads'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/admin/applications'
+    | '/admin/brasil'
     | '/admin/content'
     | '/admin/hero'
     | '/admin/leads'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/admin/applications'
+    | '/admin/brasil'
     | '/admin/content'
     | '/admin/hero'
     | '/admin/leads'
@@ -239,6 +251,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ContentRoute: typeof ContentRouteWithChildren
   AdminApplicationsRoute: typeof AdminApplicationsRoute
+  AdminBrasilRoute: typeof AdminBrasilRoute
   AdminContentRoute: typeof AdminContentRoute
   AdminHeroRoute: typeof AdminHeroRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
@@ -306,6 +319,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/applications'
       fullPath: '/admin/applications'
       preLoaderRoute: typeof AdminApplicationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/brasil': {
+      id: '/admin/brasil'
+      path: '/admin/brasil'
+      fullPath: '/admin/brasil'
+      preLoaderRoute: typeof AdminBrasilRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/content': {
@@ -393,6 +413,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ContentRoute: ContentRouteWithChildren,
   AdminApplicationsRoute: AdminApplicationsRoute,
+  AdminBrasilRoute: AdminBrasilRoute,
   AdminContentRoute: AdminContentRoute,
   AdminHeroRoute: AdminHeroRoute,
   AdminLeadsRoute: AdminLeadsRoute,
