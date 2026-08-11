@@ -73,6 +73,53 @@ export const pt = {
       { id: "fale-conosco", label: "Fale Conosco" },
     ],
   },
+  contentMenu: {
+    more: "ver todos os conteúdos",
+    groups: [
+      {
+        id: "estrategia",
+        title: "Estratégia",
+        items: [
+          { id: "desdobramento-de-metas", label: "Desdobramento de Metas" },
+          { id: "projetos-de-capital", label: "Gestão de Projetos de Capital" },
+          { id: "transformacao-digital", label: "Transformação Digital" },
+        ],
+      },
+      {
+        id: "empreendedorismo",
+        title: "Empreendedorismo",
+        items: [
+          { id: "modelagem-de-negocio", label: "Modelagem de Negócio" },
+          { id: "validacao-de-mercado", label: "Validação de Mercado" },
+          { id: "precificacao-unit-economics", label: "Precificação e Unit Economics" },
+          { id: "captacao-investidores", label: "Captação e Materiais para Investidores" },
+          { id: "operacao-inicial", label: "Estruturação da Operação Inicial" },
+        ],
+      },
+      {
+        id: "operacoes",
+        title: "Operações",
+        items: [
+          { id: "excelencia-comercial", label: "Excelência Comercial" },
+          { id: "excelencia-em-processos", label: "Excelência em Processos" },
+          { id: "excelencia-industrial", label: "Excelência Industrial" },
+          { id: "gestao-da-rotina", label: "Gestão da Rotina" },
+        ],
+      },
+      {
+        id: "pesquisas",
+        title: "Pesquisas de Mercado",
+        items: [
+          { id: "dimensionamento-de-mercado", label: "Dimensionamento de Mercado" },
+          { id: "analise-competitiva", label: "Análise Competitiva" },
+          { id: "estudos-setoriais-brasil", label: "Estudos Setoriais sobre o Brasil" },
+          { id: "comportamento-do-consumidor", label: "Comportamento do Consumidor" },
+          { id: "leitura-regulatoria", label: "Leitura Regulatória e Barreiras de Entrada" },
+          { id: "parceiros-e-alvos-locais", label: "Mapeamento de Parceiros e Alvos Locais" },
+        ],
+      },
+    ],
+  },
   hero: {
     eyebrow: "Consultoria em gestão empresarial",
     title: "Gestão que decide. Inteligência artificial que executa.",
