@@ -280,7 +280,7 @@ export function SiteHeader() {
             </div>
           </MobileAccordion>
 
-          <MobileAccordion title={t.nav.content} href="/content">
+          <MobileAccordion title={t.nav.content}>
             <div className="grid grid-cols-2 gap-x-4">
               {contentGroups.map((g) => (
                 <div key={g.id} className="min-w-0">
