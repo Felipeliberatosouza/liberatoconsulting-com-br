@@ -680,6 +680,10 @@ export const pt = {
     careersResume: "Enviar currículo",
     careersLinkedin: "LinkedIn",
   },
+  whatsapp: {
+    label: "Fale pelo WhatsApp",
+    title: "Abrir conversa no WhatsApp em nova aba",
+  },
   careers: {
     eyebrow: "Trabalhe Conosco",
     title: "Envie o seu currículo",
