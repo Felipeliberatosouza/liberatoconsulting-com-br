@@ -108,18 +108,25 @@ export function SiteHeader() {
 
             <div className="invisible absolute inset-x-0 top-full z-40 border-b border-border bg-background opacity-0 shadow-lg transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100">
               <div className="mx-auto max-w-7xl px-6 py-8">
-                <div className="grid gap-x-10 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {aboutItems.map((item) => (
-                    <Link
-                      key={item.id}
-                      to="/about"
-                      hash={item.id}
-                      className="text-sm text-muted-foreground transition-colors hover:text-accent"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
+                <div className="grid grid-cols-2 gap-x-8 gap-y-8 lg:grid-cols-4">
+                  <div className="min-w-0">
+                    <p className="mb-4 text-sm font-semibold text-accent">{t.nav.about}</p>
+                    <ul className="space-y-2.5">
+                      {aboutItems.map((item) => (
+                        <li key={item.id}>
+                          <Link
+                            to="/about"
+                            hash={item.id}
+                            className="block text-sm text-muted-foreground transition-colors hover:text-accent"
+                          >
+                            {item.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
+
 
                 <div className="mt-8 text-right">
                   <Link
