@@ -81,7 +81,20 @@ export function SiteFooter() {
             </a>
 
           </div>
+
+          <div className="mt-4 border-t border-ink-foreground/10 pt-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+              {lg.legal}
+            </p>
+            <Link to="/privacy" className="mt-3 block text-ink-foreground/70 hover:text-ink-foreground">
+              {lg.privacy}
+            </Link>
+            <Link to="/terms" className="mt-2 block text-ink-foreground/70 hover:text-ink-foreground">
+              {lg.terms}
+            </Link>
+          </div>
         </nav>
+
 
       </div>
       <div className="border-t border-ink-foreground/10">
