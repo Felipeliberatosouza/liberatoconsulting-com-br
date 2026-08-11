@@ -73,6 +73,36 @@ function AdminHome() {
     if (alert.data?.email) setAlertEmail(alert.data.email);
   }, [alert.data]);
 
+  const config = useQuery({ queryKey: ["site-config-admin"], queryFn: () => getSiteConfig() });
+  const currentLogo = config.data?.branding?.logoUrl || "/logo.png";
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+
+  const onLogoFile = async (file: File) => {
+    if (file.size > 1_000_000) {
+      toast.error("Arquivo muito grande. Use uma imagem de até 1 MB.");
+      return;
+    }
+    setUploadingLogo(true);
+    try {
+      const dataUrl: string = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(new Error("read"));
+        reader.readAsDataURL(file);
+      });
+      const r = await saveLogo({ data: { dataUrl } });
+      if (!r.ok) toast.error(r.error);
+      else {
+        toast.success("Logomarca atualizada em todo o site.");
+        await config.refetch();
+      }
+    } catch {
+      toast.error("Não foi possível enviar a logomarca.");
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
 
   return (
     <AdminShell
