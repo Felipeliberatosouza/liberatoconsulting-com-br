@@ -65,7 +65,7 @@ export function SiteHeader() {
                       key={g.id}
                       className={`min-w-0 ${i > 0 ? "lg:border-l lg:border-border lg:pl-8" : ""}`}
                     >
-                      <p className="mb-4 text-sm font-semibold text-foreground">{g.title}</p>
+                      <p className="mb-4 text-sm font-semibold text-accent">{g.title}</p>
                       <ul className="space-y-2.5">
                         {g.items.map((item) => (
                           <li key={item.id}>
