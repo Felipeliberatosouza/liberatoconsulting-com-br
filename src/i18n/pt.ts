@@ -369,6 +369,36 @@ export const pt = {
         ],
       },
       {
+        id: "operacoes",
+        title: "Operações",
+        lead: "Excelência operacional que aparece na margem, mês a mês.",
+        body: "Gestão da rotina, excelência industrial, comercial e de processos. Padronizamos a execução, eliminamos perdas e instalamos uma rotina de acompanhamento sustentada por dados e inteligência artificial.",
+        audience: "Indústrias, redes de serviço e operações comerciais que precisam de produtividade, qualidade e previsibilidade na execução do dia a dia.",
+        duration: "4 a 12 meses, com ciclos quinzenais de acompanhamento.",
+        bullets: [
+          "Gestão da rotina e padronização de processos críticos",
+          "Excelência industrial: produtividade, qualidade e manutenção",
+          "Excelência comercial: funil, produtividade da força de vendas e pricing na ponta",
+          "Redução de perdas, estoques e custos de operação",
+        ],
+        ai: {
+          body: "A IA transforma o dado que a operação já gera em alerta antecipado: o desvio é tratado antes de virar perda no fechamento do mês.",
+          items: [
+            "Previsão de demanda e planejamento de produção e abastecimento",
+            "Manutenção preditiva a partir de sinais de equipamentos e histórico de falhas",
+            "Detecção automática de desvios de qualidade, produtividade e perdas",
+            "Assistentes que apoiam supervisores na análise de causa e no plano de ação",
+          ],
+        },
+        deliverables: [
+          "Processos críticos padronizados e documentados",
+          "Rotina de gestão instalada com indicadores por turno, célula ou região",
+          "Carteira de ganhos operacionais com retorno estimado e acompanhado",
+          "Supervisores e líderes treinados para sustentar o padrão",
+        ],
+      },
+
+      {
         id: "empreendedorismo",
         title: "Empreendedorismo",
         lead: "Do modelo de negócio à tração, com menos capital queimado por hipótese.",
