@@ -57,6 +57,39 @@ function MobileAccordion({
   );
 }
 
+type AboutItem = { id: string; label: string };
+
+/** Sobre/O que fazemos/... abrem página própria; os dois últimos vão para telas existentes. */
+function AboutMenuLink({
+  item,
+  className,
+  onClick,
+}: {
+  item: AboutItem;
+  className?: string;
+  onClick?: () => void;
+}) {
+  if (item.id === "trabalhe-conosco") {
+    return (
+      <Link to="/careers" className={className} onClick={onClick}>
+        {item.label}
+      </Link>
+    );
+  }
+  if (item.id === "fale-conosco") {
+    return (
+      <Link to="/contact" className={className} onClick={onClick}>
+        {item.label}
+      </Link>
+    );
+  }
+  return (
+    <Link to="/about/$slug" params={{ slug: item.id }} className={className} onClick={onClick}>
+      {item.label}
+    </Link>
+  );
+}
+
 export function SiteHeader() {
   const { t, logoUrl } = useLanguage();
   const [open, setOpen] = useState(false);
@@ -151,13 +184,10 @@ export function SiteHeader() {
                     >
                       {chunk.map((item) => (
                         <li key={item.id}>
-                          <Link
-                            to="/about"
-                            hash={item.id}
+                          <AboutMenuLink
+                            item={item}
                             className="block text-sm text-muted-foreground transition-colors hover:text-accent"
-                          >
-                            {item.label}
-                          </Link>
+                          />
                         </li>
                       ))}
                     </ul>
@@ -318,15 +348,12 @@ export function SiteHeader() {
           <MobileAccordion title={t.nav.about}>
             <div className="border-l border-border pl-3">
               {aboutItems.map((item) => (
-                <Link
+                <AboutMenuLink
                   key={item.id}
-                  to="/about"
-                  hash={item.id}
+                  item={item}
                   onClick={closeAll}
                   className="block py-1.5 text-sm text-muted-foreground"
-                >
-                  {item.label}
-                </Link>
+                />
               ))}
             </div>
           </MobileAccordion>
