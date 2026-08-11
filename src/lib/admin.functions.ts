@@ -24,6 +24,7 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
       theme: (map.get("theme") ?? {}) as Theme,
       texts: (map.get("texts") ?? {}) as TextOverrides,
       articles: (articles.data ?? []) as unknown as ArticleRecord[],
+      branding: (map.get("branding") ?? {}) as Branding,
     };
   },
 );
