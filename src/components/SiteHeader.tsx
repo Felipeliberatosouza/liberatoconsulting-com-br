@@ -67,8 +67,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const groups = t.megaMenu.groups;
   const aboutItems = t.aboutMenu.items;
-
-  const links = [{ to: "/content", label: t.nav.content }] as const;
+  const contentGroups = t.contentMenu.groups;
 
   const closeAll = () => {
     setOpen(false);
