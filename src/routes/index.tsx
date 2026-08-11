@@ -7,22 +7,33 @@ import { useLanguage } from "@/i18n";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Liberato Consulting — Gestão empresarial com IA no centro" },
+      {
+        title: "Pesquisas de mercado sobre o Brasil e gestão com IA — Liberato Consulting",
+      },
       {
         name: "description",
         content:
-          "Consultoria em gestão estratégica, empreendedorismo e pesquisas de mercado sobre o Brasil, com inteligência artificial no centro de cada entrega.",
+          "Estudos setoriais e dados sobre o mercado brasileiro para investidores internacionais: agronegócio, energia, mineração, indústria, tecnologia, saúde e varejo, com gestão estratégica e IA.",
       },
-      { property: "og:title", content: "Liberato Consulting — Gestão empresarial com IA" },
+      {
+        name: "keywords",
+        content:
+          "pesquisa de mercado Brasil, mercado brasileiro, economia brasileira, setores do mercado brasileiro, investir no Brasil, investimento estrangeiro no Brasil, estudo setorial Brasil, agronegócio, energia renovável, mineração, indústria brasileira, fintechs, consultoria de gestão empresarial, inteligência artificial",
+      },
+      {
+        property: "og:title",
+        content: "Pesquisas de mercado sobre o Brasil — Liberato Consulting",
+      },
       {
         property: "og:description",
         content:
-          "Gestão estratégica, empreendedorismo e inteligência de mercado sobre o Brasil, com IA no centro.",
+          "Inteligência sobre setores da economia brasileira para empresas internacionais, com gestão estratégica e IA no centro.",
       },
     ],
   }),
   component: Index,
 });
+
 
 const icons = [Compass, Rocket, Globe2];
 
