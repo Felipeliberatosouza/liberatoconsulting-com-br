@@ -314,7 +314,7 @@ export const pt = {
   },
   stats: [
     { value: "IA", label: "no núcleo de todos os projetos" },
-    { value: "3", label: "frentes de atuação integradas" },
+    { value: "4", label: "frentes de atuação integradas" },
     { value: "BR", label: "inteligência local para empresas globais" },
   ],
   purpose: {
@@ -329,7 +329,7 @@ export const pt = {
   },
   services: {
     eyebrow: "Serviços",
-    title: "Três frentes, um método",
+    title: "Quatro frentes, um método",
     body: "Cada frente é entregue com inteligência artificial embarcada — do diagnóstico à execução.",
     labels: {
       scope: "O que fazemos",
