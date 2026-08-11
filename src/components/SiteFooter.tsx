@@ -44,13 +44,17 @@ export function SiteFooter() {
             >
               <Youtube className="size-4" />
             </a>
-            {whatsapp ? (
+            {normalizeWhatsApp(whatsapp) ? (
               <a
-                href={`https://wa.me/${whatsapp.replace(/\D/g, "")}`}
+                href={`https://wa.me/${normalizeWhatsApp(whatsapp)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
                 title="WhatsApp"
+                onClick={(e) => {
+                  e.preventDefault();
+                  openWhatsApp(normalizeWhatsApp(whatsapp)!);
+                }}
                 className="inline-flex size-10 items-center justify-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-accent hover:bg-accent hover:text-accent-foreground"
               >
                 <svg viewBox="0 0 24 24" fill="currentColor" className="size-4" aria-hidden="true">
