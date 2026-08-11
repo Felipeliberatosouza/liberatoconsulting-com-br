@@ -283,7 +283,7 @@ function Index() {
           <h2 className="mt-5 max-w-2xl text-3xl font-bold leading-tight md:text-5xl">
             {t.services.title}
           </h2>
-          <div className="mt-14 grid gap-8 lg:grid-cols-3">
+          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {t.services.items.map((s, i) => {
               const Icon = icons[i] ?? Compass;
               return (
