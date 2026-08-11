@@ -124,7 +124,7 @@ function AdminHero() {
             try {
               const r = await saveHeroSettings({
                 data: {
-                  autoplayMs: autoplay === 0 ? 2000 : Math.max(2000, autoplay),
+                  autoplayMs: autoplay,
                   slides: slides.map((s) => ({
                     id: s.id,
                     enabled: s.enabled,

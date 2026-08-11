@@ -431,7 +431,7 @@ export const resetLogo = createServerFn({ method: "POST" })
 
 
 const heroSchema = z.object({
-  autoplayMs: z.number().int().min(2000).max(30000),
+  autoplayMs: z.number().int().min(0).max(30000),
   slides: z
     .array(
       z.object({
