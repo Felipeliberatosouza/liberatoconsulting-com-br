@@ -7,8 +7,9 @@ export function normalizeWhatsApp(raw: string | undefined): string | null {
   return digits;
 }
 
-/** Abre diretamente o aplicativo, sem passar pelos domínios web bloqueados. */
+/** Abre uma conversa diretamente no WhatsApp Web. */
 export function whatsappHref(number: string, text?: string): string {
-  const query = text ? `&text=${encodeURIComponent(text)}` : "";
-  return `whatsapp://send?phone=${number}${query}`;
+  const params = new URLSearchParams({ phone: number });
+  if (text) params.set("text", text);
+  return `https://web.whatsapp.com/send?${params.toString()}`;
 }
