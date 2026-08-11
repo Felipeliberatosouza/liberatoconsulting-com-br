@@ -14,6 +14,12 @@ export function WhatsAppFloat() {
       href={whatsappHref(number)}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={(event) => {
+        if (window.self !== window.top) {
+          event.preventDefault();
+          window.open(whatsappHref(number), "_top");
+        }
+      }}
       aria-label={label}
       title={title}
       className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full border border-border bg-background p-2 pr-4 shadow-lg transition-transform hover:scale-105 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
