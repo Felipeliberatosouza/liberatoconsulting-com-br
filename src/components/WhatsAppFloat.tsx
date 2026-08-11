@@ -1,5 +1,5 @@
 import { useLanguage } from "@/i18n";
-import { normalizeWhatsApp, openWhatsApp } from "@/lib/whatsapp";
+import { normalizeWhatsApp, whatsappHref } from "@/lib/whatsapp";
 
 export function WhatsAppFloat() {
   const { t, logoUrl, whatsapp } = useLanguage();
@@ -11,15 +11,9 @@ export function WhatsAppFloat() {
 
   return (
     <a
-      href={`https://wa.me/${number}`}
-      target="_blank"
-      rel="noopener noreferrer"
+      href={whatsappHref(number)}
       aria-label={label}
       title={title}
-      onClick={(e) => {
-        e.preventDefault();
-        openWhatsApp(number);
-      }}
       className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full border border-border bg-background p-2 pr-4 shadow-lg transition-transform hover:scale-105 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
     >
 

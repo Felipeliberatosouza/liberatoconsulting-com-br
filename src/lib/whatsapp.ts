@@ -7,22 +7,8 @@ export function normalizeWhatsApp(raw: string | undefined): string | null {
   return digits;
 }
 
-/**
- * Em desktop o redirecionamento wa.me -> api.whatsapp.com pode ser bloqueado
- * pelo navegador (ERR_BLOCKED_BY_RESPONSE). Nesse caso usamos o WhatsApp Web,
- * que abre a conversa direto (ou o app instalado).
- */
+/** Abre diretamente o aplicativo, sem passar pelos domínios web bloqueados. */
 export function whatsappHref(number: string, text?: string): string {
-  const isMobile =
-    typeof navigator !== "undefined" &&
-    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
   const query = text ? `&text=${encodeURIComponent(text)}` : "";
-  return isMobile
-    ? `https://wa.me/${number}${text ? `?text=${encodeURIComponent(text)}` : ""}`
-    : `https://web.whatsapp.com/send?phone=${number}${query}`;
-}
-
-/** Abre a conversa em uma nova aba de nível superior. */
-export function openWhatsApp(number: string, text?: string) {
-  window.open(whatsappHref(number, text), "_blank", "noopener,noreferrer");
+  return `whatsapp://send?phone=${number}${query}`;
 }
