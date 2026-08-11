@@ -200,23 +200,10 @@ export function SiteHeader() {
                       <Link
                         to="/content"
                         search={{ category: g.id }}
-                        className="mb-4 block text-sm font-semibold text-accent transition-colors hover:underline"
+                        className="block text-sm font-semibold text-muted-foreground transition-colors hover:text-accent"
                       >
                         {g.title}
                       </Link>
-                      <ul className="space-y-2.5">
-                        {g.items.map((item) => (
-                          <li key={item.id}>
-                            <Link
-                              to="/content"
-                              search={{ category: g.id, service: item.id }}
-                              className="block text-sm text-muted-foreground transition-colors hover:text-accent"
-                            >
-                              {item.label}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
                     </div>
                   ))}
                 </div>
