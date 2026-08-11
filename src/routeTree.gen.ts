@@ -21,6 +21,7 @@ import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminTextsRouteImport } from './routes/admin.texts'
 import { Route as AdminThemeRouteImport } from './routes/admin.theme'
+import { Route as ContentSlugRouteImport } from './routes/content.$slug'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 
@@ -84,6 +85,11 @@ const AdminThemeRoute = AdminThemeRouteImport.update({
   path: '/admin/theme',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContentSlugRoute = ContentSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ContentRoute,
+} as any)
 const ServicesIndexRoute = ServicesIndexRouteImport.update({
   id: '/services/',
   path: '/services/',
@@ -100,13 +106,14 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
-  '/content': typeof ContentRoute
+  '/content': typeof ContentRouteWithChildren
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
+  '/content/$slug': typeof ContentSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -116,13 +123,14 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
-  '/content': typeof ContentRoute
+  '/content': typeof ContentRouteWithChildren
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
+  '/content/$slug': typeof ContentSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
@@ -133,13 +141,14 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
-  '/content': typeof ContentRoute
+  '/content': typeof ContentRouteWithChildren
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
+  '/content/$slug': typeof ContentSlugRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/texts'
     | '/admin/theme'
+    | '/content/$slug'
     | '/services/$slug'
     | '/admin/'
     | '/services/'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/texts'
     | '/admin/theme'
+    | '/content/$slug'
     | '/services/$slug'
     | '/admin'
     | '/services'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/texts'
     | '/admin/theme'
+    | '/content/$slug'
     | '/services/$slug'
     | '/admin/'
     | '/services/'
@@ -200,7 +212,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
-  ContentRoute: typeof ContentRoute
+  ContentRoute: typeof ContentRouteWithChildren
   AdminApplicationsRoute: typeof AdminApplicationsRoute
   AdminContentRoute: typeof AdminContentRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
@@ -298,6 +310,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminThemeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/content/$slug': {
+      id: '/content/$slug'
+      path: '/$slug'
+      fullPath: '/content/$slug'
+      preLoaderRoute: typeof ContentSlugRouteImport
+      parentRoute: typeof ContentRoute
+    }
     '/services/': {
       id: '/services/'
       path: '/services'
@@ -315,12 +334,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ContentRouteChildren {
+  ContentSlugRoute: typeof ContentSlugRoute
+}
+
+const ContentRouteChildren: ContentRouteChildren = {
+  ContentSlugRoute: ContentSlugRoute,
+}
+
+const ContentRouteWithChildren =
+  ContentRoute._addFileChildren(ContentRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
-  ContentRoute: ContentRoute,
+  ContentRoute: ContentRouteWithChildren,
   AdminApplicationsRoute: AdminApplicationsRoute,
   AdminContentRoute: AdminContentRoute,
   AdminLeadsRoute: AdminLeadsRoute,

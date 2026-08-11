@@ -65,15 +65,27 @@ function ContentPage() {
             summary: tr.summary ?? a.summary,
             service: a.service,
             link: a.link_url ?? null,
+            cover: a.cover_url ?? null,
+            authors: a.authors ?? "",
+            reads: a.read_count ?? 0,
+            slug: a.slug as string | null,
           };
         })
-      : c.items.map((i) => ({ ...i, link: null as string | null }));
+      : c.items.map((i) => ({
+          ...i,
+          link: null as string | null,
+          cover: null as string | null,
+          authors: "",
+          reads: 0,
+          slug: null as string | null,
+        }));
 
   const items = all.filter((i) => {
     if (filter !== "all" && i.group !== filter) return false;
     if (serviceFilter && i.service !== serviceFilter) return false;
     return true;
   });
+
 
   return (
     <div>
