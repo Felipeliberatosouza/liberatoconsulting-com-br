@@ -42,13 +42,14 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur">
+      <div className="relative">
       <div className="mx-auto flex h-18 max-w-7xl items-center justify-between gap-6 px-6 py-4">
         <Link to="/" className="flex items-center" onClick={closeAll}>
           <img src={logoUrl} alt="Liberato Consulting" className="h-10 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          <div className="group/menu relative">
+          <div className="group/menu">
             <Link
               to="/services"
               className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
@@ -58,7 +59,7 @@ export function SiteHeader() {
               <ChevronDown className="size-3.5 transition-transform group-hover/menu:rotate-180" />
             </Link>
 
-            <div className="invisible absolute left-1/2 top-full z-50 w-screen -translate-x-1/2 border-b border-border bg-background opacity-0 shadow-lg transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100">
+            <div className="invisible absolute inset-x-0 top-full z-40 border-b border-border bg-background opacity-0 shadow-lg transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100">
               <div className="mx-auto max-w-7xl px-6 py-8">
                 <div className="flex flex-wrap gap-1 border-b border-border">
                   {groups.map((g) => (
@@ -104,7 +105,7 @@ export function SiteHeader() {
             </div>
           </div>
 
-          <div className="group/menu relative">
+          <div className="group/menu">
             <Link
               to="/about"
               className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
@@ -114,7 +115,7 @@ export function SiteHeader() {
               <ChevronDown className="size-3.5 transition-transform group-hover/menu:rotate-180" />
             </Link>
 
-            <div className="invisible absolute left-1/2 top-full z-50 w-screen -translate-x-1/2 border-b border-border bg-background opacity-0 shadow-lg transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100">
+            <div className="invisible absolute inset-x-0 top-full z-40 border-b border-border bg-background opacity-0 shadow-lg transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100">
               <div className="mx-auto max-w-7xl px-6 py-8">
                 <div className="grid gap-x-10 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
                   {aboutItems.map((item) => (
@@ -170,6 +171,7 @@ export function SiteHeader() {
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
         </div>
+      </div>
       </div>
 
       {open && (
