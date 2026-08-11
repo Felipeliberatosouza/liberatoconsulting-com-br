@@ -1,5 +1,5 @@
 import { useLanguage } from "@/i18n";
-import { normalizeWhatsApp, openWhatsApp, whatsappHref } from "@/lib/whatsapp";
+import { normalizeWhatsApp, openWhatsApp } from "@/lib/whatsapp";
 
 export function WhatsAppFloat() {
   const { t, logoUrl, whatsapp } = useLanguage();
