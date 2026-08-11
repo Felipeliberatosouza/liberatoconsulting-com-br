@@ -200,7 +200,7 @@ export function SiteHeader() {
                       <Link
                         to="/content"
                         search={{ category: g.id }}
-                        className="block text-sm font-semibold text-muted-foreground transition-colors hover:text-accent"
+                        className="block text-sm font-normal text-muted-foreground transition-colors hover:text-accent"
                       >
                         {g.title}
                       </Link>
