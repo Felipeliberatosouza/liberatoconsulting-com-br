@@ -28,35 +28,30 @@ function LangSwitch() {
 
 function MobileAccordion({
   title,
-  href,
   children,
 }: {
   title: string;
-  href: string;
   children: ReactNode;
 }) {
   const [expanded, setExpanded] = useState(false);
   return (
     <div className="border-b border-border">
-      <div className="flex items-center justify-between">
-        <Link
-          to={href}
-          className="py-3 text-base font-medium transition-colors hover:text-accent"
-        >
+      <button
+        onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
+        className="flex w-full items-center justify-between py-3 text-left"
+      >
+        <span className="text-base font-medium transition-colors group-hover:text-accent">
           {title}
-        </Link>
-        <button
-          onClick={() => setExpanded((v) => !v)}
-          aria-label={expanded ? "Recolher" : "Expandir"}
-          className="p-2 text-muted-foreground transition-colors hover:text-accent"
-        >
+        </span>
+        <span className="p-2 text-muted-foreground transition-colors">
           {expanded ? (
             <ChevronDown className="size-4" />
           ) : (
             <ChevronRight className="size-4" />
           )}
-        </button>
-      </div>
+        </span>
+      </button>
       {expanded && <div className="pb-3">{children}</div>}
     </div>
   );
@@ -246,7 +241,7 @@ export function SiteHeader() {
 
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
-          <MobileAccordion title={t.nav.services} href="/services">
+          <MobileAccordion title={t.nav.services}>
             <div className="grid grid-cols-2 gap-x-4">
               {groups.map((g) => (
                 <div key={g.id} className="min-w-0">
@@ -269,7 +264,7 @@ export function SiteHeader() {
             </div>
           </MobileAccordion>
 
-          <MobileAccordion title={t.nav.about} href="/about">
+          <MobileAccordion title={t.nav.about}>
             <div className="border-l border-border pl-3">
               {aboutItems.map((item) => (
                 <Link
@@ -285,7 +280,7 @@ export function SiteHeader() {
             </div>
           </MobileAccordion>
 
-          <MobileAccordion title={t.nav.content} href="/content">
+          <MobileAccordion title={t.nav.content}>
             <div className="grid grid-cols-2 gap-x-4">
               {contentGroups.map((g) => (
                 <div key={g.id} className="min-w-0">
