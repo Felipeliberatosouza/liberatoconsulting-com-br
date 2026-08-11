@@ -1,19 +1,19 @@
 import type { Dict } from "../pt";
 
 // Gerado automaticamente por scripts/translate-i18n.ts — não editar à mão.
-export const sourceHash = "rdsi9q";
+export const sourceHash = "3caeq7";
 
 export const dict: Dict = {
   "nav": {
     "home": "Home",
     "services": "Services",
-    "about": "About Us",
+    "about": "About",
     "contact": "Contact",
     "content": "Content",
     "cta": "Contact us"
   },
   "megaMenu": {
-    "more": "view all services",
+    "more": "see all services",
     "groups": [
       {
         "id": "estrategia",
@@ -22,7 +22,7 @@ export const dict: Dict = {
         "items": [
           {
             "id": "desdobramento-de-metas",
-            "label": "Goal Deployment"
+            "label": "Goal Cascading"
           },
           {
             "id": "projetos-de-capital",
@@ -67,7 +67,7 @@ export const dict: Dict = {
             "label": "Business Modeling"
           },
           {
-            "id": "validacao-de-market",
+            "id": "validacao-de-mercado",
             "label": "Market Validation"
           },
           {
@@ -99,7 +99,7 @@ export const dict: Dict = {
           },
           {
             "id": "estudos-setoriais-brasil",
-            "label": "Brazil Sector Studies"
+            "label": "Sectoral Studies on Brazil"
           },
           {
             "id": "comportamento-do-consumidor",
@@ -107,11 +107,11 @@ export const dict: Dict = {
           },
           {
             "id": "leitura-regulatoria",
-            "label": "Regulatory & Entry Barriers"
+            "label": "Regulatory Landscape & Entry Barriers"
           },
           {
             "id": "parceiros-e-alvos-locais",
-            "label": "Partner & Local Target Mapping"
+            "label": "Mapping Local Partners & Targets"
           }
         ]
       }
@@ -151,7 +151,7 @@ export const dict: Dict = {
     ]
   },
   "contentMenu": {
-    "more": "view all content",
+    "more": "see all content",
     "groups": [
       {
         "id": "estrategia",
@@ -159,7 +159,7 @@ export const dict: Dict = {
         "items": [
           {
             "id": "desdobramento-de-metas",
-            "label": "Goal Deployment"
+            "label": "Goal Cascading"
           },
           {
             "id": "projetos-de-capital",
@@ -233,7 +233,7 @@ export const dict: Dict = {
           },
           {
             "id": "estudos-setoriais-brasil",
-            "label": "Brazil Sector Studies"
+            "label": "Sectoral Studies on Brazil"
           },
           {
             "id": "comportamento-do-consumidor",
@@ -241,22 +241,219 @@ export const dict: Dict = {
           },
           {
             "id": "leitura-regulatoria",
-            "label": "Regulatory & Entry Barriers"
+            "label": "Regulatory Landscape & Entry Barriers"
           },
           {
             "id": "parceiros-e-alvos-locais",
-            "label": "Partner & Local Target Mapping"
+            "label": "Mapping Local Partners & Targets"
           }
         ]
       }
     ]
   },
+  "brazilMenu": {
+    "label": "Brazil Data",
+    "more": "see all data on Brazil",
+    "items": [
+      {
+        "id": "panorama-economico",
+        "label": "Economic Overview"
+      },
+      {
+        "id": "setores-estrategicos",
+        "label": "Strategic Sectors"
+      },
+      {
+        "id": "investimento-estrangeiro",
+        "label": "Foreign Direct Investment (FDI)"
+      },
+      {
+        "id": "abrir-empresa",
+        "label": "Incorporating in Brazil"
+      },
+      {
+        "id": "tributos-e-regulacao",
+        "label": "Taxes & Regulation"
+      },
+      {
+        "id": "comercio-exterior",
+        "label": "Foreign Trade & Mercosul"
+      },
+      {
+        "id": "mercado-consumidor",
+        "label": "Consumer Market"
+      },
+      {
+        "id": "infraestrutura-logistica",
+        "label": "Infrastructure & Logistics"
+      }
+    ]
+  },
+  "brazil": {
+    "eyebrow": "Brazil Data",
+    "title": "What international investors need to know about the Brazilian market",
+    "body": "A structured overview of the Brazilian economy for those evaluating entry, expansion, or acquisition in Brazil: macroeconomic outlook, strategic sectors, foreign investment rules, tax burden, foreign trade, consumer profile, and infrastructure. Each topic can be further explored through a bespoke sectoral study.",
+    "ctaTitle": "Need a specific study on a Brazilian sector?",
+    "ctaBody": "We produce market research on Brazil for international companies, including market sizing, competitive analysis, regulatory insights, and mapping of local partners.",
+    "sectionsLabel": "Topics",
+    "sourcesLabel": "Official data sources",
+    "sources": [
+      {
+        "label": "IBGE — official statistics",
+        "url": "https://www.ibge.gov.br"
+      },
+      {
+        "label": "Central Bank of Brazil",
+        "url": "https://www.bcb.gov.br"
+      },
+      {
+        "label": "Comex Stat — foreign trade",
+        "url": "https://comexstat.mdic.gov.br"
+      },
+      {
+        "label": "Federal Revenue",
+        "url": "https://www.gov.br/receitafederal"
+      },
+      {
+        "label": "ApexBrasil — investment attraction",
+        "url": "https://apexbrasil.com.br"
+      }
+    ],
+    "sections": [
+      {
+        "id": "panorama-economico",
+        "title": "Economic Overview",
+        "body": "Brazil is the largest economy in Latin America and one of the world's largest consumer markets, featuring a floating currency, free exchange, and a mature financial system. For international investors, the key indicators are GDP and sectoral growth, inflation (IPCA), benchmark interest rates (Selic), Real/Dollar exchange rate, country risk, and public accounts.",
+        "bullets": [
+          "Brazilian GDP by sector: agribusiness, industry, and services",
+          "Inflation (IPCA), Selic rate, and cost of capital in Brazil",
+          "Exchange rates, convertibility, and profit remittance abroad",
+          "Political and fiscal cycles and their effect on the business environment"
+        ]
+      },
+      {
+        "id": "setores-estrategicos",
+        "title": "Strategic Sectors",
+        "body": "The Brazilian economy is diversified, and each sector has its own competitive dynamics. We map market size, dominant players, typical margins, entry barriers, and windows of opportunity in each vertical.",
+        "bullets": [
+          "Agribusiness: soy, corn, meat, coffee, sugar, and ethanol",
+          "Energy and energy transition: hydroelectric, wind, solar, biofuels, and green hydrogen",
+          "Oil, gas, and mining: pre-salt, iron ore, and critical minerals",
+          "Industry and manufacturing: automotive, chemical, food, and capital goods",
+          "Technology: fintechs, SaaS, e-commerce, agtech, and healthtech",
+          "Healthcare, retail, education, real estate, and financial services"
+        ]
+      },
+      {
+        "id": "investimento-estrangeiro",
+        "title": "Foreign Direct Investment (FDI)",
+        "body": "Brazil is among the main global destinations for FDI. Foreign capital enters freely in most sectors, requiring mandatory registration with the Central Bank to ensure future remittance of profits, dividends, and capital repatriation.",
+        "bullets": [
+          "Foreign capital registration with the Central Bank (RDE-IED)",
+          "Remittance of profits, dividends, and investment repatriation",
+          "Sectors with restrictions or special authorization (rural lands, aviation, media, borders)",
+          "Entry formats: greenfield, joint venture, acquisition, or local distributor"
+        ]
+      },
+      {
+        "id": "abrir-empresa",
+        "title": "Incorporating in Brazil",
+        "body": "Establishing a company in Brazil requires a defined legal entity type, a CNPJ (tax ID), a resident legal representative, and tax registrations across three government levels. The total timeline varies by municipality and licensed activity.",
+        "bullets": [
+          "Common corporate types for foreigners: LTDA and S.A.",
+          "CNPJ, foreign partner's CPF, and resident attorney-in-fact in Brazil",
+          "State and municipal registrations, licenses, and permits by activity",
+          "Bank account opening, local accounting, and ancillary obligations"
+        ]
+      },
+      {
+        "id": "tributos-e-regulacao",
+        "title": "Taxes & Regulation",
+        "body": "The Brazilian tax burden is significant, and complexity lies more in compliance than in rates. A consumption tax reform is being implemented in stages, replacing current taxes with a dual VAT model (CBS and IBS), altering operational planning.",
+        "bullets": [
+          "Consumption taxes: ICMS, ISS, PIS/Cofins, and IPI",
+          "Tax reform: CBS, IBS, Selective Tax, and transition timeline",
+          "Income taxes: IRPJ and CSLL, real profit and presumed profit models",
+          "Sectoral regulation: ANVISA, ANEEL, ANP, ANATEL, CADE, and LGPD"
+        ]
+      },
+      {
+        "id": "comercio-exterior",
+        "title": "Foreign Trade & Mercosul",
+        "body": "Brazil is a major exporter of agricultural and mineral commodities and a relevant importer of industrial goods, inputs, and technology. The country is a member of Mercosul, which defines the Common External Tariff and preferential agreements with other blocs.",
+        "bullets": [
+          "Import and export: NCM, Siscomex, Drawback, and special regimes",
+          "Mercosul Common External Tariff and active trade agreements",
+          "Main trade partners: China, United States, European Union, and Argentina",
+          "International logistics: ports of Santos, Paranaguá, and Itaqui"
+        ]
+      },
+      {
+        "id": "mercado-consumidor",
+        "title": "Consumer Market",
+        "body": "With over 200 million inhabitants, high urbanization, and digital adoption above global averages, Brazil is a deep and unequal consumer market: income, buying habits, and channels vary strongly across regions and social classes.",
+        "bullets": [
+          "Demographics, urbanization, and income distribution by region",
+          "Pix, installment credit cards, and payment behavior",
+          "E-commerce, marketplaces, and social commerce",
+          "Differences between Southeast, South, Northeast, Central-West, and North regions"
+        ]
+      },
+      {
+        "id": "infraestrutura-logistica",
+        "title": "Infrastructure & Logistics",
+        "body": "The country's continental dimensions make location a strategic decision. Logistics costs, transportation matrix, and clean energy availability directly influence the viability of industrial or distribution operations in Brazil.",
+        "bullets": [
+          "Transport matrix: road, rail, waterway, and port",
+          "Concessions, PPPs, and infrastructure auctions",
+          "Energy matrix mostly renewable and energy costs",
+          "Connectivity, data centers, and digital infrastructure"
+        ]
+      }
+    ]
+  },
   "hero": {
-    "eyebrow": "Business Management Consulting",
-    "title": "Management that decides. Artificial Intelligence that executes.",
-    "body": "Liberato Consulting combines management methodology, entrepreneurial vision, and market intelligence on Brazil—with AI at the core of every delivery.",
-    "primary": "Explore services",
+    "eyebrow": "Management consulting and market research on Brazil",
+    "title": "Understand the Brazilian market. Decide with method and AI.",
+    "body": "Liberato Consulting produces market research on Brazil for international companies and strategic management for firms seeking growth here — sectoral studies, economic data, regulatory environment, and AI at the core of every delivery.",
+    "primary": "View Brazil Data",
     "secondary": "Schedule a call"
+  },
+  "brazilFocus": {
+    "eyebrow": "Market Research on Brazil",
+    "title": "Market intelligence on Brazil for investment decisions",
+    "body": "International companies evaluating entry, expansion, or acquisition in Brazil need more than isolated numbers. We produce sectoral studies on the Brazilian economy including market sizing, competitive analysis, regulatory landscape, consumer behavior, and local partner mapping — combining official sources, primary data, and AI.",
+    "sectorsLabel": "Brazilian economic sectors we cover",
+    "sectors": [
+      "Agribusiness",
+      "Energy & Energy Transition",
+      "Oil, Gas & Mining",
+      "Industry & Manufacturing",
+      "Technology & Fintech",
+      "Healthcare & Life Sciences",
+      "Retail & Consumer Goods",
+      "Infrastructure & Logistics",
+      "Real Estate & Construction",
+      "Financial Services",
+      "Education",
+      "Tourism & Services"
+    ],
+    "points": [
+      {
+        "t": "Market Sizing in Brazil",
+        "d": "Size, growth, and capture potential by sector and region."
+      },
+      {
+        "t": "Competitive & Regulatory Analysis",
+        "d": "Local players, entry barriers, taxes, and regulatory agencies."
+      },
+      {
+        "t": "Entry & Local Partners",
+        "d": "Entry models, acquisition targets, and distributor mapping."
+      }
+    ],
+    "primary": "View Brazil Data",
+    "secondary": "Request a Sectoral Study"
   },
   "stats": [
     {
@@ -265,17 +462,17 @@ export const dict: Dict = {
     },
     {
       "value": "3",
-      "label": "integrated business fronts"
+      "label": "integrated work fronts"
     },
     {
       "value": "BR",
-      "label": "local intelligence for global firms"
+      "label": "local intelligence for global companies"
     }
   ],
   "purpose": {
     "eyebrow": "Our Purpose",
-    "title": "Artificial Intelligence applied to management, not trends",
-    "body": "We don’t treat AI as a separate service. It is the method: we map where AI generates real value in every process, define responsible data use, and empower teams to operate autonomously after we leave.",
+    "title": "AI applied to management, not to trends",
+    "body": "We don't treat AI as a separate service. It is the method: we map where AI generates real value in each process, define responsible data use, and empower teams to operate autonomously after our departure.",
     "points": [
       "AI maturity diagnosis and ROI-based prioritization",
       "AI-assisted process design and data governance",
@@ -285,11 +482,11 @@ export const dict: Dict = {
   "services": {
     "eyebrow": "Services",
     "title": "Three fronts, one method",
-    "body": "Each front is delivered with embedded artificial intelligence—from diagnosis to execution.",
+    "body": "Each front is delivered with embedded AI — from diagnosis to execution.",
     "labels": {
-      "scope": "What we do",
-      "ai": "Where AI comes in",
-      "deliverables": "What you receive",
+      "scope": "Scope",
+      "ai": "Where AI fits in",
+      "deliverables": "Deliverables",
       "audience": "Target audience",
       "duration": "Typical duration"
     },
@@ -298,29 +495,29 @@ export const dict: Dict = {
         "id": "gestao",
         "title": "Strategic Business Management",
         "lead": "From ambition to the management routine that sustains results.",
-        "body": "Strategy, goal deployment, operational efficiency, and management routine. We translate ambition into weekly monitored KPIs, with AI-supported analysis and forecasting.",
-        "audience": "Established companies needing to recover margins, accelerate growth, or ensure predictable results.",
+        "body": "Strategy, goal cascading, operational efficiency, and management routine. We translate ambition into indicators monitored week-by-week, with AI-backed analysis and forecasting.",
+        "audience": "Companies with established operations needing to recover margin, accelerate growth, or ensure predictability.",
         "duration": "3 to 9 months, with monthly review cycles.",
         "bullets": [
-          "Strategic planning and goal deployment",
+          "Strategic planning and goal cascading",
           "Cost reduction and operational efficiency",
           "Management routine: meetings, KPIs, and action plans",
           "Data governance and process standardization"
         ],
         "ai": {
-          "body": "AI does not replace the manager's decision: it shortens the path to reliable information and anticipates what hasn't appeared in reports yet.",
+          "body": "AI doesn't replace the manager's decision: it shortens the path to reliable information and anticipates what hasn't appeared in reports yet.",
           "items": [
             "Demand, revenue, and cash flow forecasting based on company history",
-            "Dashboards with automatic deviation detection and probable cause explanation",
-            "Agents consolidating ERP, CRM, and spreadsheet data into a single management report",
+            "Dashboards with automated deviation detection and probable cause explanation",
+            "Agents that consolidate ERP, CRM, and spreadsheet data into a single management report",
             "Price, cost, and capacity scenario simulations before committing investment"
           ]
         },
         "deliverables": [
-          "Strategic map with goals deployed by department",
-          "Operating KPI dashboard, automatically updated",
-          "Portfolio of gain-generating projects with estimated ROI",
-          "Team trained to lead the routine without consulting support"
+          "Strategic map with goals cascaded by area",
+          "Operational KPI dashboard, automatically populated",
+          "Portfolio of gain projects with estimated ROI",
+          "Team trained to conduct routines without the consultancy"
         ]
       },
       {
@@ -328,7 +525,7 @@ export const dict: Dict = {
         "title": "Entrepreneurship",
         "lead": "From business model to traction, with less capital burned per hypothesis.",
         "body": "We structure operations, pricing, and fundraising for founders and growth-stage companies, using AI to validate hypotheses faster and with less capital.",
-        "audience": "Founders, early-stage businesses, and new business units within established corporations.",
+        "audience": "Founders, early-stage businesses, and new business units within established firms.",
         "duration": "6 to 16 weeks, in validation sprints.",
         "bullets": [
           "Business modeling and market validation",
@@ -337,12 +534,12 @@ export const dict: Dict = {
           "Minimum viable operation design and initial hiring"
         ],
         "ai": {
-          "body": "We use AI to reduce the cost of learning: every hypothesis is tested with real evidence before becoming a fixed structure.",
+          "body": "We use AI to reduce the cost of learning: every hypothesis is tested with real evidence before becoming fixed structure.",
           "items": [
-            "Market research and competitive analysis accelerated by LLMs",
-            "Value proposition and messaging tests with automatic response synthesis",
-            "Financial models with scenarios generated and stress-tested by AI",
-            "Sales, service, and back-office automation from day one, without bloating the team"
+            "Market research and competitive analysis accelerated by language models",
+            "Value proposition and messaging tests with automated response synthesis",
+            "Financial modeling with AI-generated and stress-tested scenarios",
+            "Sales, customer service, and back-office automation from day one, without bloating the team"
           ]
         },
         "deliverables": [
@@ -354,29 +551,29 @@ export const dict: Dict = {
       },
       {
         "id": "pesquisas-brasil",
-        "title": "Brazil Market Research",
-        "lead": "Local intelligence for those deciding on Brazil from abroad.",
-        "body": "Market intelligence for international companies looking to understand, enter, or expand in Brazil: sector, competition, regulation, consumer culture, and entry scenarios.",
+        "title": "Market Research on Brazil",
+        "lead": "Local intelligence for those deciding on Brazil from outside Brazil.",
+        "body": "Market intelligence for international companies seeking to understand, enter, or expand in Brazil: sector, competition, regulation, consumer culture, and entry scenarios.",
         "audience": "International companies, funds, and corporate expansion departments evaluating the Brazilian market.",
-        "duration": "4 to 12 weeks, depending on sector depth.",
+        "duration": "4 to 12 weeks, depending on sectoral depth.",
         "bullets": [
-          "Sector studies and market sizing",
+          "Sectoral studies and market sizing",
           "Competitive, channel, and local partner mapping",
-          "Regulatory, tax, and entry barrier analysis",
+          "Regulatory, tax, and entry barrier landscape",
           "Entry scenarios: organic, partnership, or acquisition"
         ],
         "ai": {
-          "body": "Brazil produces vast public data in Portuguese. AI allows us to read it at scale and deliver conclusions in the client's language.",
+          "body": "Brazil produces vast public data in Portuguese. AI allows us to read this at scale and deliver conclusions in the client's language.",
           "items": [
-            "Automated reading of public databases, bids, balance sheets, and news in Portuguese",
+            "Automated reading of public databases, biddings, balance sheets, and news in Portuguese",
             "Continuous monitoring of competitors, prices, and market movements",
             "Sentiment and consumer culture analysis from social data and reviews",
             "Reports delivered in English, Spanish, or Mandarin with source traceability"
           ]
         },
         "deliverables": [
-          "Sector report with sizing and projections",
-          "Competitive map and shortlist of partners or local targets",
+          "Sectoral report with sizing and projections",
+          "Competitive map and shortlist of local partners or targets",
           "Regulatory and operational risk assessment",
           "Entry recommendation with a 12-month plan"
         ]
@@ -384,39 +581,39 @@ export const dict: Dict = {
     ]
   },
   "approach": {
-    "eyebrow": "How We Work",
-    "title": "Four-step Method",
+    "eyebrow": "How we work",
+    "title": "Four-step method",
     "steps": [
       {
         "n": "01",
         "t": "Diagnosis",
-        "d": "Data, interviews, and competitive context reading."
+        "d": "Data, interviews, and competitive context assessment."
       },
       {
         "n": "02",
         "t": "Design",
-        "d": "Priorities, goals, and where AI fits in each process."
+        "d": "Priorities, goals, and identifying where AI fits in each process."
       },
       {
         "n": "03",
         "t": "Implementation",
-        "d": "Working side-by-side with the team in the actual routine."
+        "d": "Working side-by-side with the team in real routines."
       },
       {
         "n": "04",
         "t": "Autonomy",
-        "d": "Training and transfer of methodology to the client."
+        "d": "Training and transferring the method to the client."
       }
     ]
   },
   "about": {
     "eyebrow": "About Us",
-    "title": "Brazilian consulting with a global perspective",
+    "title": "Brazilian consultancy with global insight",
     "body": "Liberato Consulting was born from the conviction that good management is discipline, and that AI only creates value when anchored in process, reliable data, and prepared people.",
-    "body2": "We work alongside Brazilian companies seeking growth through methodology and international firms needing to understand Brazil before investing. In every case, we deliver clarity: what to do, in what order, and how to measure it.",
+    "body2": "We work alongside Brazilian companies seeking methodical growth and international firms needing to understand Brazil before investing. In every case, we deliver clarity: what to do, in what order, and how to measure it.",
     "values": [
       {
-        "t": "Method before tools",
+        "t": "Method before tool",
         "d": "Technology serves the decision, never the other way around."
       },
       {
@@ -461,31 +658,31 @@ export const dict: Dict = {
     "sections": {
       "sobre": {
         "title": "About",
-        "body": "Liberato Consulting is a business management consultancy that unites method, entrepreneurship, and market intelligence on Brazil. Our job is to translate ambition into measurable results, with AI as a central purpose in every project."
+        "body": "Liberato Consulting is a management consultancy that blends method, entrepreneurship, and market intelligence on Brazil. Our work translates ambition into measurable results, with AI as a core purpose in every project."
       },
       "oQueFazemos": {
         "title": "What we do",
-        "body": "We operate in three integrated fronts: strategic business management, entrepreneurship, and Brazil market research for international companies. In each, AI accelerates diagnosis, prioritizes decisions, and automates repetitive deliveries.",
+        "body": "We operate in three integrated fronts: strategic business management, entrepreneurship, and market research on Brazil for international companies. In each, AI accelerates diagnosis, prioritizes decisions, and automates repetitive tasks.",
         "items": [
-          "Strategic Management: planning, goal deployment, operational efficiency, and management routine.",
+          "Strategic Management: planning, goal cascading, operational efficiency, and management routines.",
           "Entrepreneurship: business modeling, market validation, pricing, fundraising, and initial operation structuring.",
-          "Market Research: sector studies, sizing, competitive analysis, consumer behavior, and regulatory assessment in Brazil."
+          "Market Research: sectoral studies, sizing, competitive analysis, consumer behavior, and regulatory assessment in Brazil."
         ]
       },
       "equipe": {
         "title": "Team",
-        "body": "Our team brings together experienced consultants in strategy, operations, entrepreneurship, and market research, alongside AI and data specialists. We work in lean squads, side-by-side with the client, focusing on methodology transfer.",
+        "body": "Our team brings together experienced consultants in strategy, operations, entrepreneurship, and market research, alongside AI and data specialists. We work in lean squads, side-by-side with the client, focusing on method transfer.",
         "members": [
           {
-            "role": "Partners and Strategic Leaders",
+            "role": "Partners & Strategic Leaders",
             "desc": "Guide project direction and relationships with global clients."
           },
           {
             "role": "Senior Consultants",
-            "desc": "Lead diagnosis, design, and implementation in management and operations fronts."
+            "desc": "Lead diagnosis, design, and implementation in management and operations."
           },
           {
-            "role": "AI and Data Specialists",
+            "role": "AI & Data Specialists",
             "desc": "Develop models, dashboards, and agents that accelerate value delivery."
           },
           {
@@ -496,7 +693,7 @@ export const dict: Dict = {
       },
       "sustentabilidadeEInclusao": {
         "title": "Sustainability & Inclusion",
-        "body": "We believe lasting results depend on responsible practices. Our projects consider social and environmental impact, and we seek to expand access to opportunities within teams and communities. AI is used to reduce waste, optimize resources, and make information accessible in more languages."
+        "body": "We believe lasting results depend on responsible practices. Our projects consider social and environmental impact, and we seek to expand access to opportunities within our teams and communities. AI is used to reduce waste, optimize resources, and make information accessible in more languages."
       },
       "etica": {
         "title": "Ethics",
@@ -504,25 +701,25 @@ export const dict: Dict = {
         "items": [
           "Transparency: we explain how models reach recommendations.",
           "Privacy: client data is handled securely without unauthorized reuse.",
-          "Human Responsibility: AI assists the decision, but the client remains the decider.",
+          "Human responsibility: AI assists the decision, but the client remains the decider.",
           "Traceability: sources, assumptions, and limitations are documented in every delivery."
         ]
       },
       "trabalheConosco": {
         "title": "Careers",
-        "body": "We look for professionals who combine management rigor, curiosity for AI, and a drive to build real results for clients. Apply by sending your CV and indicating your area of interest.",
+        "body": "We look for professionals who combine management rigor, curiosity for AI, and a desire to build real results for clients. Apply by sending your CV and indicating your area of interest.",
         "cta": "Send CV"
       },
       "faleConosco": {
         "title": "Contact Us",
-        "body": "Want to understand how Liberato Consulting can help your company? Tell us your challenge and we will get back to you within two business days.",
+        "body": "Want to understand how Liberato Consulting can help your company? Tell us your challenge, and we will get back to you within two business days.",
         "cta": "Talk to us"
       }
     }
   },
   "contact": {
     "eyebrow": "Contact",
-    "title": "Let's discuss your next cycle",
+    "title": "Let's talk about your next cycle",
     "body": "Tell us your company's challenge. We respond within two business days.",
     "name": "Name",
     "email": "E-mail",
@@ -533,7 +730,7 @@ export const dict: Dict = {
     "info": "Or write directly to"
   },
   "cta": {
-    "title": "Ready to put AI to work for your management?",
+    "title": "Ready to put AI at the service of your management?",
     "body": "An initial 45-minute conversation is usually enough to map the first opportunities.",
     "button": "Talk to Liberato"
   },
@@ -542,7 +739,7 @@ export const dict: Dict = {
     "title": "Applied knowledge in management and AI",
     "lead": "Articles, guides, and studies produced by our team, organized by Liberato Consulting service fronts. Objective content with real examples of how AI enters execution.",
     "metaDescription": "Articles, guides, and studies from Liberato Consulting on strategic management, operations, entrepreneurship, market research in Brazil, and AI use.",
-    "readMore": "Read more",
+    "readMore": "Read content",
     "relatedService": "Related service",
     "allLabel": "All",
     "emptyNote": "New content is published every month.",
@@ -553,33 +750,33 @@ export const dict: Dict = {
       "downloading": "Generating link...",
       "noFile": "Full file coming soon.",
       "reads": "reads",
-      "contactAuthors": "Talk to authors",
+      "contactAuthors": "Talk to the authors",
       "rateLabel": "Rate this content",
-      "rateThanks": "Thank you for your rating!",
+      "rateThanks": "Thanks for your rating!",
       "ratingCount": "ratings",
       "share": "Share",
       "back": "Back to Content",
-      "publishTitle": "Publish your work too!",
+      "publishTitle": "Publish your work! Send your article!",
       "publishLead": "Have an article on management, entrepreneurship, market research, or AI? Send it to our curation team.",
-      "publishCta": "Submit your article",
+      "publishCta": "Publish your work! Send your article!",
       "formName": "Full name",
       "formEmail": "E-mail",
       "formTitle": "Article title",
       "formSummary": "Summary",
       "formMessage": "Message to curation team",
       "formFile": "Article file (PDF or DOC, up to 4 MB)",
-      "formSubmit": "Submit article",
+      "formSubmit": "Send article",
       "formSending": "Sending...",
-      "formSuccess": "Article received! Our curators will be in touch.",
-      "formError": "Submission failed. Please try again."
+      "formSuccess": "Article received! Our curation team will get in touch.",
+      "formError": "Unable to send. Please try again."
     },
     "items": [
       {
         "id": "metas-que-saem-do-papel",
         "group": "estrategia",
         "kind": "Article",
-        "title": "Goals that happen: how to deploy strategy into routine",
-        "summary": "A simple method to transform annual objectives into department goals, with KPIs that leadership can monitor weekly.",
+        "title": "Goals that actually happen: how to cascade strategy to routine",
+        "summary": "A simple method to transform annual objectives into area-specific goals, with KPIs that leadership can monitor weekly.",
         "service": "desdobramento-de-metas"
       },
       {
@@ -594,8 +791,8 @@ export const dict: Dict = {
         "id": "rotina-que-sustenta-resultado",
         "group": "operacoes",
         "kind": "Article",
-        "title": "The routine that sustains results after the project",
-        "summary": "Why operational gains are lost within six months and which management rituals prevent regression.",
+        "title": "The routine that sustains results post-project",
+        "summary": "Why operational gains are lost in six months and which management rituals prevent regression.",
         "service": "gestao-da-rotina"
       },
       {
@@ -611,14 +808,14 @@ export const dict: Dict = {
         "group": "empreendedorismo",
         "kind": "Guide",
         "title": "Unit economics before scaling",
-        "summary": "How to calculate per customer, per order, and per channel to discover if growth builds or destroys margin.",
+        "summary": "How to calculate per customer, per order, and per channel to discover if growth increases or destroys margin.",
         "service": "precificacao-unit-economics"
       },
       {
         "id": "validar-mercado-em-8-semanas",
         "group": "empreendedorismo",
         "kind": "Article",
-        "title": "Market validation in 8 weeks with AI support",
+        "title": "Validate market in 8 weeks with AI support",
         "summary": "A lean roadmap of interviews, tests, and AI-assisted analysis to confirm demand before heavy investment.",
         "service": "validacao-de-mercado"
       },
@@ -634,14 +831,14 @@ export const dict: Dict = {
         "id": "dimensionar-mercado-com-dados-publicos",
         "group": "pesquisas",
         "kind": "Guide",
-        "title": "Sizing markets with Brazilian public data",
+        "title": "Market sizing with Brazilian public data",
         "summary": "How to combine official databases and AI to estimate TAM, SAM, and SOM with transparent assumptions.",
         "service": "dimensionamento-de-mercado"
       }
     ]
   },
   "footer": {
-    "tagline": "Business management consulting with artificial intelligence at the core.",
+    "tagline": "Management consultancy with AI at the center.",
     "rights": "All rights reserved.",
     "careers": "Careers",
     "careersResume": "Send CV",
@@ -650,8 +847,8 @@ export const dict: Dict = {
   "careers": {
     "eyebrow": "Careers",
     "title": "Send your CV",
-    "lead": "We look for professionals who combine management and AI. Fill in the details below and send your CV—our team reviews all applications.",
-    "metaDescription": "Send your CV to Liberato Consulting: business management consultancy with AI at its core.",
+    "lead": "We look for professionals who combine management and AI. Fill in the data below and send your CV — our team reviews every application.",
+    "metaDescription": "Send your CV to Liberato Consulting: management consultancy with AI at the center.",
     "fullName": "Full name",
     "phone": "Mobile",
     "email": "E-mail",
@@ -662,24 +859,24 @@ export const dict: Dict = {
       "Operations",
       "Entrepreneurship",
       "Market Research",
-      "AI and Data",
-      "Admin and Support",
+      "AI & Data",
+      "Administrative & Support",
       "Internship"
     ],
-    "resume": "Upload CV (PDF or DOC, up to 3 MB)",
-    "linkedin": "LinkedIn profile link",
+    "resume": "CV upload (PDF or DOC, up to 3 MB)",
+    "linkedin": "LinkedIn link",
     "linkedinPlaceholder": "https://www.linkedin.com/in/your-profile",
-    "captcha": "Anti-spam verification: how much is",
+    "captcha": "Anti-spam verification: what is",
     "submit": "Send CV",
     "sending": "Sending...",
-    "success": "CV received! Our team will review your profile and contact you if there is a fit.",
-    "errorCaptcha": "Incorrect result. Try again.",
-    "errorTooFast": "Sent too fast. Check the data and try again.",
-    "errorRate": "Too many submissions. Please try again later.",
+    "success": "CV received! Our team will review your profile and get in touch if there is a match.",
+    "errorCaptcha": "Incorrect result. Please try again.",
+    "errorTooFast": "Submission too fast. Check the data and try again.",
+    "errorRate": "Too many submissions in a short time. Try again later.",
     "errorFileType": "File format not supported. Send PDF, DOC, DOCX, RTF, or ODT.",
     "errorFileSize": "File too large. Limit is 3 MB.",
-    "errorLinkedin": "Please provide a valid LinkedIn link.",
-    "errorGeneric": "Unable to send now. Please try again shortly.",
+    "errorLinkedin": "Provide a valid LinkedIn link.",
+    "errorGeneric": "Unable to send now. Please try again in a moment.",
     "note": "Applications are forwarded to parceria@liberato.com."
   },
   "serviceDetail": {
@@ -687,11 +884,11 @@ export const dict: Dict = {
       "breadcrumb": "Services",
       "audience": "Target audience",
       "duration": "Estimated time",
-      "scope": "What we do",
-      "ai": "Where AI comes in",
+      "scope": "Scope",
+      "ai": "Where AI fits in",
       "cta": "Contact our team",
       "ctaBody": "Tell us your context and we will design the right scope for your company.",
-      "back": "View all services",
+      "back": "See all services",
       "related": "Other services in this front"
     },
     "form": {
@@ -703,39 +900,39 @@ export const dict: Dict = {
       "email": "E-mail (optional)",
       "service": "Service of interest",
       "message": "Message (optional)",
-      "captcha": "Anti-spam verification: how much is",
+      "captcha": "Anti-spam verification: what is",
       "submit": "Send",
       "sending": "Sending...",
       "success": "We have received your contact. Our team will respond shortly.",
-      "errorCaptcha": "Incorrect result. Try again.",
-      "errorTooFast": "Sent too fast. Check the data and try again.",
-      "errorRate": "Too many submissions. Please try again later.",
-      "errorGeneric": "Unable to send now. Please try again shortly."
+      "errorCaptcha": "Incorrect result. Please try again.",
+      "errorTooFast": "Submission too fast. Check the data and try again.",
+      "errorRate": "Too many submissions. Try again later.",
+      "errorGeneric": "Unable to send now. Please try again in a moment."
     },
     "pages": [
       {
         "id": "desdobramento-de-metas",
         "group": "estrategia",
-        "title": "Goal Deployment",
-        "lead": "We transform company goals into department, team, and individual goals.",
-        "body": "We translate strategic objectives into clear KPIs, with owners, deadlines, and action plans for every level of the organization. The result is a coherent goal chain: when every area delivers, the company hits its target.",
-        "audience": "Companies with defined annual goals that struggle to connect them to daily department routines.",
+        "title": "Goal Cascading",
+        "lead": "We transform company goals into area, team, and individual goals.",
+        "body": "We translate strategic objectives into clear indicators, with owners, deadlines, and action plans for every level of the organization. The result is a coherent goal chain: when each area delivers its part, the company's goal is achieved.",
+        "audience": "Companies with defined annual goals that struggle to connect them to area routines.",
         "duration": "8 to 12 weeks.",
         "bullets": [
-          "Goal tree from Board to operations",
-          "Definition of KPIs and calculation formulas",
+          "Goal tree from board to operations",
+          "Definition of indicators and calculation formulas",
           "Action plans with owners and deadlines",
           "Monthly follow-up rituals"
         ],
-        "ai": "Predictive models estimate goal attainment based on history and flag deviations before the month ends."
+        "ai": "Predictive models estimate goal attainment based on history and alert to deviations before month-end."
       },
       {
         "id": "projetos-de-capital",
         "group": "estrategia",
         "title": "Capital Project Management",
-        "lead": "Large investments delivered on time, on budget, and in scope.",
-        "body": "We structure capital project governance: portfolio prioritization, milestones, cost control, and risk management. We provide real visibility of physical and financial progress for decision-makers.",
-        "audience": "Companies with significant CAPEX portfolios—industry, energy, infrastructure, and agro.",
+        "lead": "Large investments delivered on time, on budget, and on scope.",
+        "body": "We structure capital project governance: portfolio prioritization, milestones, cost control, and risk management. We provide real visibility into physical and financial progress for decision-makers.",
+        "audience": "Companies with significant CAPEX portfolios — industry, energy, infrastructure, and agro.",
         "duration": "4 to 12 months, following the project cycle.",
         "bullets": [
           "Portfolio prioritization by ROI and risk",
@@ -743,127 +940,127 @@ export const dict: Dict = {
           "Deviation control and change management",
           "Project management room with defined routines"
         ],
-        "ai": "Automatic schedule and cost analysis pinpoint milestones with high delay probability and estimated financial impact."
+        "ai": "Automated schedule and cost analysis points out milestones with the highest probability of delay and estimated financial impact."
       },
       {
         "id": "transformacao-digital",
         "group": "estrategia",
         "title": "Digital Transformation",
         "lead": "Technology guided by business priority, not trends.",
-        "body": "We map digital maturity, choose where technology generates fastest returns, and lead implementation with the team. Systems, data, and processes start working in favor of decisions.",
-        "audience": "Companies with manual processes, dispersed data, or non-communicating systems.",
+        "body": "We map the company's digital maturity, choose where technology generates the fastest return, and lead implementation alongside the team. Systems, data, and processes start working for the decision-maker.",
+        "audience": "Companies with manual processes, dispersed data, or non-integrated systems.",
         "duration": "3 to 9 months.",
         "bullets": [
           "Digital and data maturity diagnosis",
-          "ROI-prioritized roadmap",
+          "Roadmap prioritized by ROI",
           "Critical process automation",
           "Data governance and team training"
         ],
-        "ai": "AI identifies processes with highest automation potential and takes over repetitive tasks from the first weeks."
+        "ai": "AI identifies processes with the highest automation potential and takes over repetitive tasks from the first weeks."
       },
       {
         "id": "excelencia-comercial",
         "group": "operacoes",
         "title": "Commercial Excellence",
-        "lead": "Higher conversion, better pricing, and funnel predictability.",
-        "body": "We review the end-to-end commercial process: segmentation, approach, pricing policy, funnel, and sales team management routine. Every stage gains a goal, KPI, and follow-up ritual.",
+        "lead": "More conversion, better pricing, and funnel predictability.",
+        "body": "We review the end-to-end commercial process: segmentation, approach, pricing policy, funnel, and sales team management routines. Every stage gains goals, KPIs, and follow-up rituals.",
         "audience": "B2B and B2C companies with sales teams performing below potential.",
         "duration": "3 to 6 months.",
         "bullets": [
           "Customer segmentation and effort prioritization",
-          "Commercial and discount policies",
+          "Commercial and discount policy",
           "Sales process and CRM standardization",
           "Management routine and variable compensation"
         ],
-        "ai": "Propensity models indicate which customers are most likely to buy and which price sustains the margin."
+        "ai": "Propensity models indicate which customers have the highest likelihood of purchasing and what price sustains margin."
       },
       {
         "id": "excelencia-em-processos",
         "group": "operacoes",
         "title": "Process Excellence",
         "lead": "Faster, cheaper processes with less rework.",
-        "body": "We map time and money-consuming processes, eliminate waste, and redesign flows with documented standards. Gains are measured before and after, without vague estimates.",
-        "audience": "Admin areas, back office, and service operations with bottlenecks and rework.",
+        "body": "We map time- and capital-intensive processes, eliminate waste, and redesign flows with documented standards. Gains are measured before and after, without vague estimates.",
+        "audience": "Administrative areas, back office, and service operations with bottlenecks and rework.",
         "duration": "8 to 16 weeks per process front.",
         "bullets": [
-          "Mapping and measuring the current process",
-          "Eliminating waste and redundant stages",
-          "Standard procedures and control KPIs",
-          "Training and methodology transfer"
+          "Mapping and measurement of current process",
+          "Elimination of waste and redundant steps",
+          "Standard operating procedures and control KPIs",
+          "Training and method transfer"
         ],
-        "ai": "System log reading reveals where processes actually stall, without relying solely on interviews."
+        "ai": "Automated system log reading reveals where the process actually stalls, without relying solely on interviews."
       },
       {
         "id": "excelencia-industrial",
         "group": "operacoes",
         "title": "Industrial Excellence",
         "lead": "More production with the same assets and lower unit cost.",
-        "body": "We act on the shop floor to increase availability, yield, and quality. We address losses, maintenance, setup, and production management routines alongside shift leaders.",
+        "body": "We work on the shop floor to increase availability, yield, and quality. We address losses, maintenance, setup, and production management routines alongside shift leaders.",
         "audience": "Industries needing to gain capacity, reduce losses, or stabilize quality.",
         "duration": "4 to 9 months.",
         "bullets": [
-          "Loss diagnosis and root cause analysis",
+          "Loss diagnosis and root cause tree",
           "OEE gains: availability, performance, and quality",
           "Planned maintenance and setup reduction",
-          "Per-shift production management routine"
+          "Production management routine per shift"
         ],
-        "ai": "Sensors and maintenance history feed models that anticipate failures and suggest the best downtime windows."
+        "ai": "Sensors and maintenance history feed models that anticipate failures and suggest the best downtime window."
       },
       {
         "id": "gestao-da-rotina",
         "group": "operacoes",
         "title": "Routine Management",
-        "lead": "The daily discipline that sustains results after the project.",
-        "body": "We implement a day-to-day management system: department KPIs, short and objective meetings, anomaly handling, and live action plans. This prevents results from sliding back.",
+        "lead": "The daily discipline that sustains results after the project ends.",
+        "body": "We implement the day-to-day management system: indicators per area, short and objective meetings, anomaly treatment, and live action plans. This prevents results from regressing.",
         "audience": "Companies that achieve results in specific projects but fail to sustain improvement.",
         "duration": "3 to 6 months of assisted implementation.",
         "bullets": [
-          "Department KPI dashboards",
-          "Meeting agenda and standard protocol",
-          "Anomaly handling methodology",
-          "Training leaders to drive the routine"
+          "KPI dashboard per area",
+          "Meeting schedule and standard agenda",
+          "Anomaly treatment method",
+          "Leadership training to conduct routines"
         ],
-        "ai": "Reports are consolidated automatically and AI delivers deviation analysis before the meeting starts."
+        "ai": "Reports are consolidated automatically, and AI delivers deviation insights before the meeting starts."
       },
       {
         "id": "modelagem-de-negocio",
         "group": "empreendedorismo",
         "title": "Business Modeling",
         "lead": "From concept to a financially sustainable model.",
-        "body": "We structure value propositions, audience, channels, revenue streams, and cost structures. In the end, the business has an explicit model with critical hypotheses ready for testing.",
+        "body": "We structure value propositions, audiences, channels, revenue streams, and cost structures. In the end, the business has an explicit model with critical hypotheses identified and ready for testing.",
         "audience": "Founders in early stages and companies creating new business units.",
         "duration": "4 to 8 weeks.",
         "bullets": [
           "Value proposition and audience definition",
           "Channel and revenue stream design",
-          "Cost structure and target margins",
+          "Cost structure and target margin",
           "Critical hypothesis map"
         ],
-        "ai": "AI accelerates benchmarking of similar models globally and stress-tests model assumptions."
+        "ai": "AI accelerates benchmarking of similar models in Brazil and abroad and stress-tests model assumptions."
       },
       {
         "id": "validacao-de-mercado",
         "group": "empreendedorismo",
         "title": "Market Validation",
         "lead": "Real evidence before committing capital.",
-        "body": "We design and execute fast market tests: interviews, pilot offers, and demand experiments. Every hypothesis is approved or discarded based on data, not opinion.",
+        "body": "We design and execute rapid market tests: interviews, pilot offers, and demand experiments. Each hypothesis is approved or discarded based on data, not opinion.",
         "audience": "Early-stage businesses and new products before scaling investment.",
-        "duration": "6 to 10 weeks, in test sprints.",
+        "duration": "6 to 10 weeks in testing sprints.",
         "bullets": [
-          "Customer interview script and execution",
+          "Interview script and execution with customers",
           "Offer and willingness-to-pay tests",
           "Result analysis and go/pivot decisions",
           "Documentation of discarded hypotheses"
         ],
-        "ai": "LLMs synthesize interviews and open-ended responses in hours, revealing patterns that might be missed."
+        "ai": "Language models synthesize interviews and open responses in hours, revealing patterns that would go unnoticed."
       },
       {
         "id": "precificacao-unit-economics",
         "group": "empreendedorismo",
         "title": "Pricing & Unit Economics",
-        "lead": "Knowing how much to charge and if every sale is profitable.",
-        "body": "We build pricing structures and unit economics models: CAC, margin per customer, break-even, and LTV. Growth decisions gain a numerical foundation.",
-        "audience": "Growth companies with tight margins or intuition-based pricing.",
+        "lead": "Knowing what to charge and if every sale is profitable.",
+        "body": "We build the pricing structure and unit economics model: acquisition cost, margin per customer, break-even point, and ROI over time. Growth decisions are based on numbers.",
+        "audience": "Growth-stage companies with tight margins or pricing set by intuition.",
         "duration": "4 to 8 weeks.",
         "bullets": [
           "Cost structure and contribution margin",
@@ -871,46 +1068,46 @@ export const dict: Dict = {
           "CAC, LTV, and payback by channel",
           "Financial model with scenarios"
         ],
-        "ai": "Price, cost, and volume scenarios are generated and stress-tested by AI before market changes."
+        "ai": "Price, cost, and volume scenarios are generated and stress-tested by AI before any market changes."
       },
       {
         "id": "captacao-investidores",
         "group": "empreendedorismo",
         "title": "Fundraising & Investor Materials",
         "lead": "Story, numbers, and materials ready for the round.",
-        "body": "We organize the business narrative, financial model, and investor-required documents. We prepare the team for conversations and due diligence.",
+        "body": "We organize the business narrative, financial model, and documents investors will request. We prepare the team for conversations and due diligence.",
         "audience": "Founders preparing Angel, Seed, or Series A rounds.",
         "duration": "6 to 10 weeks.",
         "bullets": [
           "Pitch deck and one-pager",
           "Projected and defensible financial model",
-          "Data room and diligence preparation",
-          "Pitch training and question anticipation"
+          "Data room and due diligence preparation",
+          "Pitch training and Q&A anticipation"
         ],
-        "ai": "AI compares your narrative and multiples with recent sector rounds to highlight weak points."
+        "ai": "AI compares your narrative and multiples with recent sector rounds and highlights weak points."
       },
       {
         "id": "operacao-inicial",
         "group": "empreendedorismo",
         "title": "Initial Operation Structuring",
         "lead": "A lean operation that supports the first customers.",
-        "body": "We define minimum processes, systems, KPIs, and initial hires. The goal is to grow without bloating structure or improvising with every new client.",
+        "body": "We define minimum processes, systems, KPIs, and initial hires. The goal is to grow without bloating the structure or improvising for every new customer.",
         "audience": "Businesses moving from validation to recurring sales.",
         "duration": "6 to 12 weeks.",
         "bullets": [
-          "Design of essential processes",
-          "System stack and automation",
+          "Essential process design",
+          "Systems stack and automations",
           "Hiring plan and role design",
           "Operational KPIs from day one"
         ],
-        "ai": "Automation and AI agents cover service, sales, and back office before the company needs to hire."
+        "ai": "Automation and AI agents cover customer service, sales, and back-office before the company needs to hire."
       },
       {
         "id": "dimensionamento-de-mercado",
         "group": "pesquisas",
         "title": "Market Sizing",
         "lead": "What the Brazilian market you want to target is worth.",
-        "body": "We calculate market size, growth, and segmentation using public sources, sector data, and interviews. We deliver TAM, SAM, and SOM with transparent methodology.",
+        "body": "We calculate market size, growth, and segmentation using public sources, sectoral data, and interviews. We deliver TAM, SAM, and SOM with transparent, traceable methodology.",
         "audience": "International companies and funds evaluating Brazil's potential.",
         "duration": "4 to 8 weeks.",
         "bullets": [
@@ -919,31 +1116,31 @@ export const dict: Dict = {
           "Growth projection scenarios",
           "Documented and replicable sources"
         ],
-        "ai": "AI reads and organizes Portuguese public databases at scale, reducing weeks of manual collection."
+        "ai": "AI reads and organizes public Portuguese databases at scale, reducing weeks of manual collection."
       },
       {
         "id": "analise-competitiva",
         "group": "pesquisas",
         "title": "Competitive Analysis",
-        "lead": "Who is playing in Brazil, how they charge, and where they are vulnerable.",
-        "body": "We map relevant competitors: portfolio, prices, channels, positioning, and performance. You enter knowing who you compete with and where differentiation is possible.",
+        "lead": "Who is already playing in Brazil, how they charge, and where they are vulnerable.",
+        "body": "We map relevant competitors: portfolio, pricing, channels, positioning, and performance. You enter knowing who you compete with and how to differentiate.",
         "audience": "Companies planning entry or expansion in the Brazilian market.",
         "duration": "4 to 8 weeks.",
         "bullets": [
-          "Competitive map and estimated share",
+          "Competitive map and estimated market share",
           "Price and value proposition comparison",
-          "Player channels and go-to-market strategies",
+          "Players' channels and go-to-market strategy",
           "Differentiation opportunities"
         ],
-        "ai": "Continuous monitoring of prices, communications, and competitor moves, with automatic periodic summaries."
+        "ai": "Continuous monitoring of pricing, communication, and competitor moves, with automatic periodic summaries."
       },
       {
         "id": "estudos-setoriais-brasil",
         "group": "pesquisas",
-        "title": "Brazil Sector Studies",
+        "title": "Sectoral Studies on Brazil",
         "lead": "The Brazilian sector explained for decision-makers abroad.",
-        "body": "We produce comprehensive studies on specific sectors in Brazil: value chain, players, margins, trends, risks, and outlook. Written in the client's language with local context raw data misses.",
-        "audience": "International headquarters, funds, and corporate expansion departments.",
+        "body": "We produce comprehensive studies on a sector in Brazil: value chain, players, margins, trends, risks, and outlook. Written in the client's language with local context raw data can't show.",
+        "audience": "International headquarters, funds, and corporate expansion areas.",
         "duration": "6 to 12 weeks, depending on depth.",
         "bullets": [
           "Value chain and sector structure",
@@ -951,18 +1148,18 @@ export const dict: Dict = {
           "Trends and recent movements",
           "Sector risks and medium-term outlook"
         ],
-        "ai": "News, balance sheets, and reports in Portuguese are synthesized by AI with source traceability."
+        "ai": "News, balance sheets, biddings, and Portuguese reports are read and synthesized by AI with source traceability."
       },
       {
         "id": "comportamento-do-consumidor",
         "group": "pesquisas",
         "title": "Consumer Behavior",
         "lead": "How Brazilians decide, buy, and rebuy.",
-        "body": "We investigate habits, choice criteria, price sensitivity, and consumption culture by region and profile. We translate this into product, channel, and communication recommendations.",
-        "audience": "International brands adapting product and positioning to Brazil.",
+        "body": "We investigate habits, choice criteria, price sensitivity, and consumer culture by region and profile. We translate this into product, channel, and communication recommendations.",
+        "audience": "International brands adapting product and positioning for Brazil.",
         "duration": "5 to 10 weeks.",
         "bullets": [
-          "Profiles and buyer journeys",
+          "Profiles and buying journeys",
           "Decision criteria and price sensitivity",
           "Relevant regional differences",
           "Product and communication recommendations"
@@ -972,7 +1169,7 @@ export const dict: Dict = {
       {
         "id": "leitura-regulatoria",
         "group": "pesquisas",
-        "title": "Regulatory & Entry Barriers",
+        "title": "Regulatory Landscape & Entry Barriers",
         "lead": "What Brazilian rules require before you operate.",
         "body": "We map regulatory requirements, tax burden, licenses, labor laws, and practical sector barriers. We deliver the critical path and the real cost of compliance.",
         "audience": "Foreign companies evaluating Brazilian operation feasibility.",
@@ -983,23 +1180,23 @@ export const dict: Dict = {
           "Practical barriers and typical timelines",
           "Compliance checklist for entry"
         ],
-        "ai": "AI monitors Portuguese regulations, public consultations, and legislative changes, flagging what affects your case."
+        "ai": "AI monitors regulations, public consultations, and legislative changes in Portuguese, flagging what affects your case."
       },
       {
         "id": "parceiros-e-alvos-locais",
         "group": "pesquisas",
-        "title": "Partner & Local Target Mapping",
-        "lead": "Who to ally with—or buy—to enter faster.",
+        "title": "Mapping Local Partners & Targets",
+        "lead": "Who to ally with — or buy — to enter faster.",
         "body": "We identify and qualify distributors, suppliers, commercial partners, and acquisition targets. We deliver a shortlist with objective criteria and strategic fit assessment.",
-        "audience": "Companies preferring to enter Brazil via partnership or acquisition.",
+        "audience": "Companies preferring entry into Brazil via partnership or acquisition.",
         "duration": "6 to 10 weeks.",
         "bullets": [
-          "Universe of candidates and filtering criteria",
+          "Candidate universe and filter criteria",
           "Qualified shortlist with target profiles",
           "Strategic fit and risk assessment",
           "Initial approach support"
         ],
-        "ai": "Automated cross-referencing of public and financial databases speeds up screening from hundreds to dozens of firms."
+        "ai": "Automated cross-referencing of public and financial databases accelerates the screening of hundreds of companies into a few dozen."
       }
     ]
   }

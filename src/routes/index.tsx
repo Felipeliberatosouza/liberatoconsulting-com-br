@@ -60,7 +60,7 @@ function Index() {
           <p className="mt-6 max-w-xl text-lg text-ink-foreground/75">{t.hero.body}</p>
           <div className="mt-10 flex flex-wrap gap-3">
             <Link
-              to="/services"
+              to="/brasil"
               className="inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
             >
               {t.hero.primary} <ArrowRight className="size-4" />
@@ -83,6 +83,61 @@ function Index() {
               <p className="mt-2 text-sm text-muted-foreground">{s.label}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="bg-secondary py-24">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid gap-12 lg:grid-cols-2">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
+                {t.brazilFocus.eyebrow}
+              </p>
+              <h2 className="mt-5 text-3xl font-bold leading-tight md:text-5xl">
+                {t.brazilFocus.title}
+              </h2>
+              <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
+                {t.brazilFocus.body}
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Link
+                  to="/brasil"
+                  className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-ink-foreground transition-opacity hover:opacity-90"
+                >
+                  {t.brazilFocus.primary} <ArrowRight className="size-4" />
+                </Link>
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center rounded-full border border-border px-6 py-3 text-sm font-semibold transition-colors hover:text-accent"
+                >
+                  {t.brazilFocus.secondary}
+                </Link>
+              </div>
+            </div>
+            <div>
+              <ul className="space-y-6">
+                {t.brazilFocus.points.map((p) => (
+                  <li key={p.t} className="border-t border-border pt-5">
+                    <h3 className="text-lg font-bold">{p.t}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground">{p.d}</p>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-10 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+                {t.brazilFocus.sectorsLabel}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {t.brazilFocus.sectors.map((s) => (
+                  <span
+                    key={s}
+                    className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground"
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
