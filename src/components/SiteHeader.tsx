@@ -194,7 +194,7 @@ export function SiteHeader() {
             <div className="invisible absolute inset-x-0 top-full z-40 border-b border-border bg-background opacity-0 shadow-lg transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100">
               <div className="mx-auto max-w-7xl px-6 py-8">
                 <p className="mb-5 text-sm font-semibold text-accent">{t.nav.content}</p>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-8 lg:grid-cols-4">
+                <div className="grid grid-cols-2 gap-x-8 gap-y-4 lg:grid-cols-4">
                   {contentGroups.map((g, i) => (
                     <div
                       key={g.id}
@@ -203,23 +203,10 @@ export function SiteHeader() {
                       <Link
                         to="/content"
                         search={{ category: g.id }}
-                        className="mb-4 block text-sm font-semibold text-accent"
+                        className="block text-sm font-semibold text-muted-foreground transition-colors hover:text-accent"
                       >
                         {g.title}
                       </Link>
-                      <ul className="space-y-2.5">
-                        {g.items.map((item) => (
-                          <li key={item.id}>
-                            <Link
-                              to="/content"
-                              search={{ category: g.id, service: item.id }}
-                              className="block text-sm text-muted-foreground transition-colors hover:text-accent"
-                            >
-                              {item.label}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
                     </div>
                   ))}
                 </div>
@@ -306,21 +293,10 @@ export function SiteHeader() {
                     to="/content"
                     search={{ category: g.id }}
                     onClick={closeAll}
-                    className="pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent"
+                    className="block py-1.5 text-sm font-semibold text-muted-foreground"
                   >
                     {g.title}
                   </Link>
-                  {g.items.map((item) => (
-                    <Link
-                      key={item.id}
-                      to="/content"
-                      search={{ category: g.id, service: item.id }}
-                      onClick={closeAll}
-                      className="block py-1.5 text-sm text-muted-foreground"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
                 </div>
               ))}
             </div>
