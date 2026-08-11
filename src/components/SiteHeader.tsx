@@ -28,35 +28,30 @@ function LangSwitch() {
 
 function MobileAccordion({
   title,
-  href,
   children,
 }: {
   title: string;
-  href: string;
   children: ReactNode;
 }) {
   const [expanded, setExpanded] = useState(false);
   return (
     <div className="border-b border-border">
-      <div className="flex items-center justify-between">
-        <Link
-          to={href}
-          className="py-3 text-base font-medium transition-colors hover:text-accent"
-        >
+      <button
+        onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
+        className="flex w-full items-center justify-between py-3 text-left"
+      >
+        <span className="text-base font-medium transition-colors group-hover:text-accent">
           {title}
-        </Link>
-        <button
-          onClick={() => setExpanded((v) => !v)}
-          aria-label={expanded ? "Recolher" : "Expandir"}
-          className="p-2 text-muted-foreground transition-colors hover:text-accent"
-        >
+        </span>
+        <span className="p-2 text-muted-foreground transition-colors">
           {expanded ? (
             <ChevronDown className="size-4" />
           ) : (
             <ChevronRight className="size-4" />
           )}
-        </button>
-      </div>
+        </span>
+      </button>
       {expanded && <div className="pb-3">{children}</div>}
     </div>
   );
