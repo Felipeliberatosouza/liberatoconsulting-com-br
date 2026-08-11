@@ -1,9 +1,18 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
 import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
 
+type ContentSearch = {
+  category?: string | undefined;
+  service?: string | undefined;
+};
+
 export const Route = createFileRoute("/content")({
+  validateSearch: (search: Record<string, unknown>): ContentSearch => ({
+    category: typeof search["category"] === "string" ? search["category"] : undefined,
+    service: typeof search["service"] === "string" ? search["service"] : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Conteúdo | Insights — Liberato Consulting" },
@@ -28,7 +37,14 @@ function ContentPage() {
   const { t, lang, articles } = useLanguage();
   const c = t.content;
   const groups = t.megaMenu.groups;
-  const [filter, setFilter] = useState<string>("all");
+  const search = useSearch({ from: "/content" });
+  const [filter, setFilter] = useState<string>(search.category || "all");
+  const [serviceFilter, setServiceFilter] = useState<string | null>(search.service || null);
+
+  useEffect(() => {
+    setFilter(search.category || "all");
+    setServiceFilter(search.service || null);
+  }, [search.category, search.service]);
 
   const serviceLabel = useMemo(() => {
     const map: Record<string, string> = {};
@@ -53,7 +69,11 @@ function ContentPage() {
         })
       : c.items.map((i) => ({ ...i, link: null as string | null }));
 
-  const items = all.filter((i) => filter === "all" || i.group === filter);
+  const items = all.filter((i) => {
+    if (filter !== "all" && i.group !== filter) return false;
+    if (serviceFilter && i.service !== serviceFilter) return false;
+    return true;
+  });
 
   return (
     <div>
