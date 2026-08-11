@@ -181,16 +181,60 @@ export function SiteHeader() {
             </div>
           </div>
 
-          {links.map((l) => (
+          <div className="group/menu">
             <Link
-              key={l.to}
-              to={l.to}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
-              activeProps={{ className: "text-sm font-medium text-foreground hover:text-accent" }}
+              to="/content"
+              className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
+              activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
             >
-              {l.label}
+              {t.nav.content}
+              <ChevronDown className="size-3.5 transition-transform group-hover/menu:rotate-180" />
             </Link>
-          ))}
+
+            <div className="invisible absolute inset-x-0 top-full z-40 border-b border-border bg-background opacity-0 shadow-lg transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100">
+              <div className="mx-auto max-w-7xl px-6 py-8">
+                <p className="mb-5 text-sm font-semibold text-accent">{t.nav.content}</p>
+                <div className="grid grid-cols-2 gap-x-8 gap-y-8 lg:grid-cols-4">
+                  {contentGroups.map((g, i) => (
+                    <div
+                      key={g.id}
+                      className={`min-w-0 ${i > 0 ? "lg:border-l lg:border-border lg:pl-8" : ""}`}
+                    >
+                      <Link
+                        to="/content"
+                        search={{ category: g.id }}
+                        className="mb-4 block text-sm font-semibold text-accent"
+                      >
+                        {g.title}
+                      </Link>
+                      <ul className="space-y-2.5">
+                        {g.items.map((item) => (
+                          <li key={item.id}>
+                            <Link
+                              to="/content"
+                              search={{ category: g.id, service: item.id }}
+                              className="block text-sm text-muted-foreground transition-colors hover:text-accent"
+                            >
+                              {item.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8 text-right">
+                  <Link
+                    to="/content"
+                    className="text-xs font-semibold uppercase tracking-[0.2em] text-accent"
+                  >
+                    {t.contentMenu.more}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
         </nav>
 
         <div className="flex items-center gap-3">
