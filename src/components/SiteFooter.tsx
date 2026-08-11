@@ -49,6 +49,8 @@ export function SiteFooter() {
             {whatsappNumber ? (
               <a
                 href={whatsappHref(whatsappNumber)}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="WhatsApp"
                 title="WhatsApp"
                 className="inline-flex size-10 items-center justify-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-accent hover:bg-accent hover:text-accent-foreground"
