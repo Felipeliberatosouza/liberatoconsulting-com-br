@@ -65,15 +65,27 @@ function ContentPage() {
             summary: tr.summary ?? a.summary,
             service: a.service,
             link: a.link_url ?? null,
+            cover: a.cover_url ?? null,
+            authors: a.authors ?? "",
+            reads: a.read_count ?? 0,
+            slug: a.slug as string | null,
           };
         })
-      : c.items.map((i) => ({ ...i, link: null as string | null }));
+      : c.items.map((i) => ({
+          ...i,
+          link: null as string | null,
+          cover: null as string | null,
+          authors: "",
+          reads: 0,
+          slug: null as string | null,
+        }));
 
   const items = all.filter((i) => {
     if (filter !== "all" && i.group !== filter) return false;
     if (serviceFilter && i.service !== serviceFilter) return false;
     return true;
   });
+
 
   return (
     <div>
@@ -116,23 +128,56 @@ function ContentPage() {
           {items.map((item) => (
             <article
               key={item.id}
-              className="flex flex-col border-t-2 border-ink pt-6 transition-colors hover:border-accent"
+              className="flex flex-col overflow-hidden border-t-2 border-ink pt-6 transition-colors hover:border-accent"
             >
+              {item.cover && (
+                <div className="relative mb-5 aspect-[16/9] overflow-hidden rounded-md">
+                  <img
+                    src={item.cover}
+                    alt={item.title}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/85 to-transparent p-3 text-sm font-semibold text-ink-foreground">
+                    {item.title}
+                  </span>
+                </div>
+              )}
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
                 {item.kind}
               </p>
               <h2 className="mt-3 font-display text-xl font-bold leading-snug">{item.title}</h2>
-              <p className="mt-3 flex-1 text-sm text-muted-foreground">{item.summary}</p>
-              {item.link && (
-                <a
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 text-sm font-semibold text-accent hover:underline"
-                >
-                  {c.readMore}
-                </a>
+              {item.authors && (
+                <p className="mt-1 text-xs text-muted-foreground">{item.authors}</p>
               )}
+              <p className="mt-3 flex-1 text-sm text-muted-foreground">{item.summary}</p>
+              <div className="mt-4 flex flex-wrap items-center gap-4">
+                {item.slug ? (
+                  <Link
+                    to="/content/$slug"
+                    params={{ slug: item.slug }}
+                    className="text-sm font-semibold text-accent hover:underline"
+                  >
+                    {c.readMore}
+                  </Link>
+                ) : (
+                  item.link && (
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-semibold text-accent hover:underline"
+                    >
+                      {c.readMore}
+                    </a>
+                  )
+                )}
+                {item.reads > 0 && (
+                  <span className="text-xs text-muted-foreground">
+                    {item.reads} {c.article.reads}
+                  </span>
+                )}
+              </div>
               {serviceLabel[item.service] && (
                 <p className="mt-5 text-xs text-muted-foreground">
                   {c.relatedService}:{" "}
@@ -147,6 +192,7 @@ function ContentPage() {
               )}
             </article>
           ))}
+
         </div>
 
         <p className="mt-12 text-sm text-muted-foreground">{c.emptyNote}</p>

@@ -14,16 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      article_submissions: {
+        Row: {
+          created_at: string
+          email: string
+          file_name: string | null
+          file_path: string | null
+          full_name: string
+          id: string
+          ip_hash: string | null
+          language: string | null
+          message: string
+          summary: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          file_name?: string | null
+          file_path?: string | null
+          full_name: string
+          id?: string
+          ip_hash?: string | null
+          language?: string | null
+          message?: string
+          summary?: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          file_name?: string | null
+          file_path?: string | null
+          full_name?: string
+          id?: string
+          ip_hash?: string | null
+          language?: string | null
+          message?: string
+          summary?: string
+          title?: string
+        }
+        Relationships: []
+      }
       content_articles: {
         Row: {
+          author_contact: string
+          authors: string
           body: string
+          cover_url: string | null
           created_at: string
+          file_name: string | null
+          file_path: string | null
           group_id: string
           id: string
           kind: string
           link_url: string | null
           position: number
           published: boolean
+          rating_count: number
+          rating_sum: number
+          read_count: number
           service: string
           slug: string
           summary: string
@@ -32,14 +82,22 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          author_contact?: string
+          authors?: string
           body?: string
+          cover_url?: string | null
           created_at?: string
+          file_name?: string | null
+          file_path?: string | null
           group_id?: string
           id?: string
           kind?: string
           link_url?: string | null
           position?: number
           published?: boolean
+          rating_count?: number
+          rating_sum?: number
+          read_count?: number
           service?: string
           slug: string
           summary?: string
@@ -48,14 +106,22 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          author_contact?: string
+          authors?: string
           body?: string
+          cover_url?: string | null
           created_at?: string
+          file_name?: string | null
+          file_path?: string | null
           group_id?: string
           id?: string
           kind?: string
           link_url?: string | null
           position?: number
           published?: boolean
+          rating_count?: number
+          rating_sum?: number
+          read_count?: number
           service?: string
           slug?: string
           summary?: string

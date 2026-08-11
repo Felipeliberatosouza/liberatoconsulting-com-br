@@ -28,8 +28,17 @@ export type ArticleRecord = {
   link_url: string | null;
   position: number;
   published: boolean;
+  cover_url: string | null;
+  authors: string;
+  author_contact: string;
+  file_path: string | null;
+  file_name: string | null;
+  read_count: number;
+  rating_sum: number;
+  rating_count: number;
   translations: Record<string, { kind?: string; title?: string; summary?: string; body?: string }>;
 };
+
 
 export type Branding = { logoUrl?: string };
 
