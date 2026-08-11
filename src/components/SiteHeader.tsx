@@ -27,7 +27,7 @@ function LangSwitch() {
 }
 
 export function SiteHeader() {
-  const { t } = useLanguage();
+  const { t, logoUrl } = useLanguage();
   const [open, setOpen] = useState(false);
   const groups = t.megaMenu.groups;
   const aboutItems = t.aboutMenu.items;
