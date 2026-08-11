@@ -29,6 +29,7 @@ import {
   applyTextOverrides,
   applyTheme,
   type ArticleRecord,
+  type HeroSettings,
   type SiteConfig,
 } from "@/lib/site-config";
 
@@ -52,6 +53,8 @@ type LanguageContextValue = {
   articles: ArticleRecord[];
   /** URL da logomarca atual (padrão: arquivo do projeto). */
   logoUrl: string;
+  /** Configuração do carrossel da página inicial. */
+  hero: HeroSettings;
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -137,6 +140,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       translating,
       articles: config.articles,
       logoUrl: config.branding?.logoUrl || "/logo.png",
+      hero: config.hero ?? {},
     }),
     [lang, setLang, dicts, translating, config],
   );
