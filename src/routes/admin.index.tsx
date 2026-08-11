@@ -123,6 +123,50 @@ function AdminHome() {
       </div>
 
       <div className="mt-10 max-w-md rounded-lg border border-border bg-background p-6">
+        <h2 className="font-display text-lg font-bold">Logomarca</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Envie um arquivo PNG (de preferência com fundo transparente), JPG, WEBP ou SVG de até
+          1 MB. A troca vale imediatamente para o site inteiro.
+        </p>
+        <div className="mt-4 flex items-center gap-4">
+          <span className="inline-flex rounded-md border border-border bg-white px-3 py-2">
+            <img src={currentLogo} alt="Logomarca atual" className="h-10 w-auto" />
+          </span>
+          <div className="flex flex-col gap-2">
+            <label className="cursor-pointer rounded-md bg-ink px-4 py-2 text-center text-sm font-semibold text-ink-foreground hover:bg-accent hover:text-accent-foreground">
+              {uploadingLogo ? "Enviando…" : "Enviar nova logo"}
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                className="hidden"
+                disabled={uploadingLogo}
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  e.target.value = "";
+                  if (f) void onLogoFile(f);
+                }}
+              />
+            </label>
+            <button
+              type="button"
+              onClick={async () => {
+                const r = await resetLogo();
+                if (!r.ok) toast.error(r.error);
+                else {
+                  toast.success("Logomarca padrão restaurada.");
+                  await config.refetch();
+                }
+              }}
+              className="text-xs text-muted-foreground hover:text-accent"
+            >
+              Usar logo padrão
+            </button>
+          </div>
+        </div>
+      </div>
+
+
+      <div className="mt-10 max-w-md rounded-lg border border-border bg-background p-6">
         <h2 className="font-display text-lg font-bold">E-mail para alertas</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Endereço que recebe o aviso de cada novo lead e de cada currículo enviado pelo site.
