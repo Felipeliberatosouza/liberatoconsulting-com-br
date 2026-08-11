@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
 
@@ -30,18 +30,12 @@ function ServicesPage() {
   const c = t.services;
   const groups = t.megaMenu.groups;
   const pages = t.serviceDetail.pages;
-  const [filter, setFilter] = useState<string>("all");
 
-  const groupTitleById = useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const g of groups) map[g.id] = g.title;
+  const pagesByGroup = useMemo(() => {
+    const map: Record<string, typeof pages> = {};
+    for (const g of groups) map[g.id] = pages.filter((p) => p.group === g.id);
     return map;
-  }, [groups]);
-
-  const items = pages.filter((p) => {
-    if (filter === "all") return true;
-    return p.group === filter;
-  });
+  }, [groups, pages]);
 
   return (
     <div>
@@ -54,57 +48,35 @@ function ServicesPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-20">
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setFilter("all")}
-            className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-              filter === "all"
-                ? "border-ink bg-ink text-ink-foreground"
-                : "border-border text-muted-foreground hover:text-accent"
-            }`}
-          >
-            {t.content.allLabel}
-          </button>
-          {groups.map((g) => (
-            <button
-              key={g.id}
-              onClick={() => setFilter(g.id)}
-              className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-                filter === g.id
-                  ? "border-ink bg-ink text-ink-foreground"
-                  : "border-border text-muted-foreground hover:text-accent"
-              }`}
-            >
-              {g.title}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
-            <article
-              key={item.id}
-              className="flex flex-col overflow-hidden border-t-2 border-ink pt-6 transition-colors hover:border-accent"
-            >
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-                {groupTitleById[item.group] ?? item.group}
-              </p>
-              <h2 className="mt-3 font-display text-xl font-bold leading-snug">{item.title}</h2>
-              <p className="mt-3 flex-1 text-sm text-muted-foreground">{item.lead}</p>
-              <div className="mt-4 flex flex-wrap items-center gap-4">
-                <Link
-                  to="/services/$slug"
-                  params={{ slug: item.id }}
-                  className="text-sm font-semibold text-accent hover:underline"
-                >
-                  {t.content.readMore}
-                </Link>
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          {groups.map((group) => (
+            <div key={group.id} className="flex flex-col">
+              <h2 className="mb-6 border-b-2 border-accent pb-3 text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+                {group.title}
+              </h2>
+              <div className="flex flex-col gap-6">
+                {pagesByGroup[group.id]?.map((item) => (
+                  <article
+                    key={item.id}
+                    className="flex flex-col border-t border-border pt-5 transition-colors first:border-t-0 first:pt-0"
+                  >
+                    <h3 className="font-display text-lg font-bold leading-snug">{item.title}</h3>
+                    <p className="mt-2 flex-1 text-sm text-muted-foreground">{item.lead}</p>
+                    <Link
+                      to="/services/$slug"
+                      params={{ slug: item.id }}
+                      className="mt-3 text-sm font-semibold text-accent hover:underline"
+                    >
+                      {t.content.readMore}
+                    </Link>
+                  </article>
+                ))}
               </div>
-            </article>
+            </div>
           ))}
         </div>
 
-        <p className="mt-12 text-sm text-muted-foreground">{t.content.emptyNote}</p>
+        <p className="mt-16 text-sm text-muted-foreground">{t.content.emptyNote}</p>
       </section>
 
       <CtaBand />
