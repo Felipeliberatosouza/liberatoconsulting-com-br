@@ -180,24 +180,34 @@ export function SiteHeader() {
 
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
-          <Link
-            to="/services"
-            onClick={closeAll}
-            className="block py-2.5 text-base font-medium transition-colors hover:text-accent"
-          >
-            {t.nav.services}
-          </Link>
+          <MobileAccordion title={t.nav.services} href="/services">
+            {groups.map((g) => (
+              <div key={g.id} className="border-l border-border pl-3">
+                <p className="pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+                  {g.title}
+                </p>
+                {g.items.map((item) => (
+                  <Link
+                    key={item.id}
+                    to="/services/$slug"
+                    params={{ slug: item.id }}
+                    onClick={closeAll}
+                    className="block py-1.5 text-sm text-muted-foreground"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            ))}
+          </MobileAccordion>
 
-          {groups.map((g) => (
-            <div key={g.id} className="border-l border-border pl-3">
-              <p className="pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-                {g.title}
-              </p>
-              {g.items.map((item) => (
+          <MobileAccordion title={t.nav.about} href="/about">
+            <div className="border-l border-border pl-3">
+              {aboutItems.map((item) => (
                 <Link
                   key={item.id}
-                  to="/services/$slug"
-                  params={{ slug: item.id }}
+                  to="/about"
+                  hash={item.id}
                   onClick={closeAll}
                   className="block py-1.5 text-sm text-muted-foreground"
                 >
@@ -205,36 +215,14 @@ export function SiteHeader() {
                 </Link>
               ))}
             </div>
-          ))}
-
-          <Link
-            to="/about"
-            onClick={closeAll}
-            className="mt-2 block py-2.5 text-base font-medium transition-colors hover:text-accent"
-          >
-            {t.nav.about}
-          </Link>
-
-          <div className="border-l border-border pl-3">
-            {aboutItems.map((item) => (
-              <Link
-                key={item.id}
-                to="/about"
-                hash={item.id}
-                onClick={closeAll}
-                className="block py-1.5 text-sm text-muted-foreground"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
+          </MobileAccordion>
 
           {links.map((l) => (
             <Link
               key={l.to}
               to={l.to}
               onClick={closeAll}
-              className="mt-1 block py-2.5 text-base font-medium transition-colors hover:text-accent"
+              className="flex items-center justify-between border-b border-border py-3 text-base font-medium transition-colors hover:text-accent"
             >
               {l.label}
             </Link>
