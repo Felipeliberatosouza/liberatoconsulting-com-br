@@ -134,6 +134,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       t: applyTextOverrides(dicts[lang] ?? baseline[lang].dict, config.texts, lang),
       translating,
       articles: config.articles,
+      logoUrl: config.branding?.logoUrl || "/logo.png",
     }),
     [lang, setLang, dicts, translating, config],
   );
