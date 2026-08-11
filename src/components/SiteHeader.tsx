@@ -274,8 +274,8 @@ export function SiteHeader() {
                       {chunk.map((item) => (
                         <li key={item.id}>
                           <Link
-                            to="/brasil"
-                            hash={item.id}
+                            to="/brasil/$slug"
+                            params={{ slug: item.id }}
                             className="block text-sm text-muted-foreground transition-colors hover:text-accent"
                           >
                             {item.label}
@@ -379,8 +379,8 @@ export function SiteHeader() {
               {brazilItems.map((item) => (
                 <Link
                   key={item.id}
-                  to="/brasil"
-                  hash={item.id}
+                  to="/brasil/$slug"
+                  params={{ slug: item.id }}
                   onClick={closeAll}
                   className="block py-1.5 text-sm text-muted-foreground"
                 >

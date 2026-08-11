@@ -52,12 +52,13 @@ function BrazilPage() {
           <ul className="mt-4 space-y-2 border-l border-border pl-4">
             {b.sections.map((s) => (
               <li key={s.id}>
-                <a
-                  href={`#${s.id}`}
+                <Link
+                  to="/brasil/$slug"
+                  params={{ slug: s.id }}
                   className="block text-sm text-muted-foreground transition-colors hover:text-accent"
                 >
                   {s.title}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -76,6 +77,13 @@ function BrazilPage() {
                   </li>
                 ))}
               </ul>
+              <Link
+                to="/brasil/$slug"
+                params={{ slug: s.id }}
+                className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-accent"
+              >
+                {s.title} <ArrowRight className="size-4" />
+              </Link>
             </section>
           ))}
 
