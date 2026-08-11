@@ -206,6 +206,11 @@ const articleSchema = z.object({
   link_url: z.string().trim().max(500).nullable().optional(),
   position: z.number().int().min(0).max(9999),
   published: z.boolean(),
+  cover_url: z.string().max(2_000_000).nullable().optional(),
+  authors: z.string().trim().max(300).optional(),
+  author_contact: z.string().trim().max(300).optional(),
+  file_path: z.string().trim().max(500).nullable().optional(),
+  file_name: z.string().trim().max(200).nullable().optional(),
 });
 
 export const saveArticle = createServerFn({ method: "POST" })
@@ -225,6 +230,11 @@ export const saveArticle = createServerFn({ method: "POST" })
     const { id, ...rest } = data;
     const row = {
       ...rest,
+      authors: data.authors ?? "",
+      author_contact: data.author_contact ?? "",
+      cover_url: data.cover_url || null,
+      file_path: data.file_path || null,
+      file_name: data.file_name || null,
       link_url: data.link_url || null,
       translations: { en: t.en, es: t.es, zh: t.zh },
     };
@@ -236,6 +246,61 @@ export const saveArticle = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+/** Envia o arquivo do artigo completo (PDF/DOC) para o armazenamento privado. */
+export const uploadArticleFile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        name: z.string().trim().min(1).max(200),
+        dataUrl: z.string().max(14_000_000),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const match = /^data:([^;]+);base64,(.+)$/.exec(data.dataUrl);
+    if (!match) return { ok: false as const, error: "Arquivo inválido." };
+    const bytes = Buffer.from(match[2]!, "base64");
+    if (bytes.byteLength > 10_000_000) return { ok: false as const, error: "Arquivo acima de 10 MB." };
+    const safe = data.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-80);
+    const path = `articles/${crypto.randomUUID()}-${safe}`;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.storage
+      .from("content")
+      .upload(path, bytes, { contentType: match[1]!, upsert: false });
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const, path, name: data.name };
+  });
+
+/** Artigos enviados pelo público em "Publique você também". */
+export const listSubmissions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { data, error } = await context.supabase
+      .from("article_submissions")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(300);
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+/** Link temporário para baixar um arquivo do armazenamento de conteúdo. */
+export const getContentFileUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ path: z.string().min(1).max(500) }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: signed, error } = await supabaseAdmin.storage
+      .from("content")
+      .createSignedUrl(data.path, 300);
+    if (error || !signed) return { ok: false as const, error: "Falha ao gerar link." };
+    return { ok: true as const, url: signed.signedUrl };
+  });
+
 export const deleteArticle = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
@@ -245,6 +310,7 @@ export const deleteArticle = createServerFn({ method: "POST" })
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });
+
 
 /** Leads capturados nos formulários das páginas de serviço. */
 export const listLeads = createServerFn({ method: "GET" })
