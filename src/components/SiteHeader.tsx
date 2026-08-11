@@ -26,6 +26,42 @@ function LangSwitch() {
   );
 }
 
+function MobileAccordion({
+  title,
+  href,
+  children,
+}: {
+  title: string;
+  href: string;
+  children: React.ReactNode;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div className="border-b border-border">
+      <div className="flex items-center justify-between">
+        <Link
+          to={href}
+          className="py-3 text-base font-medium transition-colors hover:text-accent"
+        >
+          {title}
+        </Link>
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          aria-label={expanded ? "Recolher" : "Expandir"}
+          className="p-2 text-muted-foreground transition-colors hover:text-accent"
+        >
+          {expanded ? (
+            <ChevronDown className="size-4" />
+          ) : (
+            <ChevronRight className="size-4" />
+          )}
+        </button>
+      </div>
+      {expanded && <div className="pb-3">{children}</div>}
+    </div>
+  );
+}
+
 export function SiteHeader() {
   const { t, logoUrl } = useLanguage();
   const [open, setOpen] = useState(false);
