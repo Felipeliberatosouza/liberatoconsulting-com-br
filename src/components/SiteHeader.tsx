@@ -348,14 +348,20 @@ export function SiteHeader() {
             <div className="grid grid-cols-2 gap-x-4">
               {contentGroups.map((g) => (
                 <div key={g.id} className="min-w-0">
-                  <Link
-                    to="/content"
-                    search={{ category: g.id }}
-                    onClick={closeAll}
-                    className="block py-1.5 text-sm font-semibold text-muted-foreground"
-                  >
+                  <p className="pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
                     {g.title}
-                  </Link>
+                  </p>
+                  {g.items.map((item) => (
+                    <Link
+                      key={item.id}
+                      to="/content"
+                      search={{ category: g.id, service: item.id }}
+                      onClick={closeAll}
+                      className="block py-1.5 text-sm text-muted-foreground"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
                 </div>
               ))}
             </div>
