@@ -48,7 +48,7 @@ function ServicesPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-20">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-4">
           {groups.map((group) => (
             <div key={group.id} className="flex flex-col">
               <h2 className="mb-6 border-b-2 border-accent pb-3 text-sm font-semibold uppercase tracking-[0.2em] text-accent">

@@ -91,11 +91,11 @@ export function SiteHeader() {
 
             <div className="invisible absolute inset-x-0 top-full z-40 border-b border-border bg-background opacity-0 shadow-lg transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100">
               <div className="mx-auto max-w-7xl px-6 py-8">
-                <div className="grid grid-cols-2 gap-x-8 gap-y-8 lg:grid-cols-4">
+                <div className="grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4">
                   {groups.map((g, i) => (
                     <div
                       key={g.id}
-                      className={`min-w-0 ${i > 0 ? "lg:border-l lg:border-border lg:pl-8" : ""}`}
+                      className={`min-w-0 ${i > 0 ? "md:border-l md:border-border md:pl-8" : ""}`}
                     >
                       <p className="mb-4 text-sm font-semibold text-accent">{g.title}</p>
                       <ul className="space-y-2.5">
