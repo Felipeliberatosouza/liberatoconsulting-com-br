@@ -31,8 +31,6 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const groups = t.megaMenu.groups;
   const aboutItems = t.aboutMenu.items;
-  const [tab, setTab] = useState(groups[0]?.id ?? "");
-  const active = groups.find((g) => g.id === tab) ?? groups[0];
 
   const links = [{ to: "/content", label: t.nav.content }] as const;
 
