@@ -26,6 +26,7 @@ import { detectLanguage, getTranslations } from "@/lib/i18n.functions";
 import { getSiteConfig } from "@/lib/admin.functions";
 import {
   EMPTY_CONFIG,
+  applyBrazilOverrides,
   applyTextOverrides,
   applyTheme,
   type ArticleRecord,
@@ -136,7 +137,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       lang,
       setLang,
       toggle: () => setLang(lang === "pt" ? "en" : "pt"),
-      t: applyTextOverrides(dicts[lang] ?? baseline[lang].dict, config.texts, lang),
+      t: applyBrazilOverrides(
+        applyTextOverrides(dicts[lang] ?? baseline[lang].dict, config.texts, lang),
+        config.brazil ?? {},
+        lang,
+      ),
       translating,
       articles: config.articles,
       logoUrl: config.branding?.logoUrl || "/logo.png",

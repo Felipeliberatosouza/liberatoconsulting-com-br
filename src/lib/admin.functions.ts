@@ -4,6 +4,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type {
   ArticleRecord,
+  BrazilOverrides,
   Branding,
   HeroSettings,
   SiteConfig,
@@ -33,6 +34,7 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
       articles: (articles.data ?? []) as unknown as ArticleRecord[],
       branding: (map.get("branding") ?? {}) as Branding,
       hero: (map.get("hero") ?? {}) as HeroSettings,
+      brazil: (map.get("brazil") ?? {}) as BrazilOverrides,
     };
   },
 );
@@ -452,6 +454,59 @@ export const saveHeroSettings = createServerFn({ method: "POST" })
     const { error } = await context.supabase
       .from("site_settings")
       .upsert({ key: "hero", value: data }, { onConflict: "key" });
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
+
+const brazilSchema = z.object({
+  id: z.string().trim().min(1).max(80),
+  title: z.string().trim().max(200),
+  body: z.string().trim().max(4000),
+  bullets: z.array(z.string().trim().max(400)).max(20),
+});
+
+/**
+ * Salva o conteúdo de um tema de "Dados do Brasil" em português e gera
+ * automaticamente as versões EN/ES/ZH. Campos vazios voltam ao texto original.
+ */
+export const saveBrazilSection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => brazilSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { translateRecord } = await import("./admin.server");
+
+    const current = await context.supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "brazil")
+      .maybeSingle();
+    const overrides: BrazilOverrides = (current.data?.value ?? {}) as BrazilOverrides;
+
+    const bullets = data.bullets.filter((b) => b.length > 0);
+    if (!data.title && !data.body && bullets.length === 0) {
+      delete overrides[data.id];
+    } else {
+      const source: Record<string, string> = { title: data.title, body: data.body };
+      bullets.forEach((b, i) => (source[`b${i}`] = b));
+      const translated = await translateRecord(source);
+      const pick = (lang: "en" | "es" | "zh") => ({
+        title: translated[lang]["title"] ?? data.title,
+        body: translated[lang]["body"] ?? data.body,
+        bullets: bullets.map((b, i) => translated[lang][`b${i}`] ?? b),
+      });
+      overrides[data.id] = {
+        pt: { title: data.title, body: data.body, bullets },
+        en: pick("en"),
+        es: pick("es"),
+        zh: pick("zh"),
+      };
+    }
+
+    const { error } = await context.supabase
+      .from("site_settings")
+      .upsert({ key: "brazil", value: overrides }, { onConflict: "key" });
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });
