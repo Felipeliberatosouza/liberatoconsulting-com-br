@@ -298,16 +298,33 @@ export function SiteHeader() {
             </div>
           </MobileAccordion>
 
-          {links.map((l) => (
-            <Link
-              key={l.to}
-              to={l.to}
-              onClick={closeAll}
-              className="flex items-center justify-between border-b border-border py-3 text-base font-medium transition-colors hover:text-accent"
-            >
-              {l.label}
-            </Link>
-          ))}
+          <MobileAccordion title={t.nav.content} href="/content">
+            <div className="grid grid-cols-2 gap-x-4">
+              {contentGroups.map((g) => (
+                <div key={g.id} className="min-w-0">
+                  <Link
+                    to="/content"
+                    search={{ category: g.id }}
+                    onClick={closeAll}
+                    className="pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent"
+                  >
+                    {g.title}
+                  </Link>
+                  {g.items.map((item) => (
+                    <Link
+                      key={item.id}
+                      to="/content"
+                      search={{ category: g.id, service: item.id }}
+                      onClick={closeAll}
+                      className="block py-1.5 text-sm text-muted-foreground"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </MobileAccordion>
         </nav>
       )}
     </header>
