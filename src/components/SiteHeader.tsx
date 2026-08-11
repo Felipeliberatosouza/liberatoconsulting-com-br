@@ -62,7 +62,9 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const groups = t.megaMenu.groups;
   const aboutItems = t.aboutMenu.items;
+  const contentGroups = t.contentMenu.groups;
   const brazilItems = t.brazilMenu.items;
+
 
   const closeAll = () => {
     setOpen(false);
