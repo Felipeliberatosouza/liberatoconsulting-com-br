@@ -248,7 +248,42 @@ export const pt = {
     body: "A Liberato Consulting produz pesquisas de mercado sobre o Brasil para empresas internacionais e gestão estratégica para empresas que querem crescer aqui — estudos setoriais, dados econômicos, ambiente regulatório e IA no centro de cada entrega.",
     primary: "Ver dados do Brasil",
     secondary: "Agendar conversa",
+    slides: [
+      {
+        id: "pesquisas",
+        eyebrow: "Pesquisas de mercado sobre o Brasil",
+        title: "Entenda o mercado brasileiro. Decida com método e inteligência artificial.",
+        body: "Estudos setoriais, dados econômicos e leitura regulatória sobre o Brasil para empresas internacionais — com IA no centro de cada entrega.",
+        primary: "Ver dados do Brasil",
+        secondary: "Agendar conversa",
+      },
+      {
+        id: "empreendedorismo",
+        eyebrow: "Empreendedorismo",
+        title: "Do modelo de negócio à tração, com menos capital queimado por hipótese.",
+        body: "Modelagem, validação de mercado, precificação e materiais para investidores. Usamos IA para testar hipóteses com evidência real antes de virar estrutura fixa.",
+        primary: "Conhecer o serviço",
+        secondary: "Agendar conversa",
+      },
+      {
+        id: "operacoes",
+        eyebrow: "Operações",
+        title: "Excelência operacional que aparece na margem, mês a mês.",
+        body: "Gestão da rotina, excelência industrial, comercial e de processos. A IA antecipa desvios, prevê demanda e mantém o padrão de execução no chão de fábrica e na linha de frente.",
+        primary: "Conhecer o serviço",
+        secondary: "Agendar conversa",
+      },
+      {
+        id: "estrategia",
+        eyebrow: "Estratégia",
+        title: "Da ambição ao desdobramento de metas que a operação consegue executar.",
+        body: "Planejamento estratégico, desdobramento de metas, transformação digital e gestão de projetos de capital, com cenários simulados por inteligência artificial.",
+        primary: "Conhecer o serviço",
+        secondary: "Agendar conversa",
+      },
+    ],
   },
+
 
   brazilFocus: {
     eyebrow: "Pesquisas de mercado sobre o Brasil",
@@ -279,7 +314,7 @@ export const pt = {
   },
   stats: [
     { value: "IA", label: "no núcleo de todos os projetos" },
-    { value: "3", label: "frentes de atuação integradas" },
+    { value: "4", label: "frentes de atuação integradas" },
     { value: "BR", label: "inteligência local para empresas globais" },
   ],
   purpose: {
@@ -294,7 +329,7 @@ export const pt = {
   },
   services: {
     eyebrow: "Serviços",
-    title: "Três frentes, um método",
+    title: "Quatro frentes, um método",
     body: "Cada frente é entregue com inteligência artificial embarcada — do diagnóstico à execução.",
     labels: {
       scope: "O que fazemos",
@@ -333,6 +368,36 @@ export const pt = {
           "Time treinado para conduzir a rotina sem a consultoria",
         ],
       },
+      {
+        id: "operacoes",
+        title: "Operações",
+        lead: "Excelência operacional que aparece na margem, mês a mês.",
+        body: "Gestão da rotina, excelência industrial, comercial e de processos. Padronizamos a execução, eliminamos perdas e instalamos uma rotina de acompanhamento sustentada por dados e inteligência artificial.",
+        audience: "Indústrias, redes de serviço e operações comerciais que precisam de produtividade, qualidade e previsibilidade na execução do dia a dia.",
+        duration: "4 a 12 meses, com ciclos quinzenais de acompanhamento.",
+        bullets: [
+          "Gestão da rotina e padronização de processos críticos",
+          "Excelência industrial: produtividade, qualidade e manutenção",
+          "Excelência comercial: funil, produtividade da força de vendas e pricing na ponta",
+          "Redução de perdas, estoques e custos de operação",
+        ],
+        ai: {
+          body: "A IA transforma o dado que a operação já gera em alerta antecipado: o desvio é tratado antes de virar perda no fechamento do mês.",
+          items: [
+            "Previsão de demanda e planejamento de produção e abastecimento",
+            "Manutenção preditiva a partir de sinais de equipamentos e histórico de falhas",
+            "Detecção automática de desvios de qualidade, produtividade e perdas",
+            "Assistentes que apoiam supervisores na análise de causa e no plano de ação",
+          ],
+        },
+        deliverables: [
+          "Processos críticos padronizados e documentados",
+          "Rotina de gestão instalada com indicadores por turno, célula ou região",
+          "Carteira de ganhos operacionais com retorno estimado e acompanhado",
+          "Supervisores e líderes treinados para sustentar o padrão",
+        ],
+      },
+
       {
         id: "empreendedorismo",
         title: "Empreendedorismo",

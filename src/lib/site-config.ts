@@ -42,14 +42,39 @@ export type ArticleRecord = {
 
 export type Branding = { logoUrl?: string };
 
+/** Slides do carrossel da página inicial (ordem, exibição e imagem). */
+export type HeroSlideSetting = { id: string; enabled: boolean; imageUrl?: string };
+export type HeroSettings = { autoplayMs?: number; slides?: HeroSlideSetting[] };
+
+export const HERO_SLIDE_IDS = ["pesquisas", "empreendedorismo", "operacoes", "estrategia"] as const;
+export const DEFAULT_AUTOPLAY_MS = 7000;
+
+/** Normaliza a configuração salva, garantindo os 4 slides padrão. */
+export function heroSlideOrder(hero: HeroSettings | undefined): HeroSlideSetting[] {
+  const saved = hero?.slides ?? [];
+  const known = saved.filter((s) => (HERO_SLIDE_IDS as readonly string[]).includes(s.id));
+  const missing = HERO_SLIDE_IDS.filter((id) => !known.some((s) => s.id === id)).map((id) => ({
+    id,
+    enabled: true,
+  }));
+  return [...known, ...missing];
+}
+
 export type SiteConfig = {
   theme: Theme;
   texts: TextOverrides;
   articles: ArticleRecord[];
   branding: Branding;
+  hero: HeroSettings;
 };
 
-export const EMPTY_CONFIG: SiteConfig = { theme: {}, texts: {}, articles: [], branding: {} };
+export const EMPTY_CONFIG: SiteConfig = {
+  theme: {},
+  texts: {},
+  articles: [],
+  branding: {},
+  hero: {},
+};
 
 /** Lista todos os caminhos de texto (folhas string) do dicionário PT. */
 export function flattenTexts(value: unknown, prefix = ""): Array<{ path: string; value: string }> {

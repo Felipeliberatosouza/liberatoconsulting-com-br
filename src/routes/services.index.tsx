@@ -39,7 +39,7 @@ function ServicesPage() {
           </h1>
           <p className="mt-6 max-w-xl text-lg text-ink-foreground/75">{t.services.body}</p>
 
-          <nav className="mt-12 grid gap-px border-t border-ink-foreground/15 sm:grid-cols-3">
+          <nav className="mt-12 grid gap-px border-t border-ink-foreground/15 sm:grid-cols-2 lg:grid-cols-4">
             {t.services.items.map((s, i) => (
               <a
                 key={s.id}

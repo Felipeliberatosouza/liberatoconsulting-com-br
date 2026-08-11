@@ -2,7 +2,14 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { ArticleRecord, Branding, SiteConfig, TextOverrides, Theme } from "./site-config";
+import type {
+  ArticleRecord,
+  Branding,
+  HeroSettings,
+  SiteConfig,
+  TextOverrides,
+  Theme,
+} from "./site-config";
 
 /** Configuração pública do site (cores, textos personalizados e conteúdos). */
 export const getSiteConfig = createServerFn({ method: "GET" }).handler(
@@ -25,6 +32,7 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
       texts: (map.get("texts") ?? {}) as TextOverrides,
       articles: (articles.data ?? []) as unknown as ArticleRecord[],
       branding: (map.get("branding") ?? {}) as Branding,
+      hero: (map.get("hero") ?? {}) as HeroSettings,
     };
   },
 );
@@ -417,6 +425,33 @@ export const resetLogo = createServerFn({ method: "POST" })
     const { error } = await context.supabase
       .from("site_settings")
       .upsert({ key: "branding", value: {} }, { onConflict: "key" });
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
+
+const heroSchema = z.object({
+  autoplayMs: z.number().int().min(0).max(30000),
+  slides: z
+    .array(
+      z.object({
+        id: z.string().trim().min(1).max(40),
+        enabled: z.boolean(),
+        imageUrl: z.string().trim().max(1000).optional(),
+      }),
+    )
+    .max(12),
+});
+
+/** Configuração do carrossel da página inicial (ordem, exibição, imagem e tempo). */
+export const saveHeroSettings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => heroSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("site_settings")
+      .upsert({ key: "hero", value: data }, { onConflict: "key" });
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });

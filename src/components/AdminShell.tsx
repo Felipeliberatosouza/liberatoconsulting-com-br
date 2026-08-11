@@ -8,6 +8,7 @@ import { getAdminSession } from "@/lib/admin.functions";
 const NAV: Array<{ to: string; label: string; exact?: boolean }> = [
   { to: "/admin", label: "Visão geral", exact: true },
   { to: "/admin/theme", label: "Cores" },
+  { to: "/admin/hero", label: "Carrossel" },
   { to: "/admin/texts", label: "Textos" },
   { to: "/admin/content", label: "Conteúdo" },
   { to: "/admin/leads", label: "Leads" },
