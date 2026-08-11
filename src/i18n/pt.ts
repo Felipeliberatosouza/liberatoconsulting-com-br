@@ -248,7 +248,42 @@ export const pt = {
     body: "A Liberato Consulting produz pesquisas de mercado sobre o Brasil para empresas internacionais e gestão estratégica para empresas que querem crescer aqui — estudos setoriais, dados econômicos, ambiente regulatório e IA no centro de cada entrega.",
     primary: "Ver dados do Brasil",
     secondary: "Agendar conversa",
+    slides: [
+      {
+        id: "pesquisas",
+        eyebrow: "Pesquisas de mercado sobre o Brasil",
+        title: "Entenda o mercado brasileiro. Decida com método e inteligência artificial.",
+        body: "Estudos setoriais, dados econômicos e leitura regulatória sobre o Brasil para empresas internacionais — com IA no centro de cada entrega.",
+        primary: "Ver dados do Brasil",
+        secondary: "Agendar conversa",
+      },
+      {
+        id: "empreendedorismo",
+        eyebrow: "Empreendedorismo",
+        title: "Do modelo de negócio à tração, com menos capital queimado por hipótese.",
+        body: "Modelagem, validação de mercado, precificação e materiais para investidores. Usamos IA para testar hipóteses com evidência real antes de virar estrutura fixa.",
+        primary: "Conhecer o serviço",
+        secondary: "Agendar conversa",
+      },
+      {
+        id: "operacoes",
+        eyebrow: "Operações",
+        title: "Excelência operacional que aparece na margem, mês a mês.",
+        body: "Gestão da rotina, excelência industrial, comercial e de processos. A IA antecipa desvios, prevê demanda e mantém o padrão de execução no chão de fábrica e na linha de frente.",
+        primary: "Conhecer o serviço",
+        secondary: "Agendar conversa",
+      },
+      {
+        id: "estrategia",
+        eyebrow: "Estratégia",
+        title: "Da ambição ao desdobramento de metas que a operação consegue executar.",
+        body: "Planejamento estratégico, desdobramento de metas, transformação digital e gestão de projetos de capital, com cenários simulados por inteligência artificial.",
+        primary: "Conhecer o serviço",
+        secondary: "Agendar conversa",
+      },
+    ],
   },
+
 
   brazilFocus: {
     eyebrow: "Pesquisas de mercado sobre o Brasil",
