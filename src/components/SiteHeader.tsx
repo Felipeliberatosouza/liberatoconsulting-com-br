@@ -33,7 +33,7 @@ function MobileAccordion({
 }: {
   title: string;
   href: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const [expanded, setExpanded] = useState(false);
   return (
