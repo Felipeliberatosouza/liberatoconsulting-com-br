@@ -60,12 +60,18 @@ export function heroSlideOrder(hero: HeroSettings | undefined): HeroSlideSetting
   return [...known, ...missing];
 }
 
+/** Conteúdo editável de cada tema da seção "Dados do Brasil". */
+export type BrazilSectionText = { title: string; body: string; bullets: string[] };
+export type BrazilSectionOverride = Partial<Record<Lang, BrazilSectionText>>;
+export type BrazilOverrides = Record<string, BrazilSectionOverride>;
+
 export type SiteConfig = {
   theme: Theme;
   texts: TextOverrides;
   articles: ArticleRecord[];
   branding: Branding;
   hero: HeroSettings;
+  brazil: BrazilOverrides;
 };
 
 export const EMPTY_CONFIG: SiteConfig = {
@@ -74,6 +80,7 @@ export const EMPTY_CONFIG: SiteConfig = {
   articles: [],
   branding: {},
   hero: {},
+  brazil: {},
 };
 
 /** Lista todos os caminhos de texto (folhas string) do dicionário PT. */
@@ -132,6 +139,25 @@ export function applyTextOverrides(dict: Dict, overrides: TextOverrides, lang: L
     if (typeof text === "string" && text.length > 0) setByPath(clone, path, text);
   }
   return clone;
+}
+
+/** Aplica os textos de "Dados do Brasil" editados no painel sobre o dicionário. */
+export function applyBrazilOverrides(dict: Dict, overrides: BrazilOverrides, lang: Lang): Dict {
+  const entries = Object.entries(overrides ?? {});
+  if (entries.length === 0) return dict;
+  const map = new Map(entries);
+  const sections = dict.brazil.sections.map((s) => {
+    const o = map.get(s.id);
+    const v = o?.[lang] ?? o?.pt;
+    if (!v) return s;
+    return {
+      ...s,
+      title: v.title?.trim() ? v.title : s.title,
+      body: v.body?.trim() ? v.body : s.body,
+      bullets: v.bullets && v.bullets.length > 0 ? v.bullets : s.bullets,
+    };
+  });
+  return { ...dict, brazil: { ...dict.brazil, sections } } as Dict;
 }
 
 /** Converte hex/rgb informado no painel para valor aplicável em CSS var. */
