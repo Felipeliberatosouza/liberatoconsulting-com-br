@@ -4,7 +4,14 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
-import { getAlertEmail, inviteAdmin, saveAlertEmail } from "@/lib/admin.functions";
+import {
+  getAlertEmail,
+  getSiteConfig,
+  inviteAdmin,
+  resetLogo,
+  saveAlertEmail,
+  saveLogo,
+} from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({
