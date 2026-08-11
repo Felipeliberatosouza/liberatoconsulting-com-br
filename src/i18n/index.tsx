@@ -156,8 +156,19 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
 
+const FALLBACK_VALUE: LanguageContextValue = {
+  lang: "pt",
+  setLang: () => undefined,
+  toggle: () => undefined,
+  t: pt,
+  translating: false,
+  articles: [],
+  logoUrl: "/logo.png",
+  whatsapp: undefined,
+  hero: {},
+};
+
 export function useLanguage() {
-  const ctx = useContext(LanguageContext);
-  if (!ctx) throw new Error("useLanguage must be used within LanguageProvider");
-  return ctx;
+  // Fallback evita tela em branco caso o contexto ainda não esteja montado (ex.: HMR).
+  return useContext(LanguageContext) ?? FALLBACK_VALUE;
 }
