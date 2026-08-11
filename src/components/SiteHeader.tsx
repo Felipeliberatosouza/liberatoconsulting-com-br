@@ -264,7 +264,7 @@ export function SiteHeader() {
             </div>
           </MobileAccordion>
 
-          <MobileAccordion title={t.nav.about} href="/about">
+          <MobileAccordion title={t.nav.about}>
             <div className="border-l border-border pl-3">
               {aboutItems.map((item) => (
                 <Link
