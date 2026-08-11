@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Linkedin, Youtube } from "lucide-react";
 import { useLanguage } from "@/i18n";
 import { legal } from "@/i18n/legal";
+import { normalizeWhatsApp, openWhatsApp } from "@/lib/whatsapp";
 
 export function SiteFooter() {
   const { t, logoUrl, lang, whatsapp } = useLanguage();
