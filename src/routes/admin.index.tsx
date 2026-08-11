@@ -7,10 +7,12 @@ import { AdminShell } from "@/components/AdminShell";
 import {
   getAlertEmail,
   getSiteConfig,
+  getWhatsApp,
   inviteAdmin,
   resetLogo,
   saveAlertEmail,
   saveLogo,
+  saveWhatsApp,
 } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin/")({

@@ -907,6 +907,10 @@ export const dict: Dict = {
     "careersResume": "发送简历",
     "careersLinkedin": "LinkedIn"
   },
+  "whatsapp": {
+    "label": "通过 WhatsApp 联系",
+    "title": "在新标签页中打开 WhatsApp 对话"
+  },
   "careers": {
     "eyebrow": "加入我们",
     "title": "发送您的简历",
