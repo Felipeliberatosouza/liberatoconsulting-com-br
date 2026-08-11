@@ -16,6 +16,7 @@ import { LanguageProvider } from "@/i18n";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
+import { CookieConsent } from "@/components/CookieConsent";
 
 
 function NotFoundComponent() {
@@ -156,6 +157,7 @@ function RootComponent() {
           </main>
           <SiteFooter />
         </div>
+        <CookieConsent />
         <Toaster />
       </LanguageProvider>
     </QueryClientProvider>

@@ -1,9 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { Linkedin, Youtube } from "lucide-react";
 import { useLanguage } from "@/i18n";
+import { legal } from "@/i18n/legal";
 
 export function SiteFooter() {
-  const { t, logoUrl } = useLanguage();
+  const { t, logoUrl, lang } = useLanguage();
+  const lg = (legal[lang] ?? legal.pt).footer;
+
   return (
     <footer className="bg-ink text-ink-foreground">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-3">
@@ -78,7 +81,20 @@ export function SiteFooter() {
             </a>
 
           </div>
+
+          <div className="mt-4 border-t border-ink-foreground/10 pt-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+              {lg.legal}
+            </p>
+            <Link to="/privacy" className="mt-3 block text-ink-foreground/70 hover:text-ink-foreground">
+              {lg.privacy}
+            </Link>
+            <Link to="/terms" className="mt-2 block text-ink-foreground/70 hover:text-ink-foreground">
+              {lg.terms}
+            </Link>
+          </div>
         </nav>
+
 
       </div>
       <div className="border-t border-ink-foreground/10">
