@@ -31,8 +31,6 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const groups = t.megaMenu.groups;
   const aboutItems = t.aboutMenu.items;
-  const [tab, setTab] = useState(groups[0]?.id ?? "");
-  const active = groups.find((g) => g.id === tab) ?? groups[0];
 
   const links = [{ to: "/content", label: t.nav.content }] as const;
 
@@ -61,37 +59,30 @@ export function SiteHeader() {
 
             <div className="invisible absolute inset-x-0 top-full z-40 border-b border-border bg-background opacity-0 shadow-lg transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100">
               <div className="mx-auto max-w-7xl px-6 py-8">
-                <div className="flex flex-wrap gap-1 border-b border-border">
-                  {groups.map((g) => (
-                    <button
+                <div className="grid grid-cols-2 gap-x-8 gap-y-8 lg:grid-cols-4">
+                  {groups.map((g, i) => (
+                    <div
                       key={g.id}
-                      onMouseEnter={() => setTab(g.id)}
-                      onFocus={() => setTab(g.id)}
-                      className={`-mb-px border-b-2 px-4 py-3 text-sm font-semibold transition-colors ${
-                        g.id === active?.id
-                          ? "border-accent text-foreground"
-                          : "border-transparent text-muted-foreground hover:text-foreground"
-                      }`}
+                      className={`min-w-0 ${i > 0 ? "lg:border-l lg:border-border lg:pl-8" : ""}`}
                     >
-                      {g.title}
-                    </button>
+                      <p className="mb-4 text-sm font-semibold text-foreground">{g.title}</p>
+                      <ul className="space-y-2.5">
+                        {g.items.map((item) => (
+                          <li key={item.id}>
+                            <Link
+                              to="/services/$slug"
+                              params={{ slug: item.id }}
+                              className="block text-sm text-muted-foreground transition-colors hover:text-accent"
+                            >
+                              {item.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   ))}
                 </div>
 
-                {active && (
-                  <div className="mt-6 grid gap-x-10 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
-                    {active.items.map((item) => (
-                      <Link
-                        key={item.id}
-                        to="/services/$slug"
-                        params={{ slug: item.id }}
-                        className="text-sm text-muted-foreground transition-colors hover:text-accent"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
 
                 <div className="mt-8 text-right">
                   <Link
