@@ -243,12 +243,13 @@ export const pt = {
     ],
   },
   hero: {
-    eyebrow: "Consultoria em gestão empresarial",
-    title: "Gestão que decide. Inteligência artificial que executa.",
-    body: "A Liberato Consulting une método de gestão, visão empreendedora e inteligência de mercado sobre o Brasil — com IA no centro de cada entrega.",
-    primary: "Conheça os serviços",
+    eyebrow: "Consultoria em gestão e pesquisas de mercado sobre o Brasil",
+    title: "Entenda o mercado brasileiro. Decida com método e inteligência artificial.",
+    body: "A Liberato Consulting produz pesquisas de mercado sobre o Brasil para empresas internacionais e gestão estratégica para empresas que querem crescer aqui — estudos setoriais, dados econômicos, ambiente regulatório e IA no centro de cada entrega.",
+    primary: "Ver dados do Brasil",
     secondary: "Agendar conversa",
   },
+
   brazilFocus: {
     eyebrow: "Pesquisas de mercado sobre o Brasil",
     title: "Inteligência de mercado sobre o Brasil para decisões de investimento",
