@@ -51,6 +51,12 @@ export function SiteFooter() {
                 href={whatsappHref(whatsappNumber)}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={(event) => {
+                  if (window.self !== window.top) {
+                    event.preventDefault();
+                    window.open(whatsappHref(whatsappNumber), "_top");
+                  }
+                }}
                 aria-label="WhatsApp"
                 title="WhatsApp"
                 className="inline-flex size-10 items-center justify-center rounded-full border border-ink-foreground/20 text-ink-foreground/80 transition-colors hover:border-accent hover:bg-accent hover:text-accent-foreground"
