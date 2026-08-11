@@ -4,8 +4,8 @@ import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
 
 type ContentSearch = {
-  category?: string;
-  service?: string;
+  category?: string | undefined;
+  service?: string | undefined;
 };
 
 export const Route = createFileRoute("/content")({
