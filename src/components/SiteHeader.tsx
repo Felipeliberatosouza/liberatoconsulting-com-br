@@ -217,24 +217,26 @@ export function SiteHeader() {
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
           <MobileAccordion title={t.nav.services} href="/services">
-            {groups.map((g) => (
-              <div key={g.id} className="border-l border-border pl-3">
-                <p className="pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-                  {g.title}
-                </p>
-                {g.items.map((item) => (
-                  <Link
-                    key={item.id}
-                    to="/services/$slug"
-                    params={{ slug: item.id }}
-                    onClick={closeAll}
-                    className="block py-1.5 text-sm text-muted-foreground"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            ))}
+            <div className="grid grid-cols-2 gap-x-4">
+              {groups.map((g) => (
+                <div key={g.id} className="min-w-0">
+                  <p className="pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+                    {g.title}
+                  </p>
+                  {g.items.map((item) => (
+                    <Link
+                      key={item.id}
+                      to="/services/$slug"
+                      params={{ slug: item.id }}
+                      onClick={closeAll}
+                      className="block py-1.5 text-sm text-muted-foreground"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              ))}
+            </div>
           </MobileAccordion>
 
           <MobileAccordion title={t.nav.about} href="/about">
