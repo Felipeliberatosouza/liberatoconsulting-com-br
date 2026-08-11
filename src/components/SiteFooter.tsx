@@ -4,7 +4,7 @@ import { useLanguage } from "@/i18n";
 import { legal } from "@/i18n/legal";
 
 export function SiteFooter() {
-  const { t, logoUrl, lang } = useLanguage();
+  const { t, logoUrl, lang, whatsapp } = useLanguage();
   const lg = (legal[lang] ?? legal.pt).footer;
 
   return (
