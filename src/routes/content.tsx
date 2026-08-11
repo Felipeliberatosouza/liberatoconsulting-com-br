@@ -10,8 +10,8 @@ type ContentSearch = {
 
 export const Route = createFileRoute("/content")({
   validateSearch: (search: Record<string, unknown>): ContentSearch => ({
-    category: typeof search.category === "string" ? search.category : undefined,
-    service: typeof search.service === "string" ? search.service : undefined,
+    category: typeof search["category"] === "string" ? search["category"] : undefined,
+    service: typeof search["service"] === "string" ? search["service"] : undefined,
   }),
   head: () => ({
     meta: [
