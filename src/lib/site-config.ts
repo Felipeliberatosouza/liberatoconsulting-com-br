@@ -31,13 +31,16 @@ export type ArticleRecord = {
   translations: Record<string, { kind?: string; title?: string; summary?: string; body?: string }>;
 };
 
+export type Branding = { logoUrl?: string };
+
 export type SiteConfig = {
   theme: Theme;
   texts: TextOverrides;
   articles: ArticleRecord[];
+  branding: Branding;
 };
 
-export const EMPTY_CONFIG: SiteConfig = { theme: {}, texts: {}, articles: [] };
+export const EMPTY_CONFIG: SiteConfig = { theme: {}, texts: {}, articles: [], branding: {} };
 
 /** Lista todos os caminhos de texto (folhas string) do dicionário PT. */
 export function flattenTexts(value: unknown, prefix = ""): Array<{ path: string; value: string }> {
