@@ -50,6 +50,8 @@ type LanguageContextValue = {
   translating: boolean;
   /** Conteúdos cadastrados no painel administrativo (já traduzidos). */
   articles: ArticleRecord[];
+  /** URL da logomarca atual (padrão: arquivo do projeto). */
+  logoUrl: string;
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -134,6 +136,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       t: applyTextOverrides(dicts[lang] ?? baseline[lang].dict, config.texts, lang),
       translating,
       articles: config.articles,
+      logoUrl: config.branding?.logoUrl || "/logo.png",
     }),
     [lang, setLang, dicts, translating, config],
   );

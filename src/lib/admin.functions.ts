@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { ArticleRecord, SiteConfig, TextOverrides, Theme } from "./site-config";
+import type { ArticleRecord, Branding, SiteConfig, TextOverrides, Theme } from "./site-config";
 
 /** Configuração pública do site (cores, textos personalizados e conteúdos). */
 export const getSiteConfig = createServerFn({ method: "GET" }).handler(
@@ -24,6 +24,7 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
       theme: (map.get("theme") ?? {}) as Theme,
       texts: (map.get("texts") ?? {}) as TextOverrides,
       articles: (articles.data ?? []) as unknown as ArticleRecord[],
+      branding: (map.get("branding") ?? {}) as Branding,
     };
   },
 );
@@ -316,6 +317,40 @@ export const saveAlertEmail = createServerFn({ method: "POST" })
     const { error } = await context.supabase
       .from("site_settings")
       .upsert({ key: "alerts", value: { email: data.email } }, { onConflict: "key" });
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
+/** Logomarca atual (somente admins veem pelo painel; o site lê via getSiteConfig). */
+export const saveLogo = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        dataUrl: z
+          .string()
+          .regex(/^data:image\/(png|jpeg|webp|svg\+xml);base64,[A-Za-z0-9+/=]+$/)
+          .max(1_400_000),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("site_settings")
+      .upsert({ key: "branding", value: { logoUrl: data.dataUrl } }, { onConflict: "key" });
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
+/** Volta para a logomarca padrão do projeto. */
+export const resetLogo = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("site_settings")
+      .upsert({ key: "branding", value: {} }, { onConflict: "key" });
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });

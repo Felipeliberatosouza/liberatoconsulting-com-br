@@ -3,16 +3,21 @@ import { Linkedin, Youtube } from "lucide-react";
 import { useLanguage } from "@/i18n";
 
 export function SiteFooter() {
-  const { t } = useLanguage();
+  const { t, logoUrl } = useLanguage();
   return (
     <footer className="bg-ink text-ink-foreground">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 md:grid-cols-3">
         <div className="md:col-span-2">
-          <div className="flex items-baseline gap-2">
-            <span className="font-display text-xl font-bold tracking-tight">LIBERATO</span>
-            <span className="text-xs font-medium uppercase tracking-[0.25em] text-accent">
-              Consulting
+          <div className="flex flex-wrap items-center gap-4">
+            <span className="inline-flex rounded-md bg-white px-3 py-2">
+              <img src={logoUrl} alt="Liberato Consulting" className="h-9 w-auto" />
             </span>
+            <div className="flex items-baseline gap-2">
+              <span className="font-display text-xl font-bold tracking-tight">LIBERATO</span>
+              <span className="text-xs font-medium uppercase tracking-[0.25em] text-accent">
+                Consulting
+              </span>
+            </div>
           </div>
           <p className="mt-4 max-w-md text-sm text-ink-foreground/70">{t.footer.tagline}</p>
           <a
