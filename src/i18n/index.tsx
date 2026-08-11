@@ -54,6 +54,8 @@ type LanguageContextValue = {
   articles: ArticleRecord[];
   /** URL da logomarca atual (padrão: arquivo do projeto). */
   logoUrl: string;
+  /** Número de WhatsApp configurado no painel. */
+  whatsapp: string | undefined;
   /** Configuração do carrossel da página inicial. */
   hero: HeroSettings;
 };
@@ -145,6 +147,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       translating,
       articles: config.articles,
       logoUrl: config.branding?.logoUrl || "/logo.png",
+      whatsapp: config.branding?.whatsapp,
       hero: config.hero ?? {},
     }),
     [lang, setLang, dicts, translating, config],
