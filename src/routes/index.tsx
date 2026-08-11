@@ -1,8 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, BrainCircuit, Compass, Globe2, Rocket } from "lucide-react";
+import {
+  ArrowRight,
+  BrainCircuit,
+  ChevronLeft,
+  ChevronRight,
+  Compass,
+  Globe2,
+  Rocket,
+  Settings2,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import heroImage from "@/assets/hero.jpg";
+import heroEmpreendedorismo from "@/assets/hero-empreendedorismo.jpg";
+import heroOperacoes from "@/assets/hero-operacoes.jpg";
+import heroEstrategia from "@/assets/hero-estrategia.jpg";
 import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
+import { DEFAULT_AUTOPLAY_MS, heroSlideOrder } from "@/lib/site-config";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
