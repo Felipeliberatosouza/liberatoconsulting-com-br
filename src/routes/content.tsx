@@ -1,9 +1,18 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
 import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
 
+type ContentSearch = {
+  category?: string;
+  service?: string;
+};
+
 export const Route = createFileRoute("/content")({
+  validateSearch: (search: Record<string, unknown>): ContentSearch => ({
+    category: typeof search.category === "string" ? search.category : undefined,
+    service: typeof search.service === "string" ? search.service : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Conteúdo | Insights — Liberato Consulting" },
