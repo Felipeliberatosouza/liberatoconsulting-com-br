@@ -241,7 +241,7 @@ export function SiteHeader() {
 
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
-          <MobileAccordion title={t.nav.services} href="/services">
+          <MobileAccordion title={t.nav.services}>
             <div className="grid grid-cols-2 gap-x-4">
               {groups.map((g) => (
                 <div key={g.id} className="min-w-0">
