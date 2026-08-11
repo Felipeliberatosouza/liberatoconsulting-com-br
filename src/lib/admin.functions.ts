@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { ArticleRecord, SiteConfig, TextOverrides, Theme } from "./site-config";
+import type { ArticleRecord, Branding, SiteConfig, TextOverrides, Theme } from "./site-config";
 
 /** Configuração pública do site (cores, textos personalizados e conteúdos). */
 export const getSiteConfig = createServerFn({ method: "GET" }).handler(
