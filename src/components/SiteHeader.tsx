@@ -191,19 +191,32 @@ export function SiteHeader() {
             <div className="invisible absolute inset-x-0 top-full z-40 border-b border-border bg-background opacity-0 shadow-lg transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100">
               <div className="mx-auto max-w-7xl px-6 py-8">
                 <p className="mb-5 text-sm font-semibold text-accent">{t.nav.content}</p>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-4 lg:grid-cols-4">
+                <div className="grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4">
                   {contentGroups.map((g, i) => (
                     <div
                       key={g.id}
-                      className={`min-w-0 ${i > 0 ? "lg:border-l lg:border-border lg:pl-8" : ""}`}
+                      className={`min-w-0 ${i > 0 ? "md:border-l md:border-border md:pl-8" : ""}`}
                     >
                       <Link
                         to="/content"
                         search={{ category: g.id }}
-                        className="block text-sm font-semibold text-muted-foreground transition-colors hover:text-accent"
+                        className="mb-4 block text-sm font-semibold text-accent transition-colors hover:underline"
                       >
                         {g.title}
                       </Link>
+                      <ul className="space-y-2.5">
+                        {g.items.map((item) => (
+                          <li key={item.id}>
+                            <Link
+                              to="/content"
+                              search={{ category: g.id, service: item.id }}
+                              className="block text-sm text-muted-foreground transition-colors hover:text-accent"
+                            >
+                              {item.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   ))}
                 </div>
