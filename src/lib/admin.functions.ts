@@ -320,3 +320,37 @@ export const saveAlertEmail = createServerFn({ method: "POST" })
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });
+
+/** Logomarca atual (somente admins veem pelo painel; o site lê via getSiteConfig). */
+export const saveLogo = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        dataUrl: z
+          .string()
+          .regex(/^data:image\/(png|jpeg|webp|svg\+xml);base64,[A-Za-z0-9+/=]+$/)
+          .max(1_400_000),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("site_settings")
+      .upsert({ key: "branding", value: { logoUrl: data.dataUrl } }, { onConflict: "key" });
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
+/** Volta para a logomarca padrão do projeto. */
+export const resetLogo = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("site_settings")
+      .upsert({ key: "branding", value: {} }, { onConflict: "key" });
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
