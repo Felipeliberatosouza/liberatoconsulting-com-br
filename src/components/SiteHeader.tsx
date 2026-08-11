@@ -347,6 +347,23 @@ export function SiteHeader() {
               ))}
             </div>
           </MobileAccordion>
+
+          <MobileAccordion title={t.brazilMenu.label}>
+            <div className="grid grid-cols-2 gap-x-4">
+              {brazilItems.map((item) => (
+                <Link
+                  key={item.id}
+                  to="/brasil"
+                  hash={item.id}
+                  onClick={closeAll}
+                  className="block py-1.5 text-sm text-muted-foreground"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </MobileAccordion>
+
         </nav>
       )}
     </header>
