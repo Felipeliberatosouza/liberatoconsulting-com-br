@@ -218,8 +218,9 @@ function IndicatorsPanel() {
           i.segment !== ALL_SEGMENTS || i.region !== ALL_REGIONS || i.uf !== ALL_STATES,
       )
     : [];
-  const rows = specific.length > 0 ? specific : compatible;
-  const onlyNational = scope.applied && specific.length === 0;
+  // Com filtros aplicados exibimos apenas os indicadores daquele recorte.
+  const rows = scope.applied ? specific : compatible;
+  const onlyNational = false;
 
   if (rows.length === 0) {
     if (!scope.applied) return null;
