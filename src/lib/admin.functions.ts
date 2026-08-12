@@ -253,6 +253,16 @@ export const saveArticle = createServerFn({ method: "POST" })
       ? await context.supabase.from("content_articles").update(row).eq("id", id)
       : await context.supabase.from("content_articles").insert(row);
     if (error) return { ok: false as const, error: error.message };
+
+    // Novo conteúdo publicado: dispara a newsletter se o envio automático estiver ligado.
+    if (!id && data.published) {
+      try {
+        const { announceArticle } = await import("./newsletter.server");
+        await announceArticle({ title: data.title, summary: data.summary, slug: data.slug });
+      } catch (err) {
+        console.error("[newsletter] auto-send failed", err);
+      }
+    }
     return { ok: true as const };
   });
 
