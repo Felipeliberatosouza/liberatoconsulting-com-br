@@ -39,12 +39,24 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
   },
 );
 
-async function assertAdmin(context: { supabase: any; userId: string }) {
+async function isAdmin(context: { supabase: any; userId: string }) {
   const { data, error } = await context.supabase.rpc("has_role", {
     _user_id: context.userId,
     _role: "admin",
   });
-  if (error || !data) throw new Error("Forbidden");
+  if (!error && data) return true;
+  // Fallback: leitura direta (RLS permite ler as próprias funções)
+  const { data: row } = await context.supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", context.userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  return Boolean(row);
+}
+
+async function assertAdmin(context: { supabase: any; userId: string }) {
+  if (!(await isAdmin(context))) throw new Error("Forbidden");
 }
 
 /** Sessão atual: informa se o usuário logado é administrador. */
