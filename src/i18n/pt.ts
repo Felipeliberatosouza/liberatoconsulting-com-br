@@ -492,6 +492,14 @@ export const pt = {
       { id: "trabalhe-conosco", label: "Trabalhe Conosco" },
       { id: "fale-conosco", label: "Fale Conosco" },
     ],
+    banner: {
+      word: "resultado",
+      strong1: "real",
+      middle: ", investimento",
+      strong2: "justo!",
+      body: "Quatro frentes, um método: entregas medidas por indicadores acordados no início e um investimento proporcional ao ganho que fica na sua operação.",
+      cta: "Fale com a nossa equipe",
+    },
     sections: {
       sobre: {
         title: "Sobre",
@@ -499,10 +507,11 @@ export const pt = {
       },
       oQueFazemos: {
         title: "O que fazemos",
-        body: "Atuamos em três frentes integradas: gestão estratégica de negócios, empreendedorismo e pesquisas de mercado sobre o Brasil para empresas internacionais. Em cada uma, a inteligência artificial acelera diagnósticos, prioriza decisões e automatiza entregas repetitivas.",
+        body: "Atuamos em quatro frentes integradas: gestão estratégica de negócios, empreendedorismo, operações e pesquisas de mercado sobre o Brasil para empresas internacionais. Em cada uma, a inteligência artificial acelera diagnósticos, prioriza decisões e automatiza entregas repetitivas.",
         items: [
-          "Gestão estratégica: planejamento, desdobramento de metas, eficiência operacional e rotina de gestão.",
+          "Gestão estratégica: planejamento, desdobramento de metas, transformação digital e rotina de gestão.",
           "Empreendedorismo: modelagem de negócio, validação de mercado, precificação, captação e estruturação da operação inicial.",
+          "Operações: excelência comercial, industrial e de processos, produtividade e redução de custos.",
           "Pesquisas de mercado: estudos setoriais, dimensionamento, análise competitiva, comportamento do consumidor e leitura regulatória no Brasil.",
         ],
       },
@@ -571,14 +580,14 @@ export const pt = {
       {
         id: "o-que-fazemos",
         title: "O que fazemos",
-        lead: "Três frentes integradas: gestão estratégica, empreendedorismo e pesquisas de mercado sobre o Brasil.",
-        body: "Atuamos em três frentes que se conversam. Em cada uma, a inteligência artificial acelera diagnósticos, prioriza decisões e automatiza entregas repetitivas — sem tirar do cliente a responsabilidade pela escolha.",
+        lead: "Quatro frentes integradas: gestão estratégica, empreendedorismo, operações e pesquisas de mercado sobre o Brasil.",
+        body: "Atuamos em quatro frentes que se conversam. Em cada uma, a inteligência artificial acelera diagnósticos, prioriza decisões e automatiza entregas repetitivas — sem tirar do cliente a responsabilidade pela escolha.",
         audience: "Diretorias, fundadores e times de estratégia que precisam sair do diagnóstico para a execução.",
         bullets: [
-          "Gestão estratégica: planejamento, desdobramento de metas, eficiência operacional e rotina de gestão.",
+          "Gestão estratégica: planejamento, desdobramento de metas, transformação digital e rotina de gestão.",
           "Empreendedorismo: modelagem de negócio, validação de mercado, precificação, captação e operação inicial.",
+          "Operações: excelência comercial, industrial e de processos, produtividade e redução de custos.",
           "Pesquisas de mercado: estudos setoriais, dimensionamento, análise competitiva e leitura regulatória.",
-          "Capacitação: formação do time do cliente no método e no uso responsável de IA.",
         ],
         ai: "Modelos e agentes assistem cada frente: sintetizam bases públicas e internas, simulam cenários e mantêm painéis vivos que mostram o avanço das metas em tempo real.",
       },
