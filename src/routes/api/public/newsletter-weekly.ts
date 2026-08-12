@@ -1,19 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { assertCronCaller } from "@/lib/cron-auth.server";
 
 /**
  * Disparo automático da Newsletter (chamado pelo agendador toda quarta-feira às 10h).
  * Envia a campanha em rascunho mais antiga para todos os inscritos ativos.
- * Protegido pela chave publicável do projeto no cabeçalho `apikey`.
+ * Protegido por um segredo exclusivo do agendador (nunca enviado ao navegador).
  */
 export const Route = createFileRoute("/api/public/newsletter-weekly")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const expected = process.env["SUPABASE_PUBLISHABLE_KEY"] ?? "";
-        const provided =
-          request.headers.get("apikey") ??
-          (request.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
-        if (!expected || provided !== expected) {
+        if (!(await assertCronCaller(request))) {
           return new Response("Unauthorized", { status: 401 });
         }
 

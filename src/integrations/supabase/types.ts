@@ -1012,6 +1012,7 @@ export type Database = {
         Args: { _job: string; _schedule: string }
         Returns: undefined
       }
+      verify_cron_secret: { Args: { _token: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "editor" | "autor" | "consultor"
