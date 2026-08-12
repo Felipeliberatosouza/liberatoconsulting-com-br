@@ -20,15 +20,20 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AboutSlugRouteImport } from './routes/about_.$slug'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminApplicationsRouteImport } from './routes/admin.applications'
+import { Route as AdminApprovalsRouteImport } from './routes/admin.approvals'
 import { Route as AdminBrasilRouteImport } from './routes/admin.brasil'
 import { Route as AdminContentRouteImport } from './routes/admin.content'
+import { Route as AdminContratoRouteImport } from './routes/admin.contrato'
+import { Route as AdminEmpresaRouteImport } from './routes/admin.empresa'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
+import { Route as AdminIndicadoresRouteImport } from './routes/admin.indicadores'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as AdminTextsRouteImport } from './routes/admin.texts'
 import { Route as AdminThemeRouteImport } from './routes/admin.theme'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
 import { Route as ContentSlugRouteImport } from './routes/content.$slug'
 import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
@@ -90,6 +95,11 @@ const AdminApplicationsRoute = AdminApplicationsRouteImport.update({
   path: '/admin/applications',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminApprovalsRoute = AdminApprovalsRouteImport.update({
+  id: '/admin/approvals',
+  path: '/admin/approvals',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminBrasilRoute = AdminBrasilRouteImport.update({
   id: '/admin/brasil',
   path: '/admin/brasil',
@@ -100,9 +110,24 @@ const AdminContentRoute = AdminContentRouteImport.update({
   path: '/admin/content',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminContratoRoute = AdminContratoRouteImport.update({
+  id: '/admin/contrato',
+  path: '/admin/contrato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminEmpresaRoute = AdminEmpresaRouteImport.update({
+  id: '/admin/empresa',
+  path: '/admin/empresa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminHeroRoute = AdminHeroRouteImport.update({
   id: '/admin/hero',
   path: '/admin/hero',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndicadoresRoute = AdminIndicadoresRouteImport.update({
+  id: '/admin/indicadores',
+  path: '/admin/indicadores',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
@@ -133,6 +158,11 @@ const AdminTextsRoute = AdminTextsRouteImport.update({
 const AdminThemeRoute = AdminThemeRouteImport.update({
   id: '/admin/theme',
   path: '/admin/theme',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BrasilSlugRoute = BrasilSlugRouteImport.update({
@@ -172,15 +202,20 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/about/$slug': typeof AboutSlugRoute
   '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/approvals': typeof AdminApprovalsRoute
   '/admin/brasil': typeof AdminBrasilRoute
   '/admin/content': typeof AdminContentRoute
+  '/admin/contrato': typeof AdminContratoRoute
+  '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/hero': typeof AdminHeroRoute
+  '/admin/indicadores': typeof AdminIndicadoresRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
+  '/admin/users': typeof AdminUsersRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
@@ -199,15 +234,20 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/about/$slug': typeof AboutSlugRoute
   '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/approvals': typeof AdminApprovalsRoute
   '/admin/brasil': typeof AdminBrasilRoute
   '/admin/content': typeof AdminContentRoute
+  '/admin/contrato': typeof AdminContratoRoute
+  '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/hero': typeof AdminHeroRoute
+  '/admin/indicadores': typeof AdminIndicadoresRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
+  '/admin/users': typeof AdminUsersRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
@@ -227,15 +267,20 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/about_/$slug': typeof AboutSlugRoute
   '/admin/applications': typeof AdminApplicationsRoute
+  '/admin/approvals': typeof AdminApprovalsRoute
   '/admin/brasil': typeof AdminBrasilRoute
   '/admin/content': typeof AdminContentRoute
+  '/admin/contrato': typeof AdminContratoRoute
+  '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/hero': typeof AdminHeroRoute
+  '/admin/indicadores': typeof AdminIndicadoresRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
+  '/admin/users': typeof AdminUsersRoute
   '/brasil_/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
@@ -256,15 +301,20 @@ export interface FileRouteTypes {
     | '/terms'
     | '/about/$slug'
     | '/admin/applications'
+    | '/admin/approvals'
     | '/admin/brasil'
     | '/admin/content'
+    | '/admin/contrato'
+    | '/admin/empresa'
     | '/admin/hero'
+    | '/admin/indicadores'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
     | '/admin/reset-password'
     | '/admin/texts'
     | '/admin/theme'
+    | '/admin/users'
     | '/brasil/$slug'
     | '/content/$slug'
     | '/newsletter/unsubscribe'
@@ -283,15 +333,20 @@ export interface FileRouteTypes {
     | '/terms'
     | '/about/$slug'
     | '/admin/applications'
+    | '/admin/approvals'
     | '/admin/brasil'
     | '/admin/content'
+    | '/admin/contrato'
+    | '/admin/empresa'
     | '/admin/hero'
+    | '/admin/indicadores'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
     | '/admin/reset-password'
     | '/admin/texts'
     | '/admin/theme'
+    | '/admin/users'
     | '/brasil/$slug'
     | '/content/$slug'
     | '/newsletter/unsubscribe'
@@ -310,15 +365,20 @@ export interface FileRouteTypes {
     | '/terms'
     | '/about_/$slug'
     | '/admin/applications'
+    | '/admin/approvals'
     | '/admin/brasil'
     | '/admin/content'
+    | '/admin/contrato'
+    | '/admin/empresa'
     | '/admin/hero'
+    | '/admin/indicadores'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
     | '/admin/reset-password'
     | '/admin/texts'
     | '/admin/theme'
+    | '/admin/users'
     | '/brasil_/$slug'
     | '/content/$slug'
     | '/newsletter/unsubscribe'
@@ -338,15 +398,20 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   AboutSlugRoute: typeof AboutSlugRoute
   AdminApplicationsRoute: typeof AdminApplicationsRoute
+  AdminApprovalsRoute: typeof AdminApprovalsRoute
   AdminBrasilRoute: typeof AdminBrasilRoute
   AdminContentRoute: typeof AdminContentRoute
+  AdminContratoRoute: typeof AdminContratoRoute
+  AdminEmpresaRoute: typeof AdminEmpresaRoute
   AdminHeroRoute: typeof AdminHeroRoute
+  AdminIndicadoresRoute: typeof AdminIndicadoresRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminNewsletterRoute: typeof AdminNewsletterRoute
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
   AdminTextsRoute: typeof AdminTextsRoute
   AdminThemeRoute: typeof AdminThemeRoute
+  AdminUsersRoute: typeof AdminUsersRoute
   BrasilSlugRoute: typeof BrasilSlugRoute
   NewsletterUnsubscribeRoute: typeof NewsletterUnsubscribeRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
@@ -433,6 +498,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminApplicationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/approvals': {
+      id: '/admin/approvals'
+      path: '/admin/approvals'
+      fullPath: '/admin/approvals'
+      preLoaderRoute: typeof AdminApprovalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/brasil': {
       id: '/admin/brasil'
       path: '/admin/brasil'
@@ -447,11 +519,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/contrato': {
+      id: '/admin/contrato'
+      path: '/admin/contrato'
+      fullPath: '/admin/contrato'
+      preLoaderRoute: typeof AdminContratoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/empresa': {
+      id: '/admin/empresa'
+      path: '/admin/empresa'
+      fullPath: '/admin/empresa'
+      preLoaderRoute: typeof AdminEmpresaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/hero': {
       id: '/admin/hero'
       path: '/admin/hero'
       fullPath: '/admin/hero'
       preLoaderRoute: typeof AdminHeroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/indicadores': {
+      id: '/admin/indicadores'
+      path: '/admin/indicadores'
+      fullPath: '/admin/indicadores'
+      preLoaderRoute: typeof AdminIndicadoresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/leads': {
@@ -494,6 +587,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/theme'
       fullPath: '/admin/theme'
       preLoaderRoute: typeof AdminThemeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/brasil_/$slug': {
@@ -556,15 +656,20 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   AboutSlugRoute: AboutSlugRoute,
   AdminApplicationsRoute: AdminApplicationsRoute,
+  AdminApprovalsRoute: AdminApprovalsRoute,
   AdminBrasilRoute: AdminBrasilRoute,
   AdminContentRoute: AdminContentRoute,
+  AdminContratoRoute: AdminContratoRoute,
+  AdminEmpresaRoute: AdminEmpresaRoute,
   AdminHeroRoute: AdminHeroRoute,
+  AdminIndicadoresRoute: AdminIndicadoresRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminNewsletterRoute: AdminNewsletterRoute,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
   AdminTextsRoute: AdminTextsRoute,
   AdminThemeRoute: AdminThemeRoute,
+  AdminUsersRoute: AdminUsersRoute,
   BrasilSlugRoute: BrasilSlugRoute,
   NewsletterUnsubscribeRoute: NewsletterUnsubscribeRoute,
   ServicesSlugRoute: ServicesSlugRoute,

@@ -56,6 +56,138 @@ export type Database = {
         }
         Relationships: []
       }
+      change_requests: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          kind: string
+          payload: Json
+          requester_id: string
+          requester_name: string
+          review_note: string
+          reviewed_at: string | null
+          reviewer_id: string | null
+          status: string
+          summary: string
+          target_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          action?: string
+          created_at?: string
+          id?: string
+          kind: string
+          payload?: Json
+          requester_id: string
+          requester_name?: string
+          review_note?: string
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          summary?: string
+          target_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          payload?: Json
+          requester_id?: string
+          requester_name?: string
+          review_note?: string
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          summary?: string
+          target_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      company_profile: {
+        Row: {
+          address_city: string
+          address_complement: string
+          address_country: string
+          address_district: string
+          address_number: string
+          address_state: string
+          address_street: string
+          address_zip: string
+          cnpj: string
+          created_at: string
+          email: string
+          extra: Json
+          founded_on: string | null
+          id: string
+          legal_name: string
+          logo_url: string | null
+          municipal_registration: string
+          partners: Json
+          phone: string
+          state_registration: string
+          trade_name: string
+          updated_at: string
+          website: string
+        }
+        Insert: {
+          address_city?: string
+          address_complement?: string
+          address_country?: string
+          address_district?: string
+          address_number?: string
+          address_state?: string
+          address_street?: string
+          address_zip?: string
+          cnpj?: string
+          created_at?: string
+          email?: string
+          extra?: Json
+          founded_on?: string | null
+          id?: string
+          legal_name?: string
+          logo_url?: string | null
+          municipal_registration?: string
+          partners?: Json
+          phone?: string
+          state_registration?: string
+          trade_name?: string
+          updated_at?: string
+          website?: string
+        }
+        Update: {
+          address_city?: string
+          address_complement?: string
+          address_country?: string
+          address_district?: string
+          address_number?: string
+          address_state?: string
+          address_street?: string
+          address_zip?: string
+          cnpj?: string
+          created_at?: string
+          email?: string
+          extra?: Json
+          founded_on?: string | null
+          id?: string
+          legal_name?: string
+          logo_url?: string | null
+          municipal_registration?: string
+          partners?: Json
+          phone?: string
+          state_registration?: string
+          trade_name?: string
+          updated_at?: string
+          website?: string
+        }
+        Relationships: []
+      }
       content_articles: {
         Row: {
           author_contact: string
@@ -131,10 +263,184 @@ export type Database = {
         }
         Relationships: []
       }
+      contract_signatures: {
+        Row: {
+          audience: string
+          id: string
+          ip_hash: string | null
+          signed_at: string
+          signed_body: string
+          signer_cpf: string
+          signer_name: string
+          template_id: string | null
+          user_id: string
+          version: number
+        }
+        Insert: {
+          audience: string
+          id?: string
+          ip_hash?: string | null
+          signed_at?: string
+          signed_body?: string
+          signer_cpf?: string
+          signer_name?: string
+          template_id?: string | null
+          user_id: string
+          version?: number
+        }
+        Update: {
+          audience?: string
+          id?: string
+          ip_hash?: string | null
+          signed_at?: string
+          signed_body?: string
+          signer_cpf?: string
+          signer_name?: string
+          template_id?: string | null
+          user_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_signatures_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "contract_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contract_templates: {
+        Row: {
+          active: boolean
+          audience: string
+          body: string
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          active?: boolean
+          audience: string
+          body?: string
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          active?: boolean
+          audience?: string
+          body?: string
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          version?: number
+        }
+        Relationships: []
+      }
+      economic_indicators: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          last_checked_at: string | null
+          note: string
+          position: number
+          published: boolean
+          reference_period: string
+          slug: string
+          source_name: string
+          source_url: string
+          translations: Json
+          trend: string
+          unit: string
+          updated_at: string
+          updated_by_ai: boolean
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          last_checked_at?: string | null
+          note?: string
+          position?: number
+          published?: boolean
+          reference_period?: string
+          slug: string
+          source_name?: string
+          source_url?: string
+          translations?: Json
+          trend?: string
+          unit?: string
+          updated_at?: string
+          updated_by_ai?: boolean
+          value?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          last_checked_at?: string | null
+          note?: string
+          position?: number
+          published?: boolean
+          reference_period?: string
+          slug?: string
+          source_name?: string
+          source_url?: string
+          translations?: Json
+          trend?: string
+          unit?: string
+          updated_at?: string
+          updated_by_ai?: boolean
+          value?: string
+        }
+        Relationships: []
+      }
+      email_templates: {
+        Row: {
+          body: string
+          created_at: string
+          enabled: boolean
+          id: string
+          label: string
+          slug: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          label?: string
+          slug: string
+          subject?: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          label?: string
+          slug?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       job_applications: {
         Row: {
           created_at: string
           email: string
+          email_opt_in: boolean
           emailed: boolean
           full_name: string
           id: string
@@ -150,6 +456,7 @@ export type Database = {
         Insert: {
           created_at?: string
           email: string
+          email_opt_in?: boolean
           emailed?: boolean
           full_name: string
           id?: string
@@ -165,6 +472,7 @@ export type Database = {
         Update: {
           created_at?: string
           email?: string
+          email_opt_in?: boolean
           emailed?: boolean
           full_name?: string
           id?: string
@@ -185,6 +493,7 @@ export type Database = {
           country: string
           created_at: string
           email: string | null
+          email_opt_in: boolean
           id: string
           ip_hash: string | null
           language: string | null
@@ -199,6 +508,7 @@ export type Database = {
           country: string
           created_at?: string
           email?: string | null
+          email_opt_in?: boolean
           id?: string
           ip_hash?: string | null
           language?: string | null
@@ -213,6 +523,7 @@ export type Database = {
           country?: string
           created_at?: string
           email?: string | null
+          email_opt_in?: boolean
           id?: string
           ip_hash?: string | null
           language?: string | null
@@ -226,40 +537,64 @@ export type Database = {
       }
       newsletter_campaigns: {
         Row: {
+          author_contact: string
+          authors: string
           body: string
           created_at: string
           failed_count: number
+          file_name: string | null
+          file_path: string | null
+          full_text: string
           id: string
+          image_url: string | null
           last_error: string | null
           preheader: string
+          reference_date: string | null
           sent_at: string | null
           sent_count: number
+          sources: string
           status: string
           subject: string
           updated_at: string
         }
         Insert: {
+          author_contact?: string
+          authors?: string
           body?: string
           created_at?: string
           failed_count?: number
+          file_name?: string | null
+          file_path?: string | null
+          full_text?: string
           id?: string
+          image_url?: string | null
           last_error?: string | null
           preheader?: string
+          reference_date?: string | null
           sent_at?: string | null
           sent_count?: number
+          sources?: string
           status?: string
           subject: string
           updated_at?: string
         }
         Update: {
+          author_contact?: string
+          authors?: string
           body?: string
           created_at?: string
           failed_count?: number
+          file_name?: string | null
+          file_path?: string | null
+          full_text?: string
           id?: string
+          image_url?: string | null
           last_error?: string | null
           preheader?: string
+          reference_date?: string | null
           sent_at?: string | null
           sent_count?: number
+          sources?: string
           status?: string
           subject?: string
           updated_at?: string
@@ -299,6 +634,96 @@ export type Database = {
           status?: string
           unsubscribe_token?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          active: boolean
+          address_city: string
+          address_complement: string
+          address_country: string
+          address_district: string
+          address_number: string
+          address_state: string
+          address_street: string
+          address_zip: string
+          bank_account: string
+          bank_branch: string
+          bank_name: string
+          birth_date: string | null
+          cpf: string
+          created_at: string
+          email: string
+          email_opt_in: boolean
+          full_name: string
+          id: string
+          marital_status: string
+          nationality: string
+          notes: string
+          phone: string
+          pix_key: string
+          rg: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          address_city?: string
+          address_complement?: string
+          address_country?: string
+          address_district?: string
+          address_number?: string
+          address_state?: string
+          address_street?: string
+          address_zip?: string
+          bank_account?: string
+          bank_branch?: string
+          bank_name?: string
+          birth_date?: string | null
+          cpf?: string
+          created_at?: string
+          email?: string
+          email_opt_in?: boolean
+          full_name?: string
+          id?: string
+          marital_status?: string
+          nationality?: string
+          notes?: string
+          phone?: string
+          pix_key?: string
+          rg?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          address_city?: string
+          address_complement?: string
+          address_country?: string
+          address_district?: string
+          address_number?: string
+          address_state?: string
+          address_street?: string
+          address_zip?: string
+          bank_account?: string
+          bank_branch?: string
+          bank_name?: string
+          birth_date?: string | null
+          cpf?: string
+          created_at?: string
+          email?: string
+          email_opt_in?: boolean
+          full_name?: string
+          id?: string
+          marital_status?: string
+          nationality?: string
+          notes?: string
+          phone?: string
+          pix_key?: string
+          rg?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -355,7 +780,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "editor"
+      app_role: "admin" | "editor" | "autor" | "consultor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -483,7 +908,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "editor"],
+      app_role: ["admin", "editor", "autor", "consultor"],
     },
   },
 } as const

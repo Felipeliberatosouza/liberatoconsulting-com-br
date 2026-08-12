@@ -131,7 +131,8 @@ export const deleteSubscriber = createServerFn({ method: "POST" })
 export const listCampaigns = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context);
+    const { assertAnyRole } = await import("./access.server");
+    await assertAnyRole(context, ["autor"]);
     const { data, error } = await context.supabase
       .from("newsletter_campaigns")
       .select("*")
@@ -149,26 +150,60 @@ export const listCampaigns = createServerFn({ method: "GET" })
       failed_count: number;
       last_error: string | null;
       created_at: string;
+      authors: string;
+      author_contact: string;
+      image_url: string | null;
+      full_text: string;
+      sources: string;
+      file_path: string | null;
+      file_name: string | null;
+      reference_date: string | null;
     }>;
   });
 
 const campaignInput = z.object({
   id: z.string().uuid().optional(),
   subject: z.string().trim().min(3).max(200),
-  preheader: z.string().trim().max(200).optional().default(""),
+  preheader: z.string().trim().max(400).optional().default(""),
   body: z.string().trim().min(10).max(20000),
+  authors: z.string().trim().max(300).optional().default(""),
+  author_contact: z.string().trim().max(300).optional().default(""),
+  image_url: z.string().max(3_000_000).nullable().optional(),
+  full_text: z.string().max(120000).optional().default(""),
+  sources: z.string().max(8000).optional().default(""),
+  reference_date: z.string().trim().max(20).nullable().optional(),
 });
 
 export const saveCampaign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => campaignInput.parse(d))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    const { assertAnyRole, isAdmin, queueChangeRequest } = await import("./access.server");
+    await assertAnyRole(context, ["autor"]);
     const payload = {
       subject: data.subject,
       preheader: data.preheader ?? "",
       body: data.body,
+      authors: data.authors ?? "",
+      author_contact: data.author_contact ?? "",
+      image_url: data.image_url || null,
+      full_text: data.full_text ?? "",
+      sources: data.sources ?? "",
+      reference_date: data.reference_date || null,
     };
+    if (!(await isAdmin(context))) {
+      const queued = await queueChangeRequest(context, {
+        kind: "campaign",
+        action: data.id ? "update" : "create",
+        targetId: data.id ?? null,
+        title: `Newsletter: ${data.subject}`,
+        summary: data.preheader ?? "",
+        payload,
+      });
+      return queued.ok
+        ? { ok: true as const, id: data.id ?? "", pending: true as const }
+        : { ok: false as const, error: queued.error };
+    }
     if (data.id) {
       const { error } = await context.supabase
         .from("newsletter_campaigns")

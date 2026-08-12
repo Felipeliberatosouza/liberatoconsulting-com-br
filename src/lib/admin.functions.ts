@@ -197,7 +197,8 @@ export const saveTexts = createServerFn({ method: "POST" })
 export const listArticles = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context);
+    const { assertAnyRole } = await import("./access.server");
+    await assertAnyRole(context, ["consultor"]);
     const { data, error } = await context.supabase
       .from("content_articles")
       .select("*")
@@ -235,7 +236,10 @@ export const saveArticle = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => articleSchema.parse(d))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    const { assertAnyRole, isAdmin: checkAdmin, queueChangeRequest } = await import(
+      "./access.server"
+    );
+    await assertAnyRole(context, ["consultor"]);
     const { translateRecord } = await import("./admin.server");
 
     const t = await translateRecord({
@@ -256,6 +260,17 @@ export const saveArticle = createServerFn({ method: "POST" })
       link_url: data.link_url || null,
       translations: { en: t.en, es: t.es, zh: t.zh },
     };
+
+    if (!(await checkAdmin(context))) {
+      return queueChangeRequest(context, {
+        kind: "article",
+        action: id ? "update" : "create",
+        targetId: id ?? null,
+        title: `Conteúdo: ${data.title}`,
+        summary: data.summary,
+        payload: row,
+      });
+    }
 
     const { error } = id
       ? await context.supabase.from("content_articles").update(row).eq("id", id)
@@ -522,8 +537,11 @@ export const saveHeroSettings = createServerFn({ method: "POST" })
 const brazilSchema = z.object({
   id: z.string().trim().min(1).max(80),
   title: z.string().trim().max(200),
-  body: z.string().trim().max(4000),
+  body: z.string().trim().max(6000),
   bullets: z.array(z.string().trim().max(400)).max(20),
+  sources: z.string().trim().max(4000).optional().default(""),
+  authors: z.string().trim().max(300).optional().default(""),
+  authorContact: z.string().trim().max(300).optional().default(""),
 });
 
 /**
@@ -534,7 +552,10 @@ export const saveBrazilSection = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => brazilSchema.parse(d))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    const { assertAnyRole, isAdmin: checkAdmin, queueChangeRequest } = await import(
+      "./access.server"
+    );
+    await assertAnyRole(context, ["consultor"]);
     const { translateRecord } = await import("./admin.server");
 
     const current = await context.supabase
@@ -557,11 +578,28 @@ export const saveBrazilSection = createServerFn({ method: "POST" })
         bullets: bullets.map((b, i) => translated[lang][`b${i}`] ?? b),
       });
       overrides[data.id] = {
+        meta: {
+          sources: data.sources ?? "",
+          authors: data.authors ?? "",
+          authorContact: data.authorContact ?? "",
+          updatedAt: new Date().toISOString(),
+        },
         pt: { title: data.title, body: data.body, bullets },
         en: pick("en"),
         es: pick("es"),
         zh: pick("zh"),
       };
+    }
+
+    if (!(await checkAdmin(context))) {
+      return queueChangeRequest(context, {
+        kind: "brazil",
+        action: "update",
+        targetId: data.id,
+        title: `Dados do Brasil: ${data.title || data.id}`,
+        summary: data.body.slice(0, 200),
+        payload: overrides,
+      });
     }
 
     const { error } = await context.supabase
