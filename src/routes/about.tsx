@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
+import { ConsultantsTeam } from "@/components/ConsultantsTeam";
 import { CtaBand } from "@/components/CtaBand";
+
 import { ResultBanner } from "@/components/ResultBanner";
 import { useLanguage } from "@/i18n";
 
