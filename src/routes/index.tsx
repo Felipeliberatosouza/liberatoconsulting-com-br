@@ -9,7 +9,7 @@ import {
   Rocket,
   Settings2,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import heroImage from "@/assets/hero.jpg";
 import heroEmpreendedorismo from "@/assets/hero-empreendedorismo.jpg";
 import heroOperacoes from "@/assets/hero-operacoes.jpg";
@@ -62,6 +62,7 @@ function HeroCarousel() {
   const { t, hero } = useLanguage();
   const scope = useAudienceFilters();
   const [index, setIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
 
   const slides = useMemo(() => {
     const order = heroSlideOrder(hero).filter((s) => s.enabled);
@@ -79,32 +80,63 @@ function HeroCarousel() {
   }, [hero, t]);
 
   const count = slides.length;
-  const autoplay = hero?.autoplayMs ?? DEFAULT_AUTOPLAY_MS;
+  const configuredAutoplay = Number(hero?.autoplayMs);
+  const autoplay =
+    Number.isFinite(configuredAutoplay) && configuredAutoplay >= 2000
+      ? configuredAutoplay
+      : DEFAULT_AUTOPLAY_MS;
+
+  const nextSlide = useCallback(() => {
+    setIndex((current) => (current + 1) % count);
+  }, [count]);
 
   useEffect(() => {
     setIndex(0);
   }, [count]);
 
   useEffect(() => {
-    if (count < 2 || autoplay < 2000) return;
-    const id = window.setInterval(() => setIndex((i) => (i + 1) % count), autoplay);
-    return () => window.clearInterval(id);
-  }, [count, autoplay]);
+    if (count < 2) return;
+
+    let timeoutId: number | undefined;
+    const schedule = () => {
+      window.clearTimeout(timeoutId);
+      timeoutId = window.setTimeout(() => {
+        nextSlide();
+        schedule();
+      }, autoplay);
+    };
+    const resume = () => {
+      if (document.visibilityState === "visible") schedule();
+      else window.clearTimeout(timeoutId);
+    };
+
+    schedule();
+    document.addEventListener("visibilitychange", resume);
+    window.addEventListener("pageshow", resume);
+    return () => {
+      window.clearTimeout(timeoutId);
+      document.removeEventListener("visibilitychange", resume);
+      window.removeEventListener("pageshow", resume);
+    };
+  }, [count, autoplay, nextSlide]);
 
   const slide = slides[Math.min(index, count - 1)]!;
-
-  let touchX = 0;
 
   return (
     <section
       className="relative touch-pan-y overflow-hidden bg-ink text-ink-foreground"
       onTouchStart={(e) => {
-        touchX = e.touches[0]?.clientX ?? 0;
+        touchStartX.current = e.touches[0]?.clientX ?? null;
       }}
       onTouchEnd={(e) => {
-        const dx = (e.changedTouches[0]?.clientX ?? 0) - touchX;
+        if (touchStartX.current === null) return;
+        const dx = (e.changedTouches[0]?.clientX ?? touchStartX.current) - touchStartX.current;
+        touchStartX.current = null;
         if (Math.abs(dx) < 50 || count < 2) return;
         setIndex((i) => (dx < 0 ? (i + 1) % count : (i - 1 + count) % count));
+      }}
+      onTouchCancel={() => {
+        touchStartX.current = null;
       }}
     >
       {slides.map((s, i) => (
