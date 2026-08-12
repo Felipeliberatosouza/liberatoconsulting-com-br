@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { toInstagram, toLinkedIn, toWhatsApp } from "@/lib/social-formats";
+
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
