@@ -18,7 +18,8 @@ const select =
 
 /** Linha de personalização (segmento, região e UF) exibida abaixo do cabeçalho. */
 export function SiteFilterBar() {
-  const { segments } = useLanguage();
+  const { segments, t } = useLanguage();
+  const tf = t.filters;
   const { filters, applied, label, apply, clear } = useAudienceFilters();
   const [draft, setDraft] = useState<AudienceFilters>(filters);
 
