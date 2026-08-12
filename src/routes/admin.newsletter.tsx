@@ -129,10 +129,14 @@ function AdminNewsletter() {
       {/* Campanha */}
       <div className={`mt-8 ${card}`}>
         <h2 className="font-display text-lg font-bold">
-          {editId ? "Editar campanha" : "Nova campanha"}
+          {editId ? "Editar newsletter" : "Nova newsletter"}
         </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Preencha o título e o texto, ou carregue um arquivo com o texto completo. Os formatos para
+          WhatsApp, LinkedIn e Instagram são gerados automaticamente.
+        </p>
         <form
-          className="mt-4 space-y-3"
+          className="mt-5 space-y-5"
           onSubmit={async (e) => {
             e.preventDefault();
             setBusy(true);
@@ -142,7 +146,7 @@ function AdminNewsletter() {
               });
               if (!r.ok) toast.error(r.error);
               else {
-                toast.success("Campanha salva.");
+                toast.success("Newsletter salva.");
                 resetForm();
                 await campaigns.refetch();
               }
@@ -151,18 +155,70 @@ function AdminNewsletter() {
             }
           }}
         >
-          <input className={input} required value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Assunto do e-mail" />
-          <input className={input} value={preheader} onChange={(e) => setPreheader(e.target.value)} placeholder="Prévia (texto curto que aparece na caixa de entrada)" />
-          <textarea
-            className={`${input} min-h-48`}
-            required
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            placeholder="Escreva o conteúdo da newsletter. Separe os parágrafos com uma linha em branco."
-          />
+          <div>
+            <label className={label} htmlFor="nl-title">Título da newsletter</label>
+            <input id="nl-title" className={input} required value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Ex.: Como a IA está mudando a gestão no Brasil" />
+          </div>
+
+          <div>
+            <label className={label} htmlFor="nl-pre">Chamada curta (aparece na caixa de entrada)</label>
+            <input id="nl-pre" className={input} value={preheader} onChange={(e) => setPreheader(e.target.value)} placeholder="Uma frase que convida à leitura" />
+          </div>
+
+          <div>
+            <div className="flex flex-wrap items-center gap-3">
+              <label className={label} htmlFor="nl-body">Texto da newsletter</label>
+              <span className="ml-auto text-xs text-muted-foreground">
+                {body.trim() ? `${body.trim().split(/\s+/).length} palavras` : "vazio"}
+              </span>
+            </div>
+            <textarea
+              id="nl-body"
+              className={`${input} min-h-56 leading-relaxed`}
+              required
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder="Escreva o conteúdo. Separe os parágrafos com uma linha em branco."
+            />
+          </div>
+
+          <div className="rounded-md border border-dashed border-border p-4">
+            <p className="text-sm font-semibold">Carregar arquivo com o texto completo</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Aceita arquivos .txt e .md. O conteúdo é inserido no campo de texto acima.
+            </p>
+            <input
+              type="file"
+              accept=".txt,.md,.markdown,text/plain,text/markdown"
+              className="mt-3 text-sm"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (!file) return;
+                if (file.size > 1_000_000) {
+                  toast.error("Arquivo muito grande (máx. 1 MB).");
+                  return;
+                }
+                if (!/\.(txt|md|markdown)$/i.test(file.name)) {
+                  toast.error("Formato não suportado. Salve o texto como .txt ou .md.");
+                  return;
+                }
+                const text = await file.text();
+                setBody((prev) => (prev.trim() ? `${prev.trim()}\n\n${text.trim()}` : text.trim()));
+                if (!subject.trim()) setSubject(file.name.replace(/\.[^.]+$/, ""));
+                toast.success("Texto importado do arquivo.");
+              }}
+            />
+          </div>
+
+          <div>
+            <label className={label} htmlFor="nl-link">Link do conteúdo (opcional, usado nas redes)</label>
+            <input id="nl-link" className={input} value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://liberato.com/content/..." />
+          </div>
+
           <div className="flex flex-wrap items-center gap-3">
             <button className={btn} type="submit" disabled={busy}>
-              {busy ? "Salvando…" : editId ? "Salvar alterações" : "Criar campanha"}
+              {busy ? "Salvando…" : editId ? "Salvar alterações" : "Criar newsletter"}
             </button>
             {editId && (
               <button type="button" onClick={resetForm} className="text-sm text-muted-foreground hover:text-accent">
@@ -171,7 +227,46 @@ function AdminNewsletter() {
             )}
           </div>
         </form>
+
+        {/* Formatos para redes sociais */}
+        <div className="mt-8 border-t border-border pt-6">
+          <h3 className="font-display text-base font-bold">Formatos para redes sociais</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Gerados a partir do título e do texto acima. Edite se quiser e copie com um clique.
+          </p>
+          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+            {socialFormats.map((f) => (
+              <div key={f.key} className="rounded-md border border-border p-4">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-sm">{f.label}</span>
+                  <button
+                    type="button"
+                    className="ml-auto text-xs font-semibold text-accent hover:underline"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(f.value);
+                        toast.success(`Texto para ${f.label} copiado.`);
+                      } catch {
+                        toast.error("Não foi possível copiar.");
+                      }
+                    }}
+                  >
+                    Copiar
+                  </button>
+                </div>
+                <textarea
+                  className={`${input} mt-2 min-h-48 text-xs leading-relaxed`}
+                  value={f.value}
+                  onChange={(e) => setSocialDrafts((d) => ({ ...d, [f.key]: e.target.value }))}
+                />
+                <p className="mt-1 text-[11px] text-muted-foreground">{f.value.length} caracteres</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
+
+
 
       {/* Lista de campanhas */}
       <div className={`mt-8 ${card}`}>
