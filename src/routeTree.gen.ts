@@ -45,6 +45,7 @@ import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.u
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as ApiPublicBulletinWeeklyRouteImport } from './routes/api/public/bulletin-weekly'
+import { Route as ApiPublicNewsletterWeeklyRouteImport } from './routes/api/public/newsletter-weekly'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -226,6 +227,12 @@ const ApiPublicBulletinWeeklyRoute = ApiPublicBulletinWeeklyRouteImport.update({
   path: '/api/public/bulletin-weekly',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicNewsletterWeeklyRoute =
+  ApiPublicNewsletterWeeklyRouteImport.update({
+    id: '/api/public/newsletter-weekly',
+    path: '/api/public/newsletter-weekly',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -264,6 +271,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
+  '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -302,6 +310,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
+  '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -341,6 +350,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
+  '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -381,6 +391,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/services/'
     | '/api/public/bulletin-weekly'
+    | '/api/public/newsletter-weekly'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -419,6 +430,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/services'
     | '/api/public/bulletin-weekly'
+    | '/api/public/newsletter-weekly'
   id:
     | '__root__'
     | '/'
@@ -457,6 +469,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/services/'
     | '/api/public/bulletin-weekly'
+    | '/api/public/newsletter-weekly'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -495,6 +508,7 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
   ApiPublicBulletinWeeklyRoute: typeof ApiPublicBulletinWeeklyRoute
+  ApiPublicNewsletterWeeklyRoute: typeof ApiPublicNewsletterWeeklyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -751,6 +765,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBulletinWeeklyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/newsletter-weekly': {
+      id: '/api/public/newsletter-weekly'
+      path: '/api/public/newsletter-weekly'
+      fullPath: '/api/public/newsletter-weekly'
+      preLoaderRoute: typeof ApiPublicNewsletterWeeklyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -801,6 +822,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
   ApiPublicBulletinWeeklyRoute: ApiPublicBulletinWeeklyRoute,
+  ApiPublicNewsletterWeeklyRoute: ApiPublicNewsletterWeeklyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
