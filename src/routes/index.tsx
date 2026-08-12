@@ -93,8 +93,20 @@ function HeroCarousel() {
 
   const slide = slides[Math.min(index, count - 1)]!;
 
+  let touchX = 0;
+
   return (
-    <section className="relative overflow-hidden bg-ink text-ink-foreground">
+    <section
+      className="relative touch-pan-y overflow-hidden bg-ink text-ink-foreground"
+      onTouchStart={(e) => {
+        touchX = e.touches[0]?.clientX ?? 0;
+      }}
+      onTouchEnd={(e) => {
+        const dx = (e.changedTouches[0]?.clientX ?? 0) - touchX;
+        if (Math.abs(dx) < 50 || count < 2) return;
+        setIndex((i) => (dx < 0 ? (i + 1) % count : (i - 1 + count) % count));
+      }}
+    >
       {slides.map((s, i) => (
         <img
           key={s.id}
@@ -107,7 +119,8 @@ function HeroCarousel() {
           }`}
         />
       ))}
-      <div className="relative mx-auto max-w-7xl px-6 py-28 md:py-40">
+      <div className="relative mx-auto max-w-7xl px-6 py-16 sm:py-24 md:py-40">
+
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
             {slide.eyebrow}
