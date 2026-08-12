@@ -167,3 +167,18 @@
     letter-spacing: -0.02em;
   }
 }
+
+/* Proteção contra cópia no site público */
+body.no-copy {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+body.no-copy input,
+body.no-copy textarea,
+body.no-copy select,
+body.no-copy [contenteditable="true"],
+body.no-copy [data-allow-copy] {
+  -webkit-user-select: text;
+  user-select: text;
+}
