@@ -24,6 +24,7 @@ import { Route as AdminApplicationsRouteImport } from './routes/admin.applicatio
 import { Route as AdminApprovalsRouteImport } from './routes/admin.approvals'
 import { Route as AdminBoletimRouteImport } from './routes/admin.boletim'
 import { Route as AdminBrasilRouteImport } from './routes/admin.brasil'
+import { Route as AdminConsultoresRouteImport } from './routes/admin.consultores'
 import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminContratoRouteImport } from './routes/admin.contrato'
 import { Route as AdminEmpresaRouteImport } from './routes/admin.empresa'
@@ -118,6 +119,11 @@ const AdminBoletimRoute = AdminBoletimRouteImport.update({
 const AdminBrasilRoute = AdminBrasilRouteImport.update({
   id: '/admin/brasil',
   path: '/admin/brasil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminConsultoresRoute = AdminConsultoresRouteImport.update({
+  id: '/admin/consultores',
+  path: '/admin/consultores',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminContentRoute = AdminContentRouteImport.update({
@@ -236,6 +242,7 @@ export interface FileRoutesByFullPath {
   '/admin/approvals': typeof AdminApprovalsRoute
   '/admin/boletim': typeof AdminBoletimRoute
   '/admin/brasil': typeof AdminBrasilRoute
+  '/admin/consultores': typeof AdminConsultoresRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/empresa': typeof AdminEmpresaRoute
@@ -273,6 +280,7 @@ export interface FileRoutesByTo {
   '/admin/approvals': typeof AdminApprovalsRoute
   '/admin/boletim': typeof AdminBoletimRoute
   '/admin/brasil': typeof AdminBrasilRoute
+  '/admin/consultores': typeof AdminConsultoresRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/empresa': typeof AdminEmpresaRoute
@@ -311,6 +319,7 @@ export interface FileRoutesById {
   '/admin/approvals': typeof AdminApprovalsRoute
   '/admin/boletim': typeof AdminBoletimRoute
   '/admin/brasil': typeof AdminBrasilRoute
+  '/admin/consultores': typeof AdminConsultoresRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/empresa': typeof AdminEmpresaRoute
@@ -350,6 +359,7 @@ export interface FileRouteTypes {
     | '/admin/approvals'
     | '/admin/boletim'
     | '/admin/brasil'
+    | '/admin/consultores'
     | '/admin/content'
     | '/admin/contrato'
     | '/admin/empresa'
@@ -387,6 +397,7 @@ export interface FileRouteTypes {
     | '/admin/approvals'
     | '/admin/boletim'
     | '/admin/brasil'
+    | '/admin/consultores'
     | '/admin/content'
     | '/admin/contrato'
     | '/admin/empresa'
@@ -424,6 +435,7 @@ export interface FileRouteTypes {
     | '/admin/approvals'
     | '/admin/boletim'
     | '/admin/brasil'
+    | '/admin/consultores'
     | '/admin/content'
     | '/admin/contrato'
     | '/admin/empresa'
@@ -462,6 +474,7 @@ export interface RootRouteChildren {
   AdminApprovalsRoute: typeof AdminApprovalsRoute
   AdminBoletimRoute: typeof AdminBoletimRoute
   AdminBrasilRoute: typeof AdminBrasilRoute
+  AdminConsultoresRoute: typeof AdminConsultoresRoute
   AdminContentRoute: typeof AdminContentRoute
   AdminContratoRoute: typeof AdminContratoRoute
   AdminEmpresaRoute: typeof AdminEmpresaRoute
@@ -589,6 +602,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/brasil'
       fullPath: '/admin/brasil'
       preLoaderRoute: typeof AdminBrasilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/consultores': {
+      id: '/admin/consultores'
+      path: '/admin/consultores'
+      fullPath: '/admin/consultores'
+      preLoaderRoute: typeof AdminConsultoresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/content': {
@@ -760,6 +780,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminApprovalsRoute: AdminApprovalsRoute,
   AdminBoletimRoute: AdminBoletimRoute,
   AdminBrasilRoute: AdminBrasilRoute,
+  AdminConsultoresRoute: AdminConsultoresRoute,
   AdminContentRoute: AdminContentRoute,
   AdminContratoRoute: AdminContratoRoute,
   AdminEmpresaRoute: AdminEmpresaRoute,

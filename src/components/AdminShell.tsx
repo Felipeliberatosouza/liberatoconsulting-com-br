@@ -10,6 +10,8 @@ import { useLanguage } from "@/i18n";
 const NAV: Array<{ to: string; label: string; exact?: boolean }> = [
   { to: "/admin", label: "Visão geral", exact: true },
   { to: "/admin/users", label: "Usuários" },
+  { to: "/admin/consultores", label: "Consultores" },
+
   { to: "/admin/approvals", label: "Aprovações" },
   { to: "/admin/content", label: "Conteúdo" },
   { to: "/admin/brasil", label: "Dados do Brasil" },
