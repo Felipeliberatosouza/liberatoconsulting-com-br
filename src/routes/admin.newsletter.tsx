@@ -37,6 +37,8 @@ const input =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
 const btn =
   "rounded-md bg-ink px-4 py-2 text-sm font-semibold text-ink-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-60";
+const label = "mb-1 block text-sm font-semibold";
+
 
 function AdminNewsletter() {
   const subscribers = useQuery({ queryKey: ["nl-subs"], queryFn: () => listSubscribers(), retry: false });
