@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
+import { ScheduleSettings } from "@/components/ScheduleSettings";
 import { listEmailTemplates, saveEmailTemplate } from "@/lib/company.functions";
 import {
   getAlertEmail,
