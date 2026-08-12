@@ -50,6 +50,8 @@ function BrazilPage() {
         </div>
       </section>
 
+      <SiteFilterBar />
+
       <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 lg:grid-cols-[240px_1fr]">
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
