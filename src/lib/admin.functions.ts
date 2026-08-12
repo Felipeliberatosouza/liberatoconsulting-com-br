@@ -499,7 +499,7 @@ const heroSchema = z.object({
       z.object({
         id: z.string().trim().min(1).max(40),
         enabled: z.boolean(),
-        imageUrl: z.string().trim().max(1000).optional(),
+        imageUrl: z.string().trim().max(3_000_000).optional(),
       }),
     )
     .max(12),
