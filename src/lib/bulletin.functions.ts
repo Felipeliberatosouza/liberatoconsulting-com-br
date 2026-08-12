@@ -98,11 +98,6 @@ export const unsubscribeBulletin = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
-async function assertAdmin(context: { supabase: unknown; userId: string }) {
-  const { assertAdmin: check } = await import("./access.server");
-  await check(context as never);
-}
-
 /** Equipe do painel (admin, consultor e autor) pode consultar o boletim. */
 async function assertPanel(context: { supabase: unknown; userId: string }) {
   const { assertAnyRole } = await import("./access.server");
