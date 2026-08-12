@@ -94,15 +94,10 @@ export async function buildBulletinContent(segment: string): Promise<BulletinCon
     ? all
     : all.filter((i) => !i.segment || i.segment === "Todos" || i.segment === segment);
 
-  const c = (companyRow ?? {}) as Record<string, string | null>;
-  const address = [
-    [c["address_street"], c["address_number"]].filter(Boolean).join(", "),
-    c["address_district"],
-    [c["address_city"], c["address_state"]].filter(Boolean).join("/"),
-    c["address_zip"],
-  ]
-    .filter(Boolean)
-    .join(" — ");
+  const company = companyFooterFromRow(
+    companyRow as Record<string, string | null> | null,
+    siteOrigin(),
+  );
 
   const logo =
     ((branding?.value ?? {}) as { logoUrl?: string }).logoUrl || `${siteOrigin()}/logo.png`;
@@ -112,16 +107,10 @@ export async function buildBulletinContent(segment: string): Promise<BulletinCon
     dateLabel: formatDatePt(),
     indicators: scoped.slice(0, 8),
     articles: (articleRows ?? []) as Article[],
-    company: {
-      name: c["legal_name"] || c["trade_name"] || "Liberato Consulting",
-      cnpj: c["cnpj"] || "",
-      address,
-      email: c["email"] || "contato@liberatoconsulting.com.br",
-      phone: c["phone"] || "",
-      website: c["website"] || siteOrigin(),
-    },
+    company,
     logoUrl: logo,
   };
+
 }
 
 /** HTML do Boletim Semanal (corpo do e-mail). */
