@@ -81,6 +81,10 @@ export const dict: Dict = {
           {
             "id": "operacao-inicial",
             "label": "Estructuración de la Operación Inicial"
+          },
+          {
+            "id": "estudo-de-viabilidade",
+            "label": "Estudio de Viabilidad"
           }
         ]
       },
@@ -194,6 +198,10 @@ export const dict: Dict = {
           {
             "id": "operacao-inicial",
             "label": "Estructuración de la Operación Inicial"
+          },
+          {
+            "id": "estudo-de-viabilidade",
+            "label": "Estudio de Viabilidad"
           }
         ]
       },
@@ -1261,6 +1269,22 @@ export const dict: Dict = {
           "Indicadores operativos desde el inicio"
         ],
         "ai": "Automatización y agentes de IA cubren soporte y back office antes de contratar personal adicional."
+      },
+      {
+        "id": "estudo-de-viabilidade",
+        "group": "empreendedorismo",
+        "title": "Estudio de Viabilidad",
+        "lead": "Una decisión fundamentada antes de invertir tiempo y capital.",
+        "body": "Evaluamos la viabilidad técnica, económica, financiera y regulatoria de una idea, producto o expansión. Entregamos premisas claras, escenarios de riesgo y un dictamen objetivo sobre seguir, ajustar o descartar el proyecto.",
+        "audience": "Fundadores, directorios e inversionistas que necesitan validar una oportunidad antes de comprometer recursos.",
+        "duration": "4 a 8 semanas.",
+        "bullets": [
+          "Análisis de mercado y demanda esperada",
+          "Evaluación técnica y operacional",
+          "Proyección financiera y análisis de escenarios",
+          "Mapeo de riesgos y mitigaciones"
+        ],
+        "ai": "La IA cruza datos de mercado, regulación y benchmarks para probar premisas y acelerar la construcción de escenarios."
       },
       {
         "id": "dimensionamento-de-mercado",

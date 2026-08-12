@@ -81,6 +81,10 @@ export const dict: Dict = {
           {
             "id": "operacao-inicial",
             "label": "初创期运营架构"
+          },
+          {
+            "id": "estudo-de-viabilidade",
+            "label": "可行性研究"
           }
         ]
       },
@@ -194,6 +198,10 @@ export const dict: Dict = {
           {
             "id": "operacao-inicial",
             "label": "初创期运营架构"
+          },
+          {
+            "id": "estudo-de-viabilidade",
+            "label": "可行性研究"
           }
         ]
       },
@@ -1261,6 +1269,22 @@ export const dict: Dict = {
           "首日的运营指标体系"
         ],
         "ai": "在公司需要大量招聘前，自动化和 AI 代理即可覆盖客服、销售及后台任务。"
+      },
+      {
+        "id": "estudo-de-viabilidade",
+        "group": "empreendedorismo",
+        "title": "可行性研究",
+        "lead": "在投入时间和资金之前做出有依据的决策。",
+        "body": "我们评估一个想法、产品或扩张的技术、经济、财务和监管可行性。交付明确的假设、风险场景以及关于继续、调整或放弃项目的客观意见。",
+        "audience": "需要在投入资源之前验证机会的创始人、董事会和投资者。",
+        "duration": "4 至 8 周。",
+        "bullets": [
+          "市场分析与预期需求",
+          "技术与运营评估",
+          "财务预测与情景分析",
+          "风险识别与缓解措施"
+        ],
+        "ai": "人工智能交叉市场数据、法规和基准，以验证假设并加速情景构建。"
       },
       {
         "id": "dimensionamento-de-mercado",
