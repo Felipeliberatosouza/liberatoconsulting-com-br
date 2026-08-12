@@ -239,8 +239,7 @@ ${indicators || "Sem indicadores para este recorte."}
 *Últimos artigos*
 ${articles || "Novos conteúdos em breve."}
 
-${content.company.name}
-${content.company.email}${content.company.phone ? ` — ${content.company.phone}` : ""}
+${companyFooterText(content.company)}
 
 Para parar de receber, acesse: ${unsubscribeUrl}`;
 }
