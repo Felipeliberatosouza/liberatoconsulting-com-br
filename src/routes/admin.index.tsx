@@ -61,6 +61,11 @@ const CARDS = [
     text: "Inscritos, pré-visualização e envio por e-mail e WhatsApp, por segmento.",
   },
   {
+    to: "/admin/historico",
+    title: "Histórico de publicações",
+    text: "Newsletters enviadas, boletins semanais disparados e conteúdos publicados.",
+  },
+  {
     to: "/admin/leads",
     title: "Leads recebidos",
     text: "Contatos enviados pelos formulários das páginas de serviço.",
