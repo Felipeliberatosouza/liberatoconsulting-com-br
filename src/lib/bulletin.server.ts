@@ -481,3 +481,42 @@ export async function sendUnsubscribeConfirmation(sub: {
     }
   }
 }
+
+/**
+ * Registra no histórico do painel a edição do Boletim Semanal assim que ela é
+ * gerada (antes de qualquer envio). Evita duplicar a mesma edição.
+ */
+export async function recordBulletinGenerated(params: {
+  subject: string;
+  dateLabel: string;
+  html: string;
+  segment?: string;
+}) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: existing } = await supabaseAdmin
+    .from("bulletin_dispatches")
+    .select("id")
+    .eq("status", "gerado")
+    .eq("subject", params.subject)
+    .eq("date_label", params.dateLabel)
+    .eq("segment", params.segment ?? "")
+    .maybeSingle();
+  if (existing) {
+    await supabaseAdmin
+      .from("bulletin_dispatches")
+      .update({ body_html: params.html })
+      .eq("id", existing.id);
+    return;
+  }
+  await supabaseAdmin.from("bulletin_dispatches").insert({
+    subject: params.subject,
+    date_label: params.dateLabel,
+    sent_email: 0,
+    sent_whatsapp: 0,
+    failed: 0,
+    is_test: false,
+    body_html: params.html,
+    status: "gerado",
+    segment: params.segment ?? "",
+  });
+}
