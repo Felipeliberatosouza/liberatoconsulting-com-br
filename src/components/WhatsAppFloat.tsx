@@ -2,7 +2,7 @@ import { useLanguage } from "@/i18n";
 import { normalizeWhatsApp, whatsappHref } from "@/lib/whatsapp";
 
 export function WhatsAppFloat() {
-  const { t, logoUrl, whatsapp } = useLanguage();
+  const { t, whatsapp } = useLanguage();
   const number = normalizeWhatsApp(whatsapp);
   if (!number) return null;
 
