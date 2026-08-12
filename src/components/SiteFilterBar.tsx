@@ -14,7 +14,7 @@ import {
 } from "@/lib/audience-filters";
 
 const select =
-  "w-full rounded-full border border-ink-foreground/25 bg-ink-foreground/10 px-3 py-1.5 text-xs font-medium text-ink-foreground outline-none focus:border-accent [&>option]:bg-background [&>option]:text-foreground";
+  "w-full rounded-full border border-accent-foreground/30 bg-accent-foreground/10 px-3 py-1.5 text-xs font-medium text-accent-foreground outline-none focus:border-accent-foreground [&>option]:bg-background [&>option]:text-foreground";
 
 /** Linha de personalização (segmento, região e UF) exibida abaixo do cabeçalho. */
 export function SiteFilterBar() {
