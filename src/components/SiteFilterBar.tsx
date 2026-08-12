@@ -14,7 +14,7 @@ import {
 } from "@/lib/audience-filters";
 
 const select =
-  "w-full rounded-full border border-ink-foreground/25 bg-ink-foreground/10 px-3 py-1.5 text-xs font-medium text-ink-foreground outline-none focus:border-accent [&>option]:bg-background [&>option]:text-foreground";
+  "w-full rounded-full border border-accent-foreground/30 bg-accent-foreground/10 px-3 py-1.5 text-xs font-medium text-accent-foreground outline-none focus:border-accent-foreground [&>option]:bg-background [&>option]:text-foreground";
 
 /** Linha de personalização (segmento, região e UF) exibida abaixo do cabeçalho. */
 export function SiteFilterBar() {
@@ -33,9 +33,9 @@ export function SiteFilterBar() {
     draft.state !== filters.state;
 
   return (
-    <div className="border-t border-ink-foreground/15 bg-ink text-ink-foreground">
+    <div className="border-t border-ink-foreground/15 bg-accent text-accent-foreground">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-6 py-2.5">
-        <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
+        <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-foreground">
           <SlidersHorizontal className="size-3.5" />
           Personalize os dados
         </span>
@@ -101,14 +101,14 @@ export function SiteFilterBar() {
               setDraft(EMPTY_FILTERS);
               clear();
             }}
-            className="inline-flex items-center gap-1.5 rounded-full border border-ink-foreground/25 px-3 py-1.5 text-xs font-semibold transition-colors hover:bg-ink-foreground/10"
+            className="inline-flex items-center gap-1.5 rounded-full border border-accent-foreground/30 px-3 py-1.5 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent-foreground/10"
           >
             <Eraser className="size-3.5" />
             Apagar filtros
           </button>
           <button
             onClick={() => apply(draft)}
-            className="inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-xs font-semibold text-accent-foreground transition-opacity hover:opacity-90"
+            className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-1.5 text-xs font-semibold text-ink-foreground transition-opacity hover:opacity-90"
           >
             <Check className="size-3.5" />
             {dirty ? "Concluir filtros" : "Filtros aplicados"}
@@ -116,9 +116,9 @@ export function SiteFilterBar() {
         </div>
 
         {applied && (
-          <p className="w-full text-[11px] text-ink-foreground/70">
+          <p className="w-full text-[11px] text-accent-foreground/80">
             Exibindo informações destacadas para{" "}
-            <span className="font-semibold text-accent">{label}</span>.
+            <span className="font-semibold text-ink-foreground">{label}</span>.
           </p>
         )}
       </div>
