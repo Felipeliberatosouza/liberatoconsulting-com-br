@@ -113,8 +113,10 @@ export type Database = {
           id: string
           is_test: boolean
           last_error: string | null
+          segment: string
           sent_email: number
           sent_whatsapp: number
+          status: string
           subject: string
         }
         Insert: {
@@ -125,8 +127,10 @@ export type Database = {
           id?: string
           is_test?: boolean
           last_error?: string | null
+          segment?: string
           sent_email?: number
           sent_whatsapp?: number
+          status?: string
           subject?: string
         }
         Update: {
@@ -137,8 +141,10 @@ export type Database = {
           id?: string
           is_test?: boolean
           last_error?: string | null
+          segment?: string
           sent_email?: number
           sent_whatsapp?: number
+          status?: string
           subject?: string
         }
         Relationships: []
