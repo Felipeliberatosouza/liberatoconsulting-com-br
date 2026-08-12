@@ -33,6 +33,7 @@ import {
   type HeroSettings,
   type SiteConfig,
 } from "@/lib/site-config";
+import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
 
 export type { Lang };
 export { LANGS, LANG_LABELS, LANG_SHORT, LANG_HTML };
@@ -58,6 +59,8 @@ type LanguageContextValue = {
   whatsapp: string | undefined;
   /** Configuração do carrossel da página inicial. */
   hero: HeroSettings;
+  /** Segmentos atendidos pela consultoria (configuráveis no painel). */
+  segments: string[];
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -149,6 +152,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       logoUrl: config.branding?.logoUrl || "/logo.png",
       whatsapp: config.branding?.whatsapp,
       hero: config.hero ?? {},
+      segments:
+        config.branding?.segments && config.branding.segments.length > 0
+          ? config.branding.segments
+          : DEFAULT_SEGMENTS,
     }),
     [lang, setLang, dicts, translating, config],
   );
@@ -166,6 +173,7 @@ const FALLBACK_VALUE: LanguageContextValue = {
   logoUrl: "/logo.png",
   whatsapp: undefined,
   hero: {},
+  segments: DEFAULT_SEGMENTS,
 };
 
 export function useLanguage() {
