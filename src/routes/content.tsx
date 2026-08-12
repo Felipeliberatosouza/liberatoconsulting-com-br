@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { CtaBand } from "@/components/CtaBand";
+import { BulletinSignup } from "@/components/BulletinSignup";
 import { useLanguage } from "@/i18n";
 
 type ContentSearch = {
@@ -196,6 +197,10 @@ function ContentPage() {
         </div>
 
         <p className="mt-12 text-sm text-muted-foreground">{c.emptyNote}</p>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-6 pb-20">
+        <BulletinSignup />
       </section>
 
       <CtaBand />
