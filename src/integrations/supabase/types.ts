@@ -293,6 +293,60 @@ export type Database = {
         }
         Relationships: []
       }
+      consultants: {
+        Row: {
+          clients: string
+          contact_email: string
+          created_at: string
+          education: string
+          experience: string
+          full_name: string
+          headline: string
+          id: string
+          photo_url: string
+          position: number
+          published: boolean
+          segments: Json
+          specialties: Json
+          updated_at: string
+          works: string
+        }
+        Insert: {
+          clients?: string
+          contact_email?: string
+          created_at?: string
+          education?: string
+          experience?: string
+          full_name: string
+          headline?: string
+          id?: string
+          photo_url?: string
+          position?: number
+          published?: boolean
+          segments?: Json
+          specialties?: Json
+          updated_at?: string
+          works?: string
+        }
+        Update: {
+          clients?: string
+          contact_email?: string
+          created_at?: string
+          education?: string
+          experience?: string
+          full_name?: string
+          headline?: string
+          id?: string
+          photo_url?: string
+          position?: number
+          published?: boolean
+          segments?: Json
+          specialties?: Json
+          updated_at?: string
+          works?: string
+        }
+        Relationships: []
+      }
       content_articles: {
         Row: {
           author_contact: string
@@ -885,7 +939,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
+      list_public_consultants: {
+        Args: never
+        Returns: {
+          clients: string
+          education: string
+          experience: string
+          full_name: string
+          headline: string
+          id: string
+          photo_url: string
+          segments: Json
+          sort_order: number
+          specialties: Json
+          works: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "editor" | "autor" | "consultor"
