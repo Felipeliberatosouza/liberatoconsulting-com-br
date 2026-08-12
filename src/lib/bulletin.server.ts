@@ -436,6 +436,8 @@ export async function dispatchBulletin(options?: {
     last_error: lastError,
     is_test: Boolean(options?.testEmail || options?.testWhatsApp),
     body_html: snapshot?.html ?? "",
+    status: "enviado",
+    segment: options?.testSegment ?? "",
   });
 
   if (sentEmail === 0 && sentWhatsApp === 0) {
