@@ -15,11 +15,11 @@ import { listPublicIndicators } from "@/lib/indicators.functions";
 export const Route = createFileRoute("/brasil")({
   head: () => ({
     meta: [
-      { title: "Dados do Brasil para investidores internacionais — Liberato Consulting" },
+      { title: "Dados do Brasil para investidores — Liberato Consulting" },
       {
         name: "description",
         content:
-          "Economia brasileira em um só lugar: PIB, inflação, Selic, setores estratégicos, investimento estrangeiro direto, tributos, comércio exterior, consumidor e infraestrutura no Brasil.",
+          "Economia brasileira: PIB, inflação, Selic, setores estratégicos, investimento estrangeiro, tributos e infraestrutura em um só lugar.",
       },
       {
         property: "og:title",
@@ -30,7 +30,9 @@ export const Route = createFileRoute("/brasil")({
         content:
           "Panorama econômico, setores estratégicos, IED, tributos, Mercosul, mercado consumidor e infraestrutura do Brasil.",
       },
+      { property: "og:url", content: "https://liberato-ai-insight.lovable.app/brasil" },
     ],
+    links: [{ rel: "canonical", href: "https://liberato-ai-insight.lovable.app/brasil" }],
   }),
   component: BrazilPage,
 });
