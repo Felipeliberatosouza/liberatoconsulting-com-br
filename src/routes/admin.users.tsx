@@ -519,7 +519,7 @@ function ApplicantsTab() {
           ))}
           {(q.data ?? []).length === 0 && (
             <tr>
-              <td className="px-4 py-6 text-muted-foreground" colSpan={5}>
+              <td className="px-4 py-6 text-muted-foreground" colSpan={7}>
                 Nenhuma candidatura.
               </td>
             </tr>
