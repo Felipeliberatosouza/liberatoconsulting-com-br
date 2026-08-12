@@ -39,14 +39,7 @@ export type BulletinContent = {
   dateLabel: string;
   indicators: Indicator[];
   articles: Article[];
-  company: {
-    name: string;
-    cnpj: string;
-    address: string;
-    email: string;
-    phone: string;
-    website: string;
-  };
+  company: CompanyFooter;
   logoUrl: string;
 };
 
