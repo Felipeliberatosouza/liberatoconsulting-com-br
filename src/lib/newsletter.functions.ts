@@ -129,7 +129,7 @@ export const listCampaigns = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { assertAnyRole } = await import("./access.server");
-    await assertAnyRole(context, ["autor"]);
+    await assertAnyRole(context, ["consultor", "autor"]);
     const { data, error } = await context.supabase
       .from("newsletter_campaigns")
       .select("*")
@@ -176,7 +176,7 @@ export const saveCampaign = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => campaignInput.parse(d))
   .handler(async ({ data, context }) => {
     const { assertAnyRole, isAdmin, queueChangeRequest } = await import("./access.server");
-    await assertAnyRole(context, ["autor"]);
+    await assertAnyRole(context, ["consultor", "autor"]);
     const payload = {
       subject: data.subject,
       preheader: data.preheader ?? "",
