@@ -353,11 +353,14 @@ export type Database = {
           position: number
           published: boolean
           reference_period: string
+          region: string
+          segment: string
           slug: string
           source_name: string
           source_url: string
           translations: Json
           trend: string
+          uf: string
           unit: string
           updated_at: string
           updated_by_ai: boolean
@@ -372,11 +375,14 @@ export type Database = {
           position?: number
           published?: boolean
           reference_period?: string
+          region?: string
+          segment?: string
           slug: string
           source_name?: string
           source_url?: string
           translations?: Json
           trend?: string
+          uf?: string
           unit?: string
           updated_at?: string
           updated_by_ai?: boolean
@@ -391,11 +397,14 @@ export type Database = {
           position?: number
           published?: boolean
           reference_period?: string
+          region?: string
+          segment?: string
           slug?: string
           source_name?: string
           source_url?: string
           translations?: Json
           trend?: string
+          uf?: string
           unit?: string
           updated_at?: string
           updated_by_ai?: boolean

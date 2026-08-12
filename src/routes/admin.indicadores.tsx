@@ -11,6 +11,14 @@ import {
   saveIndicator,
   type Indicator,
 } from "@/lib/indicators.functions";
+import {
+  ALL_REGIONS,
+  ALL_SEGMENTS,
+  ALL_STATES,
+  DEFAULT_SEGMENTS,
+  REGIONS,
+  statesForRegion,
+} from "@/lib/audience-filters";
 
 export const Route = createFileRoute("/admin/indicadores")({
   head: () => ({
@@ -46,6 +54,9 @@ const empty = {
   source_url: "",
   position: 0,
   published: true,
+  segment: ALL_SEGMENTS as string,
+  region: ALL_REGIONS as string,
+  uf: ALL_STATES as string,
 };
 type Form = typeof empty;
 
@@ -218,6 +229,65 @@ function IndicatorsPage() {
             Publicado no site
           </label>
         </div>
+
+        <fieldset className="mt-6 rounded-md border border-border p-4">
+          <legend className="px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            Recorte do indicador (filtros de Dados do Brasil)
+          </legend>
+          <p className="text-xs text-muted-foreground">
+            Deixe em &quot;Geral / Todas / Todos&quot; para indicadores nacionais. Ao definir um
+            recorte, o indicador só aparece quando o visitante aplicar esses filtros.
+          </p>
+          <div className="mt-3 grid gap-4 md:grid-cols-3">
+            <label className="text-xs font-medium text-muted-foreground">
+              Segmento
+              <select
+                value={form.segment}
+                onChange={(e) => set("segment", e.target.value)}
+                className={`mt-1 ${input}`}
+              >
+                <option value={ALL_SEGMENTS}>Geral (todos os segmentos)</option>
+                {DEFAULT_SEGMENTS.map((sg) => (
+                  <option key={sg} value={sg}>
+                    {sg}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="text-xs font-medium text-muted-foreground">
+              Região
+              <select
+                value={form.region}
+                onChange={(e) => {
+                  setForm((f) => ({ ...f, region: e.target.value, uf: ALL_STATES }));
+                }}
+                className={`mt-1 ${input}`}
+              >
+                <option value={ALL_REGIONS}>Todas as regiões</option>
+                {REGIONS.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="text-xs font-medium text-muted-foreground">
+              Estado (UF)
+              <select
+                value={form.uf}
+                onChange={(e) => set("uf", e.target.value)}
+                className={`mt-1 ${input}`}
+              >
+                <option value={ALL_STATES}>Todos os estados</option>
+                {statesForRegion(form.region).map((st) => (
+                  <option key={st.uf} value={st.uf}>
+                    {st.name} ({st.uf})
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </fieldset>
         <div className="mt-6 flex gap-3">
           <button
             type="submit"
@@ -246,6 +316,7 @@ function IndicatorsPage() {
               <th className="px-4 py-3">Valor</th>
               <th className="px-4 py-3">Referência</th>
               <th className="px-4 py-3">Fonte</th>
+              <th className="px-4 py-3">Recorte</th>
               <th className="px-4 py-3">Atualizado</th>
               <th className="px-4 py-3" />
             </tr>
@@ -259,6 +330,17 @@ function IndicatorsPage() {
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">{i.reference_period || "—"}</td>
                 <td className="px-4 py-3 text-muted-foreground">{i.source_name || "—"}</td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {[
+                    i.segment !== ALL_SEGMENTS ? i.segment : null,
+                    i.region !== ALL_REGIONS
+                      ? (REGIONS.find((r) => r.id === i.region)?.label ?? i.region)
+                      : null,
+                    i.uf !== ALL_STATES ? i.uf : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ") || "Geral"}
+                </td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {i.last_checked_at
                     ? new Date(i.last_checked_at).toLocaleDateString("pt-BR")
@@ -287,7 +369,7 @@ function IndicatorsPage() {
             ))}
             {(q.data ?? []).length === 0 && (
               <tr>
-                <td className="px-4 py-6 text-muted-foreground" colSpan={6}>
+                <td className="px-4 py-6 text-muted-foreground" colSpan={7}>
                   Nenhum indicador cadastrado.
                 </td>
               </tr>
