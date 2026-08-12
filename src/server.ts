@@ -7,6 +7,8 @@ type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
 
+const CANONICAL_HOST = "liberatoconsulting.com.br";
+
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
 async function getServerEntry(): Promise<ServerEntry> {
@@ -16,6 +18,30 @@ async function getServerEntry(): Promise<ServerEntry> {
     );
   }
   return serverEntryPromise;
+}
+
+function buildRedirectUrl(request: Request, targetHost: string): string {
+  const url = new URL(request.url);
+  url.protocol = "https:";
+  url.hostname = targetHost;
+  return url.toString();
+}
+
+function shouldRedirectToCanonicalHost(host: string): boolean {
+  return (
+    host === "www.liberatoconsulting.com.br" ||
+    (host.endsWith(".lovable.app") && !host.startsWith("id-preview--"))
+  );
+}
+
+function createRedirectResponse(request: Request, targetHost: string): Response {
+  return new Response(null, {
+    status: 301,
+    headers: {
+      Location: buildRedirectUrl(request, targetHost),
+      "Cache-Control": "public, max-age=86400",
+    },
+  });
 }
 
 // h3 swallows in-handler throws into a normal 500 Response with body
@@ -46,6 +72,12 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const host = request.headers.get("host") || "";
+
+    if (shouldRedirectToCanonicalHost(host)) {
+      return createRedirectResponse(request, CANONICAL_HOST);
+    }
+
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
@@ -59,3 +91,4 @@ export default {
     }
   },
 };
+
