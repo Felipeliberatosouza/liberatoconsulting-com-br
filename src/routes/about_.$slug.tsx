@@ -87,6 +87,9 @@ function AboutDetailPage() {
             </div>
           )}
 
+          {page.id === "equipe" && <ConsultantsTeam />}
+
+
           <div className="mt-12 rounded-2xl bg-ink p-8 text-ink-foreground">
             <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
               <Sparkles className="size-4" />
