@@ -82,10 +82,10 @@ function ContactPage() {
         <aside className="border-t-2 border-ink pt-6">
           <p className="text-sm text-muted-foreground">{t.contact.info}</p>
           <a
-            href="mailto:contato@liberato.com"
+            href="mailto:contato@liberatoconsulting.com.br"
             className="mt-2 block font-display text-lg font-bold hover:text-accent"
           >
-            contato@liberato.com
+            contato@liberatoconsulting.com.br
           </a>
           <p className="mt-8 text-sm text-muted-foreground">São Paulo · Brasil</p>
         </aside>

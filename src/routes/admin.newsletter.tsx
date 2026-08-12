@@ -285,7 +285,7 @@ function AdminNewsletter() {
             </div>
             <div>
               <label className={label} htmlFor="nl-contact">Contato dos autores</label>
-              <input id="nl-contact" className={input} value={authorContact} onChange={(e) => setAuthorContact(e.target.value)} placeholder="email@liberato.com" />
+              <input id="nl-contact" className={input} value={authorContact} onChange={(e) => setAuthorContact(e.target.value)} placeholder="email@liberatoconsulting.com.br" />
             </div>
             <div>
               <label className={label} htmlFor="nl-date">Data de atualização</label>

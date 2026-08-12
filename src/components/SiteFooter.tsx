@@ -21,10 +21,10 @@ export function SiteFooter() {
           />
           <p className="mt-4 max-w-md text-sm text-ink-foreground/70">{t.footer.tagline}</p>
           <a
-            href="mailto:contato@liberato.com"
+            href="mailto:contato@liberatoconsulting.com.br"
             className="mt-6 inline-block text-sm font-medium text-accent hover:underline"
           >
-            contato@liberato.com
+            contato@liberatoconsulting.com.br
           </a>
           <div className="mt-6 flex items-center gap-3">
             <a
