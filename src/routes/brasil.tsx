@@ -37,15 +37,15 @@ function BrazilPage() {
 
   return (
     <div>
-      <section className="bg-ink text-ink-foreground">
+      <section className="bg-accent text-accent-foreground">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent-foreground/90">
             {b.eyebrow}
           </p>
           <h1 className="mt-6 max-w-4xl text-3xl font-bold leading-tight md:text-5xl">
             {b.title}
           </h1>
-          <p className="mt-6 max-w-3xl text-lg text-ink-foreground/75">{b.body}</p>
+          <p className="mt-6 max-w-3xl text-lg text-accent-foreground/85">{b.body}</p>
           <FilterScopeBadge className="mt-6" />
         </div>
       </section>
