@@ -63,11 +63,7 @@ async function assertAdmin(context: { supabase: any; userId: string }) {
 export const getAdminSession = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    return { userId: context.userId, isAdmin: Boolean(data) };
+    return { userId: context.userId, isAdmin: await isAdmin(context) };
   });
 
 /** Existe algum administrador cadastrado? Usado para o cadastro inicial. */
