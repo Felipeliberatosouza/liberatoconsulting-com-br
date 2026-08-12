@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { CtaBand } from "@/components/CtaBand";
+import { ResultBanner } from "@/components/ResultBanner";
 import { useLanguage } from "@/i18n";
 
 export const Route = createFileRoute("/about")({
@@ -95,6 +96,9 @@ function AboutPage() {
                   </li>
                 ))}
               </ul>
+              <div className="mt-12">
+                <ResultBanner />
+              </div>
             </section>
 
             <section id="equipe" className="scroll-mt-28">
