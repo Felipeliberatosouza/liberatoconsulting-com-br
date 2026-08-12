@@ -104,6 +104,63 @@ export type Database = {
         }
         Relationships: []
       }
+      bulletin_subscribers: {
+        Row: {
+          company: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          language: string
+          last_sent_at: string | null
+          segment: string
+          source_path: string
+          status: string
+          unsubscribe_token: string
+          unsubscribed_at: string | null
+          updated_at: string
+          via_email: boolean
+          via_whatsapp: boolean
+          whatsapp: string
+        }
+        Insert: {
+          company?: string
+          created_at?: string
+          email: string
+          full_name?: string
+          id?: string
+          language?: string
+          last_sent_at?: string | null
+          segment?: string
+          source_path?: string
+          status?: string
+          unsubscribe_token?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          via_email?: boolean
+          via_whatsapp?: boolean
+          whatsapp?: string
+        }
+        Update: {
+          company?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          language?: string
+          last_sent_at?: string | null
+          segment?: string
+          source_path?: string
+          status?: string
+          unsubscribe_token?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          via_email?: boolean
+          via_whatsapp?: boolean
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       change_requests: {
         Row: {
           action: string
