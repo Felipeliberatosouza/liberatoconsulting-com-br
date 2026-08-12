@@ -13,6 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { LanguageProvider } from "@/i18n";
+import { AudienceFilterProvider } from "@/lib/audience-filters";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
@@ -140,8 +141,10 @@ function RootComponent() {
     return (
       <QueryClientProvider client={queryClient}>
         <LanguageProvider>
+        <AudienceFilterProvider>
           <Outlet />
           <Toaster />
+        </AudienceFilterProvider>
         </LanguageProvider>
       </QueryClientProvider>
     );
@@ -150,6 +153,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
+        <AudienceFilterProvider>
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
           <main className="flex-1">
@@ -161,7 +165,8 @@ function RootComponent() {
         <CookieConsent />
         <WhatsAppFloat />
         <Toaster />
-      </LanguageProvider>
+      </AudienceFilterProvider>
+        </LanguageProvider>
     </QueryClientProvider>
   );
 }

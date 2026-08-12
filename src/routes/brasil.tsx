@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
+import { FilterScopeBadge } from "@/components/SiteFilterBar";
+import { useAudienceFilters } from "@/lib/audience-filters";
 import { listPublicIndicators } from "@/lib/indicators.functions";
 
 export const Route = createFileRoute("/brasil")({
@@ -30,6 +32,7 @@ export const Route = createFileRoute("/brasil")({
 
 function BrazilPage() {
   const { t } = useLanguage();
+  const scope = useAudienceFilters();
   const b = t.brazil;
 
   return (
@@ -43,6 +46,7 @@ function BrazilPage() {
             {b.title}
           </h1>
           <p className="mt-6 max-w-3xl text-lg text-ink-foreground/75">{b.body}</p>
+          <FilterScopeBadge className="mt-6" />
         </div>
       </section>
 
@@ -67,6 +71,13 @@ function BrazilPage() {
         </aside>
 
         <div className="min-w-0 space-y-14">
+          {scope.applied && (
+            <p className="rounded-md border-l-4 border-accent bg-secondary px-4 py-3 text-sm text-muted-foreground">
+              Observação: os dados e textos desta seção correspondem aos filtros aplicados —{" "}
+              <span className="font-semibold text-foreground">{scope.label}</span>.
+            </p>
+          )}
+
           <IndicatorsPanel />
 
           {b.sections.map((s) => (

@@ -15,6 +15,8 @@ import heroEmpreendedorismo from "@/assets/hero-empreendedorismo.jpg";
 import heroOperacoes from "@/assets/hero-operacoes.jpg";
 import heroEstrategia from "@/assets/hero-estrategia.jpg";
 import { CtaBand } from "@/components/CtaBand";
+import { FilterScopeBadge } from "@/components/SiteFilterBar";
+import { useAudienceFilters } from "@/lib/audience-filters";
 import { useLanguage } from "@/i18n";
 import { DEFAULT_AUTOPLAY_MS, heroSlideOrder } from "@/lib/site-config";
 
@@ -61,6 +63,7 @@ const SLIDE_IMAGES: Record<string, string> = {
 
 function HeroCarousel() {
   const { t, hero } = useLanguage();
+  const scope = useAudienceFilters();
   const [index, setIndex] = useState(0);
 
   const slides = useMemo(() => {
@@ -108,13 +111,22 @@ function HeroCarousel() {
         />
       ))}
       <div className="relative mx-auto max-w-7xl px-6 py-28 md:py-40">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
-          {slide.eyebrow}
-        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
+            {slide.eyebrow}
+          </p>
+          <FilterScopeBadge />
+        </div>
         <h1 className="mt-6 max-w-4xl text-4xl font-bold leading-[1.05] md:text-6xl lg:text-7xl">
           {slide.title}
         </h1>
         <p className="mt-6 max-w-xl text-lg text-ink-foreground/75">{slide.body}</p>
+        {scope.applied && (
+          <p className="mt-4 max-w-xl text-sm text-ink-foreground/70">
+            Conteúdo destacado para{" "}
+            <span className="font-semibold text-accent">{scope.label}</span>.
+          </p>
+        )}
         <div className="mt-10 flex flex-wrap gap-3">
           {slide.id === "pesquisas" ? (
             <Link
