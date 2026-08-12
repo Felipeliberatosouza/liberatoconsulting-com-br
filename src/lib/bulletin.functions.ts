@@ -1,0 +1,181 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
+export type BulletinSubscriberRow = {
+  id: string;
+  full_name: string;
+  company: string;
+  segment: string;
+  email: string;
+  whatsapp: string;
+  via_email: boolean;
+  via_whatsapp: boolean;
+  status: string;
+  source_path: string;
+  unsubscribed_at: string | null;
+  last_sent_at: string | null;
+  created_at: string;
+};
+
+const subscribeInput = z.object({
+  fullName: z.string().trim().min(2).max(120),
+  company: z.string().trim().min(2).max(140),
+  segment: z.string().trim().min(1).max(80),
+  email: z.string().trim().email().max(255),
+  whatsapp: z.string().trim().max(30).optional().default(""),
+  viaEmail: z.boolean(),
+  viaWhatsApp: z.boolean(),
+  language: z.string().trim().max(8).optional().default("pt"),
+  sourcePath: z.string().trim().max(300).optional().default(""),
+  website: z.string().max(200).optional().default(""),
+});
+
+/** Cadastro público no Boletim Semanal. */
+export const subscribeBulletin = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => subscribeInput.parse(d))
+  .handler(async ({ data }) => {
+    if (data.website) return { ok: true as const };
+    if (!data.viaEmail && !data.viaWhatsApp) {
+      return { ok: false as const, error: "Escolha ao menos uma forma de recebimento." };
+    }
+    if (data.viaWhatsApp && data.whatsapp.replace(/\D/g, "").length < 10) {
+      return { ok: false as const, error: "Informe um WhatsApp válido com DDD." };
+    }
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const email = data.email.toLowerCase();
+    const { data: existing } = await supabaseAdmin
+      .from("bulletin_subscribers")
+      .select("id")
+      .ilike("email", email)
+      .maybeSingle();
+
+    const payload = {
+      full_name: data.fullName,
+      company: data.company,
+      segment: data.segment,
+      email,
+      whatsapp: data.whatsapp,
+      via_email: data.viaEmail,
+      via_whatsapp: data.viaWhatsApp,
+      language: data.language ?? "pt",
+      source_path: data.sourcePath ?? "",
+      status: "active",
+      unsubscribed_at: null,
+    };
+
+    const { error } = existing
+      ? await supabaseAdmin.from("bulletin_subscribers").update(payload).eq("id", existing.id)
+      : await supabaseAdmin.from("bulletin_subscribers").insert(payload);
+
+    if (error) return { ok: false as const, error: "Não foi possível concluir o cadastro." };
+    return { ok: true as const };
+  });
+
+/** Cancelamento do Boletim Semanal pelo link enviado no e-mail/WhatsApp. */
+export const unsubscribeBulletin = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ token: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row, error } = await supabaseAdmin
+      .from("bulletin_subscribers")
+      .update({ status: "unsubscribed", unsubscribed_at: new Date().toISOString() })
+      .eq("unsubscribe_token", data.token)
+      .select("full_name, email, whatsapp, via_email, via_whatsapp")
+      .maybeSingle();
+    if (error || !row) return { ok: false as const, error: "Link inválido ou já utilizado." };
+
+    const { sendUnsubscribeConfirmation } = await import("./bulletin.server");
+    await sendUnsubscribeConfirmation({
+      full_name: row.full_name ?? "",
+      email: row.email ?? "",
+      whatsapp: row.whatsapp ?? "",
+      via_email: Boolean(row.via_email),
+      via_whatsapp: Boolean(row.via_whatsapp),
+    });
+    return { ok: true as const };
+  });
+
+async function assertAdmin(context: { supabase: unknown; userId: string }) {
+  const { assertAdmin: check } = await import("./access.server");
+  await check(context as never);
+}
+
+/** Lista os cadastros do Boletim Semanal (painel administrativo). */
+export const listBulletinSubscribers = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<BulletinSubscriberRow[]> => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin
+      .from("bulletin_subscribers")
+      .select(
+        "id, full_name, company, segment, email, whatsapp, via_email, via_whatsapp, status, source_path, unsubscribed_at, last_sent_at, created_at",
+      )
+      .order("created_at", { ascending: false })
+      .limit(2000);
+    return (data ?? []) as BulletinSubscriberRow[];
+  });
+
+/** Pré-visualização do boletim para um segmento. */
+export const previewBulletin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ segment: z.string().trim().max(80) }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { buildBulletinContent, renderBulletinHtml, renderBulletinWhatsApp, siteOrigin } =
+      await import("./bulletin.server");
+    const content = await buildBulletinContent(data.segment);
+    const url = `${siteOrigin()}/boletim/cancelar?token=00000000-0000-0000-0000-000000000000`;
+    return {
+      ok: true as const,
+      html: renderBulletinHtml(content, url),
+      whatsapp: renderBulletinWhatsApp(content, url),
+      dateLabel: content.dateLabel,
+      indicators: content.indicators.length,
+      articles: content.articles.length,
+    };
+  });
+
+/** Envia o boletim agora: teste (e-mail/WhatsApp) ou para todos os inscritos ativos. */
+export const sendBulletinNow = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        testEmail: z.string().trim().email().max(255).optional(),
+        testWhatsApp: z.string().trim().max(30).optional(),
+        testSegment: z.string().trim().max(80).optional(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { dispatchBulletin } = await import("./bulletin.server");
+    try {
+      return await dispatchBulletin({
+        testEmail: data.testEmail,
+        testWhatsApp: data.testWhatsApp,
+        testSegment: data.testSegment,
+      });
+    } catch (err) {
+      return { ok: false as const, error: err instanceof Error ? err.message : "Falha no envio." };
+    }
+  });
+
+/** Cancela manualmente um cadastro pelo painel. */
+export const unsubscribeBulletinByAdmin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("bulletin_subscribers")
+      .update({ status: "unsubscribed", unsubscribed_at: new Date().toISOString() })
+      .eq("id", data.id);
+    if (error) return { ok: false as const, error: "Não foi possível cancelar o cadastro." };
+    return { ok: true as const };
+  });
