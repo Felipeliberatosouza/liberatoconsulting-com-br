@@ -40,12 +40,6 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
 );
 
 async function isAdmin(context: { supabase: any; userId: string }) {
-  const { data, error } = await context.supabase.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "admin",
-  });
-  if (!error && data) return true;
-  // Fallback: leitura direta (RLS permite ler as próprias funções)
   const { data: row } = await context.supabase
     .from("user_roles")
     .select("role")
