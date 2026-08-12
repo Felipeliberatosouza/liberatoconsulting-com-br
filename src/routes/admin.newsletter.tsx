@@ -221,7 +221,10 @@ function AdminNewsletter() {
                 <button
                   className="text-muted-foreground hover:text-accent"
                   onClick={async () => {
-                    if (!testEmail) return toast.error("Informe um e-mail para teste.");
+                    if (!testEmail) {
+                      toast.error("Informe um e-mail para teste.");
+                      return;
+                    }
                     const r = await sendCampaign({ data: { id: c.id, testEmail } });
                     if (!r.ok) toast.error(r.error);
                     else toast.success("Teste enviado.");

@@ -25,6 +25,7 @@ import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
 import { Route as AdminTextsRouteImport } from './routes/admin.texts'
 import { Route as AdminThemeRouteImport } from './routes/admin.theme'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
@@ -113,6 +114,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminNewsletterRoute = AdminNewsletterRouteImport.update({
+  id: '/admin/newsletter',
+  path: '/admin/newsletter',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminTextsRoute = AdminTextsRouteImport.update({
   id: '/admin/texts',
   path: '/admin/texts',
@@ -165,6 +171,7 @@ export interface FileRoutesByFullPath {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/brasil/$slug': typeof BrasilSlugRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByTo {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/brasil/$slug': typeof BrasilSlugRoute
@@ -216,6 +224,7 @@ export interface FileRoutesById {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/brasil_/$slug': typeof BrasilSlugRoute
@@ -243,6 +252,7 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/leads'
     | '/admin/login'
+    | '/admin/newsletter'
     | '/admin/texts'
     | '/admin/theme'
     | '/brasil/$slug'
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/leads'
     | '/admin/login'
+    | '/admin/newsletter'
     | '/admin/texts'
     | '/admin/theme'
     | '/brasil/$slug'
@@ -293,6 +304,7 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/leads'
     | '/admin/login'
+    | '/admin/newsletter'
     | '/admin/texts'
     | '/admin/theme'
     | '/brasil_/$slug'
@@ -319,6 +331,7 @@ export interface RootRouteChildren {
   AdminHeroRoute: typeof AdminHeroRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminNewsletterRoute: typeof AdminNewsletterRoute
   AdminTextsRoute: typeof AdminTextsRoute
   AdminThemeRoute: typeof AdminThemeRoute
   BrasilSlugRoute: typeof BrasilSlugRoute
@@ -442,6 +455,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/newsletter': {
+      id: '/admin/newsletter'
+      path: '/admin/newsletter'
+      fullPath: '/admin/newsletter'
+      preLoaderRoute: typeof AdminNewsletterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/texts': {
       id: '/admin/texts'
       path: '/admin/texts'
@@ -521,6 +541,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminHeroRoute: AdminHeroRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminNewsletterRoute: AdminNewsletterRoute,
   AdminTextsRoute: AdminTextsRoute,
   AdminThemeRoute: AdminThemeRoute,
   BrasilSlugRoute: BrasilSlugRoute,
