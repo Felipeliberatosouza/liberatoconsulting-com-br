@@ -29,16 +29,12 @@ export async function assertCronCaller(request: Request): Promise<boolean> {
 
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data } = await supabaseAdmin
-      .schema("app_private" as never)
-      .from("dispatch_secret")
-      .select("value")
-      .eq("name", "cron")
-      .maybeSingle();
-    const dbSecret = ((data as { value?: string } | null)?.value ?? "").trim();
-    if (dbSecret && safeEqual(provided, dbSecret)) return true;
+    const { data, error } = await supabaseAdmin.rpc("verify_cron_secret" as never, {
+      _token: provided,
+    } as never);
+    if (!error && data === true) return true;
   } catch {
-    // ignora: falha na leitura significa acesso negado
+    // ignora: falha na verificação significa acesso negado
   }
 
   return false;
