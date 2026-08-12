@@ -12,4 +12,13 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    server: {
+      allowedHosts: [
+        "liberatoconsulting-com-br.lovable.app",
+        "www.liberatoconsulting.com.br",
+        "id-preview--4889a4be-87a4-4450-9bd7-7b20cfa78e6b.lovable.app",
+      ],
+    },
+  },
 });
