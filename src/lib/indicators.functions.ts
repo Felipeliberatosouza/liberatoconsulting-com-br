@@ -16,12 +16,15 @@ export type Indicator = {
   source_url: string;
   position: number;
   published: boolean;
+  segment: string;
+  region: string;
+  uf: string;
   last_checked_at: string | null;
   updated_at: string;
 };
 
 const SELECT =
-  "id, slug, label, value, unit, reference_period, trend, note, source_name, source_url, position, published, last_checked_at, updated_at";
+  "id, slug, label, value, unit, reference_period, trend, note, source_name, source_url, position, published, segment, region, uf, last_checked_at, updated_at";
 
 /** Indicadores econômicos publicados (leitura pública do site). */
 export const listPublicIndicators = createServerFn({ method: "GET" }).handler(
@@ -67,6 +70,9 @@ const indicatorSchema = z.object({
   source_url: z.string().trim().max(500).default(""),
   position: z.number().int().min(0).max(999).default(0),
   published: z.boolean().default(true),
+  segment: z.string().trim().max(80).default("geral"),
+  region: z.string().trim().max(40).default("todas"),
+  uf: z.string().trim().max(10).default("todos"),
 });
 
 export const saveIndicator = createServerFn({ method: "POST" })
