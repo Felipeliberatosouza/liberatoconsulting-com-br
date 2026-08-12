@@ -163,21 +163,24 @@ function HeroCarousel() {
         </div>
 
         {count > 1 && (
-          <div className="mt-12 flex items-center gap-4">
+          <div className="mt-8 flex items-center gap-4 md:mt-12">
             <button
+              type="button"
               onClick={() => setIndex((i) => (i - 1 + count) % count)}
               aria-label="Banner anterior"
-              className="rounded-full border border-ink-foreground/25 p-2 transition-colors hover:bg-ink-foreground/10"
+              className="rounded-full border border-ink-foreground/25 p-3 transition-colors hover:bg-ink-foreground/10"
             >
               <ChevronLeft className="size-4" />
             </button>
             <button
+              type="button"
               onClick={() => setIndex((i) => (i + 1) % count)}
               aria-label="Próximo banner"
-              className="rounded-full border border-ink-foreground/25 p-2 transition-colors hover:bg-ink-foreground/10"
+              className="rounded-full border border-ink-foreground/25 p-3 transition-colors hover:bg-ink-foreground/10"
             >
               <ChevronRight className="size-4" />
             </button>
+
             <div className="flex gap-2">
               {slides.map((s, i) => (
                 <button
