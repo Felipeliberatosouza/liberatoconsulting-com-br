@@ -6,7 +6,8 @@ import { useLanguage } from "@/i18n";
 import { subscribeNewsletter } from "@/lib/newsletter.functions";
 
 export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | "page" }) {
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
+  const tn = t.newsletterForm;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -19,7 +20,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
   if (done) {
     return (
       <p className={dark ? "text-sm text-ink-foreground/80" : "text-sm text-muted-foreground"}>
-        Inscrição confirmada. Obrigado!
+        {tn.done}
       </p>
     );
   }
@@ -39,10 +40,10 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
             setDone(true);
             setEmail("");
             setName("");
-            toast.success("Inscrição realizada com sucesso.");
+            toast.success(tn.success);
           }
         } catch {
-          toast.error("Não foi possível concluir a inscrição.");
+          toast.error(tn.error);
         } finally {
           setBusy(false);
         }
@@ -62,7 +63,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="seu@email.com"
+        placeholder={tn.emailPlaceholder}
         className={
           dark
             ? "w-full rounded-md border border-ink-foreground/20 bg-transparent px-3 py-2 text-sm text-ink-foreground placeholder:text-ink-foreground/40 outline-none focus:border-accent"
@@ -74,7 +75,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
         disabled={busy}
         className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
       >
-        {busy ? "Enviando…" : "Inscrever"}
+        {busy ? tn.sending : tn.submit}
       </button>
     </form>
   );

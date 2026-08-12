@@ -37,12 +37,12 @@ export function SiteFilterBar() {
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-6 py-2.5">
         <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-foreground">
           <SlidersHorizontal className="size-3.5" />
-          Personalize os dados
+          {tf.heading}
         </span>
 
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
           <label className="sr-only" htmlFor="filtro-segmento">
-            Segmento
+            {tf.segment}
           </label>
           <select
             id="filtro-segmento"
@@ -50,7 +50,7 @@ export function SiteFilterBar() {
             onChange={(e) => setDraft((d) => ({ ...d, segment: e.target.value }))}
             className={`${select} sm:w-56`}
           >
-            <option value={ALL_SEGMENTS}>Geral (todos os segmentos)</option>
+            <option value={ALL_SEGMENTS}>{tf.allSegments}</option>
             {segments.map((s) => (
               <option key={s} value={s}>
                 {s}
@@ -59,7 +59,7 @@ export function SiteFilterBar() {
           </select>
 
           <label className="sr-only" htmlFor="filtro-regiao">
-            Região do Brasil
+            {tf.region}
           </label>
           <select
             id="filtro-regiao"
@@ -69,7 +69,7 @@ export function SiteFilterBar() {
             }
             className={`${select} sm:w-44`}
           >
-            <option value={ALL_REGIONS}>Todas as regiões</option>
+            <option value={ALL_REGIONS}>{tf.allRegions}</option>
             {REGIONS.map((r) => (
               <option key={r.id} value={r.id}>
                 {r.label}
@@ -78,7 +78,7 @@ export function SiteFilterBar() {
           </select>
 
           <label className="sr-only" htmlFor="filtro-uf">
-            Estado (UF)
+            {tf.state}
           </label>
           <select
             id="filtro-uf"
@@ -86,7 +86,7 @@ export function SiteFilterBar() {
             onChange={(e) => setDraft((d) => ({ ...d, state: e.target.value }))}
             className={`${select} sm:w-52`}
           >
-            <option value={ALL_STATES}>Todos os estados</option>
+            <option value={ALL_STATES}>{tf.allStates}</option>
             {states.map((s) => (
               <option key={s.uf} value={s.uf}>
                 {s.name} ({s.uf})
@@ -104,20 +104,20 @@ export function SiteFilterBar() {
             className="inline-flex items-center gap-1.5 rounded-full border border-accent-foreground/30 px-3 py-1.5 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent-foreground/10"
           >
             <Eraser className="size-3.5" />
-            Apagar filtros
+            {tf.clear}
           </button>
           <button
             onClick={() => apply(draft)}
             className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-1.5 text-xs font-semibold text-ink-foreground transition-opacity hover:opacity-90"
           >
             <Check className="size-3.5" />
-            {dirty ? "Concluir filtros" : "Filtros aplicados"}
+            {dirty ? tf.apply : tf.applied}
           </button>
         </div>
 
         {applied && (
           <p className="w-full text-[11px] text-accent-foreground/80">
-            Exibindo informações destacadas para{" "}
+            {tf.showing}{" "}
             <span className="font-semibold text-ink-foreground">{label}</span>.
           </p>
         )}
