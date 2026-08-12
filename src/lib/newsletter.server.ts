@@ -138,6 +138,8 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
   }
   const from = `${settings.fromName} <${settings.fromEmail}>`;
   const origin = process.env["PUBLIC_SITE_URL"] || "https://liberato.com";
+  const company = await loadCompanyFooter(origin);
+
 
   type Recipient = { email: string; unsubscribe_token: string };
   let recipients: Recipient[];
