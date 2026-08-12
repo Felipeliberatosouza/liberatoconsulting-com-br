@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n";
 import { legal } from "@/i18n/legal";
+import { EmailText } from "@/components/EmailText";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -33,7 +34,7 @@ export function LegalPage({ doc }: { doc: "privacy" | "terms" }) {
         <div className="mx-auto max-w-3xl px-6 py-16">
           <h1 className="text-4xl font-bold tracking-tight text-foreground">{d.title}</h1>
           <p className="mt-3 text-xs uppercase tracking-[0.2em] text-accent">{d.updated}</p>
-          <p className="mt-6 text-base leading-relaxed text-muted-foreground">{d.intro}</p>
+          <p className="mt-6 text-base leading-relaxed text-muted-foreground"><EmailText>{d.intro}</EmailText></p>
         </div>
       </header>
       <div className="mx-auto max-w-3xl px-6 py-14">
@@ -42,7 +43,7 @@ export function LegalPage({ doc }: { doc: "privacy" | "terms" }) {
             <h2 className="text-xl font-semibold text-foreground">{s.heading}</h2>
             {s.body.map((p, i) => (
               <p key={i} className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                {p}
+                <EmailText>{p}</EmailText>
               </p>
             ))}
           </section>
