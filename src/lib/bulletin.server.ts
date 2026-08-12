@@ -375,16 +375,25 @@ export async function dispatchBulletin(options?: {
   let sentWhatsApp = 0;
   let failed = 0;
   let lastError: string | null = null;
+  let snapshot: { subject: string; dateLabel: string; html: string } | null = null;
 
   for (const r of recipients) {
     const content = await contentFor(r.segment);
     const unsubscribeUrl = `${origin}/boletim/cancelar?token=${r.unsubscribe_token}`;
+    const subject = `Boletim Semanal — ${content.dateLabel}`;
+    if (!snapshot) {
+      snapshot = {
+        subject,
+        dateLabel: content.dateLabel,
+        html: renderBulletinHtml(content, unsubscribeUrl),
+      };
+    }
 
     if (r.via_email && r.email) {
       try {
         await sendBulletinEmail({
           to: r.email,
-          subject: `Boletim Semanal — ${content.dateLabel}`,
+          subject,
           html: renderBulletinHtml(content, unsubscribeUrl),
           text: renderBulletinText(content, unsubscribeUrl),
         });
@@ -417,11 +426,24 @@ export async function dispatchBulletin(options?: {
     }
   }
 
+  // Registra o envio no histórico do painel administrativo.
+  await supabaseAdmin.from("bulletin_dispatches").insert({
+    subject: snapshot?.subject ?? "Boletim Semanal",
+    date_label: snapshot?.dateLabel ?? "",
+    sent_email: sentEmail,
+    sent_whatsapp: sentWhatsApp,
+    failed,
+    last_error: lastError,
+    is_test: Boolean(options?.testEmail || options?.testWhatsApp),
+    body_html: snapshot?.html ?? "",
+  });
+
   if (sentEmail === 0 && sentWhatsApp === 0) {
     return { ok: false as const, error: lastError ?? "Nenhum envio pôde ser concluído." };
   }
   return { ok: true as const, sentEmail, sentWhatsApp, failed, lastError };
 }
+
 
 /** Confirmação enviada quando o inscrito cancela o recebimento. */
 export async function sendUnsubscribeConfirmation(sub: {
