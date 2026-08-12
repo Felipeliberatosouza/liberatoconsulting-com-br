@@ -26,6 +26,7 @@ import { Route as AdminHeroRouteImport } from './routes/admin.hero'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
+import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as AdminTextsRouteImport } from './routes/admin.texts'
 import { Route as AdminThemeRouteImport } from './routes/admin.theme'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
@@ -119,6 +120,11 @@ const AdminNewsletterRoute = AdminNewsletterRouteImport.update({
   path: '/admin/newsletter',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
+  id: '/admin/reset-password',
+  path: '/admin/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminTextsRoute = AdminTextsRouteImport.update({
   id: '/admin/texts',
   path: '/admin/texts',
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/brasil/$slug': typeof BrasilSlugRoute
@@ -198,6 +205,7 @@ export interface FileRoutesByTo {
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/brasil/$slug': typeof BrasilSlugRoute
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/brasil_/$slug': typeof BrasilSlugRoute
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
+    | '/admin/reset-password'
     | '/admin/texts'
     | '/admin/theme'
     | '/brasil/$slug'
@@ -279,6 +289,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
+    | '/admin/reset-password'
     | '/admin/texts'
     | '/admin/theme'
     | '/brasil/$slug'
@@ -305,6 +316,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
+    | '/admin/reset-password'
     | '/admin/texts'
     | '/admin/theme'
     | '/brasil_/$slug'
@@ -332,6 +344,7 @@ export interface RootRouteChildren {
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminNewsletterRoute: typeof AdminNewsletterRoute
+  AdminResetPasswordRoute: typeof AdminResetPasswordRoute
   AdminTextsRoute: typeof AdminTextsRoute
   AdminThemeRoute: typeof AdminThemeRoute
   BrasilSlugRoute: typeof BrasilSlugRoute
@@ -462,6 +475,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminNewsletterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/reset-password': {
+      id: '/admin/reset-password'
+      path: '/admin/reset-password'
+      fullPath: '/admin/reset-password'
+      preLoaderRoute: typeof AdminResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/texts': {
       id: '/admin/texts'
       path: '/admin/texts'
@@ -542,6 +562,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminNewsletterRoute: AdminNewsletterRoute,
+  AdminResetPasswordRoute: AdminResetPasswordRoute,
   AdminTextsRoute: AdminTextsRoute,
   AdminThemeRoute: AdminThemeRoute,
   BrasilSlugRoute: BrasilSlugRoute,
