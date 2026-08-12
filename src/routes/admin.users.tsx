@@ -424,14 +424,30 @@ function ApplicantsTab() {
     queryFn: () => listApplications(),
     retry: false,
   });
+
+  async function openResume(path: string) {
+    try {
+      const r = await getResumeUrl({ data: { path } });
+      if (!r.ok) {
+        toast.error(r.error);
+        return;
+      }
+      window.open(r.url, "_blank", "noopener");
+    } catch {
+      toast.error("Não foi possível abrir o currículo.");
+    }
+  }
+
   return (
     <div className="overflow-x-auto rounded-lg border border-border bg-background">
-      <table className="w-full text-sm">
+      <table className="w-full min-w-[900px] text-sm">
         <thead className="bg-secondary/60 text-left text-xs uppercase text-muted-foreground">
           <tr>
             <th className="px-4 py-3">Nome</th>
             <th className="px-4 py-3">E-mail</th>
+            <th className="px-4 py-3">Celular</th>
             <th className="px-4 py-3">Área</th>
+            <th className="px-4 py-3">Currículo</th>
             <th className="px-4 py-3">Recebido</th>
             <th className="px-4 py-3" />
           </tr>
@@ -440,12 +456,38 @@ function ApplicantsTab() {
           {(q.data ?? []).map((a: Record<string, string | null>) => (
             <tr key={a["id"]} className="border-t border-border">
               <td className="px-4 py-3">{a["full_name"]}</td>
-              <td className="px-4 py-3">{a["email"]}</td>
+              <td className="px-4 py-3">
+                <a href={`mailto:${a["email"]}`} className="text-accent hover:underline">
+                  {a["email"]}
+                </a>
+              </td>
+              <td className="px-4 py-3">
+                {a["phone"] ? (
+                  <a href={`tel:${a["phone"]}`} className="hover:underline">
+                    {a["phone"]}
+                  </a>
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
+              </td>
               <td className="px-4 py-3 text-muted-foreground">{a["interest_area"]}</td>
+              <td className="px-4 py-3">
+                {a["resume_path"] ? (
+                  <button
+                    onClick={() => openResume(a["resume_path"] as string)}
+                    className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold hover:border-accent hover:text-accent"
+                  >
+                    {a["resume_filename"] ?? "Baixar"}
+                  </button>
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
+              </td>
               <td className="px-4 py-3 text-muted-foreground">
                 {new Date(a["created_at"] ?? "").toLocaleDateString("pt-BR")}
               </td>
               <td className="px-4 py-3 text-right">
+
                 <button
                   onClick={async () => {
                     const r = await updateApplicationRecord({
