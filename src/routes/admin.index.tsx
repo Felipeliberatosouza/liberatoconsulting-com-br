@@ -68,12 +68,24 @@ function AdminHome() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
+  const authed = useQuery({
+    queryKey: ["admin-authed"],
+    queryFn: async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data } = await supabase.auth.getSession();
+      return Boolean(data.session);
+    },
+    retry: false,
+  });
+  const enabled = authed.data === true;
+
   const [alertEmail, setAlertEmail] = useState("");
   const [savingAlert, setSavingAlert] = useState(false);
   const alert = useQuery({
     queryKey: ["admin-alert-email"],
     queryFn: () => getAlertEmail(),
     retry: false,
+    enabled,
   });
 
   useEffect(() => {
@@ -86,6 +98,7 @@ function AdminHome() {
     queryKey: ["admin-whatsapp"],
     queryFn: () => getWhatsApp(),
     retry: false,
+    enabled,
   });
 
   useEffect(() => {
