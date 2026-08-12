@@ -149,6 +149,15 @@ function AdminLogin() {
             {mode === "forgot" ? "Voltar ao login" : "Esqueci minha senha"}
           </button>
         )}
+
+        <div className="mt-4 text-center">
+          <a
+            href="/"
+            className="text-xs text-muted-foreground underline-offset-2 hover:text-accent hover:underline"
+          >
+            Voltar para a página inicial
+          </a>
+        </div>
       </form>
     </div>
   );

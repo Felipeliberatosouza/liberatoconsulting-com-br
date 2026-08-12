@@ -114,7 +114,7 @@ export function AdminShell({
           <button
             onClick={async () => {
               await supabase.auth.signOut();
-              navigate({ to: "/admin/login", replace: true });
+              navigate({ to: "/", replace: true });
             }}
             className="ml-auto text-sm text-muted-foreground hover:text-accent"
           >
