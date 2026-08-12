@@ -120,9 +120,10 @@ function HistoryPage() {
 
           {tab === "bulletins" && (
             <Table
-              head={["Assunto", "Referência", "Data", "E-mails", "WhatsApp", ""]}
+              head={["Assunto", "Situação", "Referência", "Data", "E-mails", "WhatsApp", ""]}
               rows={(data?.bulletins ?? []).map((b) => [
                 `${b.subject}${b.isTest ? " (teste)" : ""}`,
+                b.status === "gerado" ? "Gerado" : "Enviado",
                 b.dateLabel || "—",
                 fmt(b.createdAt),
                 String(b.sentEmail),
