@@ -29,6 +29,7 @@ import { Route as AdminTextsRouteImport } from './routes/admin.texts'
 import { Route as AdminThemeRouteImport } from './routes/admin.theme'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
 import { Route as ContentSlugRouteImport } from './routes/content.$slug'
+import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 
@@ -132,6 +133,11 @@ const ContentSlugRoute = ContentSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ContentRoute,
 } as any)
+const NewsletterUnsubscribeRoute = NewsletterUnsubscribeRouteImport.update({
+  id: '/newsletter/unsubscribe',
+  path: '/newsletter/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicesIndexRoute = ServicesIndexRouteImport.update({
   id: '/services/',
   path: '/services/',
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/admin/theme': typeof AdminThemeRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
+  '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -187,6 +194,7 @@ export interface FileRoutesByTo {
   '/admin/theme': typeof AdminThemeRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
+  '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
@@ -212,6 +220,7 @@ export interface FileRoutesById {
   '/admin/theme': typeof AdminThemeRoute
   '/brasil_/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
+  '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -238,6 +247,7 @@ export interface FileRouteTypes {
     | '/admin/theme'
     | '/brasil/$slug'
     | '/content/$slug'
+    | '/newsletter/unsubscribe'
     | '/services/$slug'
     | '/admin/'
     | '/services/'
@@ -262,6 +272,7 @@ export interface FileRouteTypes {
     | '/admin/theme'
     | '/brasil/$slug'
     | '/content/$slug'
+    | '/newsletter/unsubscribe'
     | '/services/$slug'
     | '/admin'
     | '/services'
@@ -286,6 +297,7 @@ export interface FileRouteTypes {
     | '/admin/theme'
     | '/brasil_/$slug'
     | '/content/$slug'
+    | '/newsletter/unsubscribe'
     | '/services/$slug'
     | '/admin/'
     | '/services/'
@@ -310,6 +322,7 @@ export interface RootRouteChildren {
   AdminTextsRoute: typeof AdminTextsRoute
   AdminThemeRoute: typeof AdminThemeRoute
   BrasilSlugRoute: typeof BrasilSlugRoute
+  NewsletterUnsubscribeRoute: typeof NewsletterUnsubscribeRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
@@ -457,6 +470,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContentSlugRouteImport
       parentRoute: typeof ContentRoute
     }
+    '/newsletter/unsubscribe': {
+      id: '/newsletter/unsubscribe'
+      path: '/newsletter/unsubscribe'
+      fullPath: '/newsletter/unsubscribe'
+      preLoaderRoute: typeof NewsletterUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/services/': {
       id: '/services/'
       path: '/services'
@@ -504,6 +524,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminTextsRoute: AdminTextsRoute,
   AdminThemeRoute: AdminThemeRoute,
   BrasilSlugRoute: BrasilSlugRoute,
+  NewsletterUnsubscribeRoute: NewsletterUnsubscribeRoute,
   ServicesSlugRoute: ServicesSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
