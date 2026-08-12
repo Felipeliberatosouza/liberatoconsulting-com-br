@@ -28,34 +28,44 @@ function LangSwitch() {
 
 function MobileAccordion({
   title,
+  to,
+  onNavigate,
   children,
 }: {
   title: string;
+  to: "/services" | "/about" | "/content" | "/brasil";
+  onNavigate?: () => void;
   children: ReactNode;
 }) {
   const [expanded, setExpanded] = useState(false);
   return (
     <div className="border-b border-border">
-      <button
-        onClick={() => setExpanded((v) => !v)}
-        aria-expanded={expanded}
-        className="flex w-full items-center justify-between py-3 text-left"
-      >
-        <span className="text-base font-medium transition-colors group-hover:text-accent">
+      <div className="flex w-full items-center justify-between">
+        <Link
+          to={to}
+          onClick={onNavigate}
+          className="flex-1 py-3 text-left text-base font-medium transition-colors hover:text-accent"
+        >
           {title}
-        </span>
-        <span className="p-2 text-muted-foreground transition-colors">
+        </Link>
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          aria-label={title}
+          className="p-3 text-muted-foreground transition-colors hover:text-accent"
+        >
           {expanded ? (
-            <ChevronDown className="size-4" />
+            <ChevronDown className="size-5" />
           ) : (
-            <ChevronRight className="size-4" />
+            <ChevronRight className="size-5" />
           )}
-        </span>
-      </button>
+        </button>
+      </div>
       {expanded && <div className="pb-3">{children}</div>}
     </div>
   );
 }
+
 
 type AboutItem = { id: string; label: string };
 
