@@ -12,7 +12,7 @@ function truncate(text: string, max: number) {
   return `${text.slice(0, max - 1).trimEnd()}…`;
 }
 
-export type SocialInput = { title: string; body: string; link?: string };
+export type SocialInput = { title: string; body: string; link?: string | undefined };
 
 export function toWhatsApp({ title, body, link }: SocialInput) {
   const paras = cleanParagraphs(body);
