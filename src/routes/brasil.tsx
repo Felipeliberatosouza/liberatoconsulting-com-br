@@ -11,6 +11,7 @@ import {
   useAudienceFilters,
 } from "@/lib/audience-filters";
 import { listPublicIndicators } from "@/lib/indicators.functions";
+import { getScopedBrazilSections } from "@/lib/brazil-scope.functions";
 
 export const Route = createFileRoute("/brasil")({
   head: () => ({
