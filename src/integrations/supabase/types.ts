@@ -104,6 +104,45 @@ export type Database = {
         }
         Relationships: []
       }
+      bulletin_dispatches: {
+        Row: {
+          body_html: string
+          created_at: string
+          date_label: string
+          failed: number
+          id: string
+          is_test: boolean
+          last_error: string | null
+          sent_email: number
+          sent_whatsapp: number
+          subject: string
+        }
+        Insert: {
+          body_html?: string
+          created_at?: string
+          date_label?: string
+          failed?: number
+          id?: string
+          is_test?: boolean
+          last_error?: string | null
+          sent_email?: number
+          sent_whatsapp?: number
+          subject?: string
+        }
+        Update: {
+          body_html?: string
+          created_at?: string
+          date_label?: string
+          failed?: number
+          id?: string
+          is_test?: boolean
+          last_error?: string | null
+          sent_email?: number
+          sent_whatsapp?: number
+          subject?: string
+        }
+        Relationships: []
+      }
       bulletin_subscribers: {
         Row: {
           company: string
