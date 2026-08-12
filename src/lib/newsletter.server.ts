@@ -87,3 +87,120 @@ export async function sendNewsletterEmail(params: {
     { apiKey },
   );
 }
+
+/** Envia uma campanha para todos os inscritos ativos (ou para um e-mail de teste). */
+export async function dispatchCampaign(campaignId: string, testEmail?: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  const { data: campaign } = await supabaseAdmin
+    .from("newsletter_campaigns")
+    .select("*")
+    .eq("id", campaignId)
+    .maybeSingle();
+  if (!campaign) return { ok: false as const, error: "Campanha não encontrada." };
+
+  const { data: settingsRow } = await supabaseAdmin
+    .from("site_settings")
+    .select("value")
+    .eq("key", "newsletter")
+    .maybeSingle();
+  const settings: NewsletterSettings = {
+    ...DEFAULT_NEWSLETTER_SETTINGS,
+    ...((settingsRow?.value ?? {}) as Partial<NewsletterSettings>),
+  };
+  if (!settings.fromEmail) {
+    return {
+      ok: false as const,
+      error:
+        "Configure o e-mail remetente da newsletter (é preciso ter um domínio de e-mail próprio conectado).",
+    };
+  }
+  const from = `${settings.fromName} <${settings.fromEmail}>`;
+  const origin = process.env["PUBLIC_SITE_URL"] || "https://liberato.com";
+
+  type Recipient = { email: string; unsubscribe_token: string };
+  let recipients: Recipient[];
+  if (testEmail) {
+    recipients = [{ email: testEmail, unsubscribe_token: "00000000-0000-0000-0000-000000000000" }];
+  } else {
+    const { data: subs } = await supabaseAdmin
+      .from("newsletter_subscribers")
+      .select("email, unsubscribe_token")
+      .eq("status", "active")
+      .limit(5000);
+    recipients = (subs ?? []) as Recipient[];
+  }
+  if (recipients.length === 0) return { ok: false as const, error: "Nenhum inscrito ativo." };
+
+  let sent = 0;
+  let failed = 0;
+  let lastError: string | null = null;
+
+  for (const r of recipients) {
+    const unsubscribeUrl = `${origin}/newsletter/unsubscribe?token=${r.unsubscribe_token}`;
+    try {
+      await sendNewsletterEmail({
+        to: r.email,
+        from,
+        subject: campaign.subject,
+        html: renderCampaignHtml({
+          subject: campaign.subject,
+          preheader: campaign.preheader ?? "",
+          body: campaign.body,
+          unsubscribeUrl,
+        }),
+        text: renderCampaignText(campaign.body, unsubscribeUrl),
+      });
+      sent += 1;
+    } catch (err) {
+      failed += 1;
+      lastError = err instanceof Error ? err.message : String(err);
+    }
+  }
+
+  if (!testEmail) {
+    await supabaseAdmin
+      .from("newsletter_campaigns")
+      .update({
+        status: sent > 0 ? "sent" : "failed",
+        sent_at: new Date().toISOString(),
+        sent_count: sent,
+        failed_count: failed,
+        last_error: lastError,
+      })
+      .eq("id", campaignId);
+  }
+
+  if (sent === 0) return { ok: false as const, error: lastError ?? "Nenhum e-mail pôde ser enviado." };
+  return { ok: true as const, sent, failed };
+}
+
+/** Cria e dispara automaticamente uma campanha anunciando um novo conteúdo publicado. */
+export async function announceArticle(article: {
+  title: string;
+  summary: string;
+  slug: string;
+}) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: settingsRow } = await supabaseAdmin
+    .from("site_settings")
+    .select("value")
+    .eq("key", "newsletter")
+    .maybeSingle();
+  const settings: NewsletterSettings = {
+    ...DEFAULT_NEWSLETTER_SETTINGS,
+    ...((settingsRow?.value ?? {}) as Partial<NewsletterSettings>),
+  };
+  if (!settings.autoSendOnPublish || !settings.fromEmail) return;
+
+  const origin = process.env["PUBLIC_SITE_URL"] || "https://liberato.com";
+  const body = `${article.summary}\n\nLeia o conteúdo completo: ${origin}/content/${article.slug}`;
+
+  const { data: created } = await supabaseAdmin
+    .from("newsletter_campaigns")
+    .insert({ subject: article.title, preheader: article.summary.slice(0, 160), body, status: "draft" })
+    .select("id")
+    .single();
+  if (!created) return;
+  await dispatchCampaign(created.id as string);
+}
