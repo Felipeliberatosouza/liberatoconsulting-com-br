@@ -183,14 +183,9 @@ export function renderBulletinHtml(content: BulletinContent, unsubscribeUrl: str
 </td></tr>
 
 <tr><td style="padding:22px 32px;background:#14192a;color:#f7f6f4">
-  <div style="font-size:13px;font-weight:700">${escapeHtml(content.company.name)}</div>
-  ${content.company.cnpj ? `<div style="font-size:12px;opacity:.75">CNPJ ${escapeHtml(content.company.cnpj)}</div>` : ""}
-  ${content.company.address ? `<div style="font-size:12px;opacity:.75">${escapeHtml(content.company.address)}</div>` : ""}
-  <div style="font-size:12px;opacity:.75">${escapeHtml(content.company.email)}${
-    content.company.phone ? ` — ${escapeHtml(content.company.phone)}` : ""
-  }</div>
-  <div style="font-size:12px;opacity:.75">${escapeHtml(content.company.website)}</div>
+  ${companyFooterHtml(content.company)}
 </td></tr>
+
 
 <tr><td style="padding:18px 32px 26px;font-size:12px;color:#78716c">
   Você recebe o Boletim Semanal da Liberato Consulting porque solicitou esta atualização.
