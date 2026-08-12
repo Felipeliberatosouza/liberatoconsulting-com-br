@@ -44,6 +44,7 @@ export const pt = {
           { id: "precificacao-unit-economics", label: "Precificação e Unit Economics" },
           { id: "captacao-investidores", label: "Captação e Materiais para Investidores" },
           { id: "operacao-inicial", label: "Estruturação da Operação Inicial" },
+          { id: "estudo-de-viabilidade", label: "Estudo de Viabilidade" },
         ],
       },
       {
@@ -94,6 +95,7 @@ export const pt = {
           { id: "precificacao-unit-economics", label: "Precificação e Unit Economics" },
           { id: "captacao-investidores", label: "Captação e Materiais para Investidores" },
           { id: "operacao-inicial", label: "Estruturação da Operação Inicial" },
+          { id: "estudo-de-viabilidade", label: "Estudo de Viabilidade" },
         ],
       },
       {
