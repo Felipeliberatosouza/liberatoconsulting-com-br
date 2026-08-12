@@ -2,18 +2,16 @@
 
 export function normalizeWhatsApp(raw: string | undefined): string | null {
   if (!raw) return null;
-  const digits = raw.replace(/\D/g, "");
+  let digits = raw.replace(/\D/g, "");
   if (digits.length < 8) return null;
+  // Números brasileiros sem DDI (10 ou 11 dígitos) recebem o código do país.
+  if (digits.length === 10 || digits.length === 11) digits = `55${digits}`;
   return digits;
 }
 
-/** Abre uma conversa diretamente no WhatsApp Web. */
+/** Link universal (wa.me): abre o app no celular e o WhatsApp Web no desktop. */
 export function whatsappHref(number: string, text?: string): string {
-  const params = new URLSearchParams({
-    phone: number,
-    type: "phone_number",
-    app_absent: "0",
-  });
-  if (text) params.set("text", text);
-  return `https://web.whatsapp.com/send/?${params.toString()}`;
+  const base = `https://wa.me/${number}`;
+  return text ? `${base}?text=${encodeURIComponent(text)}` : base;
 }
+
