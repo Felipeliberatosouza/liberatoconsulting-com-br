@@ -5,6 +5,7 @@ import { useEffect, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { getPanelSession } from "@/lib/users.functions";
 import { canAccess } from "@/lib/roles";
+import { useLanguage } from "@/i18n";
 
 const NAV: Array<{ to: string; label: string; exact?: boolean }> = [
   { to: "/admin", label: "Visão geral", exact: true },
@@ -32,6 +33,7 @@ export function AdminShell({
   children: ReactNode;
 }) {
   const navigate = useNavigate();
+  const { logoUrl } = useLanguage();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const session = useQuery({
