@@ -25,10 +25,12 @@ import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
 import { Route as AdminTextsRouteImport } from './routes/admin.texts'
 import { Route as AdminThemeRouteImport } from './routes/admin.theme'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
 import { Route as ContentSlugRouteImport } from './routes/content.$slug'
+import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 
@@ -112,6 +114,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminNewsletterRoute = AdminNewsletterRouteImport.update({
+  id: '/admin/newsletter',
+  path: '/admin/newsletter',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminTextsRoute = AdminTextsRouteImport.update({
   id: '/admin/texts',
   path: '/admin/texts',
@@ -131,6 +138,11 @@ const ContentSlugRoute = ContentSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => ContentRoute,
+} as any)
+const NewsletterUnsubscribeRoute = NewsletterUnsubscribeRouteImport.update({
+  id: '/newsletter/unsubscribe',
+  path: '/newsletter/unsubscribe',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesIndexRoute = ServicesIndexRouteImport.update({
   id: '/services/',
@@ -159,10 +171,12 @@ export interface FileRoutesByFullPath {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
+  '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -183,10 +197,12 @@ export interface FileRoutesByTo {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
+  '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
@@ -208,10 +224,12 @@ export interface FileRoutesById {
   '/admin/hero': typeof AdminHeroRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/brasil_/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
+  '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -234,10 +252,12 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/leads'
     | '/admin/login'
+    | '/admin/newsletter'
     | '/admin/texts'
     | '/admin/theme'
     | '/brasil/$slug'
     | '/content/$slug'
+    | '/newsletter/unsubscribe'
     | '/services/$slug'
     | '/admin/'
     | '/services/'
@@ -258,10 +278,12 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/leads'
     | '/admin/login'
+    | '/admin/newsletter'
     | '/admin/texts'
     | '/admin/theme'
     | '/brasil/$slug'
     | '/content/$slug'
+    | '/newsletter/unsubscribe'
     | '/services/$slug'
     | '/admin'
     | '/services'
@@ -282,10 +304,12 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/leads'
     | '/admin/login'
+    | '/admin/newsletter'
     | '/admin/texts'
     | '/admin/theme'
     | '/brasil_/$slug'
     | '/content/$slug'
+    | '/newsletter/unsubscribe'
     | '/services/$slug'
     | '/admin/'
     | '/services/'
@@ -307,9 +331,11 @@ export interface RootRouteChildren {
   AdminHeroRoute: typeof AdminHeroRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminNewsletterRoute: typeof AdminNewsletterRoute
   AdminTextsRoute: typeof AdminTextsRoute
   AdminThemeRoute: typeof AdminThemeRoute
   BrasilSlugRoute: typeof BrasilSlugRoute
+  NewsletterUnsubscribeRoute: typeof NewsletterUnsubscribeRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
@@ -429,6 +455,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/newsletter': {
+      id: '/admin/newsletter'
+      path: '/admin/newsletter'
+      fullPath: '/admin/newsletter'
+      preLoaderRoute: typeof AdminNewsletterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/texts': {
       id: '/admin/texts'
       path: '/admin/texts'
@@ -456,6 +489,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/content/$slug'
       preLoaderRoute: typeof ContentSlugRouteImport
       parentRoute: typeof ContentRoute
+    }
+    '/newsletter/unsubscribe': {
+      id: '/newsletter/unsubscribe'
+      path: '/newsletter/unsubscribe'
+      fullPath: '/newsletter/unsubscribe'
+      preLoaderRoute: typeof NewsletterUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/services/': {
       id: '/services/'
@@ -501,9 +541,11 @@ const rootRouteChildren: RootRouteChildren = {
   AdminHeroRoute: AdminHeroRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminNewsletterRoute: AdminNewsletterRoute,
   AdminTextsRoute: AdminTextsRoute,
   AdminThemeRoute: AdminThemeRoute,
   BrasilSlugRoute: BrasilSlugRoute,
+  NewsletterUnsubscribeRoute: NewsletterUnsubscribeRoute,
   ServicesSlugRoute: ServicesSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,

@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Linkedin, Youtube } from "lucide-react";
 import { useLanguage } from "@/i18n";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { legal } from "@/i18n/legal";
 import { normalizeWhatsApp, whatsappHref } from "@/lib/whatsapp";
 
@@ -67,6 +68,16 @@ export function SiteFooter() {
                 </svg>
               </a>
             ) : null}
+          </div>
+
+          <div className="mt-8 border-t border-ink-foreground/10 pt-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+              Newsletter
+            </p>
+            <p className="mt-2 max-w-md text-sm text-ink-foreground/70">
+              Receba nossos conteúdos sobre gestão, IA e o mercado brasileiro.
+            </p>
+            <NewsletterSignup />
           </div>
 
         </div>

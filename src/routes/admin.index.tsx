@@ -47,6 +47,11 @@ const CARDS = [
     text: "Publique artigos, guias e estudos que aparecem na seção Conteúdo.",
   },
   {
+    to: "/admin/newsletter",
+    title: "Newsletter",
+    text: "Gerencie inscritos, escreva campanhas e envie automaticamente para toda a base.",
+  },
+  {
     to: "/admin/leads",
     title: "Leads recebidos",
     text: "Veja os contatos enviados pelos formulários das páginas de serviço.",
