@@ -1,0 +1,85 @@
+import { sendLovableEmail } from "@lovable.dev/email-js";
+
+import { DEFAULT_NEWSLETTER_SETTINGS, type NewsletterSettings } from "./newsletter.server";
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/**
+ * Envia a mensagem de um visitante para o e-mail privado do consultor.
+ * O e-mail nunca é devolvido ao navegador.
+ */
+export async function sendConsultantMessage(input: {
+  consultantId: string;
+  fromName: string;
+  fromEmail: string;
+  company: string;
+  message: string;
+}) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  const { data: consultant } = await supabaseAdmin
+    .from("consultants")
+    .select("full_name, contact_email, published")
+    .eq("id", input.consultantId)
+    .maybeSingle();
+
+  if (!consultant || !consultant.published) {
+    return { ok: false as const, error: "Consultor não encontrado." };
+  }
+  if (!consultant.contact_email) {
+    return { ok: false as const, error: "Este consultor ainda não tem contato cadastrado." };
+  }
+
+  const { data: settingsRow } = await supabaseAdmin
+    .from("site_settings")
+    .select("value")
+    .eq("key", "newsletter")
+    .maybeSingle();
+  const settings: NewsletterSettings = {
+    ...DEFAULT_NEWSLETTER_SETTINGS,
+    ...((settingsRow?.value ?? {}) as Partial<NewsletterSettings>),
+  };
+  if (!settings.fromEmail) {
+    return {
+      ok: false as const,
+      error: "Envio de e-mail indisponível no momento. Use a página Fale conosco.",
+    };
+  }
+
+  const apiKey = process.env["LOVABLE_API_KEY"];
+  if (!apiKey) return { ok: false as const, error: "Serviço de e-mail indisponível." };
+
+  const subject = `Contato pelo site para ${consultant.full_name}`;
+  const html = `<!doctype html><html><body style="font-family:Helvetica,Arial,sans-serif;color:#1f2328">
+<h2 style="margin:0 0 16px">Nova mensagem pelo site</h2>
+<p><strong>Para:</strong> ${escapeHtml(consultant.full_name)}</p>
+<p><strong>Nome:</strong> ${escapeHtml(input.fromName)}</p>
+<p><strong>E-mail:</strong> ${escapeHtml(input.fromEmail)}</p>
+<p><strong>Empresa:</strong> ${escapeHtml(input.company || "—")}</p>
+<p style="white-space:pre-wrap;margin-top:16px">${escapeHtml(input.message)}</p>
+</body></html>`;
+  const text = `Nova mensagem pelo site\nPara: ${consultant.full_name}\nNome: ${input.fromName}\nE-mail: ${input.fromEmail}\nEmpresa: ${input.company || "—"}\n\n${input.message}`;
+
+  await sendLovableEmail(
+    {
+      to: consultant.contact_email,
+      from: `${settings.fromName} <${settings.fromEmail}>`,
+      sender_domain: settings.fromEmail.split("@")[1] ?? "",
+      reply_to: input.fromEmail,
+      subject,
+      html,
+      text,
+      purpose: "transactional",
+      label: "consultant-contact",
+    } as never,
+    { apiKey },
+  );
+
+  return { ok: true as const };
+}
