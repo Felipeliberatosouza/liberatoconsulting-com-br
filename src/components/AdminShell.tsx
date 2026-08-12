@@ -5,6 +5,7 @@ import { useEffect, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { getPanelSession } from "@/lib/users.functions";
 import { canAccess } from "@/lib/roles";
+import { useLanguage } from "@/i18n";
 
 const NAV: Array<{ to: string; label: string; exact?: boolean }> = [
   { to: "/admin", label: "Visão geral", exact: true },
@@ -32,6 +33,7 @@ export function AdminShell({
   children: ReactNode;
 }) {
   const navigate = useNavigate();
+  const { logoUrl } = useLanguage();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const session = useQuery({
@@ -90,8 +92,9 @@ export function AdminShell({
     <div className="min-h-screen bg-secondary/40">
       <header className="border-b border-border bg-background">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-6 py-4">
-          <Link to="/" className="font-display text-sm font-bold tracking-tight">
-            LIBERATO <span className="text-accent">admin</span>
+          <Link to="/" className="flex items-center gap-2">
+            <img src={logoUrl} alt="Liberato Consulting" className="h-9 w-auto" />
+            <span className="text-sm font-semibold text-accent">admin</span>
           </Link>
           <nav className="flex flex-wrap gap-1">
             {items.map((item) => {

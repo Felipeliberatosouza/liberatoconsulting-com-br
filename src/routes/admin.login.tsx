@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { adminExists, bootstrapAdmin } from "@/lib/admin.functions";
+import { useLanguage } from "@/i18n";
 
 export const Route = createFileRoute("/admin/login")({
   head: () => ({
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/admin/login")({
 
 function AdminLogin() {
   const navigate = useNavigate();
+  const { logoUrl } = useLanguage();
   const [mode, setMode] = useState<"login" | "bootstrap" | "forgot">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -77,7 +79,7 @@ function AdminLogin() {
         onSubmit={onSubmit}
         className="w-full max-w-sm rounded-lg border border-border bg-background p-8"
       >
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Liberato</p>
+        <img src={logoUrl} alt="Liberato Consulting" className="h-11 w-auto" />
         <h1 className="mt-3 font-display text-2xl font-bold">
           {mode === "bootstrap"
             ? "Criar administrador"
