@@ -56,6 +56,54 @@ export type Database = {
         }
         Relationships: []
       }
+      brazil_scope_content: {
+        Row: {
+          body: string
+          bullets: Json
+          created_at: string
+          id: string
+          lang: string
+          region: string
+          scope_key: string
+          section_id: string
+          segment: string
+          sources: Json
+          title: string
+          uf: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          bullets?: Json
+          created_at?: string
+          id?: string
+          lang?: string
+          region?: string
+          scope_key: string
+          section_id: string
+          segment?: string
+          sources?: Json
+          title?: string
+          uf?: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          bullets?: Json
+          created_at?: string
+          id?: string
+          lang?: string
+          region?: string
+          scope_key?: string
+          section_id?: string
+          segment?: string
+          sources?: Json
+          title?: string
+          uf?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       change_requests: {
         Row: {
           action: string

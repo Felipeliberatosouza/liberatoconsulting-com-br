@@ -11,6 +11,7 @@ import {
   useAudienceFilters,
 } from "@/lib/audience-filters";
 import { listPublicIndicators } from "@/lib/indicators.functions";
+import { getScopedBrazilSections } from "@/lib/brazil-scope.functions";
 
 export const Route = createFileRoute("/brasil")({
   head: () => ({
@@ -38,9 +39,26 @@ export const Route = createFileRoute("/brasil")({
 });
 
 function BrazilPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const scope = useAudienceFilters();
   const b = t.brazil;
+
+  const scoped = useQuery({
+    queryKey: ["brazil-scoped", lang, scope.filters, b.sections.map((s) => s.id).join(",")],
+    enabled: scope.applied,
+    staleTime: 600_000,
+    queryFn: () =>
+      getScopedBrazilSections({
+        data: {
+          segment: scope.filters.segment,
+          region: scope.filters.region,
+          uf: scope.filters.state,
+          lang,
+          sections: b.sections.map((s) => ({ id: s.id, title: s.title })),
+        },
+      }),
+  });
+  const scopedMap = new Map((scoped.data ?? []).map((s) => [s.section_id, s]));
 
   return (
     <div>
@@ -83,33 +101,59 @@ function BrazilPage() {
           {scope.applied && (
             <p className="rounded-md border-l-4 border-accent bg-secondary px-4 py-3 text-sm text-muted-foreground">
               Observação: os dados e textos desta seção correspondem aos filtros aplicados —{" "}
-              <span className="font-semibold text-foreground">{scope.label}</span>.
+              <span className="font-semibold text-foreground">{scope.label}</span>
+              {scoped.isFetching ? " (atualizando os textos para este recorte...)" : "."}
             </p>
           )}
 
           <IndicatorsPanel />
 
-          {b.sections.map((s) => (
-            <section key={s.id} id={s.id} className="scroll-mt-24 border-t border-border pt-8">
-              <h2 className="text-2xl font-bold md:text-3xl">{s.title}</h2>
-              <p className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">{s.body}</p>
-              <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-                {s.bullets.map((item) => (
-                  <li key={item} className="flex gap-3 text-sm">
-                    <span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
-                    {item}
-                  </li>
+          {b.sections.map((s) => {
+            const custom = scopedMap.get(s.id);
+            const title = custom?.title || s.title;
+            const body = custom?.body || s.body;
+            const bullets = custom && custom.bullets.length > 0 ? custom.bullets : s.bullets;
+            return (
+              <section key={s.id} id={s.id} className="scroll-mt-24 border-t border-border pt-8">
+                <h2 className="text-2xl font-bold md:text-3xl">{title}</h2>
+                {custom && (
+                  <p className="mt-2 inline-flex rounded-full bg-accent/15 px-3 py-1 text-xs font-semibold text-accent">
+                    {scope.label}
+                  </p>
+                )}
+                {body.split(/\n{2,}/).map((p, i) => (
+                  <p
+                    key={i}
+                    className="mt-4 max-w-3xl leading-relaxed text-muted-foreground"
+                  >
+                    {p}
+                  </p>
                 ))}
-              </ul>
-              <Link
-                to="/brasil/$slug"
-                params={{ slug: s.id }}
-                className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-accent"
-              >
-                {s.title} <ArrowRight className="size-4" />
-              </Link>
-            </section>
-          ))}
+                <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+                  {bullets.map((item) => (
+                    <li key={item} className="flex gap-3 text-sm">
+                      <span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                {custom && custom.sources.length > 0 && (
+                  <ul className="mt-4 space-y-1 text-xs text-muted-foreground">
+                    {custom.sources.map((src) => (
+                      <li key={src}>Fonte: {src}</li>
+                    ))}
+                  </ul>
+                )}
+                <Link
+                  to="/brasil/$slug"
+                  params={{ slug: s.id }}
+                  className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-accent"
+                >
+                  {s.title} <ArrowRight className="size-4" />
+                </Link>
+              </section>
+            );
+          })}
 
           <section className="border-t border-border pt-8">
             <h2 className="text-lg font-bold">{b.sourcesLabel}</h2>
@@ -174,8 +218,9 @@ function IndicatorsPanel() {
           i.segment !== ALL_SEGMENTS || i.region !== ALL_REGIONS || i.uf !== ALL_STATES,
       )
     : [];
-  const rows = specific.length > 0 ? specific : compatible;
-  const onlyNational = scope.applied && specific.length === 0;
+  // Com filtros aplicados exibimos apenas os indicadores daquele recorte.
+  const rows = scope.applied ? specific : compatible;
+  const onlyNational = false;
 
   if (rows.length === 0) {
     if (!scope.applied) return null;
