@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
-import { FilterScopeBadge } from "@/components/SiteFilterBar";
+import { FilterScopeBadge, SiteFilterBar } from "@/components/SiteFilterBar";
 import { useAudienceFilters } from "@/lib/audience-filters";
 import { listPublicIndicators } from "@/lib/indicators.functions";
 
@@ -49,6 +49,8 @@ function BrazilPage() {
           <FilterScopeBadge className="mt-6" />
         </div>
       </section>
+
+      <SiteFilterBar />
 
       <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 lg:grid-cols-[240px_1fr]">
         <aside className="lg:sticky lg:top-24 lg:self-start">

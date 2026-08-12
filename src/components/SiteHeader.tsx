@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { ChevronDown, ChevronRight, Menu, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useLanguage, LANGS, LANG_LABELS, LANG_SHORT } from "@/i18n";
-import { SiteFilterBar } from "@/components/SiteFilterBar";
 
 function LangSwitch() {
   const { lang, setLang } = useLanguage();
@@ -320,8 +319,6 @@ export function SiteHeader() {
         </div>
       </div>
       </div>
-
-      <SiteFilterBar />
 
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
