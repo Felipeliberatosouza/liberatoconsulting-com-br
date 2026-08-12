@@ -112,6 +112,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              name: "Liberato Consulting",
+              url: "https://liberato-ai-insight.lovable.app",
+              logo: "https://liberato-ai-insight.lovable.app/logo.png",
+              email: "contato@liberatoconsulting.com.br",
+              description:
+                "Consultoria em gestão empresarial com inteligência artificial no centro de cada entrega.",
+            },
+            {
+              "@type": "WebSite",
+              name: "Liberato Consulting",
+              url: "https://liberato-ai-insight.lovable.app",
+              inLanguage: "pt-BR",
+            },
+          ],
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
