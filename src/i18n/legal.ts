@@ -69,7 +69,7 @@ export const legal: Record<Lang, LegalDict> = {
           heading: "Seus direitos",
           body: [
             "Você pode solicitar confirmação de tratamento, acesso, correção, anonimização, portabilidade, revogação do consentimento e exclusão dos seus dados.",
-            "Para exercer esses direitos, escreva para contato@liberato.com.",
+            "Para exercer esses direitos, escreva para contato@liberatoconsulting.com.br.",
           ],
         },
         {
@@ -80,7 +80,7 @@ export const legal: Record<Lang, LegalDict> = {
         },
         {
           heading: "Contato",
-          body: ["Dúvidas sobre esta política: contato@liberato.com."],
+          body: ["Dúvidas sobre esta política: contato@liberatoconsulting.com.br."],
         },
       ],
     },
@@ -191,7 +191,7 @@ export const legal: Record<Lang, LegalDict> = {
           heading: "Your rights",
           body: [
             "You may request confirmation of processing, access, correction, anonymization, portability, withdrawal of consent and deletion of your data.",
-            "To exercise these rights, write to contato@liberato.com.",
+            "To exercise these rights, write to contato@liberatoconsulting.com.br.",
           ],
         },
         {
@@ -200,7 +200,7 @@ export const legal: Record<Lang, LegalDict> = {
             "We use essential cookies for the website to work and optional analytics cookies. Your choice in the cookie bar is stored in your browser and can be changed at any time by clearing site data.",
           ],
         },
-        { heading: "Contact", body: ["Questions about this policy: contato@liberato.com."] },
+        { heading: "Contact", body: ["Questions about this policy: contato@liberatoconsulting.com.br."] },
       ],
     },
     terms: {
@@ -310,7 +310,7 @@ export const legal: Record<Lang, LegalDict> = {
           heading: "Sus derechos",
           body: [
             "Puede solicitar confirmación del tratamiento, acceso, corrección, anonimización, portabilidad, revocación del consentimiento y eliminación de sus datos.",
-            "Para ejercer estos derechos, escriba a contato@liberato.com.",
+            "Para ejercer estos derechos, escriba a contato@liberatoconsulting.com.br.",
           ],
         },
         {
@@ -319,7 +319,7 @@ export const legal: Record<Lang, LegalDict> = {
             "Usamos cookies esenciales para el funcionamiento del sitio y cookies opcionales de medición. Su elección en la barra de cookies se guarda en el navegador y puede cambiarse en cualquier momento borrando los datos del sitio.",
           ],
         },
-        { heading: "Contacto", body: ["Dudas sobre esta política: contato@liberato.com."] },
+        { heading: "Contacto", body: ["Dudas sobre esta política: contato@liberatoconsulting.com.br."] },
       ],
     },
     terms: {
@@ -427,7 +427,7 @@ export const legal: Record<Lang, LegalDict> = {
           heading: "您的权利",
           body: [
             "您可以请求确认处理情况、访问、更正、匿名化、可携带性、撤回同意以及删除您的数据。",
-            "如需行使这些权利，请发送邮件至 contato@liberato.com。",
+            "如需行使这些权利，请发送邮件至 contato@liberatoconsulting.com.br。",
           ],
         },
         {
@@ -436,7 +436,7 @@ export const legal: Record<Lang, LegalDict> = {
             "我们使用网站运行所必需的 Cookie 和可选的分析 Cookie。您在 Cookie 提示栏中的选择保存在浏览器中，可随时通过清除网站数据进行更改。",
           ],
         },
-        { heading: "联系我们", body: ["有关本政策的问题：contato@liberato.com。"] },
+        { heading: "联系我们", body: ["有关本政策的问题：contato@liberatoconsulting.com.br。"] },
       ],
     },
     terms: {

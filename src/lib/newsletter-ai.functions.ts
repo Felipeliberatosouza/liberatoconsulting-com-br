@@ -131,7 +131,7 @@ export const buildNewsletterPdf = createServerFn({ method: "POST" })
       logoDataUrl: logoUrl,
       contact: {
         name: c["trade_name"] || "Liberato Consulting",
-        line1: contactLine1 || "contato@liberato.com",
+        line1: contactLine1 || "contato@liberatoconsulting.com.br",
         line2: contactLine2 || "Consultoria em gestão empresarial",
       },
     });
