@@ -103,11 +103,17 @@ async function assertAdmin(context: { supabase: unknown; userId: string }) {
   await check(context as never);
 }
 
+/** Equipe do painel (admin, consultor e autor) pode consultar o boletim. */
+async function assertPanel(context: { supabase: unknown; userId: string }) {
+  const { assertAnyRole } = await import("./access.server");
+  await assertAnyRole(context as never, ["consultor", "autor"]);
+}
+
 /** Lista os cadastros do Boletim Semanal (painel administrativo). */
 export const listBulletinSubscribers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<BulletinSubscriberRow[]> => {
-    await assertAdmin(context);
+    await assertPanel(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data } = await supabaseAdmin
       .from("bulletin_subscribers")
@@ -124,7 +130,7 @@ export const previewBulletin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ segment: z.string().trim().max(80) }).parse(d))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertPanel(context);
     const { buildBulletinContent, renderBulletinHtml, renderBulletinWhatsApp, siteOrigin } =
       await import("./bulletin.server");
     const content = await buildBulletinContent(data.segment);
@@ -152,7 +158,22 @@ export const sendBulletinNow = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertPanel(context);
+    const { isAdmin, queueChangeRequest } = await import("./access.server");
+    if (!(await isAdmin(context as never))) {
+      const queued = await queueChangeRequest(context as never, {
+        kind: "bulletin",
+        action: "send",
+        title: "Envio do Boletim Semanal",
+        summary: data.testEmail || data.testWhatsApp
+          ? "Envio de teste do Boletim Semanal."
+          : "Envio do Boletim Semanal para todos os inscritos ativos.",
+        payload: data,
+      });
+      return queued.ok
+        ? { ok: false as const, error: "Pedido enviado para aprovação do administrador." }
+        : { ok: false as const, error: queued.error };
+    }
     const { dispatchBulletin } = await import("./bulletin.server");
     try {
       return await dispatchBulletin({
@@ -170,7 +191,21 @@ export const unsubscribeBulletinByAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context);
+    await assertPanel(context);
+    const { isAdmin, queueChangeRequest } = await import("./access.server");
+    if (!(await isAdmin(context as never))) {
+      const queued = await queueChangeRequest(context as never, {
+        kind: "bulletin",
+        action: "unsubscribe",
+        targetId: data.id,
+        title: "Interromper envio do Boletim Semanal",
+        summary: "Cancelamento de um cadastro do Boletim Semanal.",
+        payload: data,
+      });
+      return queued.ok
+        ? { ok: false as const, error: "Pedido enviado para aprovação do administrador." }
+        : { ok: false as const, error: queued.error };
+    }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("bulletin_subscribers")
