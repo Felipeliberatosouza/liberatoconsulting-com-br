@@ -22,6 +22,7 @@ export type BulletinHistoryItem = {
   sentWhatsApp: number;
   failed: number;
   isTest: boolean;
+  status: string;
 };
 
 export type ContentHistoryItem = {
@@ -58,7 +59,7 @@ export const getPublicationHistory = createServerFn({ method: "GET" })
         .limit(200),
       supabaseAdmin
         .from("bulletin_dispatches")
-        .select("id, subject, date_label, created_at, sent_email, sent_whatsapp, failed, is_test")
+        .select("id, subject, date_label, created_at, sent_email, sent_whatsapp, failed, is_test, status")
         .order("created_at", { ascending: false })
         .limit(200),
       supabaseAdmin
@@ -87,6 +88,7 @@ export const getPublicationHistory = createServerFn({ method: "GET" })
         sentWhatsApp: b.sent_whatsapp ?? 0,
         failed: b.failed ?? 0,
         isTest: b.is_test,
+        status: b.status ?? "enviado",
       })) as BulletinHistoryItem[],
       contents: (articles.data ?? []).map((a) => ({
         id: a.id,

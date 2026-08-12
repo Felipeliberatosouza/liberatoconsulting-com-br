@@ -126,13 +126,30 @@ export const previewBulletin = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ segment: z.string().trim().max(80) }).parse(d))
   .handler(async ({ data, context }) => {
     await assertPanel(context);
-    const { buildBulletinContent, renderBulletinHtml, renderBulletinWhatsApp, siteOrigin } =
-      await import("./bulletin.server");
+    const {
+      buildBulletinContent,
+      renderBulletinHtml,
+      renderBulletinWhatsApp,
+      siteOrigin,
+      recordBulletinGenerated,
+    } = await import("./bulletin.server");
     const content = await buildBulletinContent(data.segment);
     const url = `${siteOrigin()}/boletim/cancelar?token=00000000-0000-0000-0000-000000000000`;
+    const html = renderBulletinHtml(content, url);
+    // O boletim entra no histórico assim que é gerado, antes de qualquer envio.
+    try {
+      await recordBulletinGenerated({
+        subject: `Boletim Semanal — ${content.dateLabel}`,
+        dateLabel: content.dateLabel,
+        html,
+        segment: data.segment,
+      });
+    } catch {
+      /* histórico é best-effort */
+    }
     return {
       ok: true as const,
-      html: renderBulletinHtml(content, url),
+      html,
       whatsapp: renderBulletinWhatsApp(content, url),
       dateLabel: content.dateLabel,
       indicators: content.indicators.length,
