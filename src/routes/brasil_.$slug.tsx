@@ -1,8 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
+import { getSiteConfig } from "@/lib/admin.functions";
 
 const SLUGS = pt.brazil.sections.map((s) => s.id);
 
@@ -43,6 +45,12 @@ function BrazilDetailPage() {
   const b = t.brazil;
   const section = b.sections.find((s) => s.id === slug) ?? b.sections[0]!;
   const related = b.sections.filter((s) => s.id !== section.id);
+  const config = useQuery({
+    queryKey: ["site-config-public"],
+    queryFn: () => getSiteConfig(),
+    staleTime: 300_000,
+  });
+  const meta = config.data?.brazil?.[slug]?.meta;
 
   return (
     <div>
@@ -71,6 +79,36 @@ function BrazilDetailPage() {
               </li>
             ))}
           </ul>
+
+          {meta && (meta.sources || meta.authors || meta.updatedAt) && (
+            <div className="mt-10 rounded-lg border border-border p-6 text-sm">
+              {meta.updatedAt && (
+                <p className="text-muted-foreground">
+                  Atualizado em {new Date(meta.updatedAt).toLocaleDateString("pt-BR")}
+                </p>
+              )}
+              {meta.authors && (
+                <p className="mt-2">
+                  <strong>Autores:</strong> {meta.authors}
+                  {meta.authorContact ? ` — ${meta.authorContact}` : ""}
+                </p>
+              )}
+              {meta.sources && (
+                <div className="mt-3">
+                  <strong>Fontes de pesquisa</strong>
+                  <ul className="mt-2 space-y-1 text-muted-foreground">
+                    {meta.sources
+                      .split("\n")
+                      .map((line) => line.trim())
+                      .filter(Boolean)
+                      .map((line) => (
+                        <li key={line}>{line}</li>
+                      ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="mt-12 rounded-2xl border border-border bg-secondary p-8">
             <h2 className="text-xl font-bold">{b.ctaTitle}</h2>

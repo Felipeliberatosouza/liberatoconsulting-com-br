@@ -62,7 +62,15 @@ export function heroSlideOrder(hero: HeroSettings | undefined): HeroSlideSetting
 
 /** Conteúdo editável de cada tema da seção "Dados do Brasil". */
 export type BrazilSectionText = { title: string; body: string; bullets: string[] };
-export type BrazilSectionOverride = Partial<Record<Lang, BrazilSectionText>>;
+export type BrazilSectionMeta = {
+  sources?: string;
+  authors?: string;
+  authorContact?: string;
+  updatedAt?: string;
+};
+export type BrazilSectionOverride = Partial<Record<Lang, BrazilSectionText>> & {
+  meta?: BrazilSectionMeta;
+};
 export type BrazilOverrides = Record<string, BrazilSectionOverride>;
 
 export type SiteConfig = {

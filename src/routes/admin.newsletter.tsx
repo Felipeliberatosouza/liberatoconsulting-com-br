@@ -18,6 +18,11 @@ import {
   sendCampaign,
   setSubscriberStatus,
 } from "@/lib/newsletter.functions";
+import {
+  buildNewsletterPdf,
+  generateNewsletterAI,
+  generateNewsletterImage,
+} from "@/lib/newsletter-ai.functions";
 
 export const Route = createFileRoute("/admin/newsletter")({
   head: () => ({
@@ -71,6 +76,14 @@ function AdminNewsletter() {
   const [testEmail, setTestEmail] = useState("");
   const [link, setLink] = useState("");
   const [socialDrafts, setSocialDrafts] = useState<Record<string, string>>({});
+  const [authors, setAuthors] = useState("");
+  const [authorContact, setAuthorContact] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [fullText, setFullText] = useState("");
+  const [sources, setSources] = useState("");
+  const [referenceDate, setReferenceDate] = useState("");
+  const [aiBusy, setAiBusy] = useState<"" | "text" | "image" | "pdf">("");
+  const [pdfUrl, setPdfUrl] = useState("");
 
   const activeCount = (subscribers.data ?? []).filter((s) => s.status === "active").length;
 
@@ -88,6 +101,13 @@ function AdminNewsletter() {
     setSubject("");
     setPreheader("");
     setBody("");
+    setAuthors("");
+    setAuthorContact("");
+    setImageUrl("");
+    setFullText("");
+    setSources("");
+    setReferenceDate("");
+    setPdfUrl("");
     setLink("");
     setSocialDrafts({});
   };
@@ -160,11 +180,26 @@ function AdminNewsletter() {
             setBusy(true);
             try {
               const r = await saveCampaign({
-                data: { ...(editId ? { id: editId } : {}), subject, preheader, body },
+                data: {
+                  ...(editId ? { id: editId } : {}),
+                  subject,
+                  preheader,
+                  body,
+                  authors,
+                  author_contact: authorContact,
+                  image_url: imageUrl || null,
+                  full_text: fullText,
+                  sources,
+                  reference_date: referenceDate || null,
+                },
               });
               if (!r.ok) toast.error(r.error);
               else {
-                toast.success("Newsletter salva.");
+                toast.success(
+                  "pending" in r && r.pending
+                    ? "Newsletter enviada para aprovação do administrador."
+                    : "Newsletter salva.",
+                );
                 resetForm();
                 await campaigns.refetch();
               }
@@ -176,6 +211,86 @@ function AdminNewsletter() {
           <div>
             <label className={label} htmlFor="nl-title">Título da newsletter</label>
             <input id="nl-title" className={input} required value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Ex.: Como a IA está mudando a gestão no Brasil" />
+          </div>
+
+          <div className="rounded-md border border-accent/40 bg-accent/5 p-4">
+            <p className="text-sm font-semibold">Gerar com inteligência artificial</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              A partir do título, a IA escreve a chamada curta, o texto de até 500 palavras, o
+              material completo com fontes e cria a imagem de cabeçalho. Revise antes de enviar.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-3">
+              <button
+                type="button"
+                disabled={aiBusy !== "" || subject.trim().length < 5}
+                onClick={async () => {
+                  setAiBusy("text");
+                  try {
+                    const r = await generateNewsletterAI({ data: { title: subject, authors } });
+                    if (!r.ok) toast.error(r.error);
+                    else {
+                      setPreheader(r.preheader);
+                      setBody(r.body);
+                      setFullText(r.fullText);
+                      setSources(r.sources);
+                      setReferenceDate(r.referenceDate);
+                      toast.success("Textos gerados. Revise antes de enviar.");
+                    }
+                  } catch {
+                    toast.error("Não foi possível gerar o texto.");
+                  } finally {
+                    setAiBusy("");
+                  }
+                }}
+                className={btn}
+              >
+                {aiBusy === "text" ? "Escrevendo…" : "Gerar textos"}
+              </button>
+              <button
+                type="button"
+                disabled={aiBusy !== "" || subject.trim().length < 5}
+                onClick={async () => {
+                  setAiBusy("image");
+                  try {
+                    const r = await generateNewsletterImage({ data: { title: subject } });
+                    if (!r.ok) toast.error(r.error);
+                    else {
+                      setImageUrl(r.imageUrl);
+                      toast.success("Imagem de cabeçalho gerada.");
+                    }
+                  } catch {
+                    toast.error("Não foi possível gerar a imagem.");
+                  } finally {
+                    setAiBusy("");
+                  }
+                }}
+                className="rounded-md border border-accent px-4 py-2 text-sm font-semibold text-accent hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
+              >
+                {aiBusy === "image" ? "Criando imagem…" : "Gerar imagem de cabeçalho"}
+              </button>
+            </div>
+            {imageUrl && (
+              <img
+                src={imageUrl}
+                alt="Cabeçalho gerado para a newsletter"
+                className="mt-4 max-h-48 w-full rounded-md object-cover"
+              />
+            )}
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div>
+              <label className={label} htmlFor="nl-authors">Autores</label>
+              <input id="nl-authors" className={input} value={authors} onChange={(e) => setAuthors(e.target.value)} placeholder="Nome dos autores" />
+            </div>
+            <div>
+              <label className={label} htmlFor="nl-contact">Contato dos autores</label>
+              <input id="nl-contact" className={input} value={authorContact} onChange={(e) => setAuthorContact(e.target.value)} placeholder="email@liberato.com" />
+            </div>
+            <div>
+              <label className={label} htmlFor="nl-date">Data de atualização</label>
+              <input id="nl-date" type="date" className={input} value={referenceDate} onChange={(e) => setReferenceDate(e.target.value)} />
+            </div>
           </div>
 
           <div>
@@ -227,6 +342,81 @@ function AdminNewsletter() {
                 toast.success("Texto importado do arquivo.");
               }}
             />
+          </div>
+
+          <div>
+            <div className="flex flex-wrap items-center gap-3">
+              <label className={label} htmlFor="nl-full">Material completo (até 5.000 palavras)</label>
+              <span className="ml-auto text-xs text-muted-foreground">
+                {fullText.trim() ? `${fullText.trim().split(/\s+/).length} palavras` : "vazio"}
+              </span>
+            </div>
+            <textarea
+              id="nl-full"
+              className={`${input} min-h-56 leading-relaxed`}
+              value={fullText}
+              onChange={(e) => setFullText(e.target.value)}
+              placeholder="Texto completo, com subtítulos, tabelas e descrição dos gráficos."
+            />
+          </div>
+
+          <div>
+            <label className={label} htmlFor="nl-sources">Fontes de pesquisa</label>
+            <textarea
+              id="nl-sources"
+              className={`${input} min-h-24`}
+              value={sources}
+              onChange={(e) => setSources(e.target.value)}
+              placeholder="IBGE (2025). Contas Nacionais. https://…"
+            />
+          </div>
+
+          <div className="rounded-md border border-dashed border-border p-4">
+            <p className="text-sm font-semibold">PDF para download</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Gera o arquivo do material completo com a logomarca da Liberato Consulting como
+              marca d’água, cabeçalho e rodapé com os dados de contato da consultoria.
+            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                disabled={aiBusy !== "" || fullText.trim().length < 50}
+                onClick={async () => {
+                  setAiBusy("pdf");
+                  try {
+                    const r = await buildNewsletterPdf({
+                      data: {
+                        ...(editId ? { campaignId: editId } : {}),
+                        title: subject,
+                        subtitle: preheader,
+                        authors,
+                        authorContact,
+                        body: fullText,
+                        sources,
+                      },
+                    });
+                    if (!r.ok) toast.error(r.error);
+                    else {
+                      setPdfUrl(r.url);
+                      toast.success("PDF gerado.");
+                      await campaigns.refetch();
+                    }
+                  } catch {
+                    toast.error("Não foi possível gerar o PDF.");
+                  } finally {
+                    setAiBusy("");
+                  }
+                }}
+                className={btn}
+              >
+                {aiBusy === "pdf" ? "Gerando PDF…" : "Gerar PDF do material completo"}
+              </button>
+              {pdfUrl && (
+                <a href={pdfUrl} target="_blank" rel="noreferrer" className="text-sm text-accent hover:underline">
+                  baixar PDF gerado
+                </a>
+              )}
+            </div>
           </div>
 
           <div>
@@ -314,6 +504,12 @@ function AdminNewsletter() {
                     setSubject(c.subject);
                     setPreheader(c.preheader ?? "");
                     setBody(c.body);
+                    setAuthors(c.authors ?? "");
+                    setAuthorContact(c.author_contact ?? "");
+                    setImageUrl(c.image_url ?? "");
+                    setFullText(c.full_text ?? "");
+                    setSources(c.sources ?? "");
+                    setReferenceDate(c.reference_date ?? "");
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                 >

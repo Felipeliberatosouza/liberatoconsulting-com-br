@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
+import { listPublicIndicators } from "@/lib/indicators.functions";
 
 export const Route = createFileRoute("/brasil")({
   head: () => ({
@@ -65,6 +67,8 @@ function BrazilPage() {
         </aside>
 
         <div className="min-w-0 space-y-14">
+          <IndicatorsPanel />
+
           {b.sections.map((s) => (
             <section key={s.id} id={s.id} className="scroll-mt-24 border-t border-border pt-8">
               <h2 className="text-2xl font-bold md:text-3xl">{s.title}</h2>
@@ -123,5 +127,59 @@ function BrazilPage() {
 
       <CtaBand />
     </div>
+  );
+}
+
+function IndicatorsPanel() {
+  const indicators = useQuery({
+    queryKey: ["public-indicators"],
+    queryFn: () => listPublicIndicators(),
+    staleTime: 300_000,
+  });
+  const rows = indicators.data ?? [];
+  if (rows.length === 0) return null;
+
+  return (
+    <section id="indicadores" className="scroll-mt-24">
+      <h2 className="text-2xl font-bold md:text-3xl">Indicadores econômicos</h2>
+      <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+        Números macroeconômicos monitorados nas fontes oficiais brasileiras e revisados pela
+        nossa equipe.
+      </p>
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {rows.map((i) => (
+          <article key={i.id} className="rounded-lg border border-border bg-background p-5">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {i.label}
+            </p>
+            <p className="mt-2 font-display text-2xl font-bold">
+              {i.value}
+              {i.unit ? <span className="ml-1 text-base font-semibold">{i.unit}</span> : null}
+            </p>
+            {i.reference_period && (
+              <p className="mt-1 text-xs text-muted-foreground">{i.reference_period}</p>
+            )}
+            {i.note && <p className="mt-3 text-sm text-muted-foreground">{i.note}</p>}
+            {i.source_name && (
+              <p className="mt-3 text-xs text-muted-foreground">
+                Fonte:{" "}
+                {i.source_url ? (
+                  <a
+                    href={i.source_url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="text-accent hover:underline"
+                  >
+                    {i.source_name}
+                  </a>
+                ) : (
+                  i.source_name
+                )}
+              </p>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
   );
 }

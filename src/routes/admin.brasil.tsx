@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
 import { getSiteConfig, saveBrazilSection } from "@/lib/admin.functions";
+import { generateBrazilSectionAI } from "@/lib/indicators.functions";
 import type { BrazilOverrides } from "@/lib/site-config";
 import { pt } from "@/i18n/pt";
 
@@ -25,7 +26,14 @@ export const Route = createFileRoute("/admin/brasil")({
   component: AdminBrazil,
 });
 
-type Draft = { title: string; body: string; bullets: string };
+type Draft = {
+  title: string;
+  body: string;
+  bullets: string;
+  sources: string;
+  authors: string;
+  authorContact: string;
+};
 
 function AdminBrazil() {
   const [overrides, setOverrides] = useState<BrazilOverrides>({});
@@ -38,10 +46,14 @@ function AdminBrazil() {
     const next: Record<string, Draft> = {};
     for (const s of pt.brazil.sections) {
       const v = o[s.id]?.pt;
+      const meta = o[s.id]?.meta;
       next[s.id] = {
         title: v?.title ?? s.title,
         body: v?.body ?? s.body,
         bullets: (v?.bullets ?? s.bullets).join("\n"),
+        sources: meta?.sources ?? "",
+        authors: meta?.authors ?? "",
+        authorContact: meta?.authorContact ?? "",
       };
     }
     setDrafts(next);
@@ -67,13 +79,20 @@ function AdminBrazil() {
             .split("\n")
             .map((b) => b.trim())
             .filter(Boolean),
+          sources: d.sources.trim(),
+          authors: d.authors.trim(),
+          authorContact: d.authorContact.trim(),
         },
       });
       if (!r.ok) {
         toast.error(r.error);
         return;
       }
-      toast.success("Tema atualizado e traduzido para EN, ES e ZH.");
+      toast.success(
+        "pending" in r && r.pending
+          ? "Alteração enviada para aprovação do administrador."
+          : "Tema atualizado e traduzido para EN, ES e ZH.",
+      );
       const c = await getSiteConfig();
       hydrate(c.brazil ?? {});
     } catch {
@@ -86,7 +105,9 @@ function AdminBrazil() {
   async function onReset(id: string) {
     setBusy(id);
     try {
-      await saveBrazilSection({ data: { id, title: "", body: "", bullets: [] } });
+      await saveBrazilSection({
+        data: { id, title: "", body: "", bullets: [], sources: "", authors: "", authorContact: "" },
+      });
       const c = await getSiteConfig();
       hydrate(c.brazil ?? {});
       toast.success("Texto original restaurado.");
@@ -104,7 +125,9 @@ function AdminBrazil() {
     >
       <div className="space-y-4">
         {pt.brazil.sections.map((s) => {
-          const d = drafts[s.id] ?? { title: "", body: "", bullets: "" };
+          const d =
+            drafts[s.id] ??
+            { title: "", body: "", bullets: "", sources: "", authors: "", authorContact: "" };
           const isCustom = Boolean(overrides[s.id]?.pt);
           const expanded = open === s.id;
           return (
@@ -169,6 +192,94 @@ function AdminBrazil() {
                     <p className="mt-1 text-[11px] text-muted-foreground">
                       Cada linha vira um item da lista exibida na página.
                     </p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      Fontes de pesquisa (padrão acadêmico, uma por linha)
+                    </label>
+                    <textarea
+                      value={d.sources}
+                      rows={4}
+                      placeholder="IBGE (2025). Contas Nacionais Trimestrais. https://…"
+                      onChange={(e) =>
+                        setDrafts((prev) => ({ ...prev, [s.id]: { ...d, sources: e.target.value } }))
+                      }
+                      className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                    />
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Autores
+                      </label>
+                      <input
+                        value={d.authors}
+                        onChange={(e) =>
+                          setDrafts((prev) => ({
+                            ...prev,
+                            [s.id]: { ...d, authors: e.target.value },
+                          }))
+                        }
+                        className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                        Contato dos autores
+                      </label>
+                      <input
+                        value={d.authorContact}
+                        onChange={(e) =>
+                          setDrafts((prev) => ({
+                            ...prev,
+                            [s.id]: { ...d, authorContact: e.target.value },
+                          }))
+                        }
+                        className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="rounded-md bg-secondary/60 p-4">
+                    <p className="text-xs text-muted-foreground">
+                      A inteligência artificial escreve uma versão atualizada deste tema em padrão
+                      acadêmico, com dados-chave e fontes de pesquisa. Revise antes de salvar.
+                    </p>
+                    <button
+                      type="button"
+                      disabled={busy === s.id}
+                      onClick={async () => {
+                        setBusy(s.id);
+                        try {
+                          const r = await generateBrazilSectionAI({
+                            data: { id: s.id, topic: d.title || s.title },
+                          });
+                          if (!r.ok) toast.error(r.error);
+                          else {
+                            setDrafts((prev) => ({
+                              ...prev,
+                              [s.id]: {
+                                ...d,
+                                title: r.title || d.title,
+                                body: r.body,
+                                bullets: r.bullets.join("\n"),
+                                sources: r.sources.join("\n"),
+                              },
+                            }));
+                            toast.success("Texto gerado. Revise e salve.");
+                          }
+                        } catch {
+                          toast.error("Não foi possível gerar o texto.");
+                        } finally {
+                          setBusy(null);
+                        }
+                      }}
+                      className="mt-3 rounded-md border border-accent px-4 py-2 text-sm font-semibold text-accent hover:bg-accent hover:text-accent-foreground disabled:opacity-50"
+                    >
+                      Atualizar com IA
+                    </button>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-4">
