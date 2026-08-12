@@ -22,7 +22,7 @@ export function WhatsAppFloat() {
       }}
       aria-label={label}
       title={title}
-      className="fixed bottom-6 right-6 z-50 inline-flex size-14 items-center justify-center rounded-full bg-[#25D366] p-3 text-white shadow-lg transition-transform hover:scale-105 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      className="fixed bottom-20 right-6 z-40 inline-flex size-14 items-center justify-center rounded-full bg-[#25D366] p-3 text-white shadow-lg transition-transform hover:scale-105 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
     >
       <svg
         viewBox="0 0 24 24"
