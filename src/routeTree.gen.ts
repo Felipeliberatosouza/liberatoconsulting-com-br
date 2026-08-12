@@ -36,6 +36,7 @@ import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminTextsRouteImport } from './routes/admin.texts'
 import { Route as AdminThemeRouteImport } from './routes/admin.theme'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as BoletimCancelarRouteImport } from './routes/boletim.cancelar'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
 import { Route as ContentSlugRouteImport } from './routes/content.$slug'
 import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
@@ -177,6 +178,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BoletimCancelarRoute = BoletimCancelarRouteImport.update({
+  id: '/boletim/cancelar',
+  path: '/boletim/cancelar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BrasilSlugRoute = BrasilSlugRouteImport.update({
   id: '/brasil_/$slug',
   path: '/brasil/$slug',
@@ -230,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/admin/users': typeof AdminUsersRoute
+  '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
@@ -264,6 +271,7 @@ export interface FileRoutesByTo {
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/admin/users': typeof AdminUsersRoute
+  '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
@@ -299,6 +307,7 @@ export interface FileRoutesById {
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/admin/users': typeof AdminUsersRoute
+  '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil_/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
@@ -335,6 +344,7 @@ export interface FileRouteTypes {
     | '/admin/texts'
     | '/admin/theme'
     | '/admin/users'
+    | '/boletim/cancelar'
     | '/brasil/$slug'
     | '/content/$slug'
     | '/newsletter/unsubscribe'
@@ -369,6 +379,7 @@ export interface FileRouteTypes {
     | '/admin/texts'
     | '/admin/theme'
     | '/admin/users'
+    | '/boletim/cancelar'
     | '/brasil/$slug'
     | '/content/$slug'
     | '/newsletter/unsubscribe'
@@ -403,6 +414,7 @@ export interface FileRouteTypes {
     | '/admin/texts'
     | '/admin/theme'
     | '/admin/users'
+    | '/boletim/cancelar'
     | '/brasil_/$slug'
     | '/content/$slug'
     | '/newsletter/unsubscribe'
@@ -438,6 +450,7 @@ export interface RootRouteChildren {
   AdminTextsRoute: typeof AdminTextsRoute
   AdminThemeRoute: typeof AdminThemeRoute
   AdminUsersRoute: typeof AdminUsersRoute
+  BoletimCancelarRoute: typeof BoletimCancelarRoute
   BrasilSlugRoute: typeof BrasilSlugRoute
   NewsletterUnsubscribeRoute: typeof NewsletterUnsubscribeRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
@@ -636,6 +649,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/boletim/cancelar': {
+      id: '/boletim/cancelar'
+      path: '/boletim/cancelar'
+      fullPath: '/boletim/cancelar'
+      preLoaderRoute: typeof BoletimCancelarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/brasil_/$slug': {
       id: '/brasil_/$slug'
       path: '/brasil/$slug'
@@ -712,6 +732,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminTextsRoute: AdminTextsRoute,
   AdminThemeRoute: AdminThemeRoute,
   AdminUsersRoute: AdminUsersRoute,
+  BoletimCancelarRoute: BoletimCancelarRoute,
   BrasilSlugRoute: BrasilSlugRoute,
   NewsletterUnsubscribeRoute: NewsletterUnsubscribeRoute,
   ServicesSlugRoute: ServicesSlugRoute,
