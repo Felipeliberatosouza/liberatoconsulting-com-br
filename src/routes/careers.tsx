@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, ArrowRight, ShieldCheck, Upload } from "lucide-react";
 
 import { pt } from "@/i18n/pt";
+import { EmailText } from "@/components/EmailText";
 import { useLanguage } from "@/i18n";
 import { submitApplication } from "@/lib/careers.functions";
 
@@ -241,7 +242,7 @@ function CareersPage() {
                   {status === "sending" ? C.sending : C.submit}
                   <ArrowRight className="size-4" />
                 </button>
-                <p className="mt-3 text-xs text-muted-foreground">{C.note}</p>
+                <p className="mt-3 text-xs text-muted-foreground"><EmailText>{C.note}</EmailText></p>
               </div>
             </form>
           )}
