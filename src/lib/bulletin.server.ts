@@ -1,5 +1,11 @@
 import { sendLovableEmail } from "@lovable.dev/email-js";
 
+import {
+  companyFooterFromRow,
+  companyFooterHtml,
+  companyFooterText,
+  type CompanyFooter,
+} from "./company-footer.server";
 import { DEFAULT_NEWSLETTER_SETTINGS, type NewsletterSettings } from "./newsletter.server";
 
 export type BulletinSubscriber = {
