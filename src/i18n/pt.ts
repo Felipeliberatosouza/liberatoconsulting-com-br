@@ -44,6 +44,7 @@ export const pt = {
           { id: "precificacao-unit-economics", label: "Precificação e Unit Economics" },
           { id: "captacao-investidores", label: "Captação e Materiais para Investidores" },
           { id: "operacao-inicial", label: "Estruturação da Operação Inicial" },
+          { id: "estudo-de-viabilidade", label: "Estudo de Viabilidade" },
         ],
       },
       {
@@ -94,6 +95,7 @@ export const pt = {
           { id: "precificacao-unit-economics", label: "Precificação e Unit Economics" },
           { id: "captacao-investidores", label: "Captação e Materiais para Investidores" },
           { id: "operacao-inicial", label: "Estruturação da Operação Inicial" },
+          { id: "estudo-de-viabilidade", label: "Estudo de Viabilidade" },
         ],
       },
       {
@@ -1039,6 +1041,22 @@ export const pt = {
           "Indicadores da operação desde o dia um",
         ],
         ai: "Automação e agentes de IA cobrem atendimento, vendas e back office antes de a empresa precisar contratar.",
+      },
+      {
+        id: "estudo-de-viabilidade",
+        group: "empreendedorismo",
+        title: "Estudo de Viabilidade",
+        lead: "Uma decisão embasada antes de investir tempo e capital.",
+        body: "Avaliamos a viabilidade técnica, econômica, financeira e regulatória de uma ideia, produto ou expansão. Entregamos premissas claras, cenários de risco e um parecer objetivo sobre seguir, ajustar ou descartar o projeto.",
+        audience: "Fundadores, diretorias e investidores que precisam validar uma oportunidade antes de comprometer recursos.",
+        duration: "4 a 8 semanas.",
+        bullets: [
+          "Análise de mercado e demanda esperada",
+          "Avaliação técnica e operacional",
+          "Projeção financeira e análise de cenários",
+          "Mapeamento de riscos e mitigações",
+        ],
+        ai: "A IA cruza dados de mercado, regulamentação e benchmarks para testar premissas e acelerar a construção dos cenários.",
       },
       {
         id: "dimensionamento-de-mercado",
