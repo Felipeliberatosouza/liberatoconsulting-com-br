@@ -348,9 +348,9 @@ export async function sendWhatsAppMessage(params: {
 
 /** Dispara o boletim para os inscritos ativos (ou para um destinatário de teste). */
 export async function dispatchBulletin(options?: {
-  testEmail?: string;
-  testWhatsApp?: string;
-  testSegment?: string;
+  testEmail?: string | undefined;
+  testWhatsApp?: string | undefined;
+  testSegment?: string | undefined;
 }) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const origin = siteOrigin();
