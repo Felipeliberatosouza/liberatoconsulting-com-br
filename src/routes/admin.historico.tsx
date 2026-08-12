@@ -55,7 +55,10 @@ function HistoryPage() {
   async function openItem(kind: "newsletter" | "bulletin", id: string) {
     try {
       const res = await getPublicationBody({ data: { kind, id } });
-      if (!res.ok) return toast.error(res.error);
+      if (!res.ok) {
+        toast.error(res.error);
+        return;
+      }
       setOpen({ title: res.title, html: res.html, text: res.text });
     } catch {
       toast.error("Não foi possível abrir a publicação.");
