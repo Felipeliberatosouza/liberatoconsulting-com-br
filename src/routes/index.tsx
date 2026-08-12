@@ -185,15 +185,17 @@ function HeroCarousel() {
               {slides.map((s, i) => (
                 <button
                   key={s.id}
+                  type="button"
                   onClick={() => setIndex(i)}
                   aria-label={s.eyebrow}
                   aria-current={i === index}
-                  className={`h-1.5 rounded-full transition-all ${
+                  className={`h-2.5 rounded-full transition-all ${
                     i === index ? "w-8 bg-accent" : "w-4 bg-ink-foreground/30"
                   }`}
                 />
               ))}
             </div>
+
           </div>
         )}
       </div>
