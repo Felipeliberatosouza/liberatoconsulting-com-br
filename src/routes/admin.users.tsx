@@ -17,7 +17,7 @@ import {
   updateTeamMember,
   type TeamRow,
 } from "@/lib/users.functions";
-import { listApplications, listLeads } from "@/lib/admin.functions";
+import { getResumeUrl, listApplications, listLeads } from "@/lib/admin.functions";
 import { listSubscribers } from "@/lib/newsletter.functions";
 
 export const Route = createFileRoute("/admin/users")({
