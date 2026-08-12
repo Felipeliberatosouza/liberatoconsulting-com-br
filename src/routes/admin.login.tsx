@@ -1,9 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { adminExists, bootstrapAdmin } from "@/lib/admin.functions";
+import { getPanelSession } from "@/lib/users.functions";
 import { useLanguage } from "@/i18n";
 
 export const Route = createFileRoute("/admin/login")({
@@ -23,6 +25,7 @@ export const Route = createFileRoute("/admin/login")({
 
 function AdminLogin() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { logoUrl } = useLanguage();
   const [mode, setMode] = useState<"login" | "bootstrap" | "forgot">("login");
   const [email, setEmail] = useState("");
@@ -60,14 +63,36 @@ function AdminLogin() {
         }
         toast.success("Administrador criado. Entrando…");
       }
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error || !data.session) {
         toast.error("E-mail ou senha inválidos.");
         return;
       }
+
+      // A tela administrativa pode ter armazenado uma consulta sem sessão antes
+      // do login. Remova esse resultado e valide o acesso com o novo token antes
+      // de navegar, evitando o redirecionamento de volta ao login na 1ª tentativa.
+      queryClient.removeQueries({ queryKey: ["panel-session"] });
+      const panelSession = await queryClient.fetchQuery({
+        queryKey: ["panel-session"],
+        queryFn: () => getPanelSession(),
+        staleTime: 30_000,
+      });
+      if (panelSession.roles.length === 0) {
+        await supabase.auth.signOut();
+        queryClient.removeQueries({ queryKey: ["panel-session"] });
+        toast.error("Este usuário não possui acesso à área administrativa.");
+        return;
+      }
+
       navigate({ to: "/admin", replace: true });
-    } catch {
-      toast.error("Não foi possível entrar. Tente novamente.");
+    } catch (error) {
+      queryClient.removeQueries({ queryKey: ["panel-session"] });
+      toast.error(
+        error instanceof Error && error.message.includes("Forbidden")
+          ? "Este usuário não possui acesso à área administrativa."
+          : "Não foi possível validar o acesso. Tente novamente.",
+      );
     } finally {
       setBusy(false);
     }
