@@ -1,5 +1,12 @@
 import { sendLovableEmail } from "@lovable.dev/email-js";
 
+import {
+  companyFooterHtml,
+  companyFooterText,
+  loadCompanyFooter,
+  type CompanyFooter,
+} from "./company-footer.server";
+
 export type NewsletterSettings = {
   fromName: string;
   fromEmail: string;
@@ -26,6 +33,7 @@ export function renderCampaignHtml(input: {
   preheader: string;
   body: string;
   unsubscribeUrl: string;
+  company?: CompanyFooter;
 }) {
   const paragraphs = input.body
     .split(/\n{2,}/)
@@ -39,6 +47,12 @@ export function renderCampaignHtml(input: {
     )
     .join("");
 
+  const companyBlock = input.company
+    ? `<tr><td style="padding:22px 32px;background:#14192a;color:#f7f6f4">
+${companyFooterHtml(input.company)}
+</td></tr>`
+    : "";
+
   return `<!doctype html><html><body style="margin:0;background:#f5f5f4;padding:32px 0;font-family:Helvetica,Arial,sans-serif">
 <span style="display:none;opacity:0;color:transparent">${escapeHtml(input.preheader)}</span>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
@@ -51,6 +65,7 @@ export function renderCampaignHtml(input: {
 <h1 style="margin:0 0 20px;font-size:24px;line-height:1.25;color:#111111">${escapeHtml(input.subject)}</h1>
 ${paragraphs}
 </td></tr>
+${companyBlock}
 <tr><td style="padding:20px 32px 28px;border-top:1px solid #e7e5e4;font-size:12px;color:#78716c">
 Você recebeu este e-mail porque se inscreveu na newsletter da Liberato Consulting.
 <a href="${input.unsubscribeUrl}" style="color:#ea580c">Cancelar inscrição</a>.
@@ -58,9 +73,15 @@ Você recebeu este e-mail porque se inscreveu na newsletter da Liberato Consulti
 </table></td></tr></table></body></html>`;
 }
 
-export function renderCampaignText(body: string, unsubscribeUrl: string) {
-  return `${body}\n\n—\nCancelar inscrição: ${unsubscribeUrl}`;
+export function renderCampaignText(
+  body: string,
+  unsubscribeUrl: string,
+  company?: CompanyFooter,
+) {
+  const footer = company ? `\n\n${companyFooterText(company)}` : "";
+  return `${body}${footer}\n\n—\nCancelar inscrição: ${unsubscribeUrl}`;
 }
+
 
 /** Envia um e-mail da newsletter pelo serviço de e-mail da Lovable. */
 export async function sendNewsletterEmail(params: {
@@ -117,6 +138,8 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
   }
   const from = `${settings.fromName} <${settings.fromEmail}>`;
   const origin = process.env["PUBLIC_SITE_URL"] || "https://liberato.com";
+  const company = await loadCompanyFooter(origin);
+
 
   type Recipient = { email: string; unsubscribe_token: string };
   let recipients: Recipient[];
@@ -148,8 +171,10 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
           preheader: campaign.preheader ?? "",
           body: campaign.body,
           unsubscribeUrl,
+          company,
         }),
-        text: renderCampaignText(campaign.body, unsubscribeUrl),
+        text: renderCampaignText(campaign.body, unsubscribeUrl, company),
+
       });
       sent += 1;
     } catch (err) {

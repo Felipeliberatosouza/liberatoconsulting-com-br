@@ -110,16 +110,13 @@ export const buildNewsletterPdf = createServerFn({ method: "POST" })
       supabaseAdmin.from("company_profile").select("*").limit(1).maybeSingle(),
     ]);
     const logoUrl = ((branding?.value ?? {}) as { logoUrl?: string }).logoUrl ?? null;
+    const { formatCompanyAddress } = await import("./company-footer.server");
     const c = (company ?? {}) as Record<string, string>;
-    const contactLine1 = [c["email"], c["phone"], c["website"]].filter(Boolean).join("  |  ");
-    const contactLine2 = [
-      [c["address_street"], c["address_number"]].filter(Boolean).join(", "),
-      c["address_city"],
-      c["address_state"],
-      c["cnpj"] ? `CNPJ ${c["cnpj"]}` : "",
-    ]
+    const contactLine1 = [c["phone"], c["email"], c["website"]].filter(Boolean).join("  |  ");
+    const contactLine2 = [formatCompanyAddress(c), c["cnpj"] ? `CNPJ ${c["cnpj"]}` : ""]
       .filter(Boolean)
       .join("  |  ");
+
 
     const bytes = await buildBrandedPdf({
       title: data.title,

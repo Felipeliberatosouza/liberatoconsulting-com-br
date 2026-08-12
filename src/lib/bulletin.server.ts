@@ -1,5 +1,11 @@
 import { sendLovableEmail } from "@lovable.dev/email-js";
 
+import {
+  companyFooterFromRow,
+  companyFooterHtml,
+  companyFooterText,
+  type CompanyFooter,
+} from "./company-footer.server";
 import { DEFAULT_NEWSLETTER_SETTINGS, type NewsletterSettings } from "./newsletter.server";
 
 export type BulletinSubscriber = {
@@ -33,14 +39,7 @@ export type BulletinContent = {
   dateLabel: string;
   indicators: Indicator[];
   articles: Article[];
-  company: {
-    name: string;
-    cnpj: string;
-    address: string;
-    email: string;
-    phone: string;
-    website: string;
-  };
+  company: CompanyFooter;
   logoUrl: string;
 };
 
@@ -94,15 +93,10 @@ export async function buildBulletinContent(segment: string): Promise<BulletinCon
     ? all
     : all.filter((i) => !i.segment || i.segment === "Todos" || i.segment === segment);
 
-  const c = (companyRow ?? {}) as Record<string, string | null>;
-  const address = [
-    [c["address_street"], c["address_number"]].filter(Boolean).join(", "),
-    c["address_district"],
-    [c["address_city"], c["address_state"]].filter(Boolean).join("/"),
-    c["address_zip"],
-  ]
-    .filter(Boolean)
-    .join(" — ");
+  const company = companyFooterFromRow(
+    companyRow as Record<string, string | null> | null,
+    siteOrigin(),
+  );
 
   const logo =
     ((branding?.value ?? {}) as { logoUrl?: string }).logoUrl || `${siteOrigin()}/logo.png`;
@@ -112,16 +106,10 @@ export async function buildBulletinContent(segment: string): Promise<BulletinCon
     dateLabel: formatDatePt(),
     indicators: scoped.slice(0, 8),
     articles: (articleRows ?? []) as Article[],
-    company: {
-      name: c["legal_name"] || c["trade_name"] || "Liberato Consulting",
-      cnpj: c["cnpj"] || "",
-      address,
-      email: c["email"] || "contato@liberatoconsulting.com.br",
-      phone: c["phone"] || "",
-      website: c["website"] || siteOrigin(),
-    },
+    company,
     logoUrl: logo,
   };
+
 }
 
 /** HTML do Boletim Semanal (corpo do e-mail). */
@@ -188,14 +176,9 @@ export function renderBulletinHtml(content: BulletinContent, unsubscribeUrl: str
 </td></tr>
 
 <tr><td style="padding:22px 32px;background:#14192a;color:#f7f6f4">
-  <div style="font-size:13px;font-weight:700">${escapeHtml(content.company.name)}</div>
-  ${content.company.cnpj ? `<div style="font-size:12px;opacity:.75">CNPJ ${escapeHtml(content.company.cnpj)}</div>` : ""}
-  ${content.company.address ? `<div style="font-size:12px;opacity:.75">${escapeHtml(content.company.address)}</div>` : ""}
-  <div style="font-size:12px;opacity:.75">${escapeHtml(content.company.email)}${
-    content.company.phone ? ` — ${escapeHtml(content.company.phone)}` : ""
-  }</div>
-  <div style="font-size:12px;opacity:.75">${escapeHtml(content.company.website)}</div>
+  ${companyFooterHtml(content.company)}
 </td></tr>
+
 
 <tr><td style="padding:18px 32px 26px;font-size:12px;color:#78716c">
   Você recebe o Boletim Semanal da Liberato Consulting porque solicitou esta atualização.
@@ -223,10 +206,7 @@ ${indicators || "Sem indicadores para este recorte."}
 ÚLTIMOS ARTIGOS
 ${articles || "Novos conteúdos em breve."}
 
-${content.company.name}
-${content.company.address}
-${content.company.email} ${content.company.phone}
-${content.company.website}
+${companyFooterText(content.company)}
 
 Parar de receber: ${unsubscribeUrl}`;
 }
@@ -252,8 +232,7 @@ ${indicators || "Sem indicadores para este recorte."}
 *Últimos artigos*
 ${articles || "Novos conteúdos em breve."}
 
-${content.company.name}
-${content.company.email}${content.company.phone ? ` — ${content.company.phone}` : ""}
+${companyFooterText(content.company)}
 
 Para parar de receber, acesse: ${unsubscribeUrl}`;
 }
