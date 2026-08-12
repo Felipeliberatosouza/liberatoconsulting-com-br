@@ -12,11 +12,6 @@ export async function getRoles(context: Ctx): Promise<string[]> {
 }
 
 export async function isAdmin(context: Ctx): Promise<boolean> {
-  const { data, error } = await context.supabase.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "admin",
-  });
-  if (!error && data) return true;
   return (await getRoles(context)).includes("admin");
 }
 
