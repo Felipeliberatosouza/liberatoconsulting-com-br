@@ -29,6 +29,7 @@ import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminContratoRouteImport } from './routes/admin.contrato'
 import { Route as AdminEmpresaRouteImport } from './routes/admin.empresa'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
+import { Route as AdminHistoricoRouteImport } from './routes/admin.historico'
 import { Route as AdminIndicadoresRouteImport } from './routes/admin.indicadores'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -147,6 +148,11 @@ const AdminHeroRoute = AdminHeroRouteImport.update({
   path: '/admin/hero',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminHistoricoRoute = AdminHistoricoRouteImport.update({
+  id: '/admin/historico',
+  path: '/admin/historico',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndicadoresRoute = AdminIndicadoresRouteImport.update({
   id: '/admin/indicadores',
   path: '/admin/indicadores',
@@ -254,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/hero': typeof AdminHeroRoute
+  '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -293,6 +300,7 @@ export interface FileRoutesByTo {
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/hero': typeof AdminHeroRoute
+  '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -333,6 +341,7 @@ export interface FileRoutesById {
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/hero': typeof AdminHeroRoute
+  '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
@@ -374,6 +383,7 @@ export interface FileRouteTypes {
     | '/admin/contrato'
     | '/admin/empresa'
     | '/admin/hero'
+    | '/admin/historico'
     | '/admin/indicadores'
     | '/admin/leads'
     | '/admin/login'
@@ -413,6 +423,7 @@ export interface FileRouteTypes {
     | '/admin/contrato'
     | '/admin/empresa'
     | '/admin/hero'
+    | '/admin/historico'
     | '/admin/indicadores'
     | '/admin/leads'
     | '/admin/login'
@@ -452,6 +463,7 @@ export interface FileRouteTypes {
     | '/admin/contrato'
     | '/admin/empresa'
     | '/admin/hero'
+    | '/admin/historico'
     | '/admin/indicadores'
     | '/admin/leads'
     | '/admin/login'
@@ -492,6 +504,7 @@ export interface RootRouteChildren {
   AdminContratoRoute: typeof AdminContratoRoute
   AdminEmpresaRoute: typeof AdminEmpresaRoute
   AdminHeroRoute: typeof AdminHeroRoute
+  AdminHistoricoRoute: typeof AdminHistoricoRoute
   AdminIndicadoresRoute: typeof AdminIndicadoresRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
@@ -653,6 +666,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminHeroRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/historico': {
+      id: '/admin/historico'
+      path: '/admin/historico'
+      fullPath: '/admin/historico'
+      preLoaderRoute: typeof AdminHistoricoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/indicadores': {
       id: '/admin/indicadores'
       path: '/admin/indicadores'
@@ -806,6 +826,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminContratoRoute: AdminContratoRoute,
   AdminEmpresaRoute: AdminEmpresaRoute,
   AdminHeroRoute: AdminHeroRoute,
+  AdminHistoricoRoute: AdminHistoricoRoute,
   AdminIndicadoresRoute: AdminIndicadoresRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
