@@ -332,7 +332,7 @@ export function SiteHeader() {
 
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
-          <MobileAccordion title={t.nav.services}>
+          <MobileAccordion title={t.nav.services} to="/services" onNavigate={closeAll}>
             <div className="grid grid-cols-2 gap-x-4">
               {groups.map((g) => (
                 <div key={g.id} className="min-w-0">
@@ -355,7 +355,7 @@ export function SiteHeader() {
             </div>
           </MobileAccordion>
 
-          <MobileAccordion title={t.nav.about}>
+          <MobileAccordion title={t.nav.about} to="/about" onNavigate={closeAll}>
             <div className="border-l border-border pl-3">
               {aboutItems.map((item) => (
                 <AboutMenuLink
@@ -368,7 +368,7 @@ export function SiteHeader() {
             </div>
           </MobileAccordion>
 
-          <MobileAccordion title={t.nav.content}>
+          <MobileAccordion title={t.nav.content} to="/content" onNavigate={closeAll}>
             <div className="grid grid-cols-2 gap-x-4">
               {contentGroups.map((g) => (
                 <Link
@@ -384,7 +384,7 @@ export function SiteHeader() {
             </div>
           </MobileAccordion>
 
-          <MobileAccordion title={t.brazilMenu.label}>
+          <MobileAccordion title={t.brazilMenu.label} to="/brasil" onNavigate={closeAll}>
             <div className="grid grid-cols-2 gap-x-4">
               {brazilItems.map((item) => (
                 <Link
