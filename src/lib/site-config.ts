@@ -40,7 +40,7 @@ export type ArticleRecord = {
 };
 
 
-export type Branding = { logoUrl?: string; whatsapp?: string };
+export type Branding = { logoUrl?: string; whatsapp?: string; segments?: string[] };
 
 /** Slides do carrossel da página inicial (ordem, exibição e imagem). */
 export type HeroSlideSetting = { id: string; enabled: boolean; imageUrl?: string };

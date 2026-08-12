@@ -424,6 +424,42 @@ export const saveAlertEmail = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+async function currentBranding(context: { supabase: any }): Promise<Branding> {
+  const { data } = await context.supabase
+    .from("site_settings")
+    .select("value")
+    .eq("key", "branding")
+    .maybeSingle();
+  return (data?.value ?? {}) as Branding;
+}
+
+/** Segmentos atendidos pela consultoria, exibidos no filtro do cabeçalho. */
+export const getSegments = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const branding = await currentBranding(context);
+    return { segments: branding.segments ?? [] };
+  });
+
+export const saveSegments = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ segments: z.array(z.string().trim().max(80)).max(60) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const segments = data.segments.map((s) => s.trim()).filter(Boolean);
+    const { error } = await context.supabase
+      .from("site_settings")
+      .upsert(
+        { key: "branding", value: { ...(await currentBranding(context)), segments } },
+        { onConflict: "key" },
+      );
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
 /** Logomarca atual (somente admins veem pelo painel; o site lê via getSiteConfig). */
 export const saveLogo = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -441,7 +477,10 @@ export const saveLogo = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { error } = await context.supabase
       .from("site_settings")
-      .upsert({ key: "branding", value: { logoUrl: data.dataUrl } }, { onConflict: "key" });
+      .upsert(
+        { key: "branding", value: { ...(await currentBranding(context)), logoUrl: data.dataUrl } },
+        { onConflict: "key" },
+      );
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });
@@ -453,7 +492,10 @@ export const resetLogo = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { error } = await context.supabase
       .from("site_settings")
-      .upsert({ key: "branding", value: {} }, { onConflict: "key" });
+      .upsert(
+        { key: "branding", value: { ...(await currentBranding(context)), logoUrl: undefined } },
+        { onConflict: "key" },
+      );
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });
