@@ -1,6 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Check, Sparkles, Users } from "lucide-react";
+import { ConsultantsTeam } from "@/components/ConsultantsTeam";
 import { ResultBanner } from "@/components/ResultBanner";
+
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
 
