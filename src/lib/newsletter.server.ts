@@ -1,5 +1,12 @@
 import { sendLovableEmail } from "@lovable.dev/email-js";
 
+import {
+  companyFooterHtml,
+  companyFooterText,
+  loadCompanyFooter,
+  type CompanyFooter,
+} from "./company-footer.server";
+
 export type NewsletterSettings = {
   fromName: string;
   fromEmail: string;
