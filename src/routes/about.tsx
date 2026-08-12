@@ -117,7 +117,9 @@ function AboutPage() {
                   </div>
                 ))}
               </div>
+              <ConsultantsTeam />
             </section>
+
 
             <section id="sustentabilidade-e-inclusao" className="scroll-mt-28">
               <h2 className="text-3xl font-bold">{s.sustentabilidadeEInclusao.title}</h2>
