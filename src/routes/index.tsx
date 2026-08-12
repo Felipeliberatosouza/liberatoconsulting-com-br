@@ -93,8 +93,20 @@ function HeroCarousel() {
 
   const slide = slides[Math.min(index, count - 1)]!;
 
+  let touchX = 0;
+
   return (
-    <section className="relative overflow-hidden bg-ink text-ink-foreground">
+    <section
+      className="relative touch-pan-y overflow-hidden bg-ink text-ink-foreground"
+      onTouchStart={(e) => {
+        touchX = e.touches[0]?.clientX ?? 0;
+      }}
+      onTouchEnd={(e) => {
+        const dx = (e.changedTouches[0]?.clientX ?? 0) - touchX;
+        if (Math.abs(dx) < 50 || count < 2) return;
+        setIndex((i) => (dx < 0 ? (i + 1) % count : (i - 1 + count) % count));
+      }}
+    >
       {slides.map((s, i) => (
         <img
           key={s.id}
@@ -107,7 +119,8 @@ function HeroCarousel() {
           }`}
         />
       ))}
-      <div className="relative mx-auto max-w-7xl px-6 py-28 md:py-40">
+      <div className="relative mx-auto max-w-7xl px-6 py-16 sm:py-24 md:py-40">
+
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
             {slide.eyebrow}
@@ -150,34 +163,39 @@ function HeroCarousel() {
         </div>
 
         {count > 1 && (
-          <div className="mt-12 flex items-center gap-4">
+          <div className="mt-8 flex items-center gap-4 md:mt-12">
             <button
+              type="button"
               onClick={() => setIndex((i) => (i - 1 + count) % count)}
               aria-label="Banner anterior"
-              className="rounded-full border border-ink-foreground/25 p-2 transition-colors hover:bg-ink-foreground/10"
+              className="rounded-full border border-ink-foreground/25 p-3 transition-colors hover:bg-ink-foreground/10"
             >
               <ChevronLeft className="size-4" />
             </button>
             <button
+              type="button"
               onClick={() => setIndex((i) => (i + 1) % count)}
               aria-label="Próximo banner"
-              className="rounded-full border border-ink-foreground/25 p-2 transition-colors hover:bg-ink-foreground/10"
+              className="rounded-full border border-ink-foreground/25 p-3 transition-colors hover:bg-ink-foreground/10"
             >
               <ChevronRight className="size-4" />
             </button>
+
             <div className="flex gap-2">
               {slides.map((s, i) => (
                 <button
                   key={s.id}
+                  type="button"
                   onClick={() => setIndex(i)}
                   aria-label={s.eyebrow}
                   aria-current={i === index}
-                  className={`h-1.5 rounded-full transition-all ${
+                  className={`h-2.5 rounded-full transition-all ${
                     i === index ? "w-8 bg-accent" : "w-4 bg-ink-foreground/30"
                   }`}
                 />
               ))}
             </div>
+
           </div>
         )}
       </div>
