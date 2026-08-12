@@ -56,6 +56,11 @@ const CARDS = [
     text: "Escreva com IA, gere imagem e PDF, e envie para toda a base de inscritos.",
   },
   {
+    to: "/admin/boletim",
+    title: "Boletim Semanal",
+    text: "Inscritos, pré-visualização e envio por e-mail e WhatsApp, por segmento.",
+  },
+  {
     to: "/admin/leads",
     title: "Leads recebidos",
     text: "Contatos enviados pelos formulários das páginas de serviço.",

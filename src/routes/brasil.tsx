@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
+import { BulletinSignup } from "@/components/BulletinSignup";
 import { useLanguage } from "@/i18n";
 import { FilterScopeBadge, SiteFilterBar } from "@/components/SiteFilterBar";
 import {
@@ -188,6 +189,10 @@ function BrazilPage() {
           </section>
         </div>
       </div>
+
+      <section className="mx-auto w-full max-w-6xl px-6 pb-20">
+        <BulletinSignup />
+      </section>
 
       <CtaBand />
     </div>
