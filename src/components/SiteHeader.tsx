@@ -320,8 +320,6 @@ export function SiteHeader() {
       </div>
       </div>
 
-      <SiteFilterBar />
-
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
           <MobileAccordion title={t.nav.services}>
