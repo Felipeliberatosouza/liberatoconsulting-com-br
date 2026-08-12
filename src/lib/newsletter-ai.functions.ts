@@ -20,7 +20,7 @@ export const generateNewsletterAI = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { assertAnyRole } = await import("./access.server");
-    await assertAnyRole(context, ["autor"]);
+    await assertAnyRole(context, ["consultor", "autor"]);
     const { askJson } = await import("./ai.server");
 
     type Out = { preheader: string; body: string; fullText: string; sources: string[] };
@@ -64,7 +64,7 @@ export const generateNewsletterImage = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { assertAnyRole } = await import("./access.server");
-    await assertAnyRole(context, ["autor"]);
+    await assertAnyRole(context, ["consultor", "autor"]);
     const { askImage } = await import("./ai.server");
     try {
       const url = await askImage(
@@ -101,7 +101,7 @@ export const buildNewsletterPdf = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { assertAnyRole } = await import("./access.server");
-    await assertAnyRole(context, ["autor"]);
+    await assertAnyRole(context, ["consultor", "autor"]);
     const { buildBrandedPdf } = await import("./pdf.server");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 

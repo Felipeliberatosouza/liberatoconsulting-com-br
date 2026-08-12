@@ -192,7 +192,7 @@ export const listArticles = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { assertAnyRole } = await import("./access.server");
-    await assertAnyRole(context, ["consultor"]);
+    await assertAnyRole(context, ["consultor", "autor"]);
     const { data, error } = await context.supabase
       .from("content_articles")
       .select("*")
@@ -233,7 +233,7 @@ export const saveArticle = createServerFn({ method: "POST" })
     const { assertAnyRole, isAdmin: checkAdmin, queueChangeRequest } = await import(
       "./access.server"
     );
-    await assertAnyRole(context, ["consultor"]);
+    await assertAnyRole(context, ["consultor", "autor"]);
     const { translateRecord } = await import("./admin.server");
 
     const t = await translateRecord({
@@ -591,7 +591,7 @@ export const saveBrazilSection = createServerFn({ method: "POST" })
     const { assertAnyRole, isAdmin: checkAdmin, queueChangeRequest } = await import(
       "./access.server"
     );
-    await assertAnyRole(context, ["consultor"]);
+    await assertAnyRole(context, ["consultor", "autor"]);
     const { translateRecord } = await import("./admin.server");
 
     const current = await context.supabase

@@ -44,6 +44,31 @@ export async function applyChangeRequest(req: Request) {
       if (error) return { ok: false as const, error: error.message };
       return { ok: true as const };
     }
+    case "bulletin": {
+      if (req.action === "unsubscribe" && req.target_id) {
+        const { error } = await supabaseAdmin
+          .from("bulletin_subscribers")
+          .update({ status: "unsubscribed", unsubscribed_at: new Date().toISOString() })
+          .eq("id", req.target_id);
+        if (error) return { ok: false as const, error: error.message };
+        return { ok: true as const };
+      }
+      const data = req.payload as { testEmail?: string; testWhatsApp?: string; testSegment?: string };
+      const { dispatchBulletin } = await import("./bulletin.server");
+      try {
+        const r = await dispatchBulletin({
+          testEmail: data.testEmail,
+          testWhatsApp: data.testWhatsApp,
+          testSegment: data.testSegment,
+        });
+        return r.ok ? { ok: true as const } : { ok: false as const, error: r.error };
+      } catch (err) {
+        return {
+          ok: false as const,
+          error: err instanceof Error ? err.message : "Falha no envio do boletim.",
+        };
+      }
+    }
     default:
       return { ok: false as const, error: `Tipo de alteração desconhecido: ${req.kind}` };
   }

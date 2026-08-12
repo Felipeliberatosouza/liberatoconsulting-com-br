@@ -75,7 +75,6 @@ function AdminBulletin() {
   return (
     <AdminShell
       title="Boletim Semanal"
-      requireAdmin
       description="O boletim é montado automaticamente com a logomarca da consultoria, a data de atualização, os indicadores econômicos do segmento, os últimos artigos e os dados da consultoria no rodapé. O envio automático ocorre toda segunda-feira às 10h."
     >
       <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">

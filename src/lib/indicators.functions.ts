@@ -43,7 +43,7 @@ export const listIndicators = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<Indicator[]> => {
     const { assertAnyRole } = await import("./access.server");
-    await assertAnyRole(context, ["consultor"]);
+    await assertAnyRole(context, ["consultor", "autor"]);
     const { data, error } = await context.supabase
       .from("economic_indicators")
       .select(SELECT)
@@ -80,7 +80,7 @@ export const saveIndicator = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => indicatorSchema.parse(d))
   .handler(async ({ data, context }) => {
     const { assertAnyRole, isAdmin, queueChangeRequest } = await import("./access.server");
-    await assertAnyRole(context, ["consultor"]);
+    await assertAnyRole(context, ["consultor", "autor"]);
     const { id, ...row } = data;
     if (!(await isAdmin(context))) {
       return queueChangeRequest(context, {
@@ -212,7 +212,7 @@ export const generateBrazilSectionAI = createServerFn({ method: "POST" })
   )
   .handler(async ({ data, context }) => {
     const { assertAnyRole } = await import("./access.server");
-    await assertAnyRole(context, ["consultor"]);
+    await assertAnyRole(context, ["consultor", "autor"]);
     const { askJson } = await import("./ai.server");
 
     type Out = { title: string; body: string; bullets: string[]; sources: string[] };

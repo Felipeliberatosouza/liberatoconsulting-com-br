@@ -10,16 +10,29 @@ export const ROLE_LABEL: Record<PanelRole, string> = {
 
 export const ROLE_DESCRIPTION: Record<PanelRole, string> = {
   admin: "Acesso completo ao painel, aprovações e configurações.",
-  consultor: "Acesso a Conteúdo e Dados do Brasil. Alterações passam por aprovação.",
-  autor: "Acesso à Newsletter (inserção de textos). Alterações passam por aprovação.",
+  consultor:
+    "Acesso a Conteúdos, Indicadores, Newsletter, Dados do Brasil e Boletim Semanal. Alterações passam por aprovação.",
+  autor:
+    "Acesso a Conteúdos, Indicadores, Newsletter, Dados do Brasil e Boletim Semanal. Alterações passam por aprovação.",
 };
+
+const PANEL_AREAS = [
+  "/admin",
+  "/admin/content",
+  "/admin/brasil",
+  "/admin/indicadores",
+  "/admin/newsletter",
+  "/admin/boletim",
+  "/admin/contrato",
+];
 
 /** Rotas do painel liberadas para cada papel. */
 export const ROLE_ROUTES: Record<PanelRole, string[]> = {
   admin: ["*"],
-  consultor: ["/admin", "/admin/content", "/admin/brasil", "/admin/indicadores", "/admin/contrato"],
-  autor: ["/admin", "/admin/newsletter", "/admin/contrato"],
+  consultor: PANEL_AREAS,
+  autor: PANEL_AREAS,
 };
+
 
 export function canAccess(roles: string[], path: string): boolean {
   if (roles.includes("admin")) return true;
