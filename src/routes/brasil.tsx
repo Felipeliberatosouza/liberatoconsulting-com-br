@@ -4,7 +4,12 @@ import { ArrowRight, ExternalLink } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
 import { FilterScopeBadge, SiteFilterBar } from "@/components/SiteFilterBar";
-import { useAudienceFilters } from "@/lib/audience-filters";
+import {
+  ALL_REGIONS,
+  ALL_SEGMENTS,
+  ALL_STATES,
+  useAudienceFilters,
+} from "@/lib/audience-filters";
 import { listPublicIndicators } from "@/lib/indicators.functions";
 
 export const Route = createFileRoute("/brasil")({
@@ -144,13 +149,45 @@ function BrazilPage() {
 }
 
 function IndicatorsPanel() {
+  const scope = useAudienceFilters();
   const indicators = useQuery({
     queryKey: ["public-indicators"],
     queryFn: () => listPublicIndicators(),
     staleTime: 300_000,
   });
-  const rows = indicators.data ?? [];
-  if (rows.length === 0) return null;
+  const all = indicators.data ?? [];
+  const f = scope.filters;
+
+  // Compatíveis com os filtros: recorte igual ao filtro ou marcado como geral/nacional.
+  const compatible = all.filter(
+    (i) =>
+      (i.segment === ALL_SEGMENTS || f.segment === ALL_SEGMENTS || i.segment === f.segment) &&
+      (i.region === ALL_REGIONS || f.region === ALL_REGIONS || i.region === f.region) &&
+      (i.uf === ALL_STATES || f.state === ALL_STATES || i.uf === f.state),
+  );
+  // Quando há filtros aplicados, priorizamos os indicadores específicos daquele recorte.
+  const specific = scope.applied
+    ? compatible.filter(
+        (i) =>
+          i.segment !== ALL_SEGMENTS || i.region !== ALL_REGIONS || i.uf !== ALL_STATES,
+      )
+    : [];
+  const rows = specific.length > 0 ? specific : compatible;
+  const onlyNational = scope.applied && specific.length === 0;
+
+  if (rows.length === 0) {
+    if (!scope.applied) return null;
+    return (
+      <section id="indicadores" className="scroll-mt-24">
+        <h2 className="text-2xl font-bold md:text-3xl">Indicadores econômicos</h2>
+        <p className="mt-3 max-w-3xl rounded-md border-l-4 border-accent bg-secondary px-4 py-3 text-sm text-muted-foreground">
+          Ainda não há indicadores publicados para o recorte selecionado (
+          <span className="font-semibold text-foreground">{scope.label}</span>). Ajuste os
+          filtros acima ou fale com a nossa equipe para uma pesquisa sob medida.
+        </p>
+      </section>
+    );
+  }
 
   return (
     <section id="indicadores" className="scroll-mt-24">
@@ -158,6 +195,14 @@ function IndicatorsPanel() {
       <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
         Números macroeconômicos monitorados nas fontes oficiais brasileiras e revisados pela
         nossa equipe.
+        {scope.applied && (
+          <>
+            {" "}
+            Exibindo apenas os dados do recorte{" "}
+            <span className="font-semibold text-foreground">{scope.label}</span>
+            {onlyNational ? " — no momento, com indicadores nacionais de referência." : "."}
+          </>
+        )}
       </p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {rows.map((i) => (
