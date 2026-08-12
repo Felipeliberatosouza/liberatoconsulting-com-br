@@ -206,7 +206,7 @@ function AdminHero() {
                       className="h-20 w-32 rounded-md border border-border object-cover"
                     />
                     <button
-                      onClick={() => update(i, { imageUrl: undefined })}
+                      onClick={() => update(i, { imageUrl: "" })}
                       className="text-sm text-muted-foreground hover:text-accent"
                     >
                       Remover (voltar à imagem padrão)
