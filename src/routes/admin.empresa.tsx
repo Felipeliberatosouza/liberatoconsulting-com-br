@@ -13,6 +13,8 @@ import {
   type CompanyProfile,
   type Partner,
 } from "@/lib/company.functions";
+import { getSegments, saveSegments } from "@/lib/admin.functions";
+import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
 
 export const Route = createFileRoute("/admin/empresa")({
   head: () => ({
@@ -159,6 +161,8 @@ function CompanyPage() {
         </button>
       </form>
 
+      <SegmentsBlock />
+
       <ContractsBlock />
     </AdminShell>
   );
@@ -170,6 +174,60 @@ function L({ label, children }: { label: string; children: React.ReactNode }) {
       {label}
       <span className="mt-1 block">{children}</span>
     </label>
+  );
+}
+
+function SegmentsBlock() {
+  const q = useQuery({ queryKey: ["segments"], queryFn: () => getSegments(), retry: false });
+  const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!q.data) return;
+    const list = q.data.segments.length > 0 ? q.data.segments : DEFAULT_SEGMENTS;
+    setText(list.join("\n"));
+  }, [q.data]);
+
+  return (
+    <div className="mt-10 rounded-lg border border-border bg-background p-6">
+      <h2 className="font-display text-lg font-bold">Segmentos atendidos</h2>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Um segmento por linha. Eles aparecem na barra de personalização abaixo do cabeçalho do
+        site, sempre com a opção “Geral” como primeira escolha.
+      </p>
+      <textarea
+        rows={12}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        className={`mt-4 ${input}`}
+        placeholder={"Agronegócio\nEnergia e renováveis\n…"}
+      />
+      <button
+        disabled={busy}
+        onClick={async () => {
+          setBusy(true);
+          try {
+            const segments = text
+              .split("\n")
+              .map((l) => l.trim())
+              .filter(Boolean);
+            const r = await saveSegments({ data: { segments } });
+            if (!r.ok) toast.error(r.error);
+            else {
+              toast.success("Segmentos salvos.");
+              await q.refetch();
+            }
+          } catch {
+            toast.error("Não foi possível salvar os segmentos.");
+          } finally {
+            setBusy(false);
+          }
+        }}
+        className="mt-4 rounded-md bg-ink px-5 py-2.5 text-sm font-semibold text-ink-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
+      >
+        {busy ? "Salvando…" : "Salvar segmentos"}
+      </button>
+    </div>
   );
 }
 
