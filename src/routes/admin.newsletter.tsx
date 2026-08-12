@@ -67,15 +67,29 @@ function AdminNewsletter() {
   const [busy, setBusy] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [testEmail, setTestEmail] = useState("");
+  const [link, setLink] = useState("");
+  const [socialDrafts, setSocialDrafts] = useState<Record<string, string>>({});
 
   const activeCount = (subscribers.data ?? []).filter((s) => s.status === "active").length;
+
+  const socialFormats = useMemo(() => {
+    const src = { title: subject, body, link: link.trim() || undefined };
+    return [
+      { key: "whatsapp", label: "WhatsApp", value: socialDrafts["whatsapp"] ?? toWhatsApp(src) },
+      { key: "linkedin", label: "LinkedIn", value: socialDrafts["linkedin"] ?? toLinkedIn(src) },
+      { key: "instagram", label: "Instagram", value: socialDrafts["instagram"] ?? toInstagram(src) },
+    ];
+  }, [subject, body, link, socialDrafts]);
 
   const resetForm = () => {
     setEditId(null);
     setSubject("");
     setPreheader("");
     setBody("");
+    setLink("");
+    setSocialDrafts({});
   };
+
 
   return (
     <AdminShell
