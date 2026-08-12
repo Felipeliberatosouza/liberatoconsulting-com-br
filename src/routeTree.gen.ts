@@ -22,6 +22,7 @@ import { Route as AboutSlugRouteImport } from './routes/about_.$slug'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminApplicationsRouteImport } from './routes/admin.applications'
 import { Route as AdminApprovalsRouteImport } from './routes/admin.approvals'
+import { Route as AdminBoletimRouteImport } from './routes/admin.boletim'
 import { Route as AdminBrasilRouteImport } from './routes/admin.brasil'
 import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminContratoRouteImport } from './routes/admin.contrato'
@@ -107,6 +108,11 @@ const AdminApplicationsRoute = AdminApplicationsRouteImport.update({
 const AdminApprovalsRoute = AdminApprovalsRouteImport.update({
   id: '/admin/approvals',
   path: '/admin/approvals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminBoletimRoute = AdminBoletimRouteImport.update({
+  id: '/admin/boletim',
+  path: '/admin/boletim',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminBrasilRoute = AdminBrasilRouteImport.update({
@@ -228,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/about/$slug': typeof AboutSlugRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/approvals': typeof AdminApprovalsRoute
+  '/admin/boletim': typeof AdminBoletimRoute
   '/admin/brasil': typeof AdminBrasilRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
@@ -264,6 +271,7 @@ export interface FileRoutesByTo {
   '/about/$slug': typeof AboutSlugRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/approvals': typeof AdminApprovalsRoute
+  '/admin/boletim': typeof AdminBoletimRoute
   '/admin/brasil': typeof AdminBrasilRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
@@ -301,6 +309,7 @@ export interface FileRoutesById {
   '/about_/$slug': typeof AboutSlugRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/approvals': typeof AdminApprovalsRoute
+  '/admin/boletim': typeof AdminBoletimRoute
   '/admin/brasil': typeof AdminBrasilRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
@@ -339,6 +348,7 @@ export interface FileRouteTypes {
     | '/about/$slug'
     | '/admin/applications'
     | '/admin/approvals'
+    | '/admin/boletim'
     | '/admin/brasil'
     | '/admin/content'
     | '/admin/contrato'
@@ -375,6 +385,7 @@ export interface FileRouteTypes {
     | '/about/$slug'
     | '/admin/applications'
     | '/admin/approvals'
+    | '/admin/boletim'
     | '/admin/brasil'
     | '/admin/content'
     | '/admin/contrato'
@@ -411,6 +422,7 @@ export interface FileRouteTypes {
     | '/about_/$slug'
     | '/admin/applications'
     | '/admin/approvals'
+    | '/admin/boletim'
     | '/admin/brasil'
     | '/admin/content'
     | '/admin/contrato'
@@ -448,6 +460,7 @@ export interface RootRouteChildren {
   AboutSlugRoute: typeof AboutSlugRoute
   AdminApplicationsRoute: typeof AdminApplicationsRoute
   AdminApprovalsRoute: typeof AdminApprovalsRoute
+  AdminBoletimRoute: typeof AdminBoletimRoute
   AdminBrasilRoute: typeof AdminBrasilRoute
   AdminContentRoute: typeof AdminContentRoute
   AdminContratoRoute: typeof AdminContratoRoute
@@ -562,6 +575,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/approvals'
       fullPath: '/admin/approvals'
       preLoaderRoute: typeof AdminApprovalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/boletim': {
+      id: '/admin/boletim'
+      path: '/admin/boletim'
+      fullPath: '/admin/boletim'
+      preLoaderRoute: typeof AdminBoletimRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/brasil': {
@@ -738,6 +758,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutSlugRoute: AboutSlugRoute,
   AdminApplicationsRoute: AdminApplicationsRoute,
   AdminApprovalsRoute: AdminApprovalsRoute,
+  AdminBoletimRoute: AdminBoletimRoute,
   AdminBrasilRoute: AdminBrasilRoute,
   AdminContentRoute: AdminContentRoute,
   AdminContratoRoute: AdminContratoRoute,
