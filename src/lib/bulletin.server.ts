@@ -213,10 +213,7 @@ ${indicators || "Sem indicadores para este recorte."}
 ÚLTIMOS ARTIGOS
 ${articles || "Novos conteúdos em breve."}
 
-${content.company.name}
-${content.company.address}
-${content.company.email} ${content.company.phone}
-${content.company.website}
+${companyFooterText(content.company)}
 
 Parar de receber: ${unsubscribeUrl}`;
 }
