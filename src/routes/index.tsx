@@ -25,17 +25,12 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       {
-        title: "Pesquisas de mercado sobre o Brasil e gestão com IA — Liberato Consulting",
+        title: "Pesquisas de mercado e gestão com IA — Liberato Consulting",
       },
       {
         name: "description",
         content:
-          "Estudos setoriais e dados sobre o mercado brasileiro para investidores internacionais: agronegócio, energia, mineração, indústria, tecnologia, saúde e varejo, com gestão estratégica e IA.",
-      },
-      {
-        name: "keywords",
-        content:
-          "pesquisa de mercado Brasil, mercado brasileiro, economia brasileira, setores do mercado brasileiro, investir no Brasil, investimento estrangeiro no Brasil, estudo setorial Brasil, agronegócio, energia renovável, mineração, indústria brasileira, fintechs, consultoria de gestão empresarial, inteligência artificial",
+          "Estudos e dados sobre o mercado brasileiro para investidores internacionais, abrangendo agronegócio, energia e indústria com gestão estratégica e IA.",
       },
       {
         property: "og:title",
@@ -46,7 +41,9 @@ export const Route = createFileRoute("/")({
         content:
           "Inteligência sobre setores da economia brasileira para empresas internacionais, com gestão estratégica e IA no centro.",
       },
+      { property: "og:url", content: "https://liberato-ai-insight.lovable.app/" },
     ],
+    links: [{ rel: "canonical", href: "https://liberato-ai-insight.lovable.app/" }],
   }),
   component: Index,
 });
