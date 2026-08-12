@@ -38,9 +38,26 @@ export const Route = createFileRoute("/brasil")({
 });
 
 function BrazilPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const scope = useAudienceFilters();
   const b = t.brazil;
+
+  const scoped = useQuery({
+    queryKey: ["brazil-scoped", lang, scope.filters, b.sections.map((s) => s.id).join(",")],
+    enabled: scope.applied,
+    staleTime: 600_000,
+    queryFn: () =>
+      getScopedBrazilSections({
+        data: {
+          segment: scope.filters.segment,
+          region: scope.filters.region,
+          uf: scope.filters.state,
+          lang,
+          sections: b.sections.map((s) => ({ id: s.id, title: s.title })),
+        },
+      }),
+  });
+  const scopedMap = new Map((scoped.data ?? []).map((s) => [s.section_id, s]));
 
   return (
     <div>
