@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { contactConsultant, listPublicConsultants, type PublicConsultant } from "@/lib/consultants.functions";
+import { useLanguage } from "@/i18n";
 
 function Initials({ name }: { name: string }) {
   const initials = name
@@ -53,6 +54,8 @@ function Block({
 }
 
 function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onDone: () => void }) {
+  const { t } = useLanguage();
+  const tt = t.team;
   const startedAt = useRef(Date.now());
   const [sending, setSending] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "", website: "" });
@@ -73,13 +76,13 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
         },
       });
       if (res.ok) {
-        toast.success(`Mensagem enviada para ${consultant.full_name}.`);
+        toast.success(`${tt.sent} ${consultant.full_name}.`);
         onDone();
       } else {
-        toast.error(res.error ?? "Não foi possível enviar.");
+        toast.error(res.error ?? tt.error);
       }
     } catch {
-      toast.error("Não foi possível enviar agora.");
+      toast.error(tt.error);
     } finally {
       setSending(false);
     }
@@ -96,31 +99,31 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
       />
       <Input
         required
-        placeholder="Seu nome"
+        placeholder={tt.namePlaceholder}
         value={form.name}
         onChange={(e) => setForm({ ...form, name: e.target.value })}
       />
       <Input
         required
         type="email"
-        placeholder="Seu e-mail"
+        placeholder={tt.emailPlaceholder}
         value={form.email}
         onChange={(e) => setForm({ ...form, email: e.target.value })}
       />
       <Input
-        placeholder="Empresa (opcional)"
+        placeholder={tt.companyPlaceholder}
         value={form.company}
         onChange={(e) => setForm({ ...form, company: e.target.value })}
       />
       <Textarea
         required
         rows={4}
-        placeholder="Como podemos ajudar?"
+        placeholder={tt.messagePlaceholder}
         value={form.message}
         onChange={(e) => setForm({ ...form, message: e.target.value })}
       />
       <Button type="submit" disabled={sending} className="w-full">
-        {sending ? <Loader2 className="size-4 animate-spin" /> : "Enviar mensagem"}
+        {sending ? <Loader2 className="size-4 animate-spin" /> : tt.submit}
       </Button>
     </form>
   );
@@ -128,6 +131,8 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
 
 /** Vitrine pública dos consultores da equipe. */
 export function ConsultantsTeam() {
+  const { t } = useLanguage();
+  const tt = t.team;
   const [openId, setOpenId] = useState<string | null>(null);
   const [contactId, setContactId] = useState<string | null>(null);
 
@@ -143,14 +148,14 @@ export function ConsultantsTeam() {
 
   if (isLoading) {
     return (
-      <p className="mt-6 text-sm text-muted-foreground">Carregando consultores…</p>
+      <p className="mt-6 text-sm text-muted-foreground">{tt.loading}</p>
     );
   }
   if (consultants.length === 0) return null;
 
   return (
     <div className="mt-10">
-      <h3 className="text-xl font-bold">Nossos consultores</h3>
+      <h3 className="text-xl font-bold">{tt.heading}</h3>
       <div className="mt-6 grid gap-6 sm:grid-cols-2">
         {consultants.map((c) => (
           <div key={c.id} className="rounded-2xl border border-border bg-card p-6">
@@ -158,7 +163,7 @@ export function ConsultantsTeam() {
               {c.photo_url ? (
                 <img
                   src={c.photo_url}
-                  alt={`Foto de ${c.full_name}`}
+                  alt={`${tt.photoAlt} ${c.full_name}`}
                   loading="lazy"
                   className="size-20 shrink-0 rounded-full object-cover"
                 />
@@ -186,11 +191,11 @@ export function ConsultantsTeam() {
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
               <Button variant="outline" size="sm" onClick={() => setOpenId(c.id)}>
-                Ver perfil
+                {tt.viewProfile}
               </Button>
               <Button size="sm" onClick={() => setContactId(c.id)}>
                 <Mail className="size-4" />
-                Enviar e-mail
+                {tt.sendEmail}
               </Button>
             </div>
           </div>
@@ -208,14 +213,14 @@ export function ConsultantsTeam() {
                 )}
               </DialogHeader>
               <div className="space-y-5">
-                <Block icon={GraduationCap} title="Formação acadêmica" text={selected.education} />
-                <Block icon={Briefcase} title="Experiências profissionais" text={selected.experience} />
-                <Block icon={Users} title="Clientes" text={selected.clients} />
-                <Block icon={Award} title="Trabalhos realizados" text={selected.works} />
+                <Block icon={GraduationCap} title={tt.education} text={selected.education} />
+                <Block icon={Briefcase} title={tt.experience} text={selected.experience} />
+                <Block icon={Users} title={tt.clients} text={selected.clients} />
+                <Block icon={Award} title={tt.works} text={selected.works} />
                 {selected.specialties.length > 0 && (
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-                      Especializações
+                      {tt.specialties}
                     </p>
                     <p className="mt-2 text-sm text-muted-foreground">
                       {selected.specialties.join(" · ")}
@@ -225,7 +230,7 @@ export function ConsultantsTeam() {
                 {selected.segments.length > 0 && (
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-                      Segmentos
+                      {tt.segments}
                     </p>
                     <p className="mt-2 text-sm text-muted-foreground">
                       {selected.segments.join(" · ")}
@@ -239,7 +244,7 @@ export function ConsultantsTeam() {
                   }}
                 >
                   <Mail className="size-4" />
-                  Enviar e-mail
+                  {tt.sendEmail}
                 </Button>
               </div>
             </>
@@ -252,10 +257,9 @@ export function ConsultantsTeam() {
           {contactTarget && (
             <>
               <DialogHeader>
-                <DialogTitle>Enviar e-mail para {contactTarget.full_name}</DialogTitle>
+                <DialogTitle>{tt.contactTitle} {contactTarget.full_name}</DialogTitle>
                 <DialogDescription>
-                  Sua mensagem é encaminhada diretamente ao consultor. O contato dele permanece
-                  privado.
+                  {tt.contactDescription}
                 </DialogDescription>
               </DialogHeader>
               <ContactForm consultant={contactTarget} onDone={() => setContactId(null)} />

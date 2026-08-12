@@ -8,7 +8,8 @@ import { subscribeBulletin } from "@/lib/bulletin.functions";
 
 /** Chamada para o Boletim Semanal (Dados do Brasil e Conteúdo). */
 export function BulletinSignup() {
-  const { lang, segments } = useLanguage();
+  const { lang, segments, t } = useLanguage();
+  const tb = t.bulletin;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const [fullName, setFullName] = useState("");
@@ -31,19 +32,18 @@ export function BulletinSignup() {
       className="rounded-xl border border-border bg-secondary/40 p-6 md:p-8"
     >
       <p className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">
-        Boletim Semanal
+        {tb.eyebrow}
       </p>
       <h2 className="mt-2 font-display text-2xl font-bold">
-        Receba os dados atualizados toda semana
+        {tb.title}
       </h2>
       <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-        Indicadores econômicos e os últimos artigos do seu segmento, enviados automaticamente por
-        e-mail e/ou WhatsApp. Você pode cancelar quando quiser, com um clique.
+        {tb.description}
       </p>
 
       {done ? (
         <p className="mt-6 rounded-md border border-accent/40 bg-accent/10 px-4 py-3 text-sm font-medium text-accent">
-          Cadastro confirmado. Seu próximo Boletim Semanal chega em breve.
+          {tb.done}
         </p>
       ) : (
         <form
@@ -51,7 +51,7 @@ export function BulletinSignup() {
           onSubmit={async (e) => {
             e.preventDefault();
             if (!viaEmail && !viaWhatsApp) {
-              toast.error("Escolha ao menos uma forma de recebimento.");
+              toast.error(tb.chooseChannel);
               return;
             }
             setBusy(true);
@@ -73,10 +73,10 @@ export function BulletinSignup() {
               if (!r.ok) toast.error(r.error);
               else {
                 setDone(true);
-                toast.success("Cadastro realizado com sucesso.");
+                toast.success(tb.success);
               }
             } catch {
-              toast.error("Não foi possível concluir o cadastro.");
+              toast.error(tb.error);
             } finally {
               setBusy(false);
             }
@@ -93,7 +93,7 @@ export function BulletinSignup() {
           />
 
           <label className="text-sm font-medium">
-            Nome completo
+            {tb.name}
             <input
               required
               value={fullName}
@@ -103,7 +103,7 @@ export function BulletinSignup() {
           </label>
 
           <label className="text-sm font-medium">
-            Empresa / instituição
+            {tb.company}
             <input
               required
               value={company}
@@ -113,19 +113,19 @@ export function BulletinSignup() {
           </label>
 
           <label className="text-sm font-medium">
-            E-mail
+            {tb.email}
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="voce@empresa.com"
+              placeholder={tb.emailPlaceholder}
               className={field}
             />
           </label>
 
           <label className="text-sm font-medium">
-            WhatsApp (com DDD)
+            {tb.whatsapp}
             <input
               value={whatsapp}
               onChange={(e) => setWhatsapp(e.target.value)}
@@ -135,13 +135,13 @@ export function BulletinSignup() {
           </label>
 
           <label className="text-sm font-medium">
-            Segmento de interesse
+            {tb.segment}
             <select
               value={segment}
               onChange={(e) => setSegment(e.target.value)}
               className={field}
             >
-              <option value="Todos">Todos os segmentos</option>
+              <option value="Todos">{tb.allSegments}</option>
               {segments.map((s) => (
                 <option key={s} value={s}>
                   {s}
@@ -151,7 +151,7 @@ export function BulletinSignup() {
           </label>
 
           <fieldset className="text-sm font-medium">
-            <legend>Como quer receber</legend>
+            <legend>{tb.channels}</legend>
             <div className="mt-2 flex flex-wrap gap-4">
               <label className="inline-flex items-center gap-2 text-sm font-normal">
                 <input
@@ -160,7 +160,7 @@ export function BulletinSignup() {
                   onChange={(e) => setViaEmail(e.target.checked)}
                   className="size-4 accent-[var(--accent)]"
                 />
-                <Mail className="size-4 text-accent" /> E-mail
+                <Mail className="size-4 text-accent" /> {tb.channelEmail}
               </label>
               <label className="inline-flex items-center gap-2 text-sm font-normal">
                 <input
@@ -169,7 +169,7 @@ export function BulletinSignup() {
                   onChange={(e) => setViaWhatsApp(e.target.checked)}
                   className="size-4 accent-[var(--accent)]"
                 />
-                <MessageCircle className="size-4 text-accent" /> WhatsApp
+                <MessageCircle className="size-4 text-accent" /> {tb.channelWhatsApp}
               </label>
             </div>
           </fieldset>
@@ -180,11 +180,10 @@ export function BulletinSignup() {
               disabled={busy}
               className="rounded-md bg-ink px-6 py-2.5 text-sm font-semibold text-ink-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
             >
-              {busy ? "Enviando…" : "Quero receber o Boletim Semanal"}
+              {busy ? tb.sending : tb.submit}
             </button>
             <p className="mt-3 text-xs text-muted-foreground">
-              O conteúdo é montado de acordo com o segmento escolhido. Seus dados são usados apenas
-              para o envio do boletim.
+              {tb.note}
             </p>
           </div>
         </form>
