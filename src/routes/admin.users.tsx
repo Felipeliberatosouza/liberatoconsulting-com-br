@@ -19,6 +19,10 @@ import {
 } from "@/lib/users.functions";
 import { getResumeUrl, listApplications, listLeads } from "@/lib/admin.functions";
 import { listSubscribers } from "@/lib/newsletter.functions";
+import {
+  listBulletinSubscribers,
+  unsubscribeBulletinByAdmin,
+} from "@/lib/bulletin.functions";
 
 export const Route = createFileRoute("/admin/users")({
   head: () => ({
@@ -38,11 +42,16 @@ export const Route = createFileRoute("/admin/users")({
   component: UsersPage,
 });
 
-type Tab = "team" | "subscribers" | "applicants" | "leads";
+type Tab = "team" | "subscribers" | "bulletin" | "applicants" | "leads";
 
 const TABS: Array<{ id: Tab; label: string; hint: string }> = [
   { id: "team", label: "Equipe com acesso", hint: "Administradores, consultores e autores." },
   { id: "subscribers", label: "Assinantes da newsletter", hint: "Nome, e-mail e origem." },
+  {
+    id: "bulletin",
+    label: "Assinantes do Boletim Semanal",
+    hint: "Nome, empresa, segmento, e-mail, WhatsApp, canais e situação.",
+  },
   { id: "applicants", label: "Candidatos", hint: "Currículos do Trabalhe Conosco." },
   { id: "leads", label: "Leads", hint: "Contatos dos formulários do site." },
 ];
@@ -136,6 +145,7 @@ function UsersPage() {
       <div className="mt-6">
         {tab === "team" && <TeamTab />}
         {tab === "subscribers" && <SubscribersTab />}
+        {tab === "bulletin" && <BulletinTab />}
         {tab === "applicants" && <ApplicantsTab />}
         {tab === "leads" && <LeadsTab />}
       </div>
@@ -407,6 +417,105 @@ function SubscribersTab() {
             <tr>
               <td className="px-4 py-6 text-muted-foreground" colSpan={5}>
                 Nenhum assinante.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/* ------------------ assinantes do boletim semanal -------------------- */
+
+function BulletinTab() {
+  const q = useQuery({
+    queryKey: ["admin-bulletin-subscribers"],
+    queryFn: () => listBulletinSubscribers(),
+    retry: false,
+  });
+  const rows = q.data ?? [];
+  const active = rows.filter((r) => r.status === "active").length;
+
+  return (
+    <div className="overflow-x-auto rounded-lg border border-border bg-background">
+      <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
+        {active} ativos · {rows.length - active} cancelados
+      </p>
+      <table className="w-full min-w-[1000px] text-sm">
+        <thead className="bg-secondary/60 text-left text-xs uppercase text-muted-foreground">
+          <tr>
+            <th className="px-4 py-3">Nome completo</th>
+            <th className="px-4 py-3">Empresa / instituição</th>
+            <th className="px-4 py-3">Segmento</th>
+            <th className="px-4 py-3">E-mail</th>
+            <th className="px-4 py-3">WhatsApp</th>
+            <th className="px-4 py-3">Canais</th>
+            <th className="px-4 py-3">Origem</th>
+            <th className="px-4 py-3">Cadastro</th>
+            <th className="px-4 py-3">Situação</th>
+            <th className="px-4 py-3" />
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.id} className="border-t border-border align-top">
+              <td className="px-4 py-3">{r.full_name || "—"}</td>
+              <td className="px-4 py-3">{r.company || "—"}</td>
+              <td className="px-4 py-3">{r.segment || "—"}</td>
+              <td className="px-4 py-3">
+                <a href={`mailto:${r.email}`} className="text-accent hover:underline">
+                  {r.email}
+                </a>
+              </td>
+              <td className="px-4 py-3">
+                {r.whatsapp ? (
+                  <a href={`tel:${r.whatsapp}`} className="text-accent hover:underline">
+                    {r.whatsapp}
+                  </a>
+                ) : (
+                  "—"
+                )}
+              </td>
+              <td className="px-4 py-3">
+                {[r.via_email ? "E-mail" : null, r.via_whatsapp ? "WhatsApp" : null]
+                  .filter(Boolean)
+                  .join(" + ") || "—"}
+              </td>
+              <td className="px-4 py-3 text-muted-foreground">{r.source_path || "—"}</td>
+              <td className="px-4 py-3 text-muted-foreground">
+                {new Date(r.created_at).toLocaleDateString("pt-BR")}
+              </td>
+              <td className="px-4 py-3">
+                {r.status === "active"
+                  ? "ativo"
+                  : `cancelado${
+                      r.unsubscribed_at
+                        ? ` em ${new Date(r.unsubscribed_at).toLocaleDateString("pt-BR")}`
+                        : ""
+                    }`}
+              </td>
+              <td className="px-4 py-3 text-right">
+                {r.status === "active" && (
+                  <button
+                    onClick={async () => {
+                      const res = await unsubscribeBulletinByAdmin({ data: { id: r.id } });
+                      if (!res.ok) toast.error(res.error);
+                      else toast.success("Envio interrompido para este cadastro.");
+                      await q.refetch();
+                    }}
+                    className="text-destructive hover:underline"
+                  >
+                    interromper envio
+                  </button>
+                )}
+              </td>
+            </tr>
+          ))}
+          {rows.length === 0 && (
+            <tr>
+              <td className="px-4 py-6 text-muted-foreground" colSpan={10}>
+                Nenhum assinante do Boletim Semanal.
               </td>
             </tr>
           )}
