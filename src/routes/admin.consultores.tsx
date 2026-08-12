@@ -70,16 +70,46 @@ function AdminConsultantsPage() {
     });
   }
 
+  /** Redimensiona a foto para no máximo 512px e converte em JPEG leve. */
   async function onPhoto(file: File | undefined) {
     if (!file || !draft) return;
-    if (file.size > 2_500_000) {
-      toast.error("Imagem acima de 2,5 MB.");
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione um arquivo de imagem.");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => setDraft({ ...draft, photo_url: String(reader.result) });
-    reader.readAsDataURL(file);
+    if (file.size > 10_000_000) {
+      toast.error("Imagem acima de 10 MB.");
+      return;
+    }
+    try {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(new Error("read"));
+        reader.readAsDataURL(file);
+      });
+      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const el = new Image();
+        el.onload = () => resolve(el);
+        el.onerror = () => reject(new Error("decode"));
+        el.src = dataUrl;
+      });
+      const max = 512;
+      const scale = Math.min(1, max / Math.max(img.width, img.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(img.width * scale));
+      canvas.height = Math.max(1, Math.round(img.height * scale));
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("canvas");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const compressed = canvas.toDataURL("image/jpeg", 0.82);
+      setDraft((prev) => (prev ? { ...prev, photo_url: compressed } : prev));
+      toast.success("Foto carregada. Clique em Salvar para confirmar.");
+    } catch {
+      toast.error("Não foi possível processar a imagem.");
+    }
   }
+
 
   async function save() {
     if (!draft) return;
