@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
-import { FilterScopeBadge } from "@/components/SiteFilterBar";
+import { FilterScopeBadge, SiteFilterBar } from "@/components/SiteFilterBar";
 import { useAudienceFilters } from "@/lib/audience-filters";
 import { listPublicIndicators } from "@/lib/indicators.functions";
 
