@@ -939,6 +939,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_weekly_schedules: {
+        Args: never
+        Returns: {
+          job_name: string
+          schedule: string
+        }[]
+      }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       list_public_consultants: {
         Args: never
@@ -955,6 +962,10 @@ export type Database = {
           specialties: Json
           works: string
         }[]
+      }
+      set_weekly_schedule: {
+        Args: { _job: string; _schedule: string }
+        Returns: undefined
       }
     }
     Enums: {
