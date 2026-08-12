@@ -64,6 +64,7 @@ function SettingsPage() {
 
       <BrandingBlock />
       <ContactsBlock />
+      <ScheduleSettings />
       <EmailTemplatesBlock />
     </AdminShell>
   );
