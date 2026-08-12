@@ -171,8 +171,10 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
           preheader: campaign.preheader ?? "",
           body: campaign.body,
           unsubscribeUrl,
+          company,
         }),
-        text: renderCampaignText(campaign.body, unsubscribeUrl),
+        text: renderCampaignText(campaign.body, unsubscribeUrl, company),
+
       });
       sent += 1;
     } catch (err) {
