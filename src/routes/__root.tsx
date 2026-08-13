@@ -203,8 +203,14 @@ function RootShell({ children }: { children: ReactNode }) {
   const htmlLang = HTML_LANG[normalizeLang(langParam)] ?? "pt-BR";
   return (
     <html lang={htmlLang}>
-
       <head>
+        {/* Google tag (gtag.js) — imediatamente após <head> */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-44WQ42SD3T"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\n\ngtag('config', 'G-44WQ42SD3T');`,
+          }}
+        />
         <HeadContent />
       </head>
       <body>
