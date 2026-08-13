@@ -171,6 +171,17 @@ const campaignInput = z.object({
   reference_date: z.string().trim().max(20).nullable().optional(),
 });
 
+/** Endereço amigável a partir do título (mesma regra usada no painel). */
+export function newsletterSlug(title: string) {
+  return title
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 70);
+}
+
 export const saveCampaign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => campaignInput.parse(d))
