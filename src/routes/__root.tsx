@@ -20,6 +20,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { CookieConsent } from "@/components/CookieConsent";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { CopyProtection } from "@/components/CopyProtection";
+import { normalizeLang } from "@/lib/seo";
+
 
 
 function NotFoundComponent() {
