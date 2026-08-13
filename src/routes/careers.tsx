@@ -206,9 +206,8 @@ function CareersPage() {
                   type="url"
                   maxLength={300}
                   placeholder={C.linkedinPlaceholder}
+                  pattern="https?://.+"
                   title={C.errorLinkedin}
-                  onInvalid={(e) => e.currentTarget.setCustomValidity(C.errorLinkedin)}
-                  onInput={(e) => e.currentTarget.setCustomValidity("")}
                   className={field}
                 />
                 <span className="mt-1 block text-xs text-muted-foreground">{C.errorLinkedin}</span>
