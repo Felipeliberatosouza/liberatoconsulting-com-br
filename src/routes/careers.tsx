@@ -98,6 +98,9 @@ function CareersPage() {
         setStatus("done");
         form.reset();
         setFileName("");
+        if (typeof window !== "undefined") {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
         return;
       }
       setStatus("idle");
