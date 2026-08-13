@@ -51,10 +51,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:description", content: "Inteligência sobre setores da economia brasileira para empresas internacionais, com gestão estratégica e IA no centro." },
       ...seoLocaleMeta(headLang(ctx)),
     ],
-    links: [
-      ...seoLinks("/", headLang(ctx)),
-      { rel: "preload", as: "image", href: heroImage, fetchpriority: "high" },
-    ],
+    links: seoLinks("/", headLang(ctx)),
     scripts: [
       jsonLd(
         webPageSchema({

@@ -17,6 +17,10 @@ export function SiteFooter() {
           <img
             src={logoUrl === "/logo.png" ? "/logo-light.png" : logoUrl}
             alt="Liberato Consulting"
+            width={280}
+            height={79}
+            loading="lazy"
+            decoding="async"
             className="h-11 w-auto"
           />
           <p className="mt-4 max-w-md text-sm text-ink-foreground/70">{t.footer.tagline}</p>
