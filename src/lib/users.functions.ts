@@ -282,12 +282,121 @@ export const updateTeamMember = createServerFn({ method: "POST" })
     const roleRes = await supabaseAdmin.from("user_roles").insert({ user_id, role });
     if (roleRes.error) return { ok: false as const, error: roleRes.error.message };
 
-    if (password && password.length >= 8) {
+    if (password && password.length > 0) {
+      if (
+        !isStrongPassword(password, {
+          fullName: profile.full_name,
+          email: profile.email,
+          birthDate: birth_date,
+          cpf: profile.cpf,
+        })
+      ) {
+        return { ok: false as const, error: "A senha não atende às regras de segurança." };
+      }
       const up = await supabaseAdmin.auth.admin.updateUserById(user_id, { password });
       if (up.error) return { ok: false as const, error: up.error.message };
     }
     return { ok: true as const };
   });
+
+/* ------------------------------------------------------------------ */
+/* Contrato assinado                                                    */
+/* ------------------------------------------------------------------ */
+
+/** Reenvia o contrato do papel para o e-mail do membro. */
+export const resendContractEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ user_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./access.server");
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [{ data: profile }, { data: roles }] = await Promise.all([
+      supabaseAdmin
+        .from("profiles")
+        .select("full_name, email")
+        .eq("user_id", data.user_id)
+        .maybeSingle(),
+      supabaseAdmin.from("user_roles").select("role").eq("user_id", data.user_id),
+    ]);
+    const audience = (roles ?? []).map((r) => r.role as string).find(
+      (r) => r === "consultor" || r === "autor",
+    ) as "consultor" | "autor" | undefined;
+    if (!audience) return { ok: false as const, error: "Este usuário não exige contrato." };
+    if (!profile?.email) return { ok: false as const, error: "Usuário sem e-mail cadastrado." };
+    const { sendContractEmail } = await import("./contracts.server");
+    const sent = await sendContractEmail({
+      audience,
+      toEmail: profile.email as string,
+      toName: (profile.full_name as string) ?? "",
+    });
+    if (!sent.ok) return sent;
+    await supabaseAdmin
+      .from("profiles")
+      .update({ contract_sent_at: new Date().toISOString() })
+      .eq("user_id", data.user_id);
+    return { ok: true as const };
+  });
+
+/** Recebe o contrato assinado (PDF/imagem) e libera o acesso do usuário. */
+export const uploadSignedContract = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        user_id: z.string().uuid(),
+        file_name: z.string().trim().min(1).max(200),
+        content_type: z.string().trim().max(120).default("application/pdf"),
+        file_base64: z.string().min(16).max(15_000_000),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./access.server");
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const binary = atob(data.file_base64.replace(/^data:[^;]+;base64,/, ""));
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+
+    const safeName = data.file_name.replace(/[^\w.\-]+/g, "_");
+    const path = `${data.user_id}/${Date.now()}_${safeName}`;
+    const up = await supabaseAdmin.storage
+      .from("contracts")
+      .upload(path, bytes, { contentType: data.content_type, upsert: true });
+    if (up.error) return { ok: false as const, error: up.error.message };
+
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .update({
+        contract_file_path: path,
+        contract_file_name: data.file_name,
+        contract_uploaded_at: new Date().toISOString(),
+      })
+      .eq("user_id", data.user_id);
+    if (error) return { ok: false as const, error: error.message };
+
+    // Libera o acesso ao painel.
+    await supabaseAdmin.auth.admin.updateUserById(data.user_id, { ban_duration: "none" } as never);
+    return { ok: true as const };
+  });
+
+/** Link temporário para abrir o contrato assinado. */
+export const getSignedContractUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ path: z.string().min(1) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./access.server");
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: signed, error } = await supabaseAdmin.storage
+      .from("contracts")
+      .createSignedUrl(data.path, 300);
+    if (error || !signed) return { ok: false as const, error: error?.message ?? "Falha." };
+    return { ok: true as const, url: signed.signedUrl };
+  });
+
 
 /** Remove definitivamente um usuário do painel. */
 export const deleteTeamMember = createServerFn({ method: "POST" })
