@@ -14,8 +14,17 @@ import {
 } from "@/lib/content.functions";
 import type { ArticleRecord } from "@/lib/site-config";
 import { seoLinks } from "@/lib/seo";
+import { getPublishedNewsletter } from "@/lib/newsletter-public.functions";
 
 export const Route = createFileRoute("/content/$slug")({
+  /** Endereços antigos de newsletter (/content/...) seguem para a página da newsletter. */
+  loader: async ({ params }) => {
+    const article = await getPublicArticle({ data: { slug: params.slug } }).catch(() => null);
+    if (article) return null;
+    const news = await getPublishedNewsletter({ data: { slug: params.slug } }).catch(() => null);
+    if (news) throw redirect({ to: "/newsletter/$slug", params: { slug: params.slug } });
+    return null;
+  },
   head: ({ params }) => ({
     meta: [
       { title: `Artigo — Liberato Consulting` },
