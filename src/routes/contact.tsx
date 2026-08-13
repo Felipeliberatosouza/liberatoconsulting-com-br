@@ -5,7 +5,9 @@ import { ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
+
 
 export const Route = createFileRoute("/contact")({
   head: (ctx) => ({
@@ -145,6 +147,7 @@ function ContactPage() {
       if (result.ok) {
         setStatus("done");
         toast.success(t.contact.sent);
+        trackEvent("form_submit", { form_name: "contact", service: "Contato geral" });
         form.reset();
         return;
       }

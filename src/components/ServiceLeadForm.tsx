@@ -3,7 +3,9 @@ import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 
 import { useLanguage } from "@/i18n";
+import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
+
 
 type Props = { serviceSlug: string; serviceTitle: string };
 
@@ -49,6 +51,7 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
 
       if (result.ok) {
         setStatus("done");
+        trackEvent("form_submit", { form_name: "service_lead", service: serviceTitle });
         form.reset();
         return;
       }

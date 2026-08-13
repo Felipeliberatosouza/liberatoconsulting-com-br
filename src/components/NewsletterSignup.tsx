@@ -3,7 +3,9 @@ import { toast } from "sonner";
 import { useRouterState } from "@tanstack/react-router";
 
 import { useLanguage } from "@/i18n";
+import { trackEvent } from "@/lib/gtag";
 import { subscribeNewsletter } from "@/lib/newsletter.functions";
+
 
 export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | "page" }) {
   const { lang, t } = useLanguage();
@@ -41,6 +43,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
             setEmail("");
             setName("");
             toast.success(tn.success);
+            trackEvent("form_submit", { form_name: "newsletter", location: pathname });
           }
         } catch {
           toast.error(tn.error);

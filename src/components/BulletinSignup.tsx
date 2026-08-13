@@ -4,7 +4,9 @@ import { useRouterState } from "@tanstack/react-router";
 import { Mail, MessageCircle } from "lucide-react";
 
 import { useLanguage } from "@/i18n";
+import { trackEvent } from "@/lib/gtag";
 import { subscribeBulletin } from "@/lib/bulletin.functions";
+
 
 /** Chamada para o Boletim Semanal (Dados do Brasil e Conteúdo). */
 export function BulletinSignup() {
@@ -74,6 +76,7 @@ export function BulletinSignup() {
               else {
                 setDone(true);
                 toast.success(tb.success);
+                trackEvent("form_submit", { form_name: "bulletin", location: pathname });
               }
             } catch {
               toast.error(tb.error);
