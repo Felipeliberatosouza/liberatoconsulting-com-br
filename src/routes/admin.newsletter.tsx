@@ -32,6 +32,7 @@ import {
   generateNewsletterImage,
 } from "@/lib/newsletter-ai.functions";
 import { listAuthorOptions } from "@/lib/users.functions";
+import { useAuthReady } from "@/hooks/useAuthReady";
 
 
 export const Route = createFileRoute("/admin/newsletter")({
@@ -74,12 +75,14 @@ function contentLink(title: string) {
 
 
 function AdminNewsletter() {
-  const subscribers = useQuery({ queryKey: ["nl-subs"], queryFn: () => listSubscribers(), retry: false });
-  const campaigns = useQuery({ queryKey: ["nl-camps"], queryFn: () => listCampaigns(), retry: false });
+  const authReady = useAuthReady();
+  const subscribers = useQuery({ queryKey: ["nl-subs"], queryFn: () => listSubscribers(), retry: false, enabled: authReady });
+  const campaigns = useQuery({ queryKey: ["nl-camps"], queryFn: () => listCampaigns(), retry: false, enabled: authReady });
   const settings = useQuery({
     queryKey: ["nl-settings"],
     queryFn: () => getNewsletterSettings(),
     retry: false,
+    enabled: authReady,
   });
 
   const [fromName, setFromName] = useState("Liberato Consulting");
@@ -141,6 +144,7 @@ function AdminNewsletter() {
     queryKey: ["nl-authors"],
     queryFn: () => listAuthorOptions(),
     retry: false,
+    enabled: authReady,
   });
 
   // O link do conteúdo acompanha o título até que seja editado manualmente.
