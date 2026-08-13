@@ -432,22 +432,35 @@ export const listAuthorOptions = createServerFn({ method: "GET" })
     const { assertAnyRole } = await import("./access.server");
     await assertAnyRole(context, ["consultor", "autor"]);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [{ data: roles }, { data: profiles }] = await Promise.all([
+    const [{ data: roles }, { data: profiles }, authList] = await Promise.all([
       supabaseAdmin.from("user_roles").select("user_id, role"),
       supabaseAdmin.from("profiles").select("user_id, full_name, email, active"),
+      supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 }),
     ]);
     const allowed = new Set(
       (roles ?? [])
         .filter((r) => ["admin", "consultor", "autor"].includes(r.role as string))
         .map((r) => r.user_id as string),
     );
-    return (profiles ?? [])
-      .filter((p) => allowed.has(p.user_id as string) && p.active !== false)
-      .map((p) => ({
-        userId: p.user_id as string,
-        name: (p.full_name as string) ?? "",
-        email: (p.email as string) ?? "",
-      }))
-      .filter((p) => p.name.trim())
+    const byUser = new Map<string, { name: string; email: string; active: boolean }>();
+    for (const p of profiles ?? []) {
+      byUser.set(p.user_id as string, {
+        name: ((p.full_name as string) ?? "").trim(),
+        email: ((p.email as string) ?? "").trim(),
+        active: p.active !== false,
+      });
+    }
+    // Usuários com papel mas ainda sem perfil preenchido continuam disponíveis.
+    for (const u of authList.data?.users ?? []) {
+      if (!allowed.has(u.id)) continue;
+      const cur = byUser.get(u.id);
+      const email = cur?.email || u.email || "";
+      const name = cur?.name || email.split("@")[0] || "";
+      byUser.set(u.id, { name, email, active: cur ? cur.active : true });
+    }
+    return [...byUser.entries()]
+      .filter(([userId, v]) => allowed.has(userId) && v.active && v.name.trim())
+      .map(([userId, v]) => ({ userId, name: v.name, email: v.email }))
       .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
   });
+
