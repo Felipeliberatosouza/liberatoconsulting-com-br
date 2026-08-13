@@ -58,8 +58,8 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
  */
 async function drawLogo(ctx: CanvasRenderingContext2D, width: number, height: number) {
   const pad = Math.round(width * 0.045);
-  // 40% menor do que o tamanho anterior
-  const logoW = Math.round(width * (width > height ? 0.2 : 0.26) * 0.6);
+  // 40% menor do que o tamanho anterior (aplicado duas vezes: 0.6 * 0.6)
+  const logoW = Math.round(width * (width > height ? 0.2 : 0.26) * 0.36);
   const probeH = Math.round(height * 0.12);
   const dark =
     areaLuminance(ctx, Math.max(0, width - logoW - pad * 2), 0, logoW + pad * 2, probeH) < 0.55;

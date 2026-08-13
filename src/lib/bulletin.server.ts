@@ -156,7 +156,7 @@ export function renderBulletinHtml(content: BulletinContent, unsubscribeUrl: str
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:94%;background:#ffffff;border-radius:12px;overflow:hidden">
 
 <tr><td style="padding:28px 32px 20px;border-bottom:1px solid #e7e5e4" align="center">
-  <img src="${escapeHtml(content.logoUrl)}" alt="Liberato Consulting" style="height:44px;width:auto" />
+  <img src="${escapeHtml(content.logoUrl)}" alt="Liberato Consulting" style="height:26px;width:auto" />
   <h1 style="margin:18px 0 6px;font-size:24px;color:#14192a">Boletim Semanal</h1>
   <div style="font-size:13px;color:#78716c">Atualizado em ${escapeHtml(content.dateLabel)}</div>
   <div style="margin-top:6px;font-size:12px;color:#e2751f;font-weight:600">Segmento: ${escapeHtml(
