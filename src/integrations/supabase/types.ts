@@ -1003,7 +1003,6 @@ export type Database = {
           schedule: string
         }[]
       }
-      is_admin: { Args: { _user_id: string }; Returns: boolean }
       list_public_consultants: {
         Args: never
         Returns: {
