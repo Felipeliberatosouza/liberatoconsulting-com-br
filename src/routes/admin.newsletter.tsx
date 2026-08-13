@@ -110,6 +110,30 @@ function AdminNewsletter() {
   const [referenceDate, setReferenceDate] = useState(today);
   const [aiBusy, setAiBusy] = useState<"" | "text" | "image" | "pdf">("");
   const [pdfUrl, setPdfUrl] = useState("");
+  const [headline, setHeadline] = useState("");
+  const [bullets, setBullets] = useState<string[]>([]);
+  const [linkedinText, setLinkedinText] = useState("");
+  const [socialImage, setSocialImage] = useState("");
+  const [socialArt, setSocialArt] = useState<Record<string, string>>({});
+  const [socialBusy, setSocialBusy] = useState<"" | "text" | "image" | "art">("");
+  const [previewId, setPreviewId] = useState<string | null>(null);
+  const [onlyAuthorized, setOnlyAuthorized] = useState(true);
+
+  /** Redesenha as artes em todos os formatos a partir da mesma imagem base. */
+  const renderArts = async (base: string, head: string, list: string[]) => {
+    setSocialBusy("art");
+    try {
+      const out: Record<string, string> = {};
+      for (const key of Object.keys(SOCIAL_IMAGE_FORMATS) as SocialFormatKey[]) {
+        out[key] = await composeSocialImage(base, key, head, list);
+      }
+      setSocialArt(out);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Falha ao montar as artes.");
+    } finally {
+      setSocialBusy("");
+    }
+  };
 
   const authorOptions = useQuery({
     queryKey: ["nl-authors"],
