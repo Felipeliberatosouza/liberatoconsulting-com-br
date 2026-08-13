@@ -182,6 +182,21 @@ export function newsletterSlug(title: string) {
     .slice(0, 70);
 }
 
+/** Garante que o endereço amigável não colida com outra newsletter. */
+async function uniqueSlug(client: any, base: string, currentId: string | null) {
+  const root = base || "newsletter";
+  for (let i = 0; i < 20; i++) {
+    const candidate = i === 0 ? root : `${root}-${i + 1}`;
+    const { data } = await client
+      .from("newsletter_campaigns")
+      .select("id")
+      .eq("slug", candidate)
+      .maybeSingle();
+    if (!data || data.id === currentId) return candidate;
+  }
+  return `${root}-${Date.now()}`;
+}
+
 export const saveCampaign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => campaignInput.parse(d))
