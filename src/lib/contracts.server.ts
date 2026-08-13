@@ -32,9 +32,9 @@ export async function sendContractEmail(input: {
   const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) return { ok: false as const, error: "Serviço de e-mail indisponível." };
 
-  const company = await loadCompanyFooter();
-  const fromEmail = company?.email || "contato@liberatoconsulting.com.br";
-  const fromName = company?.tradeName || "Liberato Consulting";
+  const company = await loadCompanyFooter("https://liberatoconsulting.com.br");
+  const fromEmail = company.email || "contato@liberatoconsulting.com.br";
+  const fromName = company.name || "Liberato Consulting";
 
   const paragraphs = String(tpl.body)
     .split(/\n{2,}/)
