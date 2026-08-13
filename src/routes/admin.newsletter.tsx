@@ -614,7 +614,7 @@ function AdminNewsletter() {
                   if (!r.ok) toast.error(r.error);
                   else {
                     setSocialImage(r.imageUrl);
-                    if (!imageUrl) setImageUrl(r.imageUrl);
+                    if (!imageUrl) setImageUrl(await stampLogo(r.imageUrl).catch(() => r.imageUrl));
                     await renderArts(
                       r.imageUrl,
                       headline || `Você sabe o que é ${subject}?`,
