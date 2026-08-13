@@ -401,8 +401,10 @@ function AdminNewsletter() {
                       toast.success("PDF gerado.");
                       await campaigns.refetch();
                     }
-                  } catch {
-                    toast.error("Não foi possível gerar o PDF.");
+                  } catch (err) {
+                    toast.error(
+                      `Não foi possível gerar o PDF. ${err instanceof Error ? err.message : ""}`.trim(),
+                    );
                   } finally {
                     setAiBusy("");
                   }
