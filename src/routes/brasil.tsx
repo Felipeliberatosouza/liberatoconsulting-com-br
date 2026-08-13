@@ -36,6 +36,9 @@ export const Route = createFileRoute("/brasil")({
           "Panorama econômico, setores estratégicos, IED, tributos, Mercosul, mercado consumidor e infraestrutura do Brasil.",
       },
       { property: "og:url", content: "https://liberatoconsulting.com.br/brasil" },
+      { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
+      { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: seoLinks("/brasil"),
     scripts: [

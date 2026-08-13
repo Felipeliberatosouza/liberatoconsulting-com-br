@@ -44,6 +44,9 @@ export const Route = createFileRoute("/")({
           "Inteligência sobre setores da economia brasileira para empresas internacionais, com gestão estratégica e IA no centro.",
       },
       { property: "og:url", content: "https://liberatoconsulting.com.br/" },
+      { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
+      { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: seoLinks("/"),
     scripts: [

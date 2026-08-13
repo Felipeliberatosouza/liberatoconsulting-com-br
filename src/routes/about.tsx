@@ -22,6 +22,9 @@ export const Route = createFileRoute("/about")({
         property: "og:description",
         content: "Método de gestão, resultado medido e inteligência artificial como propósito.",
       },
+      { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
+      { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: seoLinks("/about"),
     scripts: [
