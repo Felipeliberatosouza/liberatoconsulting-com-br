@@ -149,13 +149,22 @@ function AdminNewsletter() {
   const activeCount = (subscribers.data ?? []).filter((s) => s.status === "active").length;
 
   const socialFormats = useMemo(() => {
-    const src = { title: subject, body, link: link.trim() || undefined };
+    const src = {
+      title: subject,
+      body,
+      link: link.trim() || undefined,
+      headline: headline || undefined,
+      bullets,
+      linkedinText: linkedinText || undefined,
+      authors: authors || undefined,
+      publishedAt: referenceDate || undefined,
+    };
     return [
       { key: "whatsapp", label: "WhatsApp", value: socialDrafts["whatsapp"] ?? toWhatsApp(src) },
       { key: "linkedin", label: "LinkedIn", value: socialDrafts["linkedin"] ?? toLinkedIn(src) },
       { key: "instagram", label: "Instagram", value: socialDrafts["instagram"] ?? toInstagram(src) },
     ];
-  }, [subject, body, link, socialDrafts]);
+  }, [subject, body, link, socialDrafts, headline, bullets, linkedinText, authors, referenceDate]);
 
   const resetForm = () => {
     setEditId(null);
@@ -172,6 +181,11 @@ function AdminNewsletter() {
     setLink("");
     setLinkTouched(false);
     setSocialDrafts({});
+    setHeadline("");
+    setBullets([]);
+    setLinkedinText("");
+    setSocialImage("");
+    setSocialArt({});
   };
 
 
