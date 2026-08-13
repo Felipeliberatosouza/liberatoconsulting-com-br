@@ -32,19 +32,49 @@ export const Route = createFileRoute("/contact")({
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "LocalBusiness",
+          "@type": "ProfessionalService",
+          "@id": "https://liberatoconsulting.com.br/#organization",
           name: "Liberato Consulting",
+          description:
+            "Consultoria em gestão empresarial com inteligência artificial no centro de cada entrega.",
           url: "https://liberatoconsulting.com.br/contact",
           email: "contato@liberatoconsulting.com.br",
-          image: "https://liberatoconsulting.com.br/logo.png",
+          telephone: "+5511913258668",
+          priceRange: "$$",
+          image: ["https://liberatoconsulting.com.br/og-default.png"],
+          logo: "https://liberatoconsulting.com.br/logo.png",
           address: {
             "@type": "PostalAddress",
+            streetAddress: "Av. Paulista, 1000",
             addressLocality: "São Paulo",
             addressRegion: "SP",
+            postalCode: "01310-100",
             addressCountry: "BR",
           },
+          areaServed: [
+            { "@type": "Country", name: "Brasil" },
+            { "@type": "Place", name: "Global" },
+          ],
+          openingHoursSpecification: [
+            {
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+              opens: "09:00",
+              closes: "18:00",
+            },
+          ],
+          contactPoint: [
+            {
+              "@type": "ContactPoint",
+              contactType: "customer service",
+              email: "contato@liberatoconsulting.com.br",
+              telephone: "+5511913258668",
+              availableLanguage: ["Portuguese", "English", "Spanish", "Chinese"],
+            },
+          ],
         }),
       },
+
       {
         type: "application/ld+json",
         children: JSON.stringify({
