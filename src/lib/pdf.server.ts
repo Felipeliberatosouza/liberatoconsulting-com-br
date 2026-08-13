@@ -45,19 +45,36 @@ function sanitize(text: string) {
     .replace(/[^\x09\x0A\x0D\x20-\xFF]/g, "");
 }
 
-async function embedLogo(pdf: PDFDocument, dataUrl?: string | null) {
-  if (!dataUrl) return null;
-  const match = /^data:image\/(png|jpeg|jpg);base64,(.+)$/i.exec(dataUrl);
-  if (!match) return null;
-  const bytes = Buffer.from(match[2]!, "base64");
+function b64ToBytes(b64: string) {
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+async function embedLogo(pdf: PDFDocument, src?: string | null) {
+  if (!src) return null;
   try {
-    return match[1]!.toLowerCase() === "png"
-      ? await pdf.embedPng(bytes)
-      : await pdf.embedJpg(bytes);
+    const match = /^data:image\/(png|jpeg|jpg);base64,(.+)$/i.exec(src);
+    if (match) {
+      const bytes = b64ToBytes(match[2]!);
+      return match[1]!.toLowerCase() === "png"
+        ? await pdf.embedPng(bytes)
+        : await pdf.embedJpg(bytes);
+    }
+    if (/^https?:\/\//i.test(src)) {
+      const res = await fetch(src);
+      if (!res.ok) return null;
+      const bytes = new Uint8Array(await res.arrayBuffer());
+      const isPng = bytes[0] === 0x89 && bytes[1] === 0x50;
+      return isPng ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes);
+    }
+    return null;
   } catch {
     return null;
   }
 }
+
 
 /**
  * Gera o PDF institucional: marca d'água com a logomarca, cabeçalho com o nome
