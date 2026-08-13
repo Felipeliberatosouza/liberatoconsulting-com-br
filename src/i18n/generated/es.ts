@@ -1045,7 +1045,7 @@ export const dict: Dict = {
     "errorFileSize": "Archivo demasiado grande (máx 3 MB).",
     "errorLinkedin": "Enlace de LinkedIn inválido.",
     "errorGeneric": "No fue posible enviar. Intente en unos instantes.",
-    "note": "Las candidaturas se envían a parceria@liberatoconsulting.com.br."
+    "note": "Las candidaturas se envían a contato@liberatoconsulting.com.br."
   },
   "serviceDetail": {
     "labels": {

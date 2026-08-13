@@ -815,7 +815,7 @@ export const pt = {
     errorFileSize: "Arquivo muito grande. O limite é 3 MB.",
     errorLinkedin: "Informe um link válido do LinkedIn.",
     errorGeneric: "Não foi possível enviar agora. Tente novamente em instantes.",
-    note: "As candidaturas são encaminhadas para parceria@liberatoconsulting.com.br.",
+    note: "As candidaturas são encaminhadas para contato@liberatoconsulting.com.br.",
   },
 
   serviceDetail: {

@@ -1045,7 +1045,7 @@ export const dict: Dict = {
     "errorFileSize": "File too large. Limit is 3 MB.",
     "errorLinkedin": "Provide a valid LinkedIn link.",
     "errorGeneric": "Could not send now. Try again in a moment.",
-    "note": "Applications are forwarded to parceria@liberatoconsulting.com.br."
+    "note": "Applications are forwarded to contato@liberatoconsulting.com.br."
   },
   "serviceDetail": {
     "labels": {

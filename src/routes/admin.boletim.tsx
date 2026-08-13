@@ -108,7 +108,7 @@ function AdminBulletin() {
               <input
                 value={testEmail}
                 onChange={(e) => setTestEmail(e.target.value)}
-                placeholder="voce@liberatoconsulting.com.br"
+                placeholder="contato@liberatoconsulting.com.br"
                 className={field}
               />
             </label>

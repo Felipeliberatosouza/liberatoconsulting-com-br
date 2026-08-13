@@ -153,7 +153,7 @@ function AdminNewsletter() {
           }}
         >
           <input className={input} value={fromName} onChange={(e) => setFromName(e.target.value)} placeholder="Nome do remetente" />
-          <input className={input} type="email" value={fromEmail} onChange={(e) => setFromEmail(e.target.value)} placeholder="newsletter@seudominio.com" />
+          <input className={input} type="email" value={fromEmail} onChange={(e) => setFromEmail(e.target.value)} placeholder="contato@liberatoconsulting.com.br" />
           <label className="flex items-center gap-2 text-sm sm:col-span-2">
             <input type="checkbox" checked={autoSend} onChange={(e) => setAutoSend(e.target.checked)} />
             Enviar automaticamente para todos os inscritos quando um novo conteúdo for publicado
@@ -285,7 +285,7 @@ function AdminNewsletter() {
             </div>
             <div>
               <label className={label} htmlFor="nl-contact">Contato dos autores</label>
-              <input id="nl-contact" className={input} value={authorContact} onChange={(e) => setAuthorContact(e.target.value)} placeholder="email@liberatoconsulting.com.br" />
+              <input id="nl-contact" className={input} value={authorContact} onChange={(e) => setAuthorContact(e.target.value)} placeholder="contato@liberatoconsulting.com.br" />
             </div>
             <div>
               <label className={label} htmlFor="nl-date">Data de atualização</label>

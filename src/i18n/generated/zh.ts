@@ -1045,7 +1045,7 @@ export const dict: Dict = {
     "errorFileSize": "文件过大。限制为 3 MB。",
     "errorLinkedin": "请输入有效的 LinkedIn 链接。",
     "errorGeneric": "目前无法发送。请稍后重试。",
-    "note": "申请将转发至 parceria@liberatoconsulting.com.br。"
+    "note": "申请将转发至 contato@liberatoconsulting.com.br。"
   },
   "serviceDetail": {
     "labels": {
