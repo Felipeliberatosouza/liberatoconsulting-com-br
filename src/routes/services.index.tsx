@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { CtaBand } from "@/components/CtaBand";
 import { seoLinks } from "@/lib/seo";
+import { breadcrumb, itemList, jsonLd } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
 export const Route = createFileRoute("/services/")({
@@ -23,6 +24,23 @@ export const Route = createFileRoute("/services/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: seoLinks("/services"),
+    scripts: [
+      jsonLd(
+        breadcrumb([
+          { name: "Início", path: "/" },
+          { name: "Serviços", path: "/services" },
+        ]),
+      ),
+      jsonLd(
+        itemList({
+          name: "Serviços de consultoria",
+          items: pt.serviceDetail.pages.map((p) => ({
+            name: p.title,
+            path: `/services/${p.id}`,
+          })),
+        }),
+      ),
+    ],
   }),
   component: ServicesPage,
 });

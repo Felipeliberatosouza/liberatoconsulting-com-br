@@ -5,6 +5,7 @@ import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
 import { getPublishedNewsletter } from "@/lib/newsletter-public.functions";
 import { seoLinks } from "@/lib/seo";
+import { articleSchema, breadcrumb, jsonLd } from "@/lib/schema";
 
 
 const SITE = "https://liberatoconsulting.com.br";
@@ -46,6 +47,25 @@ export const Route = createFileRoute("/newsletter/$slug")({
           : []),
       ],
       links: seoLinks(`/newsletter/${params.slug}`),
+      scripts: [
+        jsonLd(
+          breadcrumb([
+            { name: "Início", path: "/" },
+            { name: "Conteúdo", path: "/content" },
+            { name: loaderData.subject, path: `/newsletter/${params.slug}` },
+          ]),
+        ),
+        jsonLd(
+          articleSchema({
+            headline: loaderData.subject,
+            description,
+            path: `/newsletter/${params.slug}`,
+            datePublished: loaderData.referenceDate,
+            image: image ?? null,
+            authorName: loaderData.authors || null,
+          }),
+        ),
+      ],
     };
   },
   notFoundComponent: NewsletterNotFound,

@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, Check, Clock, Sparkles, Users } from "lucide-rea
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
 import { seoLinks } from "@/lib/seo";
+import { breadcrumb, jsonLd, serviceSchema } from "@/lib/schema";
 import { ServiceLeadForm } from "@/components/ServiceLeadForm";
 
 
@@ -29,6 +30,23 @@ export const Route = createFileRoute("/services/$slug")({
         { name: "twitter:card", content: "summary_large_image" },
       ],
       links: seoLinks(`/services/${params.slug}`),
+      scripts: [
+        jsonLd(
+          breadcrumb([
+            { name: "Início", path: "/" },
+            { name: "Serviços", path: "/services" },
+            { name: page.title, path: `/services/${params.slug}` },
+          ]),
+        ),
+        jsonLd(
+          serviceSchema({
+            name: page.title,
+            description: page.lead,
+            path: `/services/${params.slug}`,
+            category: page.group,
+          }),
+        ),
+      ],
     };
   },
   component: ServiceDetailPage,

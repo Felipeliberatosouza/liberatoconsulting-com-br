@@ -14,6 +14,7 @@ import {
 } from "@/lib/content.functions";
 import type { ArticleRecord } from "@/lib/site-config";
 import { seoLinks } from "@/lib/seo";
+import { articleSchema, breadcrumb, jsonLd } from "@/lib/schema";
 import { getPublishedNewsletter } from "@/lib/newsletter-public.functions";
 
 export const Route = createFileRoute("/content/$slug")({
@@ -42,6 +43,23 @@ export const Route = createFileRoute("/content/$slug")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: seoLinks(`/content/${params.slug}`),
+    scripts: [
+      jsonLd(
+        breadcrumb([
+          { name: "Início", path: "/" },
+          { name: "Conteúdo", path: "/content" },
+          { name: params.slug.replace(/-/g, " "), path: `/content/${params.slug}` },
+        ]),
+      ),
+      jsonLd(
+        articleSchema({
+          headline: params.slug.replace(/-/g, " "),
+          description:
+            "Artigo publicado pela Liberato Consulting sobre gestão empresarial e inteligência artificial aplicada.",
+          path: `/content/${params.slug}`,
+        }),
+      ),
+    ],
   }),
   component: ArticlePage,
 });

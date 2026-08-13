@@ -5,6 +5,7 @@ import { ResultBanner } from "@/components/ResultBanner";
 
 import { pt } from "@/i18n/pt";
 import { seoLinks } from "@/lib/seo";
+import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
 const SLUGS = pt.aboutDetail.pages.map((p) => p.id);
@@ -35,6 +36,23 @@ export const Route = createFileRoute("/about_/$slug")({
         { name: "twitter:card", content: "summary_large_image" },
       ],
       links: seoLinks(`/about/${params.slug}`),
+      scripts: [
+        jsonLd(
+          breadcrumb([
+            { name: "Início", path: "/" },
+            { name: "Quem somos", path: "/about" },
+            { name: page.title, path: `/about/${params.slug}` },
+          ]),
+        ),
+        jsonLd(
+          webPageSchema({
+            name: page.title,
+            description: page.lead,
+            path: `/about/${params.slug}`,
+            type: "AboutPage",
+          }),
+        ),
+      ],
     };
   },
   component: AboutDetailPage,
