@@ -151,6 +151,8 @@ export async function composeSocialImage(
     y += bulletSize * 0.4;
   }
 
+  await drawLogo(ctx, f.width, f.height);
+
   return canvas.toDataURL(f.mime, 0.92);
 }
 
