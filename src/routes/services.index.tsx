@@ -22,6 +22,8 @@ export const Route = createFileRoute("/services/")({
           "Quatro frentes de consultoria com inteligência artificial embarcada, do diagnóstico à execução.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
+      { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: seoLinks("/services"),

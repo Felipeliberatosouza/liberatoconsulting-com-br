@@ -30,6 +30,8 @@ export const Route = createFileRoute("/content")({
         content: "Conhecimento aplicado em gestão empresarial e inteligência artificial.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
+      { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: seoLinks("/content"),
