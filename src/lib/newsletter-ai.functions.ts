@@ -37,10 +37,14 @@ export const generateNewsletterAI = createServerFn({ method: "POST" })
             preheader: "chamada curta de até 160 caracteres",
             body: "texto da newsletter com NO MÁXIMO 500 palavras, em parágrafos curtos",
             fullText:
-              "material completo de 2000 a 5000 palavras, com subtítulos, tabelas em texto " +
-              "(linhas separadas por | ) e descrição dos gráficos sugeridos",
+              "material completo e aprofundado, de 8000 a 15000 palavras, em markdown: " +
+              "subtítulos com ##, listas com -, tabelas em markdown (| col | col | e linha |---|---|). " +
+              "Nunca escreva 'gráfico sugerido': sempre que houver dados comparáveis, insira o gráfico " +
+              "no ponto exato do texto usando um bloco ```chart com 'titulo: ...' e uma linha por série " +
+              "no formato 'Rótulo | número' (apenas números, sem % nem texto no valor).",
             sources: ["referências: Instituição (ano). Título. URL"],
           },
+
         }),
       );
       return {
@@ -96,6 +100,7 @@ export const buildNewsletterPdf = createServerFn({ method: "POST" })
         authorContact: z.string().trim().max(500).optional().default(""),
         body: z.string().trim().min(20).max(400000),
         sources: z.string().trim().max(100000).optional().default(""),
+        imageUrl: z.string().trim().max(3000).optional().default(""),
       })
       .parse(d),
   )
@@ -113,10 +118,11 @@ export const buildNewsletterPdf = createServerFn({ method: "POST" })
       const logoUrl = ((branding?.value ?? {}) as { logoUrl?: string }).logoUrl ?? null;
       const { formatCompanyAddress } = await import("./company-footer.server");
       const c = (company ?? {}) as Record<string, string>;
-      const contactLine1 = [c["phone"], c["email"], c["website"]].filter(Boolean).join("  |  ");
+      const contactLine1 = [c["phone"], c["email"]].filter(Boolean).join("  |  ");
       const contactLine2 = [formatCompanyAddress(c), c["cnpj"] ? `CNPJ ${c["cnpj"]}` : ""]
         .filter(Boolean)
         .join("  |  ");
+      const companyName = c["trade_name"] || c["legal_name"] || "Liberato Consulting";
 
       const bytes = await buildBrandedPdf({
         title: data.title,
@@ -126,22 +132,28 @@ export const buildNewsletterPdf = createServerFn({ method: "POST" })
         body: data.body,
         sources: data.sources ?? "",
         logoDataUrl: logoUrl,
+        coverImageUrl: data.imageUrl || null,
         contact: {
-          name: c["trade_name"] || "Liberato Consulting",
+          name: companyName,
           line1: contactLine1 || "contato@liberatoconsulting.com.br",
           line2: contactLine2 || "Consultoria em gestão empresarial",
+          website: c["website"] || "www.liberatoconsulting.com.br",
         },
       });
 
-      const safe =
-        data.title
+      // Nome do arquivo: NomedoAssunto_NomedaConsultoria.pdf
+      const camel = (value: string, max: number) =>
+        value
           .normalize("NFD")
           .replace(/[\u0300-\u036f]/g, "")
-          .replace(/[^a-zA-Z0-9]+/g, "-")
-          .toLowerCase()
-          .slice(0, 60)
-          .replace(/^-+|-+$/g, "") || "newsletter";
-      const path = `newsletter/${crypto.randomUUID()}-${safe}.pdf`;
+          .replace(/[^a-zA-Z0-9 ]+/g, " ")
+          .split(/\s+/)
+          .filter(Boolean)
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join("")
+          .slice(0, max);
+      const fileName = `${camel(data.title, 60) || "Material"}_${camel(companyName, 40) || "LiberatoConsulting"}.pdf`;
+      const path = `newsletter/${crypto.randomUUID()}-${fileName}`;
       const { error } = await supabaseAdmin.storage
         .from("content")
         .upload(path, bytes, { contentType: "application/pdf", upsert: false });
@@ -150,13 +162,14 @@ export const buildNewsletterPdf = createServerFn({ method: "POST" })
       if (data.campaignId) {
         await supabaseAdmin
           .from("newsletter_campaigns")
-          .update({ file_path: path, file_name: `${safe}.pdf` })
+          .update({ file_path: path, file_name: fileName })
           .eq("id", data.campaignId);
       }
       const { data: signed } = await supabaseAdmin.storage
         .from("content")
         .createSignedUrl(path, 600);
-      return { ok: true as const, path, name: `${safe}.pdf`, url: signed?.signedUrl ?? "" };
+      return { ok: true as const, path, name: fileName, url: signed?.signedUrl ?? "" };
+
     } catch (err) {
       console.error("buildNewsletterPdf failed", err);
       const message = err instanceof Error ? err.message : String(err);
