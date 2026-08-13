@@ -88,8 +88,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // 1. Idioma inicial: escolha salva > país de origem do acesso > idioma do navegador.
+  // 1. Idioma inicial: ?lang= na URL > escolha salva > país de origem > idioma do navegador.
   useEffect(() => {
+    const fromUrl = new URLSearchParams(window.location.search).get("lang");
+    if (fromUrl && (LANGS as readonly string[]).includes(fromUrl)) {
+      setLangState(fromUrl as Lang);
+      window.localStorage.setItem(STORAGE_KEY, fromUrl);
+      return;
+    }
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (stored && (LANGS as readonly string[]).includes(stored)) {
       setLangState(stored as Lang);
