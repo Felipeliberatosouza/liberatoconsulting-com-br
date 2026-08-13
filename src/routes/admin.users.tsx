@@ -17,6 +17,21 @@ import {
   updateTeamMember,
   type TeamRow,
 } from "@/lib/users.functions";
+import {
+  getSignedContractUrl,
+  resendContractEmail,
+  uploadSignedContract,
+} from "@/lib/users.functions";
+import {
+  formatCep,
+  formatCpf,
+  formatPhone,
+  isValidCep,
+  isValidCpf,
+  isValidEmail,
+  isValidPhone,
+  passwordRules,
+} from "@/lib/validation";
 import { getResumeUrl, listApplications, listLeads } from "@/lib/admin.functions";
 import { listSubscribers } from "@/lib/newsletter.functions";
 import {
@@ -106,11 +121,11 @@ function Field({
   onChange: (v: string) => void;
   type?: string;
   required?: boolean;
-  error?: string;
-  valid?: boolean;
-  hint?: string;
-  onBlur?: () => void;
-  disabled?: boolean;
+  error?: string | undefined;
+  valid?: boolean | undefined;
+  hint?: string | undefined;
+  onBlur?: (() => void) | undefined;
+  disabled?: boolean | undefined;
 }) {
   return (
     <label className="block text-xs font-medium text-muted-foreground">
@@ -341,12 +356,25 @@ function TeamTab() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!emailOk) return toast.error("Informe um e-mail válido.");
-    if (!cpfOk) return toast.error("Informe um CPF válido.");
-    if (!phoneOk) return toast.error("Informe o celular no formato (11) 91234-5678.");
-    if (!cepOk) return toast.error("Informe um CEP válido.");
+    if (!emailOk) {
+      toast.error("Informe um e-mail válido.");
+      return;
+    }
+    if (!cpfOk) {
+      toast.error("Informe um CPF válido.");
+      return;
+    }
+    if (!phoneOk) {
+      toast.error("Informe o celular no formato (11) 91234-5678.");
+      return;
+    }
+    if (!cepOk) {
+      toast.error("Informe um CEP válido.");
+      return;
+    }
     if ((!editing || form.password) && !passwordOk) {
-      return toast.error("A senha não atende às regras de segurança.");
+      toast.error("A senha não atende às regras de segurança.");
+      return;
     }
     setBusy(true);
     try {
@@ -358,8 +386,9 @@ function TeamTab() {
         : await createTeamMember({ data: { ...rest, password } });
       if (!r.ok) toast.error(r.error);
       else {
-        if (!editing && "needsContract" in r && r.needsContract) {
-          if (r.contractWarning) toast.error(r.contractWarning);
+        const created = r as { needsContract?: boolean; contractWarning?: string };
+        if (!editing && created.needsContract) {
+          if (created.contractWarning) toast.error(created.contractWarning);
           else
             toast.success(
               "Usuário criado e contrato enviado por e-mail. O acesso será liberado após o upload do contrato assinado.",
