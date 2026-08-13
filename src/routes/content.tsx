@@ -2,7 +2,7 @@ import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { CtaBand } from "@/components/CtaBand";
 import { BulletinSignup } from "@/components/BulletinSignup";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/content")({
     category: typeof search["category"] === "string" ? search["category"] : undefined,
     service: typeof search["service"] === "string" ? search["service"] : undefined,
   }),
-  head: () => ({
+  head: (ctx) => ({
     meta: [
       { title: "Conteúdo | Insights — Liberato Consulting" },
       {
@@ -33,8 +33,9 @@ export const Route = createFileRoute("/content")({
       { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      ...seoLocaleMeta(headLang(ctx)),
     ],
-    links: seoLinks("/content"),
+    links: seoLinks("/content", headLang(ctx)),
     scripts: [
       jsonLd(
         breadcrumb([

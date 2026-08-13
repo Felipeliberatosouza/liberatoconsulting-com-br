@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "./privacy";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/terms")({
-  head: () => ({
+  head: (ctx) => ({
     meta: [
       { title: "Termos de Uso — Liberato Consulting" },
       {
@@ -18,8 +18,9 @@ export const Route = createFileRoute("/terms")({
       },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
+      ...seoLocaleMeta(headLang(ctx)),
     ],
-    links: seoLinks("/terms"),
+    links: seoLinks("/terms", headLang(ctx)),
   }),
   component: () => <LegalPage doc="terms" />,
 });

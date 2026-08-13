@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { getSiteConfig } from "@/lib/admin.functions";
 
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/brasil_/$slug")({
     if (!SLUGS.includes(params.slug)) throw notFound();
     return null;
   },
-  head: ({ params }) => {
+  head: ({ params, ...ctx }) => {
     const section = pt.brazil.sections.find((s) => s.id === params.slug);
     if (!section) {
       return {
@@ -35,8 +35,9 @@ export const Route = createFileRoute("/brasil_/$slug")({
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary_large_image" },
+        ...seoLocaleMeta(headLang(ctx)),
       ],
-      links: seoLinks(`/brasil/${params.slug}`),
+      links: seoLinks(`/brasil/${params.slug}`, headLang(ctx)),
       scripts: [
         jsonLd(
           breadcrumb([

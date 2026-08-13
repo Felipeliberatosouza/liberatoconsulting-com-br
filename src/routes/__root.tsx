@@ -20,6 +20,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { CookieConsent } from "@/components/CookieConsent";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { CopyProtection } from "@/components/CopyProtection";
+import { normalizeLang } from "@/lib/seo";
+
 
 
 function NotFoundComponent() {
@@ -186,9 +188,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+const HTML_LANG: Record<string, string> = {
+  pt: "pt-BR",
+  en: "en",
+  es: "es",
+  zh: "zh-Hans",
+};
+
 function RootShell({ children }: { children: ReactNode }) {
+  const langParam = useRouterState({
+    select: (s) => (s.location.search as Record<string, unknown> | undefined)?.["lang"],
+  });
+  const htmlLang = HTML_LANG[normalizeLang(langParam)] ?? "pt-BR";
   return (
-    <html lang="pt-BR">
+    <html lang={htmlLang}>
+
       <head>
         <HeadContent />
       </head>

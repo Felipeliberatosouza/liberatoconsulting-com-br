@@ -4,7 +4,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
 import { getPublishedNewsletter } from "@/lib/newsletter-public.functions";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { articleSchema, breadcrumb, jsonLd } from "@/lib/schema";
 
 
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/newsletter/$slug")({
     if (!data) throw notFound();
     return data;
   },
-  head: ({ loaderData, params }) => {
+  head: ({ loaderData, params, ...ctx }) => {
     if (!loaderData) {
       return {
         meta: [
@@ -45,8 +45,9 @@ export const Route = createFileRoute("/newsletter/$slug")({
               { name: "twitter:image", content: image },
             ]
           : []),
+        ...seoLocaleMeta(headLang(ctx)),
       ],
-      links: seoLinks(`/newsletter/${params.slug}`),
+      links: seoLinks(`/newsletter/${params.slug}`, headLang(ctx)),
       scripts: [
         jsonLd(
           breadcrumb([

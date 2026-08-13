@@ -4,11 +4,11 @@ import { useServerFn } from "@tanstack/react-start";
 import { ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { submitLead } from "@/lib/leads.functions";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
+  head: (ctx) => ({
     meta: [
       { title: "Contato — Liberato Consulting" },
       {
@@ -25,8 +25,9 @@ export const Route = createFileRoute("/contact")({
       { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      ...seoLocaleMeta(headLang(ctx)),
     ],
-    links: seoLinks("/contact"),
+    links: seoLinks("/contact", headLang(ctx)),
     scripts: [
       {
         type: "application/ld+json",

@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n";
 import { legal } from "@/i18n/legal";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { EmailText } from "@/components/EmailText";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
+  head: (ctx) => ({
     meta: [
       { title: "Política de Privacidade — Liberato Consulting" },
       {
@@ -20,8 +20,9 @@ export const Route = createFileRoute("/privacy")({
       },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
+      ...seoLocaleMeta(headLang(ctx)),
     ],
-    links: seoLinks("/privacy"),
+    links: seoLinks("/privacy", headLang(ctx)),
   }),
   component: () => <LegalPage doc="privacy" />,
 });
