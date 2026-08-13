@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { CtaBand } from "@/components/CtaBand";
+import { pt } from "@/i18n/pt";
 import { seoLinks } from "@/lib/seo";
 import { breadcrumb, itemList, jsonLd } from "@/lib/schema";
 import { useLanguage } from "@/i18n";

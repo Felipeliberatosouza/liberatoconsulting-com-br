@@ -12,6 +12,7 @@ import {
   useAudienceFilters,
 } from "@/lib/audience-filters";
 import { listPublicIndicators } from "@/lib/indicators.functions";
+import { pt } from "@/i18n/pt";
 import { seoLinks } from "@/lib/seo";
 import { breadcrumb, itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { getScopedBrazilSections } from "@/lib/brazil-scope.functions";
