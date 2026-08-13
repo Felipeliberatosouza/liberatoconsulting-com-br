@@ -2,6 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { toInstagram, toLinkedIn, toWhatsApp } from "@/lib/social-formats";
+import {
+  SOCIAL_IMAGE_FORMATS,
+  composeSocialImage,
+  downloadDataUrl,
+  type SocialFormatKey,
+} from "@/lib/social-image";
+import { generateSocialImage, generateSocialPack } from "@/lib/social-ai.functions";
 
 import { toast } from "sonner";
 
@@ -103,6 +110,30 @@ function AdminNewsletter() {
   const [referenceDate, setReferenceDate] = useState(today);
   const [aiBusy, setAiBusy] = useState<"" | "text" | "image" | "pdf">("");
   const [pdfUrl, setPdfUrl] = useState("");
+  const [headline, setHeadline] = useState("");
+  const [bullets, setBullets] = useState<string[]>([]);
+  const [linkedinText, setLinkedinText] = useState("");
+  const [socialImage, setSocialImage] = useState("");
+  const [socialArt, setSocialArt] = useState<Record<string, string>>({});
+  const [socialBusy, setSocialBusy] = useState<"" | "text" | "image" | "art">("");
+  const [previewId, setPreviewId] = useState<string | null>(null);
+  const [onlyAuthorized, setOnlyAuthorized] = useState(true);
+
+  /** Redesenha as artes em todos os formatos a partir da mesma imagem base. */
+  const renderArts = async (base: string, head: string, list: string[]) => {
+    setSocialBusy("art");
+    try {
+      const out: Record<string, string> = {};
+      for (const key of Object.keys(SOCIAL_IMAGE_FORMATS) as SocialFormatKey[]) {
+        out[key] = await composeSocialImage(base, key, head, list);
+      }
+      setSocialArt(out);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Falha ao montar as artes.");
+    } finally {
+      setSocialBusy("");
+    }
+  };
 
   const authorOptions = useQuery({
     queryKey: ["nl-authors"],
@@ -118,13 +149,22 @@ function AdminNewsletter() {
   const activeCount = (subscribers.data ?? []).filter((s) => s.status === "active").length;
 
   const socialFormats = useMemo(() => {
-    const src = { title: subject, body, link: link.trim() || undefined };
+    const src = {
+      title: subject,
+      body,
+      link: link.trim() || undefined,
+      headline: headline || undefined,
+      bullets,
+      linkedinText: linkedinText || undefined,
+      authors: authors || undefined,
+      publishedAt: referenceDate || undefined,
+    };
     return [
       { key: "whatsapp", label: "WhatsApp", value: socialDrafts["whatsapp"] ?? toWhatsApp(src) },
       { key: "linkedin", label: "LinkedIn", value: socialDrafts["linkedin"] ?? toLinkedIn(src) },
       { key: "instagram", label: "Instagram", value: socialDrafts["instagram"] ?? toInstagram(src) },
     ];
-  }, [subject, body, link, socialDrafts]);
+  }, [subject, body, link, socialDrafts, headline, bullets, linkedinText, authors, referenceDate]);
 
   const resetForm = () => {
     setEditId(null);
@@ -141,6 +181,11 @@ function AdminNewsletter() {
     setLink("");
     setLinkTouched(false);
     setSocialDrafts({});
+    setHeadline("");
+    setBullets([]);
+    setLinkedinText("");
+    setSocialImage("");
+    setSocialArt({});
   };
 
 
@@ -505,36 +550,166 @@ function AdminNewsletter() {
         <div className="mt-8 border-t border-border pt-6">
           <h3 className="font-display text-base font-bold">Formatos para redes sociais</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Gerados a partir do título e do texto acima. Edite se quiser e copie com um clique.
+            A mesma arte é gerada nos formatos ideais de cada rede, com título em forma de pergunta
+            e até 5 bullets conceituais sobre a imagem. O texto traz o link com a chamada
+            “Leia mais! Acesse:”.
           </p>
-          <div className="mt-4 grid gap-4 lg:grid-cols-3">
-            {socialFormats.map((f) => (
-              <div key={f.key} className="rounded-md border border-border p-4">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-sm">{f.label}</span>
-                  <button
-                    type="button"
-                    className="ml-auto text-xs font-semibold text-accent hover:underline"
-                    onClick={async () => {
-                      try {
-                        await navigator.clipboard.writeText(f.value);
-                        toast.success(`Texto para ${f.label} copiado.`);
-                      } catch {
-                        toast.error("Não foi possível copiar.");
-                      }
-                    }}
-                  >
-                    Copiar
-                  </button>
+
+          <div className="mt-4 flex flex-wrap gap-3">
+            <button
+              type="button"
+              className={btn}
+              disabled={socialBusy !== "" || subject.trim().length < 5}
+              onClick={async () => {
+                setSocialBusy("text");
+                try {
+                  const r = await generateSocialPack({ data: { title: subject, body } });
+                  if (!r.ok) toast.error(r.error);
+                  else {
+                    setHeadline(r.headline);
+                    setBullets(r.bullets);
+                    setLinkedinText(r.linkedinText);
+                    setSocialDrafts({});
+                    if (socialImage) await renderArts(socialImage, r.headline, r.bullets);
+                    toast.success("Título e bullets gerados.");
+                  }
+                } catch {
+                  toast.error("Não foi possível gerar o conteúdo das redes.");
+                } finally {
+                  setSocialBusy("");
+                }
+              }}
+            >
+              {socialBusy === "text" ? "Escrevendo…" : "Gerar título e bullets"}
+            </button>
+            <button
+              type="button"
+              className="rounded-md border border-accent px-4 py-2 text-sm font-semibold text-accent hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
+              disabled={socialBusy !== "" || subject.trim().length < 5}
+              onClick={async () => {
+                setSocialBusy("image");
+                try {
+                  const r = await generateSocialImage({ data: { title: subject } });
+                  if (!r.ok) toast.error(r.error);
+                  else {
+                    setSocialImage(r.imageUrl);
+                    if (!imageUrl) setImageUrl(r.imageUrl);
+                    await renderArts(
+                      r.imageUrl,
+                      headline || `Você sabe o que é ${subject}?`,
+                      bullets,
+                    );
+                    toast.success("Imagem gerada para todas as redes.");
+                  }
+                } catch {
+                  toast.error("Não foi possível gerar a imagem.");
+                } finally {
+                  setSocialBusy("");
+                }
+              }}
+            >
+              {socialBusy === "image" ? "Criando imagem…" : "Gerar imagem das redes"}
+            </button>
+            {(socialImage || imageUrl) && (
+              <button
+                type="button"
+                className="rounded-md border border-border px-4 py-2 text-sm hover:border-accent disabled:opacity-60"
+                disabled={socialBusy !== ""}
+                onClick={() =>
+                  renderArts(
+                    socialImage || imageUrl,
+                    headline || `Você sabe o que é ${subject}?`,
+                    bullets,
+                  )
+                }
+              >
+                {socialBusy === "art" ? "Montando artes…" : "Atualizar artes"}
+              </button>
+            )}
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className={label} htmlFor="nl-headline">Título sobre a imagem (pergunta)</label>
+              <input
+                id="nl-headline"
+                className={input}
+                value={headline}
+                onChange={(e) => setHeadline(e.target.value)}
+                placeholder="Você sabe o que é solopreneurship?"
+              />
+            </div>
+            <div>
+              <label className={label} htmlFor="nl-bullets">Bullets (um por linha, máx. 5)</label>
+              <textarea
+                id="nl-bullets"
+                className={`${input} min-h-24 text-sm`}
+                value={bullets.join("\n")}
+                onChange={(e) =>
+                  setBullets(e.target.value.split("\n").map((b) => b).slice(0, 5))
+                }
+                placeholder={"Empresa de uma pessoa só\nIA como equipe virtual"}
+              />
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-3">
+            {socialFormats.map((f) => {
+              const fmt = SOCIAL_IMAGE_FORMATS[f.key as SocialFormatKey];
+              const art = socialArt[f.key];
+              return (
+                <div key={f.key} className="rounded-md border border-border p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-sm">{f.label}</span>
+                    <span className="text-[11px] text-muted-foreground">
+                      {fmt.width}×{fmt.height} · {fmt.ext.toUpperCase()}
+                    </span>
+                    <button
+                      type="button"
+                      className="ml-auto text-xs font-semibold text-accent hover:underline"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(f.value);
+                          toast.success(`Texto para ${f.label} copiado.`);
+                        } catch {
+                          toast.error("Não foi possível copiar.");
+                        }
+                      }}
+                    >
+                      Copiar
+                    </button>
+                  </div>
+                  {art ? (
+                    <div className="mt-3">
+                      <img
+                        src={art}
+                        alt={`Arte para ${f.label}`}
+                        className="w-full rounded-md border border-border"
+                      />
+                      <button
+                        type="button"
+                        className="mt-2 text-xs font-semibold text-accent hover:underline"
+                        onClick={() =>
+                          downloadDataUrl(art, `${f.key}-${fmt.width}x${fmt.height}.${fmt.ext}`)
+                        }
+                      >
+                        Baixar imagem ({fmt.ext.toUpperCase()})
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="mt-3 rounded-md border border-dashed border-border p-3 text-xs text-muted-foreground">
+                      Gere a imagem das redes para ver a arte neste formato.
+                    </p>
+                  )}
+                  <textarea
+                    className={`${input} mt-2 min-h-48 text-xs leading-relaxed`}
+                    value={f.value}
+                    onChange={(e) => setSocialDrafts((d) => ({ ...d, [f.key]: e.target.value }))}
+                  />
+                  <p className="mt-1 text-[11px] text-muted-foreground">{f.value.length} caracteres</p>
                 </div>
-                <textarea
-                  className={`${input} mt-2 min-h-48 text-xs leading-relaxed`}
-                  value={f.value}
-                  onChange={(e) => setSocialDrafts((d) => ({ ...d, [f.key]: e.target.value }))}
-                />
-                <p className="mt-1 text-[11px] text-muted-foreground">{f.value.length} caracteres</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
@@ -544,9 +719,20 @@ function AdminNewsletter() {
       {/* Lista de campanhas */}
       <div className={`mt-8 ${card}`}>
         <h2 className="font-display text-lg font-bold">Campanhas</h2>
-        <div className="mt-4 flex flex-wrap items-center gap-2">
+        <p className="mt-1 text-sm text-muted-foreground">
+          Visualize o material antes de enviar, edite o conteúdo e dispare para a base autorizada.
+        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
           <input className={`${input} max-w-xs`} value={testEmail} onChange={(e) => setTestEmail(e.target.value)} placeholder="E-mail para teste" />
           <span className="text-xs text-muted-foreground">use “Enviar teste” em uma campanha abaixo</span>
+          <label className="ml-auto flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={onlyAuthorized}
+              onChange={(e) => setOnlyAuthorized(e.target.checked)}
+            />
+            Enviar apenas para quem autoriza o recebimento ({activeCount} inscritos)
+          </label>
         </div>
         <div className="mt-4 space-y-3">
           {(campaigns.data ?? []).map((c) => (
@@ -561,7 +747,42 @@ function AdminNewsletter() {
                 </span>
               </div>
               {c.last_error && <p className="mt-2 text-xs text-destructive">{c.last_error}</p>}
+              {previewId === c.id && (
+                <div className="mt-3 rounded-md border border-border bg-secondary/40 p-4">
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                    Pré-visualização do envio
+                  </p>
+                  <p className="mt-2 text-sm">
+                    <strong>Assunto:</strong> {c.subject}
+                  </p>
+                  {c.preheader && (
+                    <p className="text-sm text-muted-foreground">{c.preheader}</p>
+                  )}
+                  {c.image_url && (
+                    <img
+                      src={c.image_url}
+                      alt="Cabeçalho da campanha"
+                      className="mt-3 max-h-56 w-full rounded-md object-cover"
+                    />
+                  )}
+                  <div className="mt-3 space-y-2 text-sm leading-relaxed">
+                    {c.body.split(/\n{2,}/).map((p, i) => (
+                      <p key={i}>{p}</p>
+                    ))}
+                  </div>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    {c.authors ? `Autoria: ${c.authors}` : ""}
+                    {c.reference_date ? ` • ${c.reference_date}` : ""}
+                  </p>
+                </div>
+              )}
               <div className="mt-3 flex flex-wrap gap-3 text-sm">
+                <button
+                  className="text-muted-foreground hover:text-accent"
+                  onClick={() => setPreviewId((p) => (p === c.id ? null : c.id))}
+                >
+                  {previewId === c.id ? "Ocultar visualização" : "Visualizar"}
+                </button>
                 <button
                   className="text-muted-foreground hover:text-accent"
                   onClick={() => {
@@ -585,14 +806,21 @@ function AdminNewsletter() {
                 <button
                   className="font-semibold text-accent hover:underline"
                   onClick={async () => {
-                    if (!confirm(`Enviar “${c.subject}” para ${activeCount} inscritos?`)) return;
+                    if (!onlyAuthorized) {
+                      toast.error(
+                        "O envio só é permitido para inscritos que autorizam o recebimento.",
+                      );
+                      return;
+                    }
+                    if (!confirm(`Enviar “${c.subject}” para ${activeCount} inscritos autorizados?`))
+                      return;
                     const r = await sendCampaign({ data: { id: c.id } });
                     if (!r.ok) toast.error(r.error);
                     else toast.success(`Enviada para ${r.sent} inscritos.`);
                     await campaigns.refetch();
                   }}
                 >
-                  Enviar para todos
+                  Enviar para todos os autorizados
                 </button>
                 <button
                   className="text-muted-foreground hover:text-accent"
@@ -648,9 +876,18 @@ function AdminNewsletter() {
           <a
             className="rounded-md border border-border px-4 py-2 text-sm hover:border-accent"
             href={`data:text/csv;charset=utf-8,${encodeURIComponent(
-              "email,nome,idioma,status,data\n" +
+              "email,nome,idioma,autoriza_envio,status,data\n" +
                 (subscribers.data ?? [])
-                  .map((s) => [s.email, s.name, s.language ?? "", s.status, s.created_at].join(","))
+                  .map((s) =>
+                    [
+                      s.email,
+                      s.name,
+                      s.language ?? "",
+                      s.status === "active" ? "sim" : "nao",
+                      s.status,
+                      s.created_at,
+                    ].join(","),
+                  )
                   .join("\n"),
             )}`}
             download="inscritos-newsletter.csv"
@@ -658,6 +895,10 @@ function AdminNewsletter() {
             Exportar CSV
           </a>
         </form>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Quem cancela a inscrição fica marcado como “Não autoriza” e é retirado automaticamente da
+          lista de envio.
+        </p>
 
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -665,6 +906,7 @@ function AdminNewsletter() {
               <tr>
                 <th className="py-2">E-mail</th>
                 <th className="py-2">Idioma</th>
+                <th className="py-2">Autoriza envio</th>
                 <th className="py-2">Status</th>
                 <th className="py-2">Data</th>
                 <th className="py-2" />
@@ -675,6 +917,17 @@ function AdminNewsletter() {
                 <tr key={s.id} className="border-t border-border">
                   <td className="py-2">{s.email}</td>
                   <td className="py-2">{s.language ?? "—"}</td>
+                  <td className="py-2">
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                        s.status === "active"
+                          ? "bg-accent/15 text-accent"
+                          : "bg-destructive/10 text-destructive"
+                      }`}
+                    >
+                      {s.status === "active" ? "Autoriza" : "Não autoriza"}
+                    </span>
+                  </td>
                   <td className="py-2">{s.status === "active" ? "Ativo" : "Cancelado"}</td>
                   <td className="py-2">{new Date(s.created_at).toLocaleDateString("pt-BR")}</td>
                   <td className="py-2 text-right">
@@ -687,7 +940,7 @@ function AdminNewsletter() {
                         await subscribers.refetch();
                       }}
                     >
-                      {s.status === "active" ? "Cancelar" : "Reativar"}
+                      {s.status === "active" ? "Remover da lista" : "Reativar envio"}
                     </button>
                     <button
                       className="text-xs text-muted-foreground hover:text-destructive"
