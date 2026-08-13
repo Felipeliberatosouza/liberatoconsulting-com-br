@@ -71,14 +71,18 @@ export function serviceSchema(input: {
   path: string;
   category?: string;
 }) {
+  const category = input.category
+    ? (SERVICE_CATEGORY_LABELS[input.category] ?? input.category)
+    : "Consultoria em gestão empresarial";
   return {
     "@context": "https://schema.org",
     "@type": "Service",
     name: input.name,
     description: input.description,
     url: absoluteUrl(input.path),
-    serviceType: input.category ?? "Consultoria em gestão empresarial",
-    provider: orgRef,
+    serviceType: category,
+    category,
+    provider: publisherOrg,
     areaServed: [
       { "@type": "Country", name: "Brasil" },
       { "@type": "Place", name: "Global" },
@@ -96,11 +100,14 @@ export function itemList(input: {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: input.name,
+    itemListOrder: "https://schema.org/ItemListOrderAscending",
+    numberOfItems: input.items.length,
     itemListElement: input.items.map((item, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: item.name,
       url: absoluteUrl(item.path),
+      item: absoluteUrl(item.path),
     })),
   };
 }
@@ -111,27 +118,38 @@ export function articleSchema(input: {
   description: string;
   path: string;
   datePublished?: string | null;
+  dateModified?: string | null;
   image?: string | null;
   authorName?: string | null;
   inLanguage?: string;
 }) {
   const url = absoluteUrl(input.path);
+  const published = input.datePublished || input.dateModified || null;
+  const modified = input.dateModified || input.datePublished || null;
+  const authors = (input.authorName ?? "")
+    .split(/\s*(?:,| e |&|\/)\s*/)
+    .map((n) => n.trim())
+    .filter(Boolean);
   return {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: input.headline.slice(0, 110),
+    name: input.headline.slice(0, 110),
     description: input.description,
     url,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     inLanguage: input.inLanguage ?? "pt-BR",
-    publisher: orgRef,
-    author: input.authorName
-      ? { "@type": "Person", name: input.authorName }
-      : orgRef,
-    ...(input.datePublished ? { datePublished: input.datePublished } : {}),
-    ...(input.image ? { image: input.image } : {}),
+    publisher: publisherOrg,
+    author:
+      authors.length > 0
+        ? authors.map((name) => ({ "@type": "Person", name, url: `${SITE_URL}/about/equipe` }))
+        : [publisherOrg],
+    image: [input.image || DEFAULT_IMAGE],
+    ...(published ? { datePublished: published } : {}),
+    ...(modified ? { dateModified: modified } : {}),
   };
 }
+
 
 /** Página institucional genérica (Quem somos, Dados do Brasil, etc.). */
 export function webPageSchema(input: {
