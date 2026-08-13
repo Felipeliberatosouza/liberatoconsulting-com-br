@@ -18,3 +18,7 @@ Disallow: /boletim/cancelar
 Disallow: /newsletter/unsubscribe
 
 Sitemap: https://liberatoconsulting.com.br/sitemap.xml
+Sitemap: https://liberatoconsulting.com.br/sitemap-pt.xml
+Sitemap: https://liberatoconsulting.com.br/sitemap-en.xml
+Sitemap: https://liberatoconsulting.com.br/sitemap-es.xml
+Sitemap: https://liberatoconsulting.com.br/sitemap-zh.xml
