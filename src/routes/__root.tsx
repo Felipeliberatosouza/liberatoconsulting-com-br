@@ -94,6 +94,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Consultoria em gestão empresarial com inteligência artificial no centro de cada entrega.",
       },
       { name: "author", content: "Liberato Consulting" },
+      {
+        name: "google-site-verification",
+        content: "0bFmwuonAC2cDrDPipONs6d4ZgjBXAdOg982BGMtnl4",
+      },
       { property: "og:title", content: "Liberato Consulting" },
       {
         property: "og:description",
