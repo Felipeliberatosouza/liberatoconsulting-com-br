@@ -3,6 +3,13 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { PANEL_ROLES } from "./roles";
+import {
+  isStrongPassword,
+  isValidCep,
+  isValidCpf,
+  isValidEmail,
+  isValidPhone,
+} from "./validation";
 
 export type TeamRow = {
   id: string;
