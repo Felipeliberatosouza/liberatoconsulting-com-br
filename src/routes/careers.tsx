@@ -57,6 +57,7 @@ function CareersPage() {
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
+    if (!form.reportValidity()) return;
     const fd = new FormData(form);
     const file = fd.get("resume");
 
@@ -202,11 +203,15 @@ function CareersPage() {
                 {C.linkedin}
                 <input
                   name="linkedin"
-                  type="url"
+                  type="text"
+                  inputMode="url"
                   maxLength={300}
                   placeholder={C.linkedinPlaceholder}
+                  pattern="https?://.+"
+                  title={C.errorLinkedin}
                   className={field}
                 />
+                <span className="mt-1 block text-xs text-muted-foreground">{C.errorLinkedin}</span>
               </label>
 
               {/* Honeypot */}

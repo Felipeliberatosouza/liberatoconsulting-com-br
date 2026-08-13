@@ -1,7 +1,7 @@
 import type { Dict } from "../pt";
 
 // Gerado automaticamente por scripts/translate-i18n.ts — não editar à mão.
-export const sourceHash = "1cz8pmy";
+export const sourceHash = "j6uv3t";
 
 export const dict: Dict = {
   "nav": {
@@ -1043,7 +1043,7 @@ export const dict: Dict = {
     "errorRate": "发送频率过高。请稍后再试。",
     "errorFileType": "不支持的文件格式。请发送 PDF, DOC, DOCX, RTF 或 ODT。",
     "errorFileSize": "文件过大。限制为 3 MB。",
-    "errorLinkedin": "请输入有效的 LinkedIn 链接。",
+    "errorLinkedin": "请输入有效的 LinkedIn 链接，格式完整：http://www.linkedin.com/in/您的个人资料。不要忘记 'http://'。",
     "errorGeneric": "目前无法发送。请稍后重试。",
     "note": "申请将转发至 contato@liberatoconsulting.com.br。"
   },
