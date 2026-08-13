@@ -1,0 +1,1 @@
+update public.site_settings set value = jsonb_build_object('email','contato@liberatoconsulting.com.br') where key = 'alerts';
