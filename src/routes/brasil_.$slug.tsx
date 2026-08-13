@@ -46,12 +46,13 @@ export const Route = createFileRoute("/brasil_/$slug")({
           ]),
         ),
         jsonLd(
-          articleSchema({
-            headline: section.title,
+          webPageSchema({
+            name: section.title,
             description,
             path: `/brasil/${params.slug}`,
           }),
         ),
+
       ],
     };
   },
