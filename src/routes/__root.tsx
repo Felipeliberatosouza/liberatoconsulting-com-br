@@ -87,7 +87,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Liberato Consulting" },
+      { title: "Liberato Consulting — Gestão estratégica com IA" },
       {
         name: "description",
         content:
@@ -98,7 +98,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "google-site-verification",
         content: "0bFmwuonAC2cDrDPipONs6d4ZgjBXAdOg982BGMtnl4",
       },
-      { property: "og:title", content: "Liberato Consulting" },
+      { property: "og:title", content: "Liberato Consulting — Gestão estratégica com IA" },
+
       {
         property: "og:description",
         content:
