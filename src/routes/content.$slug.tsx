@@ -21,46 +21,61 @@ export const Route = createFileRoute("/content/$slug")({
   /** Endereços antigos de newsletter (/content/...) seguem para a página da newsletter. */
   loader: async ({ params }) => {
     const article = await getPublicArticle({ data: { slug: params.slug } }).catch(() => null);
-    if (article) return null;
+    if (article) {
+      return {
+        title: article.title,
+        summary: article.summary,
+        authors: article.authors,
+        coverUrl: article.cover_url,
+      };
+    }
     const news = await getPublishedNewsletter({ data: { slug: params.slug } }).catch(() => null);
     if (news) throw redirect({ to: "/newsletter/$slug", params: { slug: params.slug } });
     return null;
   },
-  head: ({ params }) => ({
-    meta: [
-      { title: `Artigo — Liberato Consulting` },
-      {
-        name: "description",
-        content:
-          "Artigo publicado pela Liberato Consulting sobre gestão empresarial e inteligência artificial aplicada.",
-      },
-      { property: "og:title", content: `Artigo — Liberato Consulting` },
-      {
-        property: "og:description",
-        content: `Leia o conteúdo ${params.slug} publicado pela Liberato Consulting.`,
-      },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: seoLinks(`/content/${params.slug}`),
-    scripts: [
-      jsonLd(
-        breadcrumb([
-          { name: "Início", path: "/" },
-          { name: "Conteúdo", path: "/content" },
-          { name: params.slug.replace(/-/g, " "), path: `/content/${params.slug}` },
-        ]),
-      ),
-      jsonLd(
-        articleSchema({
-          headline: params.slug.replace(/-/g, " "),
-          description:
-            "Artigo publicado pela Liberato Consulting sobre gestão empresarial e inteligência artificial aplicada.",
-          path: `/content/${params.slug}`,
-        }),
-      ),
-    ],
-  }),
+  head: ({ params, loaderData }) => {
+    const fallbackTitle = params.slug.replace(/-/g, " ");
+    const title = loaderData?.title || fallbackTitle;
+    const summary =
+      loaderData?.summary ||
+      "Artigo publicado pela Liberato Consulting sobre gestão empresarial e inteligência artificial aplicada.";
+    const pageTitle = `${title} — Liberato Consulting`.slice(0, 70);
+    const image = loaderData?.coverUrl?.startsWith("http")
+      ? loaderData.coverUrl
+      : "https://liberatoconsulting.com.br/og-default.png";
+    return {
+      meta: [
+        { title: pageTitle },
+        { name: "description", content: summary.slice(0, 158) },
+        { property: "og:title", content: pageTitle },
+        { property: "og:description", content: summary.slice(0, 158) },
+        { property: "og:type", content: "article" },
+        { property: "og:image", content: image },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: image },
+      ],
+      links: seoLinks(`/content/${params.slug}`),
+      scripts: [
+        jsonLd(
+          breadcrumb([
+            { name: "Início", path: "/" },
+            { name: "Conteúdo", path: "/content" },
+            { name: title, path: `/content/${params.slug}` },
+          ]),
+        ),
+        jsonLd(
+          articleSchema({
+            headline: title,
+            description: summary,
+            path: `/content/${params.slug}`,
+            author: loaderData?.authors || undefined,
+            image: image,
+          }),
+        ),
+      ],
+    };
+  },
+
   component: ArticlePage,
 });
 
