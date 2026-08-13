@@ -221,9 +221,9 @@ export async function buildBrandedPdf(input: PdfDocInput): Promise<Uint8Array> {
         rotate: degrees(20),
       });
       // Cabeçalho: logomarca
-      const hw = Math.min(130, logo.width);
+      const hw = Math.min(78, logo.width);
       const hs = hw / logo.width;
-      const hh = Math.min(logo.height * hs, 30);
+      const hh = Math.min(logo.height * hs, 18);
       p.drawImage(logo, { x: M, y: H - 34 - hh / 2 + 4, width: hw, height: hh });
     } else {
       p.drawText(sanitize(input.contact.name), {
