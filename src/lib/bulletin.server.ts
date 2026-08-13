@@ -360,11 +360,50 @@ export async function dispatchBulletin(options?: {
   testSegment?: string | undefined;
 }) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { translateContent } = await import("./ai-translate.server");
   const origin = siteOrigin();
   const cache = new Map<string, BulletinContent>();
-  const contentFor = async (segment: string) => {
-    const key = segment || "Todos";
-    if (!cache.has(key)) cache.set(key, await buildBulletinContent(key));
+  const stamp = new Date().toISOString().slice(0, 10);
+
+  /** Conteúdo do boletim por segmento, traduzido para o idioma do inscrito. */
+  const contentFor = async (segment: string, lang: EmailLang): Promise<BulletinContent> => {
+    const key = `${segment || "Todos"}|${lang}`;
+    if (!cache.has(key)) {
+      const base = await buildBulletinContent(segment || "Todos");
+      if (lang === "pt") {
+        cache.set(key, base);
+      } else {
+        const translated = await translateContent(
+          `bulletin:${stamp}:${segment || "Todos"}`,
+          lang,
+          {
+            segment: base.segment,
+            indicators: base.indicators.map((i) => ({
+              label: i.label,
+              reference_period: i.reference_period,
+              note: i.note,
+            })),
+            articles: base.articles.map((a) => ({ title: a.title, summary: a.summary })),
+          },
+        );
+        cache.set(key, {
+          ...base,
+          dateLabel: formatDateFor(lang),
+          segment: translated.segment || base.segment,
+          indicators: base.indicators.map((i, idx) => ({
+            ...i,
+            label: translated.indicators[idx]?.label || i.label,
+            reference_period: translated.indicators[idx]?.reference_period ?? i.reference_period,
+            note: translated.indicators[idx]?.note ?? i.note,
+          })),
+          articles: base.articles.map((a, idx) => ({
+            ...a,
+            title: translated.articles[idx]?.title || a.title,
+            summary: translated.articles[idx]?.summary ?? a.summary,
+          })),
+        });
+      }
+    }
     return cache.get(key)!;
   };
 
@@ -382,13 +421,14 @@ export async function dispatchBulletin(options?: {
         via_whatsapp: Boolean(options.testWhatsApp),
         status: "active",
         unsubscribe_token: "00000000-0000-0000-0000-000000000000",
+        language: options.testLanguage ?? "pt",
       },
     ];
   } else {
     const { data } = await supabaseAdmin
       .from("bulletin_subscribers")
       .select(
-        "id, full_name, company, segment, email, whatsapp, via_email, via_whatsapp, status, unsubscribe_token",
+        "id, full_name, company, segment, email, whatsapp, via_email, via_whatsapp, status, unsubscribe_token, language",
       )
       .eq("status", "active")
       .limit(5000);
@@ -406,14 +446,15 @@ export async function dispatchBulletin(options?: {
   let snapshot: { subject: string; dateLabel: string; html: string } | null = null;
 
   for (const r of recipients) {
-    const content = await contentFor(r.segment);
+    const lang = emailLang(r.language);
+    const content = await contentFor(r.segment, lang);
     const unsubscribeUrl = `${origin}/boletim/cancelar?token=${r.unsubscribe_token}`;
-    const subject = `Boletim Semanal — ${content.dateLabel}`;
+    const subject = `${labelsFor(lang).bulletinTitle} — ${content.dateLabel}`;
     if (!snapshot) {
       snapshot = {
         subject,
         dateLabel: content.dateLabel,
-        html: renderBulletinHtml(content, unsubscribeUrl),
+        html: renderBulletinHtml(content, unsubscribeUrl, lang),
       };
     }
 
@@ -422,8 +463,8 @@ export async function dispatchBulletin(options?: {
         await sendBulletinEmail({
           to: r.email,
           subject,
-          html: renderBulletinHtml(content, unsubscribeUrl),
-          text: renderBulletinText(content, unsubscribeUrl),
+          html: renderBulletinHtml(content, unsubscribeUrl, lang),
+          text: renderBulletinText(content, unsubscribeUrl, lang),
         });
         sentEmail += 1;
       } catch (err) {
@@ -436,7 +477,7 @@ export async function dispatchBulletin(options?: {
       try {
         await sendWhatsAppMessage({
           to: r.whatsapp,
-          caption: renderBulletinWhatsApp(content, unsubscribeUrl),
+          caption: renderBulletinWhatsApp(content, unsubscribeUrl, lang),
           imageUrl: content.logoUrl,
         });
         sentWhatsApp += 1;
@@ -445,6 +486,7 @@ export async function dispatchBulletin(options?: {
         lastError = err instanceof Error ? err.message : String(err);
       }
     }
+
 
     if (r.id !== "test") {
       await supabaseAdmin
