@@ -36,7 +36,9 @@ export function renderCampaignHtml(input: {
   body: string;
   unsubscribeUrl: string;
   company?: CompanyFooter;
+  lang?: EmailLang;
 }) {
+  const labels = labelsFor(input.lang ?? "pt");
   const paragraphs = input.body
     .split(/\n{2,}/)
     .map((p) => p.trim())
@@ -55,7 +57,7 @@ ${companyFooterHtml(input.company)}
 </td></tr>`
     : "";
 
-  return `<!doctype html><html><body style="margin:0;background:#f5f5f4;padding:32px 0;font-family:Helvetica,Arial,sans-serif">
+  return `<!doctype html><html lang="${input.lang ?? "pt"}"><body style="margin:0;background:#f5f5f4;padding:32px 0;font-family:Helvetica,Arial,sans-serif">
 <span style="display:none;opacity:0;color:transparent">${escapeHtml(input.preheader)}</span>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:92%;background:#ffffff;border-radius:12px;overflow:hidden">
@@ -69,8 +71,8 @@ ${paragraphs}
 </td></tr>
 ${companyBlock}
 <tr><td style="padding:20px 32px 28px;border-top:1px solid #e7e5e4;font-size:12px;color:#78716c">
-Você recebeu este e-mail porque se inscreveu na newsletter da Liberato Consulting.
-<a href="${input.unsubscribeUrl}" style="color:#ea580c">Cancelar inscrição</a>.
+${escapeHtml(labels.newsletterWhy)}
+<a href="${input.unsubscribeUrl}" style="color:#ea580c">${escapeHtml(labels.unsubscribe)}</a>.
 </td></tr>
 </table></td></tr></table></body></html>`;
 }
@@ -79,10 +81,12 @@ export function renderCampaignText(
   body: string,
   unsubscribeUrl: string,
   company?: CompanyFooter,
+  lang: EmailLang = "pt",
 ) {
   const footer = company ? `\n\n${companyFooterText(company)}` : "";
-  return `${body}${footer}\n\n—\nCancelar inscrição: ${unsubscribeUrl}`;
+  return `${body}${footer}\n\n—\n${labelsFor(lang).unsubscribe}: ${unsubscribeUrl}`;
 }
+
 
 
 /** Envia um e-mail da newsletter pelo serviço de e-mail da Lovable. */
