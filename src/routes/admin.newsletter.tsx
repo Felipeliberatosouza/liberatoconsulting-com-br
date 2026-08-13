@@ -313,7 +313,28 @@ function AdminNewsletter() {
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className={label} htmlFor="nl-authors">Autores</label>
-              <input id="nl-authors" className={input} value={authors} onChange={(e) => setAuthors(e.target.value)} placeholder="Nome dos autores" />
+              <select
+                id="nl-authors"
+                className={input}
+                value={authors}
+                onChange={(e) => {
+                  const name = e.target.value;
+                  setAuthors(name);
+                  const found = (authorOptions.data ?? []).find((a) => a.name === name);
+                  if (found?.email) setAuthorContact(found.email);
+                }}
+              >
+                <option value="">Selecione o autor</option>
+                {(authorOptions.data ?? []).map((a) => (
+                  <option key={a.userId} value={a.name}>
+                    {a.name}
+                  </option>
+                ))}
+                {authors && !(authorOptions.data ?? []).some((a) => a.name === authors) && (
+                  <option value={authors}>{authors}</option>
+                )}
+              </select>
+
             </div>
             <div>
               <label className={label} htmlFor="nl-contact">Contato dos autores</label>
