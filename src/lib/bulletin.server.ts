@@ -526,21 +526,25 @@ export async function sendUnsubscribeConfirmation(sub: {
   via_email: boolean;
   via_whatsapp: boolean;
   full_name: string;
+  language?: string | null;
 }) {
-  const message = `Olá${sub.full_name ? `, ${sub.full_name}` : ""}. Confirmamos o cancelamento do Boletim Semanal da Liberato Consulting. Você não receberá mais estes envios. Se quiser voltar, é só se cadastrar novamente em ${siteOrigin()}/brasil.`;
+  const lang = emailLang(sub.language);
+  const L = labelsFor(lang);
+  const message = L.cancelBody(sub.full_name ?? "", siteOrigin());
 
   if (sub.via_email && sub.email) {
     try {
       await sendBulletinEmail({
         to: sub.email,
-        subject: "Cancelamento confirmado — Boletim Semanal",
-        html: `<!doctype html><html><body style="font-family:Helvetica,Arial,sans-serif;background:#f5f5f4;padding:28px">
+        subject: L.cancelSubject,
+        html: `<!doctype html><html lang="${lang}"><body style="font-family:Helvetica,Arial,sans-serif;background:#f5f5f4;padding:28px">
 <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:12px;padding:28px">
-<h1 style="font-size:20px;color:#14192a;margin:0 0 12px">Cancelamento confirmado</h1>
+<h1 style="font-size:20px;color:#14192a;margin:0 0 12px">${escapeHtml(L.cancelTitle)}</h1>
 <p style="font-size:15px;color:#1f2328;line-height:1.6">${escapeHtml(message)}</p>
 </div></body></html>`,
         text: message,
       });
+
     } catch {
       /* confirmação é best-effort */
     }
