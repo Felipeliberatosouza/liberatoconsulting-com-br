@@ -60,6 +60,13 @@ function CareersPage() {
     const fd = new FormData(form);
     const file = fd.get("resume");
 
+    const linkedin = form.elements.namedItem("linkedin") as HTMLInputElement | null;
+    if (linkedin && linkedin.value && !linkedin.checkValidity()) {
+      linkedin.setCustomValidity(C.errorLinkedin);
+      linkedin.reportValidity();
+      return;
+    }
+
     if (!(file instanceof File) || file.size === 0) {
       setError(C.errorFileType);
       return;
