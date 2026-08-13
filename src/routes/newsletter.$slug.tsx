@@ -1,8 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 
 import { CtaBand } from "@/components/CtaBand";
+import { useLanguage } from "@/i18n";
 import { getPublishedNewsletter } from "@/lib/newsletter-public.functions";
 import { seoLinks } from "@/lib/seo";
+
 
 const SITE = "https://liberatoconsulting.com.br";
 
