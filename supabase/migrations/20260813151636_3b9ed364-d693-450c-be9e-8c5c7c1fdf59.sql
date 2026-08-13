@@ -1,0 +1,1 @@
+UPDATE public.newsletter_campaigns SET slug = 'solopreneur-com-ia-a-empresa-de-uma-pessoa-so' WHERE id = '6c03c798-51d9-4619-978f-59f559fbbbdf';
