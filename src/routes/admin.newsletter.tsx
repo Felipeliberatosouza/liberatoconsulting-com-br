@@ -719,9 +719,20 @@ function AdminNewsletter() {
       {/* Lista de campanhas */}
       <div className={`mt-8 ${card}`}>
         <h2 className="font-display text-lg font-bold">Campanhas</h2>
-        <div className="mt-4 flex flex-wrap items-center gap-2">
+        <p className="mt-1 text-sm text-muted-foreground">
+          Visualize o material antes de enviar, edite o conteúdo e dispare para a base autorizada.
+        </p>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
           <input className={`${input} max-w-xs`} value={testEmail} onChange={(e) => setTestEmail(e.target.value)} placeholder="E-mail para teste" />
           <span className="text-xs text-muted-foreground">use “Enviar teste” em uma campanha abaixo</span>
+          <label className="ml-auto flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={onlyAuthorized}
+              onChange={(e) => setOnlyAuthorized(e.target.checked)}
+            />
+            Enviar apenas para quem autoriza o recebimento ({activeCount} inscritos)
+          </label>
         </div>
         <div className="mt-4 space-y-3">
           {(campaigns.data ?? []).map((c) => (
@@ -736,6 +747,35 @@ function AdminNewsletter() {
                 </span>
               </div>
               {c.last_error && <p className="mt-2 text-xs text-destructive">{c.last_error}</p>}
+              {previewId === c.id && (
+                <div className="mt-3 rounded-md border border-border bg-secondary/40 p-4">
+                  <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                    Pré-visualização do envio
+                  </p>
+                  <p className="mt-2 text-sm">
+                    <strong>Assunto:</strong> {c.subject}
+                  </p>
+                  {c.preheader && (
+                    <p className="text-sm text-muted-foreground">{c.preheader}</p>
+                  )}
+                  {c.image_url && (
+                    <img
+                      src={c.image_url}
+                      alt="Cabeçalho da campanha"
+                      className="mt-3 max-h-56 w-full rounded-md object-cover"
+                    />
+                  )}
+                  <div className="mt-3 space-y-2 text-sm leading-relaxed">
+                    {c.body.split(/\n{2,}/).map((p, i) => (
+                      <p key={i}>{p}</p>
+                    ))}
+                  </div>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    {c.authors ? `Autoria: ${c.authors}` : ""}
+                    {c.reference_date ? ` • ${c.reference_date}` : ""}
+                  </p>
+                </div>
+              )}
               <div className="mt-3 flex flex-wrap gap-3 text-sm">
                 <button
                   className="text-muted-foreground hover:text-accent"
