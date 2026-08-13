@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Check, Clock, Sparkles, Users } from "lucide-react";
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
-import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { OG_IMAGE, headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, serviceSchema } from "@/lib/schema";
 import { ServiceLeadForm } from "@/components/ServiceLeadForm";
 
@@ -27,7 +27,11 @@ export const Route = createFileRoute("/services/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: page.lead },
         { property: "og:type", content: "website" },
+        { property: "og:image", content: OG_IMAGE },
         { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: page.lead },
+        { name: "twitter:image", content: OG_IMAGE },
         ...seoLocaleMeta(headLang(ctx)),
       ],
       links: seoLinks(`/services/${params.slug}`, headLang(ctx)),

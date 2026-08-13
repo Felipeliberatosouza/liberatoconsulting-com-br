@@ -39,6 +39,8 @@ export const Route = createFileRoute("/brasil")({
       { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Dados do Brasil para investidores internacionais" },
+      { name: "twitter:description", content: "Panorama econômico, setores estratégicos, IED, tributos, Mercosul, mercado consumidor e infraestrutura do Brasil." },
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/brasil", headLang(ctx)),

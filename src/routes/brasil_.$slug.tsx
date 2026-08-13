@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
-import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { OG_IMAGE, headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { getSiteConfig } from "@/lib/admin.functions";
 
@@ -34,7 +34,11 @@ export const Route = createFileRoute("/brasil_/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
+        { property: "og:image", content: OG_IMAGE },
         { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: OG_IMAGE },
         ...seoLocaleMeta(headLang(ctx)),
       ],
       links: seoLinks(`/brasil/${params.slug}`, headLang(ctx)),

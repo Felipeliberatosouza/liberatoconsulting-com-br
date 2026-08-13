@@ -4,7 +4,7 @@ import { ConsultantsTeam } from "@/components/ConsultantsTeam";
 import { ResultBanner } from "@/components/ResultBanner";
 
 import { pt } from "@/i18n/pt";
-import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { OG_IMAGE, headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
@@ -33,7 +33,11 @@ export const Route = createFileRoute("/about_/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: page.lead },
         { property: "og:type", content: "website" },
+        { property: "og:image", content: OG_IMAGE },
         { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: page.lead },
+        { name: "twitter:image", content: OG_IMAGE },
         ...seoLocaleMeta(headLang(ctx)),
       ],
       links: seoLinks(`/about/${params.slug}`, headLang(ctx)),

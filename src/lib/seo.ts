@@ -9,6 +9,9 @@
 
 export const SITE_URL = "https://liberatoconsulting.com.br";
 
+/** Imagem padrão de preview social (Open Graph / Twitter Card). */
+export const OG_IMAGE = `${SITE_URL}/og-default.png`;
+
 /** Idiomas publicados e seus códigos hreflang. */
 export const HREFLANGS = [
   ["pt", "pt-BR"],

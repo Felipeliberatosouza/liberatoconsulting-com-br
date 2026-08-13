@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n";
 import { legal } from "@/i18n/legal";
-import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { OG_IMAGE, headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { EmailText } from "@/components/EmailText";
 
 export const Route = createFileRoute("/privacy")({
@@ -19,7 +19,11 @@ export const Route = createFileRoute("/privacy")({
         content: "Tratamento de dados pessoais, cookies e direitos do titular.",
       },
       { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary" },
+      { property: "og:image", content: OG_IMAGE },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Política de Privacidade — Liberato Consulting" },
+      { name: "twitter:description", content: "Tratamento de dados pessoais, cookies e direitos do titular." },
+      { name: "twitter:image", content: OG_IMAGE },
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/privacy", headLang(ctx)),

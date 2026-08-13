@@ -22,6 +22,8 @@ export const Route = createFileRoute("/boletim/cancelar")({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Parar de receber o Boletim Semanal" },
+      { name: "twitter:description", content: "Cancelamento do Boletim Semanal da Liberato Consulting." },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/boletim/cancelar") }],
   }),
