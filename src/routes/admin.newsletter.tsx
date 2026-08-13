@@ -2,6 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { toInstagram, toLinkedIn, toWhatsApp } from "@/lib/social-formats";
+import {
+  SOCIAL_IMAGE_FORMATS,
+  composeSocialImage,
+  downloadDataUrl,
+  type SocialFormatKey,
+} from "@/lib/social-image";
+import { generateSocialImage, generateSocialPack } from "@/lib/social-ai.functions";
 
 import { toast } from "sonner";
 
