@@ -23,6 +23,8 @@ import {
   generateNewsletterAI,
   generateNewsletterImage,
 } from "@/lib/newsletter-ai.functions";
+import { listAuthorOptions } from "@/lib/users.functions";
+
 
 export const Route = createFileRoute("/admin/newsletter")({
   head: () => ({
@@ -45,6 +47,22 @@ const input =
 const btn =
   "rounded-md bg-ink px-4 py-2 text-sm font-semibold text-ink-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-60";
 const label = "mb-1 block text-sm font-semibold";
+
+const today = () => new Date().toISOString().slice(0, 10);
+
+/** Gera o endereço público sugerido a partir do título. */
+function contentLink(title: string) {
+  const slug = title
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 70);
+  return slug ? `https://liberatoconsulting.com.br/content/${slug}` : "";
+}
+
+
 
 
 function AdminNewsletter() {
@@ -75,15 +93,27 @@ function AdminNewsletter() {
   const [newEmail, setNewEmail] = useState("");
   const [testEmail, setTestEmail] = useState("");
   const [link, setLink] = useState("");
+  const [linkTouched, setLinkTouched] = useState(false);
   const [socialDrafts, setSocialDrafts] = useState<Record<string, string>>({});
   const [authors, setAuthors] = useState("");
   const [authorContact, setAuthorContact] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [fullText, setFullText] = useState("");
   const [sources, setSources] = useState("");
-  const [referenceDate, setReferenceDate] = useState("");
+  const [referenceDate, setReferenceDate] = useState(today);
   const [aiBusy, setAiBusy] = useState<"" | "text" | "image" | "pdf">("");
   const [pdfUrl, setPdfUrl] = useState("");
+
+  const authorOptions = useQuery({
+    queryKey: ["nl-authors"],
+    queryFn: () => listAuthorOptions(),
+    retry: false,
+  });
+
+  // O link do conteúdo acompanha o título até que seja editado manualmente.
+  useEffect(() => {
+    if (!linkTouched) setLink(contentLink(subject));
+  }, [subject, linkTouched]);
 
   const activeCount = (subscribers.data ?? []).filter((s) => s.status === "active").length;
 
@@ -106,11 +136,13 @@ function AdminNewsletter() {
     setImageUrl("");
     setFullText("");
     setSources("");
-    setReferenceDate("");
+    setReferenceDate(today());
     setPdfUrl("");
     setLink("");
+    setLinkTouched(false);
     setSocialDrafts({});
   };
+
 
 
   return (
@@ -281,7 +313,28 @@ function AdminNewsletter() {
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className={label} htmlFor="nl-authors">Autores</label>
-              <input id="nl-authors" className={input} value={authors} onChange={(e) => setAuthors(e.target.value)} placeholder="Nome dos autores" />
+              <select
+                id="nl-authors"
+                className={input}
+                value={authors}
+                onChange={(e) => {
+                  const name = e.target.value;
+                  setAuthors(name);
+                  const found = (authorOptions.data ?? []).find((a) => a.name === name);
+                  if (found?.email) setAuthorContact(found.email);
+                }}
+              >
+                <option value="">Selecione o autor</option>
+                {(authorOptions.data ?? []).map((a) => (
+                  <option key={a.userId} value={a.name}>
+                    {a.name}
+                  </option>
+                ))}
+                {authors && !(authorOptions.data ?? []).some((a) => a.name === authors) && (
+                  <option value={authors}>{authors}</option>
+                )}
+              </select>
+
             </div>
             <div>
               <label className={label} htmlFor="nl-contact">Contato dos autores</label>
@@ -422,8 +475,18 @@ function AdminNewsletter() {
           </div>
 
           <div>
-            <label className={label} htmlFor="nl-link">Link do conteúdo (opcional, usado nas redes)</label>
-            <input id="nl-link" className={input} value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://liberato.com/content/..." />
+            <label className={label} htmlFor="nl-link">Link do conteúdo (gerado a partir do título, pode ser editado)</label>
+            <input
+              id="nl-link"
+              className={input}
+              value={link}
+              onChange={(e) => {
+                setLinkTouched(true);
+                setLink(e.target.value);
+              }}
+              placeholder="https://liberatoconsulting.com.br/content/..."
+            />
+
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -511,7 +574,9 @@ function AdminNewsletter() {
                     setImageUrl(c.image_url ?? "");
                     setFullText(c.full_text ?? "");
                     setSources(c.sources ?? "");
-                    setReferenceDate(c.reference_date ?? "");
+                    setReferenceDate(c.reference_date ?? today());
+                    setLinkTouched(false);
+
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                 >
