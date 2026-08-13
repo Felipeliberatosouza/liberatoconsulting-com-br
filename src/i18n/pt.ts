@@ -1202,7 +1202,16 @@ export const pt = {
     success: "Cadastro realizado com sucesso.",
     error: "Não foi possível concluir o cadastro.",
   },
+  newsletterPage: {
+    eyebrow: "Newsletter",
+    by: "Por",
+    sources: "Fontes",
+    notFound: "Newsletter não encontrada.",
+    seeContent: "Ver conteúdos",
+    translating: "Traduzindo o conteúdo…",
+  },
   newsletterForm: {
+
     done: "Inscrição confirmada. Obrigado!",
     emailPlaceholder: "seu@email.com",
     submit: "Inscrever",

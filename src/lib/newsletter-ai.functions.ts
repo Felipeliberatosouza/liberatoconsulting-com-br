@@ -161,7 +161,7 @@ export const buildNewsletterPdf = createServerFn({ method: "POST" })
           .join("")
           .slice(0, max);
       const fileName = `${camel(data.title, 60) || "Material"}_${camel(companyName, 40) || "LiberatoConsulting"}.pdf`;
-      const path = `newsletter/${crypto.randomUUID()}-${fileName}`;
+      const path = `newsletter/${crypto.randomUUID()}/${fileName}`;
       const { error } = await supabaseAdmin.storage
         .from("content")
         .upload(path, bytes, { contentType: "application/pdf", upsert: false });
@@ -173,10 +173,12 @@ export const buildNewsletterPdf = createServerFn({ method: "POST" })
           .update({ file_path: path, file_name: fileName })
           .eq("id", data.campaignId);
       }
+      // `download` força o nome do arquivo exibido ao usuário.
       const { data: signed } = await supabaseAdmin.storage
         .from("content")
-        .createSignedUrl(path, 600);
+        .createSignedUrl(path, 600, { download: fileName });
       return { ok: true as const, path, name: fileName, url: signed?.signedUrl ?? "" };
+
 
     } catch (err) {
       console.error("buildNewsletterPdf failed", err);
