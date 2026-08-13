@@ -8,7 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -128,15 +128,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     scripts: [
       {
+        src: "https://www.googletagmanager.com/gtag/js?id=G-44WQ42SD3T",
+        async: true,
+        type: "text/javascript",
+      },
+      {
         type: "text/javascript",
         children: `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'G-44WQ42SD3T', { send_page_view: false });
-// Carrega o gtag.js fora do caminho crítico para não competir com o LCP.
-(function(){var loaded=false;function load(){if(loaded)return;loaded=true;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-44WQ42SD3T';document.head.appendChild(s);}
-if('requestIdleCallback' in window){window.requestIdleCallback(load,{timeout:4000});}else{setTimeout(load,3000);}
-['pointerdown','keydown','touchstart','scroll'].forEach(function(e){window.addEventListener(e,load,{once:true,passive:true});});})();`,
+
+gtag('config', 'G-44WQ42SD3T');`,
       },
       {
         type: "application/ld+json",
