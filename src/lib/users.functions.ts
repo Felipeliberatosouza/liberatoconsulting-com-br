@@ -140,24 +140,41 @@ export const listTeam = createServerFn({ method: "GET" })
 
 const profileFields = z.object({
   full_name: z.string().trim().min(2).max(160),
-  email: z.string().trim().email().max(255),
-  phone: z.string().trim().max(40).default(""),
-  birth_date: z.string().trim().max(20).nullable().optional(),
-  cpf: z.string().trim().max(20).default(""),
+  email: z
+    .string()
+    .trim()
+    .max(255)
+    .refine((v) => isValidEmail(v), "E-mail inválido."),
+  phone: z
+    .string()
+    .trim()
+    .max(40)
+    .default("")
+    .refine((v) => !v || isValidPhone(v), "Celular inválido."),
+  birth_date: z.string().trim().min(1, "Data de nascimento obrigatória.").max(20),
+  cpf: z
+    .string()
+    .trim()
+    .max(20)
+    .refine((v) => isValidCpf(v), "CPF inválido."),
   rg: z.string().trim().max(30).default(""),
   nationality: z.string().trim().max(60).default(""),
   marital_status: z.string().trim().max(40).default(""),
   address_street: z.string().trim().max(160).default(""),
-  address_number: z.string().trim().max(20).default(""),
+  address_number: z.string().trim().min(1, "Número obrigatório.").max(20),
   address_complement: z.string().trim().max(80).default(""),
   address_district: z.string().trim().max(80).default(""),
   address_city: z.string().trim().max(80).default(""),
   address_state: z.string().trim().max(40).default(""),
-  address_zip: z.string().trim().max(20).default(""),
+  address_zip: z
+    .string()
+    .trim()
+    .max(20)
+    .refine((v) => isValidCep(v), "CEP inválido."),
   address_country: z.string().trim().max(60).default("Brasil"),
-  bank_name: z.string().trim().max(80).default(""),
-  bank_branch: z.string().trim().max(20).default(""),
-  bank_account: z.string().trim().max(30).default(""),
+  bank_name: z.string().trim().min(1, "Banco obrigatório.").max(80),
+  bank_branch: z.string().trim().min(1, "Agência obrigatória.").max(20),
+  bank_account: z.string().trim().min(1, "Conta obrigatória.").max(30),
   pix_key: z.string().trim().max(140).default(""),
   notes: z.string().trim().max(2000).default(""),
   email_opt_in: z.boolean().default(true),
@@ -179,11 +196,26 @@ export const createTeamMember = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { role, password, birth_date, ...profile } = data;
 
+    if (
+      !isStrongPassword(password, {
+        fullName: profile.full_name,
+        email: profile.email,
+        birthDate: birth_date,
+        cpf: profile.cpf,
+      })
+    ) {
+      return { ok: false as const, error: "A senha não atende às regras de segurança." };
+    }
+
+    const needsContract = role === "consultor" || role === "autor";
+
     const created = await supabaseAdmin.auth.admin.createUser({
       email: profile.email,
       password,
       email_confirm: true,
-    });
+      // Acesso bloqueado até o envio do contrato assinado.
+      ...(needsContract ? { ban_duration: "876000h" } : {}),
+    } as never);
     if (created.error || !created.data.user) {
       return { ok: false as const, error: created.error?.message ?? "Falha ao criar usuário." };
     }
@@ -194,8 +226,27 @@ export const createTeamMember = createServerFn({ method: "POST" })
       .from("profiles")
       .insert({ ...profile, birth_date: birth_date || null, user_id: userId });
     if (error) return { ok: false as const, error: error.message };
-    return { ok: true as const };
+
+    let contractWarning = "";
+    if (needsContract) {
+      const { sendContractEmail } = await import("./contracts.server");
+      const sent = await sendContractEmail({
+        audience: role,
+        toEmail: profile.email,
+        toName: profile.full_name,
+      }).catch((e: unknown) => ({ ok: false as const, error: String(e) }));
+      if (sent.ok) {
+        await supabaseAdmin
+          .from("profiles")
+          .update({ contract_sent_at: new Date().toISOString() })
+          .eq("user_id", userId);
+      } else {
+        contractWarning = sent.error ?? "Não foi possível enviar o contrato por e-mail.";
+      }
+    }
+    return { ok: true as const, contractWarning, needsContract };
   });
+
 
 /** Atualiza os dados cadastrais e o papel de um membro da equipe. */
 export const updateTeamMember = createServerFn({ method: "POST" })
