@@ -61,6 +61,7 @@ function CareersPage() {
     const file = fd.get("resume");
 
     const linkedin = form.elements.namedItem("linkedin") as HTMLInputElement | null;
+    console.log("linkedin debug", { value: linkedin?.value, valid: linkedin?.checkValidity(), message: linkedin?.validationMessage, errorLinkedin: C.errorLinkedin });
     if (linkedin && linkedin.value && !linkedin.checkValidity()) {
       linkedin.setCustomValidity(C.errorLinkedin);
       linkedin.reportValidity();
