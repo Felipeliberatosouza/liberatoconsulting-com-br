@@ -45,12 +45,11 @@ export const Route = createFileRoute("/contact")({
           logo: "https://liberatoconsulting.com.br/logo.png",
           address: {
             "@type": "PostalAddress",
-            streetAddress: "Av. Paulista, 1000",
             addressLocality: "São Paulo",
             addressRegion: "SP",
-            postalCode: "01310-100",
             addressCountry: "BR",
           },
+
           areaServed: [
             { "@type": "Country", name: "Brasil" },
             { "@type": "Place", name: "Global" },
