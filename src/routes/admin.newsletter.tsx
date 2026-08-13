@@ -358,29 +358,46 @@ function AdminNewsletter() {
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className={label} htmlFor="nl-authors">Autores</label>
-              <select
+              <div
                 id="nl-authors"
-                className={input}
-                value={authors}
-                onChange={(e) => {
-                  const name = e.target.value;
-                  setAuthors(name);
-                  const found = (authorOptions.data ?? []).find((a) => a.name === name);
-                  if (found?.email) setAuthorContact(found.email);
-                }}
+                className="max-h-40 space-y-1 overflow-auto rounded-md border border-input bg-background p-2 text-sm"
               >
-                <option value="">Selecione o autor</option>
-                {(authorOptions.data ?? []).map((a) => (
-                  <option key={a.userId} value={a.name}>
-                    {a.name}
-                  </option>
-                ))}
-                {authors && !(authorOptions.data ?? []).some((a) => a.name === authors) && (
-                  <option value={authors}>{authors}</option>
+                {(authorOptions.data ?? []).length === 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    {authorOptions.isLoading
+                      ? "Carregando..."
+                      : "Nenhum usuário com papel de administrador, autor ou consultor."}
+                  </p>
                 )}
-              </select>
-
+                {(authorOptions.data ?? []).map((a) => {
+                  const list = authors.split(",").map((s) => s.trim()).filter(Boolean);
+                  const checked = list.includes(a.name);
+                  return (
+                    <label key={a.userId} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) => {
+                          const next = e.target.checked
+                            ? [...list, a.name]
+                            : list.filter((n) => n !== a.name);
+                          setAuthors(next.join(", "));
+                          const emails = (authorOptions.data ?? [])
+                            .filter((o) => next.includes(o.name) && o.email)
+                            .map((o) => o.email);
+                          setAuthorContact(emails.join(", "));
+                        }}
+                      />
+                      {a.name}
+                    </label>
+                  );
+                })}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Selecione um ou mais autores para o texto.
+              </p>
             </div>
+
             <div>
               <label className={label} htmlFor="nl-contact">Contato dos autores</label>
               <input id="nl-contact" className={input} value={authorContact} onChange={(e) => setAuthorContact(e.target.value)} placeholder="contato@liberatoconsulting.com.br" />
