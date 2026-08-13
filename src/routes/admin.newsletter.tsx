@@ -93,15 +93,27 @@ function AdminNewsletter() {
   const [newEmail, setNewEmail] = useState("");
   const [testEmail, setTestEmail] = useState("");
   const [link, setLink] = useState("");
+  const [linkTouched, setLinkTouched] = useState(false);
   const [socialDrafts, setSocialDrafts] = useState<Record<string, string>>({});
   const [authors, setAuthors] = useState("");
   const [authorContact, setAuthorContact] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [fullText, setFullText] = useState("");
   const [sources, setSources] = useState("");
-  const [referenceDate, setReferenceDate] = useState("");
+  const [referenceDate, setReferenceDate] = useState(today);
   const [aiBusy, setAiBusy] = useState<"" | "text" | "image" | "pdf">("");
   const [pdfUrl, setPdfUrl] = useState("");
+
+  const authorOptions = useQuery({
+    queryKey: ["nl-authors"],
+    queryFn: () => listAuthorOptions(),
+    retry: false,
+  });
+
+  // O link do conteúdo acompanha o título até que seja editado manualmente.
+  useEffect(() => {
+    if (!linkTouched) setLink(contentLink(subject));
+  }, [subject, linkTouched]);
 
   const activeCount = (subscribers.data ?? []).filter((s) => s.status === "active").length;
 
@@ -124,11 +136,13 @@ function AdminNewsletter() {
     setImageUrl("");
     setFullText("");
     setSources("");
-    setReferenceDate("");
+    setReferenceDate(today());
     setPdfUrl("");
     setLink("");
+    setLinkTouched(false);
     setSocialDrafts({});
   };
+
 
 
   return (
