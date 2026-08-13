@@ -559,13 +559,54 @@ function AdminNewsletter() {
             <button className={btn} type="submit" disabled={busy}>
               {busy ? "Salvando…" : editId ? "Salvar alterações" : "Criar newsletter"}
             </button>
+            <button
+              type="button"
+              className="rounded-md border border-border px-4 py-2 text-sm hover:border-accent"
+              onClick={() => setDraftPreview((v) => !v)}
+            >
+              {draftPreview ? "Ocultar prévia" : "Visualizar material"}
+            </button>
             {editId && (
               <button type="button" onClick={resetForm} className="text-sm text-muted-foreground hover:text-accent">
                 Cancelar edição
               </button>
             )}
+            <span className="text-xs text-muted-foreground">
+              Salve para que a newsletter apareça em “Campanhas”, onde é possível revisar, editar e
+              enviar.
+            </span>
           </div>
+
+          {draftPreview && (
+            <div className="rounded-md border border-border bg-secondary/40 p-4">
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                Prévia do material (antes do envio)
+              </p>
+              <p className="mt-2 font-display text-lg font-bold">{subject || "Sem título"}</p>
+              {preheader && <p className="text-sm text-muted-foreground">{preheader}</p>}
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt="Cabeçalho da newsletter"
+                  className="mt-3 max-h-64 w-full rounded-md object-cover"
+                />
+              )}
+              <div className="mt-3 space-y-2 text-sm leading-relaxed">
+                {body
+                  .split(/\n{2,}/)
+                  .filter(Boolean)
+                  .map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground">
+                {authors ? `Autoria: ${authors}` : ""}
+                {referenceDate ? ` • ${referenceDate}` : ""}
+              </p>
+            </div>
+          )}
         </form>
+
 
         {/* Formatos para redes sociais */}
         <div className="mt-8 border-t border-border pt-6">
