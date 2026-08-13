@@ -5,7 +5,7 @@ import { CtaBand } from "@/components/CtaBand";
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
 import { seoLinks } from "@/lib/seo";
-import { articleSchema, breadcrumb, jsonLd } from "@/lib/schema";
+import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { getSiteConfig } from "@/lib/admin.functions";
 
 const SLUGS = pt.brazil.sections.map((s) => s.id);

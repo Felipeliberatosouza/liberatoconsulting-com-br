@@ -27,7 +27,12 @@ export const Route = createFileRoute("/content/$slug")({
         summary: article.summary,
         authors: article.authors,
         coverUrl: article.cover_url,
+        publishedAt:
+          ((article as unknown as Record<string, string | null>)["created_at"] ?? null),
+        updatedAt:
+          ((article as unknown as Record<string, string | null>)["updated_at"] ?? null),
       };
+
     }
     const news = await getPublishedNewsletter({ data: { slug: params.slug } }).catch(() => null);
     if (news) throw redirect({ to: "/newsletter/$slug", params: { slug: params.slug } });
