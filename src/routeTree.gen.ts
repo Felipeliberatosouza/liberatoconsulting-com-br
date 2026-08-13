@@ -16,6 +16,10 @@ import { Route as CareersRouteImport } from './routes/careers'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContentRouteImport } from './routes/content'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SitemapEnDotxmlRouteImport } from './routes/sitemap-en[.]xml'
+import { Route as SitemapEsDotxmlRouteImport } from './routes/sitemap-es[.]xml'
+import { Route as SitemapPtDotxmlRouteImport } from './routes/sitemap-pt[.]xml'
+import { Route as SitemapZhDotxmlRouteImport } from './routes/sitemap-zh[.]xml'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AboutSlugRouteImport } from './routes/about_.$slug'
@@ -83,6 +87,26 @@ const ContentRoute = ContentRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapEnDotxmlRoute = SitemapEnDotxmlRouteImport.update({
+  id: '/sitemap-en.xml',
+  path: '/sitemap-en.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapEsDotxmlRoute = SitemapEsDotxmlRouteImport.update({
+  id: '/sitemap-es.xml',
+  path: '/sitemap-es.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapPtDotxmlRoute = SitemapPtDotxmlRouteImport.update({
+  id: '/sitemap-pt.xml',
+  path: '/sitemap-pt.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapZhDotxmlRoute = SitemapZhDotxmlRouteImport.update({
+  id: '/sitemap-zh.xml',
+  path: '/sitemap-zh.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -261,6 +285,10 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
+  '/sitemap-es.xml': typeof SitemapEsDotxmlRoute
+  '/sitemap-pt.xml': typeof SitemapPtDotxmlRoute
+  '/sitemap-zh.xml': typeof SitemapZhDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/about/$slug': typeof AboutSlugRoute
@@ -303,6 +331,10 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
+  '/sitemap-es.xml': typeof SitemapEsDotxmlRoute
+  '/sitemap-pt.xml': typeof SitemapPtDotxmlRoute
+  '/sitemap-zh.xml': typeof SitemapZhDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/about/$slug': typeof AboutSlugRoute
@@ -346,6 +378,10 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
+  '/sitemap-es.xml': typeof SitemapEsDotxmlRoute
+  '/sitemap-pt.xml': typeof SitemapPtDotxmlRoute
+  '/sitemap-zh.xml': typeof SitemapZhDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/about_/$slug': typeof AboutSlugRoute
@@ -390,6 +426,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/privacy'
+    | '/sitemap-en.xml'
+    | '/sitemap-es.xml'
+    | '/sitemap-pt.xml'
+    | '/sitemap-zh.xml'
     | '/sitemap.xml'
     | '/terms'
     | '/about/$slug'
@@ -432,6 +472,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/privacy'
+    | '/sitemap-en.xml'
+    | '/sitemap-es.xml'
+    | '/sitemap-pt.xml'
+    | '/sitemap-zh.xml'
     | '/sitemap.xml'
     | '/terms'
     | '/about/$slug'
@@ -474,6 +518,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/privacy'
+    | '/sitemap-en.xml'
+    | '/sitemap-es.xml'
+    | '/sitemap-pt.xml'
+    | '/sitemap-zh.xml'
     | '/sitemap.xml'
     | '/terms'
     | '/about_/$slug'
@@ -517,6 +565,10 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ContentRoute: typeof ContentRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
+  SitemapEnDotxmlRoute: typeof SitemapEnDotxmlRoute
+  SitemapEsDotxmlRoute: typeof SitemapEsDotxmlRoute
+  SitemapPtDotxmlRoute: typeof SitemapPtDotxmlRoute
+  SitemapZhDotxmlRoute: typeof SitemapZhDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   AboutSlugRoute: typeof AboutSlugRoute
@@ -600,6 +652,34 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-en.xml': {
+      id: '/sitemap-en.xml'
+      path: '/sitemap-en.xml'
+      fullPath: '/sitemap-en.xml'
+      preLoaderRoute: typeof SitemapEnDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-es.xml': {
+      id: '/sitemap-es.xml'
+      path: '/sitemap-es.xml'
+      fullPath: '/sitemap-es.xml'
+      preLoaderRoute: typeof SitemapEsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pt.xml': {
+      id: '/sitemap-pt.xml'
+      path: '/sitemap-pt.xml'
+      fullPath: '/sitemap-pt.xml'
+      preLoaderRoute: typeof SitemapPtDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-zh.xml': {
+      id: '/sitemap-zh.xml'
+      path: '/sitemap-zh.xml'
+      fullPath: '/sitemap-zh.xml'
+      preLoaderRoute: typeof SitemapZhDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -855,6 +935,10 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ContentRoute: ContentRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
+  SitemapEnDotxmlRoute: SitemapEnDotxmlRoute,
+  SitemapEsDotxmlRoute: SitemapEsDotxmlRoute,
+  SitemapPtDotxmlRoute: SitemapPtDotxmlRoute,
+  SitemapZhDotxmlRoute: SitemapZhDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   AboutSlugRoute: AboutSlugRoute,
