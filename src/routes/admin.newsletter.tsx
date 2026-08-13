@@ -876,9 +876,18 @@ function AdminNewsletter() {
           <a
             className="rounded-md border border-border px-4 py-2 text-sm hover:border-accent"
             href={`data:text/csv;charset=utf-8,${encodeURIComponent(
-              "email,nome,idioma,status,data\n" +
+              "email,nome,idioma,autoriza_envio,status,data\n" +
                 (subscribers.data ?? [])
-                  .map((s) => [s.email, s.name, s.language ?? "", s.status, s.created_at].join(","))
+                  .map((s) =>
+                    [
+                      s.email,
+                      s.name,
+                      s.language ?? "",
+                      s.status === "active" ? "sim" : "nao",
+                      s.status,
+                      s.created_at,
+                    ].join(","),
+                  )
                   .join("\n"),
             )}`}
             download="inscritos-newsletter.csv"
@@ -886,6 +895,10 @@ function AdminNewsletter() {
             Exportar CSV
           </a>
         </form>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Quem cancela a inscrição fica marcado como “Não autoriza” e é retirado automaticamente da
+          lista de envio.
+        </p>
 
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-left text-sm">
@@ -893,6 +906,7 @@ function AdminNewsletter() {
               <tr>
                 <th className="py-2">E-mail</th>
                 <th className="py-2">Idioma</th>
+                <th className="py-2">Autoriza envio</th>
                 <th className="py-2">Status</th>
                 <th className="py-2">Data</th>
                 <th className="py-2" />
@@ -903,6 +917,17 @@ function AdminNewsletter() {
                 <tr key={s.id} className="border-t border-border">
                   <td className="py-2">{s.email}</td>
                   <td className="py-2">{s.language ?? "—"}</td>
+                  <td className="py-2">
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                        s.status === "active"
+                          ? "bg-accent/15 text-accent"
+                          : "bg-destructive/10 text-destructive"
+                      }`}
+                    >
+                      {s.status === "active" ? "Autoriza" : "Não autoriza"}
+                    </span>
+                  </td>
                   <td className="py-2">{s.status === "active" ? "Ativo" : "Cancelado"}</td>
                   <td className="py-2">{new Date(s.created_at).toLocaleDateString("pt-BR")}</td>
                   <td className="py-2 text-right">
@@ -915,7 +940,7 @@ function AdminNewsletter() {
                         await subscribers.refetch();
                       }}
                     >
-                      {s.status === "active" ? "Cancelar" : "Reativar"}
+                      {s.status === "active" ? "Remover da lista" : "Reativar envio"}
                     </button>
                     <button
                       className="text-xs text-muted-foreground hover:text-destructive"
