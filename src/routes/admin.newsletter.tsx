@@ -118,6 +118,7 @@ function AdminNewsletter() {
   const [socialArt, setSocialArt] = useState<Record<string, string>>({});
   const [socialBusy, setSocialBusy] = useState<"" | "text" | "image" | "art">("");
   const [previewId, setPreviewId] = useState<string | null>(null);
+  const [draftPreview, setDraftPreview] = useState(false);
   const [onlyAuthorized, setOnlyAuthorized] = useState(true);
 
   /** Redesenha as artes em todos os formatos a partir da mesma imagem base. */
