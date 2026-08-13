@@ -333,7 +333,8 @@ function AdminNewsletter() {
                     const r = await generateNewsletterImage({ data: { title: subject } });
                     if (!r.ok) toast.error(r.error);
                     else {
-                      setImageUrl(r.imageUrl);
+                      // Aplica a logomarca (PNG sem fundo) no canto inferior direito.
+                      setImageUrl(await stampLogo(r.imageUrl).catch(() => r.imageUrl));
                       toast.success("Imagem de cabeçalho gerada.");
                     }
                   } catch {
