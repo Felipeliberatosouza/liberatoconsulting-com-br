@@ -22,6 +22,8 @@ import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { CopyProtection } from "@/components/CopyProtection";
 import { normalizeLang } from "@/lib/seo";
 import { trackPageView } from "@/lib/gtag";
+import { getPublicCompanyAddress } from "@/lib/company-public.functions";
+import { postalAddressSchema } from "@/lib/company-address";
 
 
 
@@ -87,7 +89,8 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
+  loader: () => getPublicCompanyAddress(),
+  head: (ctx) => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -155,12 +158,7 @@ if('requestIdleCallback' in window){window.requestIdleCallback(load,{timeout:400
               telephone: "+55 11 91325-8668",
               description:
                 "Consultoria em gestão empresarial com inteligência artificial no centro de cada entrega.",
-              address: {
-                "@type": "PostalAddress",
-                addressLocality: "São Paulo",
-                addressRegion: "SP",
-                addressCountry: "BR",
-              },
+              address: postalAddressSchema(ctx.loaderData),
               areaServed: [
                 { "@type": "Country", name: "Brasil" },
                 { "@type": "Place", name: "Global" },

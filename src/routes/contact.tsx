@@ -7,9 +7,12 @@ import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
+import { getPublicCompanyAddress } from "@/lib/company-public.functions";
+import { postalAddressSchema } from "@/lib/company-address";
 
 
 export const Route = createFileRoute("/contact")({
+  loader: () => getPublicCompanyAddress(),
   head: (ctx) => ({
     meta: [
       { title: "Contato — Liberato Consulting" },
@@ -48,12 +51,8 @@ export const Route = createFileRoute("/contact")({
           priceRange: "$$",
           image: ["https://liberatoconsulting.com.br/og-default.png"],
           logo: "https://liberatoconsulting.com.br/logo.png",
-          address: {
-            "@type": "PostalAddress",
-            addressLocality: "São Paulo",
-            addressRegion: "SP",
-            addressCountry: "BR",
-          },
+          address: postalAddressSchema(ctx.loaderData),
+
 
           areaServed: [
             { "@type": "Country", name: "Brasil" },
