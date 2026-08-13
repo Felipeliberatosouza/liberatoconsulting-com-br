@@ -508,6 +508,8 @@ function AdminNewsletter() {
                         authorContact,
                         body: fullText,
                         sources,
+                        imageUrl,
+
                       },
                     });
                     if (!r.ok) toast.error(r.error);
