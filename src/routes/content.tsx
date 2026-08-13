@@ -2,6 +2,7 @@ import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { CtaBand } from "@/components/CtaBand";
 import { BulletinSignup } from "@/components/BulletinSignup";
+import { seoLinks } from "@/lib/seo";
 import { useLanguage } from "@/i18n";
 
 type ContentSearch = {
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/content")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: seoLinks("/content"),
   }),
   component: ContentPage,
 });

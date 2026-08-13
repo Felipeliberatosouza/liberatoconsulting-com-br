@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Check, Clock, Sparkles, Users } from "lucide-react";
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
+import { seoLinks } from "@/lib/seo";
 import { ServiceLeadForm } from "@/components/ServiceLeadForm";
 
 
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/services/$slug")({
         { property: "og:type", content: "website" },
         { name: "twitter:card", content: "summary_large_image" },
       ],
+      links: seoLinks(`/services/${params.slug}`),
     };
   },
   component: ServiceDetailPage,

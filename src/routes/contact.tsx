@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n";
+import { seoLinks } from "@/lib/seo";
 import { submitLead } from "@/lib/leads.functions";
 
 export const Route = createFileRoute("/contact")({
@@ -20,9 +21,9 @@ export const Route = createFileRoute("/contact")({
         property: "og:description",
         content: "Conte o desafio da sua empresa. Respondemos em até dois dias úteis.",
       },
-      { property: "og:url", content: "https://liberato-ai-insight.lovable.app/contact" },
+      { property: "og:url", content: "https://liberatoconsulting.com.br/contact" },
     ],
-    links: [{ rel: "canonical", href: "https://liberato-ai-insight.lovable.app/contact" }],
+    links: seoLinks("/contact"),
     scripts: [
       {
         type: "application/ld+json",
@@ -30,9 +31,9 @@ export const Route = createFileRoute("/contact")({
           "@context": "https://schema.org",
           "@type": "LocalBusiness",
           name: "Liberato Consulting",
-          url: "https://liberato-ai-insight.lovable.app/contact",
+          url: "https://liberatoconsulting.com.br/contact",
           email: "contato@liberatoconsulting.com.br",
-          image: "https://liberato-ai-insight.lovable.app/logo.png",
+          image: "https://liberatoconsulting.com.br/logo.png",
           address: {
             "@type": "PostalAddress",
             addressLocality: "São Paulo",

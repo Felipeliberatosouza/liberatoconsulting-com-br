@@ -18,6 +18,7 @@ import { CtaBand } from "@/components/CtaBand";
 import { FilterScopeBadge } from "@/components/SiteFilterBar";
 import { useAudienceFilters } from "@/lib/audience-filters";
 import { useLanguage } from "@/i18n";
+import { seoLinks } from "@/lib/seo";
 import { DEFAULT_AUTOPLAY_MS, heroSlideOrder } from "@/lib/site-config";
 
 
@@ -41,9 +42,9 @@ export const Route = createFileRoute("/")({
         content:
           "Inteligência sobre setores da economia brasileira para empresas internacionais, com gestão estratégica e IA no centro.",
       },
-      { property: "og:url", content: "https://liberato-ai-insight.lovable.app/" },
+      { property: "og:url", content: "https://liberatoconsulting.com.br/" },
     ],
-    links: [{ rel: "canonical", href: "https://liberato-ai-insight.lovable.app/" }],
+    links: seoLinks("/"),
   }),
   component: Index,
 });

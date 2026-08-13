@@ -44,7 +44,7 @@ export type BulletinContent = {
 };
 
 export function siteOrigin() {
-  return process.env["PUBLIC_SITE_URL"] || "https://liberato-ai-insight.lovable.app";
+  return process.env["PUBLIC_SITE_URL"] || "https://liberatoconsulting.com.br";
 }
 
 function escapeHtml(value: string) {

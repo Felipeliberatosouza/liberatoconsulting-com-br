@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
+import { seoLinks } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/admin.functions";
 
 const SLUGS = pt.brazil.sections.map((s) => s.id);
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/brasil_/$slug")({
         { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary_large_image" },
       ],
+      links: seoLinks(`/brasil/${params.slug}`),
     };
   },
   component: BrazilDetailPage,

@@ -4,6 +4,7 @@ import { ConsultantsTeam } from "@/components/ConsultantsTeam";
 import { ResultBanner } from "@/components/ResultBanner";
 
 import { pt } from "@/i18n/pt";
+import { seoLinks } from "@/lib/seo";
 import { useLanguage } from "@/i18n";
 
 const SLUGS = pt.aboutDetail.pages.map((p) => p.id);
@@ -33,6 +34,7 @@ export const Route = createFileRoute("/about_/$slug")({
         { property: "og:type", content: "website" },
         { name: "twitter:card", content: "summary_large_image" },
       ],
+      links: seoLinks(`/about/${params.slug}`),
     };
   },
   component: AboutDetailPage,

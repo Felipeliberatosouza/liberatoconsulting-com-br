@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "./privacy";
+import { seoLinks } from "@/lib/seo";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/terms")({
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
     ],
+    links: seoLinks("/terms"),
   }),
   component: () => <LegalPage doc="terms" />,
 });

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { CtaBand } from "@/components/CtaBand";
+import { seoLinks } from "@/lib/seo";
 import { useLanguage } from "@/i18n";
 
 export const Route = createFileRoute("/services/")({
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/services/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: seoLinks("/services"),
   }),
   component: ServicesPage,
 });

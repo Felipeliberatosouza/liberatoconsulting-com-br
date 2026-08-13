@@ -4,6 +4,7 @@ import { ConsultantsTeam } from "@/components/ConsultantsTeam";
 import { CtaBand } from "@/components/CtaBand";
 
 import { ResultBanner } from "@/components/ResultBanner";
+import { seoLinks } from "@/lib/seo";
 import { useLanguage } from "@/i18n";
 
 export const Route = createFileRoute("/about")({
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/about")({
         content: "Método de gestão, resultado medido e inteligência artificial como propósito.",
       },
     ],
+    links: seoLinks("/about"),
   }),
   component: AboutPage,
 });

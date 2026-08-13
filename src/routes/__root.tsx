@@ -122,8 +122,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             {
               "@type": "Organization",
               name: "Liberato Consulting",
-              url: "https://liberato-ai-insight.lovable.app",
-              logo: "https://liberato-ai-insight.lovable.app/logo.png",
+              url: "https://liberatoconsulting.com.br",
+              logo: "https://liberatoconsulting.com.br/logo.png",
               email: "contato@liberatoconsulting.com.br",
               description:
                 "Consultoria em gestão empresarial com inteligência artificial no centro de cada entrega.",
@@ -131,7 +131,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             {
               "@type": "WebSite",
               name: "Liberato Consulting",
-              url: "https://liberato-ai-insight.lovable.app",
+              url: "https://liberatoconsulting.com.br",
               inLanguage: "pt-BR",
             },
           ],
