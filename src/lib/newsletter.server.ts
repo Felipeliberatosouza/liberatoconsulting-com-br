@@ -157,9 +157,18 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
   }
   if (recipients.length === 0) return { ok: false as const, error: "Nenhum inscrito ativo." };
 
+  if (!testEmail) {
+    // limpa o erro da tentativa anterior enquanto reenviamos
+    await supabaseAdmin
+      .from("newsletter_campaigns")
+      .update({ status: "sending", last_error: null })
+      .eq("id", campaignId);
+  }
+
   let sent = 0;
   let failed = 0;
   let lastError: string | null = null;
+
 
   for (const r of recipients) {
     const unsubscribeUrl = `${origin}/newsletter/unsubscribe?token=${r.unsubscribe_token}`;
