@@ -12,14 +12,15 @@ export const Route = createFileRoute("/api/public/newsletter-image/$slug")({
         if (!slug) return new Response("Not found", { status: 404 });
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data: row } = await supabaseAdmin
+        const { data: rows } = await supabaseAdmin
           .from("newsletter_campaigns")
           .select("image_url")
-          .eq("slug", slug)
+          .like("slug", `${slug}%`)
           .not("published_at", "is", null)
-          .maybeSingle();
+          .order("published_at", { ascending: false })
+          .limit(1);
 
-        const src = (row?.image_url ?? "") as string;
+        const src = (rows?.[0]?.image_url ?? "") as string;
         if (!src) return new Response("Not found", { status: 404 });
 
         if (/^data:/i.test(src)) {
