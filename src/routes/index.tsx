@@ -10,10 +10,10 @@ import {
   Settings2,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import heroImage from "@/assets/hero.jpg";
-import heroEmpreendedorismo from "@/assets/hero-empreendedorismo.jpg";
-import heroOperacoes from "@/assets/hero-operacoes.jpg";
-import heroEstrategia from "@/assets/hero-estrategia.jpg";
+import heroImage from "@/assets/hero.webp";
+import heroEmpreendedorismo from "@/assets/hero-empreendedorismo.webp";
+import heroOperacoes from "@/assets/hero-operacoes.webp";
+import heroEstrategia from "@/assets/hero-estrategia.webp";
 import { CtaBand } from "@/components/CtaBand";
 import { FilterScopeBadge } from "@/components/SiteFilterBar";
 import { useAudienceFilters } from "@/lib/audience-filters";
@@ -91,7 +91,22 @@ function HeroCarousel() {
   const { t, hero } = useLanguage();
   const scope = useAudienceFilters();
   const [index, setIndex] = useState(0);
+  const [loadedAll, setLoadedAll] = useState(false);
   const touchStartX = useRef<number | null>(null);
+
+  // Só busca as imagens dos demais slides depois que a página fica ociosa,
+  // preservando a largura de banda para o LCP.
+  useEffect(() => {
+    const w = window as typeof window & {
+      requestIdleCallback?: (cb: () => void) => number;
+    };
+    if (w.requestIdleCallback) {
+      w.requestIdleCallback(() => setLoadedAll(true));
+      return;
+    }
+    const id = window.setTimeout(() => setLoadedAll(true), 2000);
+    return () => window.clearTimeout(id);
+  }, []);
 
   const slides = useMemo(() => {
     const order = heroSlideOrder(hero).filter((s) => s.enabled);
@@ -171,10 +186,14 @@ function HeroCarousel() {
       {slides.map((s, i) => (
         <img
           key={s.id}
-          src={s.image}
+          src={i === 0 || i === index || loadedAll ? s.image : undefined}
           alt=""
           width={1600}
           height={1008}
+          decoding={i === 0 ? "sync" : "async"}
+          {...(i === 0
+            ? { fetchPriority: "high" as const, loading: "eager" as const }
+            : { loading: "lazy" as const })}
           className={`absolute inset-0 size-full object-cover transition-opacity duration-700 ${
             i === index ? "opacity-35" : "opacity-0"
           }`}

@@ -118,6 +118,8 @@ function NewsletterPage() {
           <img
             src={cover}
             alt={data.subject}
+            fetchPriority="high"
+            decoding="async"
             className="absolute inset-0 h-full w-full object-cover opacity-45"
           />
         )}

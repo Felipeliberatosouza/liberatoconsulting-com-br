@@ -115,6 +115,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "dns-prefetch", href: "https://www.googletagmanager.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
@@ -124,15 +125,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     scripts: [
       {
-        src: "https://www.googletagmanager.com/gtag/js?id=G-44WQ42SD3T",
-        async: true,
-      },
-      {
         type: "text/javascript",
         children: `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'G-44WQ42SD3T');`,
+gtag('config', 'G-44WQ42SD3T');
+// Carrega o gtag.js fora do caminho crítico para não competir com o LCP.
+(function(){var loaded=false;function load(){if(loaded)return;loaded=true;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-44WQ42SD3T';document.head.appendChild(s);}
+if('requestIdleCallback' in window){window.requestIdleCallback(load,{timeout:4000});}else{setTimeout(load,3000);}
+['pointerdown','keydown','touchstart','scroll'].forEach(function(e){window.addEventListener(e,load,{once:true,passive:true});});})();`,
       },
       {
         type: "application/ld+json",

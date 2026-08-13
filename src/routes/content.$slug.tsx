@@ -202,6 +202,8 @@ function ArticlePage() {
           <img
             src={article.cover_url}
             alt={view.title}
+            fetchPriority="high"
+            decoding="async"
             className="absolute inset-0 h-full w-full object-cover opacity-45"
           />
         )}
