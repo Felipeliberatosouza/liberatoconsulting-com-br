@@ -6,12 +6,26 @@ export const getPublishedNewsletter = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) => z.object({ slug: z.string().trim().min(1).max(160) }).parse(d))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: row } = await supabaseAdmin
+    const cols =
+      "subject, preheader, body, full_text, sources, authors, image_url, reference_date, published_at, slug";
+    const { data: exact } = await supabaseAdmin
       .from("newsletter_campaigns")
-      .select("subject, preheader, body, full_text, sources, authors, image_url, reference_date, published_at, slug")
+      .select(cols)
       .eq("slug", data.slug)
       .not("published_at", "is", null)
       .maybeSingle();
+    // Compatibilidade: links antigos podem apontar para o endereço sem o sufixo numérico.
+    let row = exact;
+    if (!row) {
+      const { data: similar } = await supabaseAdmin
+        .from("newsletter_campaigns")
+        .select(cols)
+        .like("slug", `${data.slug}%`)
+        .not("published_at", "is", null)
+        .order("published_at", { ascending: false })
+        .limit(1);
+      row = similar?.[0] ?? null;
+    }
     if (!row) return null;
     return {
       subject: row.subject as string,
