@@ -51,12 +51,8 @@ export const Route = createFileRoute("/contact")({
           priceRange: "$$",
           image: ["https://liberatoconsulting.com.br/og-default.png"],
           logo: "https://liberatoconsulting.com.br/logo.png",
-          address: {
-            "@type": "PostalAddress",
-            addressLocality: "São Paulo",
-            addressRegion: "SP",
-            addressCountry: "BR",
-          },
+          address: postalAddressSchema(ctx.loaderData),
+
 
           areaServed: [
             { "@type": "Country", name: "Brasil" },
