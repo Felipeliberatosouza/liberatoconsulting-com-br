@@ -6,6 +6,8 @@ import {
   loadCompanyFooter,
   type CompanyFooter,
 } from "./company-footer.server";
+import { emailLang, labelsFor, type EmailLang } from "./email-i18n.server";
+
 
 export type NewsletterSettings = {
   fromName: string;
