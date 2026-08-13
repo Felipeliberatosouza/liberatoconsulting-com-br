@@ -83,7 +83,7 @@ export const unsubscribeBulletin = createServerFn({ method: "POST" })
       .from("bulletin_subscribers")
       .update({ status: "unsubscribed", unsubscribed_at: new Date().toISOString() })
       .eq("unsubscribe_token", data.token)
-      .select("full_name, email, whatsapp, via_email, via_whatsapp")
+      .select("full_name, email, whatsapp, via_email, via_whatsapp, language")
       .maybeSingle();
     if (error || !row) return { ok: false as const, error: "Link inválido ou já utilizado." };
 
@@ -94,6 +94,7 @@ export const unsubscribeBulletin = createServerFn({ method: "POST" })
       whatsapp: row.whatsapp ?? "",
       via_email: Boolean(row.via_email),
       via_whatsapp: Boolean(row.via_whatsapp),
+      language: row.language,
     });
     return { ok: true as const };
   });
