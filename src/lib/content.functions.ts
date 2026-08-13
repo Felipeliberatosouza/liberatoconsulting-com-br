@@ -66,16 +66,17 @@ export const getArticleFileUrl = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row } = await supabaseAdmin
       .from("content_articles")
-      .select("file_path")
+      .select("file_path, file_name")
       .eq("slug", data.slug)
       .eq("published", true)
       .maybeSingle();
     if (!row?.file_path) return { ok: false as const, error: "Arquivo indisponível." };
     const { data: signed, error } = await supabaseAdmin.storage
       .from("content")
-      .createSignedUrl(row.file_path, 300);
+      .createSignedUrl(row.file_path, 300, row.file_name ? { download: row.file_name } : undefined);
     if (error || !signed) return { ok: false as const, error: "Falha ao gerar link." };
     return { ok: true as const, url: signed.signedUrl };
+
   });
 
 const submissionSchema = z.object({
