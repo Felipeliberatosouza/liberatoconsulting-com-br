@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CtaBand } from "@/components/CtaBand";
 import { BulletinSignup } from "@/components/BulletinSignup";
 import { seoLinks } from "@/lib/seo";
+import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
 type ContentSearch = {
@@ -32,6 +33,23 @@ export const Route = createFileRoute("/content")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: seoLinks("/content"),
+    scripts: [
+      jsonLd(
+        breadcrumb([
+          { name: "Início", path: "/" },
+          { name: "Conteúdo", path: "/content" },
+        ]),
+      ),
+      jsonLd(
+        webPageSchema({
+          name: "Conteúdo — Liberato Consulting",
+          description:
+            "Artigos, guias e estudos sobre gestão estratégica, operações, empreendedorismo e inteligência artificial aplicada.",
+          path: "/content",
+          type: "CollectionPage",
+        }),
+      ),
+    ],
   }),
   component: ContentPage,
 });

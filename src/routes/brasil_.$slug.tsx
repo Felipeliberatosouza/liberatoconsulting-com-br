@@ -5,6 +5,7 @@ import { CtaBand } from "@/components/CtaBand";
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
 import { seoLinks } from "@/lib/seo";
+import { articleSchema, breadcrumb, jsonLd } from "@/lib/schema";
 import { getSiteConfig } from "@/lib/admin.functions";
 
 const SLUGS = pt.brazil.sections.map((s) => s.id);
@@ -36,6 +37,22 @@ export const Route = createFileRoute("/brasil_/$slug")({
         { name: "twitter:card", content: "summary_large_image" },
       ],
       links: seoLinks(`/brasil/${params.slug}`),
+      scripts: [
+        jsonLd(
+          breadcrumb([
+            { name: "Início", path: "/" },
+            { name: "Dados do Brasil", path: "/brasil" },
+            { name: section.title, path: `/brasil/${params.slug}` },
+          ]),
+        ),
+        jsonLd(
+          articleSchema({
+            headline: section.title,
+            description,
+            path: `/brasil/${params.slug}`,
+          }),
+        ),
+      ],
     };
   },
   component: BrazilDetailPage,

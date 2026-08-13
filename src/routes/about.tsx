@@ -5,6 +5,7 @@ import { CtaBand } from "@/components/CtaBand";
 
 import { ResultBanner } from "@/components/ResultBanner";
 import { seoLinks } from "@/lib/seo";
+import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
 export const Route = createFileRoute("/about")({
@@ -23,6 +24,23 @@ export const Route = createFileRoute("/about")({
       },
     ],
     links: seoLinks("/about"),
+    scripts: [
+      jsonLd(
+        breadcrumb([
+          { name: "Início", path: "/" },
+          { name: "Quem somos", path: "/about" },
+        ]),
+      ),
+      jsonLd(
+        webPageSchema({
+          name: "Quem somos — Liberato Consulting",
+          description:
+            "Método de gestão, resultado medido e transferência de conhecimento, com inteligência artificial como propósito central.",
+          path: "/about",
+          type: "AboutPage",
+        }),
+      ),
+    ],
   }),
   component: AboutPage,
 });

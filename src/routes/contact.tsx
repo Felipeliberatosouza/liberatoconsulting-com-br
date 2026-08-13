@@ -42,6 +42,27 @@ export const Route = createFileRoute("/contact")({
           },
         }),
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "Início",
+              item: "https://liberatoconsulting.com.br/",
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Contato",
+              item: "https://liberatoconsulting.com.br/contact",
+            },
+          ],
+        }),
+      },
     ],
   }),
   component: ContactPage,

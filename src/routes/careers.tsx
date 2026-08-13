@@ -7,6 +7,7 @@ import { pt } from "@/i18n/pt";
 import { EmailText } from "@/components/EmailText";
 import { useLanguage } from "@/i18n";
 import { seoLinks } from "@/lib/seo";
+import { breadcrumb, jobBoardSchema, jsonLd } from "@/lib/schema";
 import { submitApplication } from "@/lib/careers.functions";
 
 export const Route = createFileRoute("/careers")({
@@ -22,6 +23,21 @@ export const Route = createFileRoute("/careers")({
         { name: "twitter:card", content: "summary_large_image" },
       ],
       links: seoLinks("/careers"),
+      scripts: [
+        jsonLd(
+          breadcrumb([
+            { name: "Início", path: "/" },
+            { name: "Trabalhe Conosco", path: "/careers" },
+          ]),
+        ),
+        jsonLd(
+          jobBoardSchema({
+            name: title,
+            description: pt.careers.metaDescription,
+            path: "/careers",
+          }),
+        ),
+      ],
     };
   },
   component: CareersPage,

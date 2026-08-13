@@ -19,6 +19,7 @@ import { FilterScopeBadge } from "@/components/SiteFilterBar";
 import { useAudienceFilters } from "@/lib/audience-filters";
 import { useLanguage } from "@/i18n";
 import { seoLinks } from "@/lib/seo";
+import { itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { DEFAULT_AUTOPLAY_MS, heroSlideOrder } from "@/lib/site-config";
 
 
@@ -45,6 +46,27 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "https://liberatoconsulting.com.br/" },
     ],
     links: seoLinks("/"),
+    scripts: [
+      jsonLd(
+        webPageSchema({
+          name: "Liberato Consulting — Consultoria em gestão com IA",
+          description:
+            "Gestão estratégica, operações, empreendedorismo e pesquisas de mercado sobre o Brasil, com inteligência artificial embarcada.",
+          path: "/",
+        }),
+      ),
+      jsonLd(
+        itemList({
+          name: "Frentes de atuação",
+          items: [
+            { name: "Serviços", path: "/services" },
+            { name: "Dados do Brasil", path: "/brasil" },
+            { name: "Quem somos", path: "/about" },
+            { name: "Conteúdo", path: "/content" },
+          ],
+        }),
+      ),
+    ],
   }),
   component: Index,
 });

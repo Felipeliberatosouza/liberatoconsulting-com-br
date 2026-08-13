@@ -12,7 +12,9 @@ import {
   useAudienceFilters,
 } from "@/lib/audience-filters";
 import { listPublicIndicators } from "@/lib/indicators.functions";
+import { pt } from "@/i18n/pt";
 import { seoLinks } from "@/lib/seo";
+import { breadcrumb, itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { getScopedBrazilSections } from "@/lib/brazil-scope.functions";
 
 export const Route = createFileRoute("/brasil")({
@@ -36,6 +38,32 @@ export const Route = createFileRoute("/brasil")({
       { property: "og:url", content: "https://liberatoconsulting.com.br/brasil" },
     ],
     links: seoLinks("/brasil"),
+    scripts: [
+      jsonLd(
+        breadcrumb([
+          { name: "Início", path: "/" },
+          { name: "Dados do Brasil", path: "/brasil" },
+        ]),
+      ),
+      jsonLd(
+        webPageSchema({
+          name: "Dados do Brasil para investidores",
+          description:
+            "Panorama econômico, setores estratégicos, investimento estrangeiro, tributos e infraestrutura do Brasil.",
+          path: "/brasil",
+          type: "CollectionPage",
+        }),
+      ),
+      jsonLd(
+        itemList({
+          name: "Temas sobre o Brasil",
+          items: pt.brazil.sections.map((s) => ({
+            name: s.title,
+            path: `/brasil/${s.id}`,
+          })),
+        }),
+      ),
+    ],
   }),
   component: BrazilPage,
 });
