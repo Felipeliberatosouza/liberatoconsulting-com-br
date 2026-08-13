@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { newsletterSlug, uniqueNewsletterSlug } from "./newsletter-slug";
 
 async function assertAdmin(context: { supabase: any; userId: string }) {
   const { assertAdmin: check } = await import("./access.server");
@@ -187,6 +188,12 @@ export const saveCampaign = createServerFn({ method: "POST" })
       full_text: data.full_text ?? "",
       sources: data.sources ?? "",
       reference_date: data.reference_date || null,
+      slug: await uniqueNewsletterSlug(
+        context.supabase,
+        newsletterSlug(data.subject),
+        data.id ?? null,
+      ),
+      published_at: new Date().toISOString(),
     };
     if (!(await isAdmin(context))) {
       const queued = await queueChangeRequest(context, {

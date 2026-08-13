@@ -42,11 +42,13 @@ import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as BoletimCancelarRouteImport } from './routes/boletim.cancelar'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
 import { Route as ContentSlugRouteImport } from './routes/content.$slug'
+import { Route as NewsletterSlugRouteImport } from './routes/newsletter.$slug'
 import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as ApiPublicBulletinWeeklyRouteImport } from './routes/api/public/bulletin-weekly'
 import { Route as ApiPublicNewsletterWeeklyRouteImport } from './routes/api/public/newsletter-weekly'
+import { Route as ApiPublicNewsletterImageSlugRouteImport } from './routes/api/public/newsletter-image.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -213,6 +215,11 @@ const ContentSlugRoute = ContentSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ContentRoute,
 } as any)
+const NewsletterSlugRoute = NewsletterSlugRouteImport.update({
+  id: '/newsletter/$slug',
+  path: '/newsletter/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NewsletterUnsubscribeRoute = NewsletterUnsubscribeRouteImport.update({
   id: '/newsletter/unsubscribe',
   path: '/newsletter/unsubscribe',
@@ -237,6 +244,12 @@ const ApiPublicNewsletterWeeklyRoute =
   ApiPublicNewsletterWeeklyRouteImport.update({
     id: '/api/public/newsletter-weekly',
     path: '/api/public/newsletter-weekly',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicNewsletterImageSlugRoute =
+  ApiPublicNewsletterImageSlugRouteImport.update({
+    id: '/api/public/newsletter-image/$slug',
+    path: '/api/public/newsletter-image/$slug',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -273,12 +286,14 @@ export interface FileRoutesByFullPath {
   '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
+  '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
+  '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -313,12 +328,14 @@ export interface FileRoutesByTo {
   '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
+  '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
+  '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -354,12 +371,14 @@ export interface FileRoutesById {
   '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil_/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
+  '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
+  '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -396,12 +415,14 @@ export interface FileRouteTypes {
     | '/boletim/cancelar'
     | '/brasil/$slug'
     | '/content/$slug'
+    | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
     | '/admin/'
     | '/services/'
     | '/api/public/bulletin-weekly'
     | '/api/public/newsletter-weekly'
+    | '/api/public/newsletter-image/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -436,12 +457,14 @@ export interface FileRouteTypes {
     | '/boletim/cancelar'
     | '/brasil/$slug'
     | '/content/$slug'
+    | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
     | '/admin'
     | '/services'
     | '/api/public/bulletin-weekly'
     | '/api/public/newsletter-weekly'
+    | '/api/public/newsletter-image/$slug'
   id:
     | '__root__'
     | '/'
@@ -476,12 +499,14 @@ export interface FileRouteTypes {
     | '/boletim/cancelar'
     | '/brasil_/$slug'
     | '/content/$slug'
+    | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
     | '/admin/'
     | '/services/'
     | '/api/public/bulletin-weekly'
     | '/api/public/newsletter-weekly'
+    | '/api/public/newsletter-image/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -516,12 +541,14 @@ export interface RootRouteChildren {
   AdminUsersRoute: typeof AdminUsersRoute
   BoletimCancelarRoute: typeof BoletimCancelarRoute
   BrasilSlugRoute: typeof BrasilSlugRoute
+  NewsletterSlugRoute: typeof NewsletterSlugRoute
   NewsletterUnsubscribeRoute: typeof NewsletterUnsubscribeRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
   ApiPublicBulletinWeeklyRoute: typeof ApiPublicBulletinWeeklyRoute
   ApiPublicNewsletterWeeklyRoute: typeof ApiPublicNewsletterWeeklyRoute
+  ApiPublicNewsletterImageSlugRoute: typeof ApiPublicNewsletterImageSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -757,6 +784,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContentSlugRouteImport
       parentRoute: typeof ContentRoute
     }
+    '/newsletter/$slug': {
+      id: '/newsletter/$slug'
+      path: '/newsletter/$slug'
+      fullPath: '/newsletter/$slug'
+      preLoaderRoute: typeof NewsletterSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/newsletter/unsubscribe': {
       id: '/newsletter/unsubscribe'
       path: '/newsletter/unsubscribe'
@@ -790,6 +824,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/newsletter-weekly'
       fullPath: '/api/public/newsletter-weekly'
       preLoaderRoute: typeof ApiPublicNewsletterWeeklyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/newsletter-image/$slug': {
+      id: '/api/public/newsletter-image/$slug'
+      path: '/api/public/newsletter-image/$slug'
+      fullPath: '/api/public/newsletter-image/$slug'
+      preLoaderRoute: typeof ApiPublicNewsletterImageSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -838,12 +879,14 @@ const rootRouteChildren: RootRouteChildren = {
   AdminUsersRoute: AdminUsersRoute,
   BoletimCancelarRoute: BoletimCancelarRoute,
   BrasilSlugRoute: BrasilSlugRoute,
+  NewsletterSlugRoute: NewsletterSlugRoute,
   NewsletterUnsubscribeRoute: NewsletterUnsubscribeRoute,
   ServicesSlugRoute: ServicesSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
   ApiPublicBulletinWeeklyRoute: ApiPublicBulletinWeeklyRoute,
   ApiPublicNewsletterWeeklyRoute: ApiPublicNewsletterWeeklyRoute,
+  ApiPublicNewsletterImageSlugRoute: ApiPublicNewsletterImageSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

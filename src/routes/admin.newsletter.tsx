@@ -68,7 +68,7 @@ function contentLink(title: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 70);
-  return slug ? `https://liberatoconsulting.com.br/content/${slug}` : "";
+  return slug ? `https://liberatoconsulting.com.br/newsletter/${slug}` : "";
 }
 
 
