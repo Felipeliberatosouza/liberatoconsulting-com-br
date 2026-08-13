@@ -187,7 +187,28 @@ async function sitemapPaths(): Promise<string[]> {
   }
 }
 
+const IF_AVAILABLE = process.argv.includes("--if-available");
+
+async function serverIsUp() {
+  try {
+    const res = await fetch(`${BASE}/`, { signal: AbortSignal.timeout(5000) });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 async function main() {
+  if (!(await serverIsUp())) {
+    const msg = `Servidor indisponível em ${BASE} — checagem de JSON-LD não executada.`;
+    if (IF_AVAILABLE) {
+      console.log(`aviso  ${msg}`);
+      return;
+    }
+    console.error(msg);
+    process.exit(1);
+  }
+
   const base = ["/", "/services", "/about", "/brasil", "/content", "/contact", "/careers"];
   const fromSitemap = await sitemapPaths();
   const all = [...new Set([...base, ...fromSitemap])].slice(0, MAX_URLS);
