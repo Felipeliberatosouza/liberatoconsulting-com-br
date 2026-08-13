@@ -6,6 +6,7 @@ import {
   SOCIAL_IMAGE_FORMATS,
   composeSocialImage,
   downloadDataUrl,
+  stampLogo,
   type SocialFormatKey,
 } from "@/lib/social-image";
 import { generateSocialImage, generateSocialPack } from "@/lib/social-ai.functions";
