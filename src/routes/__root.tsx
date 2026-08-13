@@ -227,6 +227,15 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function RouteTracker() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const search = useRouterState({ select: (s) => s.location.searchStr });
+  useEffect(() => {
+    trackPageView(pathname + search);
+  }, [pathname, search]);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const isAdmin = useRouterState({ select: (s) => s.location.pathname.startsWith("/admin") });
