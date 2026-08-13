@@ -203,7 +203,8 @@ function CareersPage() {
                 {C.linkedin}
                 <input
                   name="linkedin"
-                  type="url"
+                  type="text"
+                  inputMode="url"
                   maxLength={300}
                   placeholder={C.linkedinPlaceholder}
                   pattern="https?://.+"
