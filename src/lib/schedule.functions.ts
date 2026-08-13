@@ -35,7 +35,10 @@ export function fromCron(schedule: string) {
 export const getWeeklySchedules = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data, error } = await context.supabase.rpc("get_weekly_schedules");
+    const { assertAdmin } = await import("./access.server");
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin.rpc("get_weekly_schedules");
     if (error) throw new Error(error.message);
     const rows = (data ?? []) as Array<{ job_name: string; schedule: string }>;
     const pick = (job: string) =>
@@ -60,7 +63,10 @@ export const saveWeeklySchedule = createServerFn({ method: "POST" })
       .parse(data),
   )
   .handler(async ({ context, data }) => {
-    const { error } = await context.supabase.rpc("set_weekly_schedule", {
+    const { assertAdmin } = await import("./access.server");
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.rpc("set_weekly_schedule", {
       _job: data.job,
       _schedule: toCron(data.dow, data.hour, data.minute),
     });
