@@ -255,6 +255,7 @@ export async function sendBulletinEmail(params: {
   subject: string;
   html: string;
   text: string;
+  idempotencyKey?: string;
 }) {
   const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) throw new Error("Serviço de e-mail indisponível.");
@@ -271,8 +272,11 @@ export async function sendBulletinEmail(params: {
       subject: params.subject,
       html: params.html,
       text: params.text,
-      purpose: "newsletter",
+      purpose: "transactional",
       label: "boletim-semanal",
+      idempotency_key:
+        params.idempotencyKey ??
+        `bol-${new Date().toISOString().slice(0, 10)}-${params.to}`.slice(0, 200),
     },
     { apiKey },
   );

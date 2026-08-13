@@ -90,6 +90,7 @@ export async function sendNewsletterEmail(params: {
   html: string;
   text: string;
   from: string;
+  idempotencyKey: string;
 }) {
   const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) throw new Error("Serviço de e-mail indisponível (chave ausente).");
@@ -102,8 +103,9 @@ export async function sendNewsletterEmail(params: {
       subject: params.subject,
       html: params.html,
       text: params.text,
-      purpose: "newsletter",
+      purpose: "transactional",
       label: "newsletter",
+      idempotency_key: params.idempotencyKey,
     },
     { apiKey },
   );
@@ -174,6 +176,7 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
           company,
         }),
         text: renderCampaignText(campaign.body, unsubscribeUrl, company),
+        idempotencyKey: `nl-${campaignId}-${r.unsubscribe_token}-${r.email}`.slice(0, 200),
 
       });
       sent += 1;
