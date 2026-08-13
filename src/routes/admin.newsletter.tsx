@@ -23,6 +23,8 @@ import {
   generateNewsletterAI,
   generateNewsletterImage,
 } from "@/lib/newsletter-ai.functions";
+import { listAuthorOptions } from "@/lib/users.functions";
+
 
 export const Route = createFileRoute("/admin/newsletter")({
   head: () => ({
