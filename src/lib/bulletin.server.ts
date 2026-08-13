@@ -20,6 +20,7 @@ export type BulletinSubscriber = {
   via_whatsapp: boolean;
   status: string;
   unsubscribe_token: string;
+  language?: string | null;
 };
 
 type Indicator = {
@@ -358,6 +359,7 @@ export async function dispatchBulletin(options?: {
   testEmail?: string | undefined;
   testWhatsApp?: string | undefined;
   testSegment?: string | undefined;
+  testLanguage?: string | undefined;
 }) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { translateContent } = await import("./ai-translate.server");
