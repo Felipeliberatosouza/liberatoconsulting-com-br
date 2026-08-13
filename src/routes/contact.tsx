@@ -7,9 +7,12 @@ import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
+import { getPublicCompanyAddress } from "@/lib/company-public.functions";
+import { postalAddressSchema } from "@/lib/company-address";
 
 
 export const Route = createFileRoute("/contact")({
+  loader: () => getPublicCompanyAddress(),
   head: (ctx) => ({
     meta: [
       { title: "Contato — Liberato Consulting" },
