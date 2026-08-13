@@ -26,8 +26,8 @@ export type ConsultantRecord = Omit<PublicConsultant, "sort_order"> & {
 /** Consultores publicados (sem expor e-mail de contato). */
 export const listPublicConsultants = createServerFn({ method: "GET" }).handler(
   async (): Promise<PublicConsultant[]> => {
-    const { publicClient } = await import("./admin.server");
-    const { data, error } = await publicClient().rpc("list_public_consultants" as never);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin.rpc("list_public_consultants" as never);
     if (error) return [];
     return ((data ?? []) as PublicConsultant[]).map((c) => ({
       ...c,
