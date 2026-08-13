@@ -583,6 +583,11 @@ function AdminNewsletter() {
               <p className="text-xs uppercase tracking-widest text-muted-foreground">
                 Prévia do material (antes do envio)
               </p>
+              {!subject.trim() && !body.trim() ? (
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Preencha o título e o texto da newsletter acima para ver a prévia aqui.
+                </p>
+              ) : null}
               <p className="mt-2 font-display text-lg font-bold">{subject || "Sem título"}</p>
               {preheader && <p className="text-sm text-muted-foreground">{preheader}</p>}
               {imageUrl && (
@@ -622,8 +627,12 @@ function AdminNewsletter() {
             <button
               type="button"
               className={btn}
-              disabled={socialBusy !== "" || subject.trim().length < 5}
+              disabled={socialBusy !== ""}
               onClick={async () => {
+                if (subject.trim().length < 5) {
+                  toast.error("Preencha primeiro o título da newsletter (mín. 5 caracteres).");
+                  return;
+                }
                 setSocialBusy("text");
                 try {
                   const r = await generateSocialPack({ data: { title: subject, body } });
@@ -636,8 +645,10 @@ function AdminNewsletter() {
                     if (socialImage) await renderArts(socialImage, r.headline, r.bullets);
                     toast.success("Título e bullets gerados.");
                   }
-                } catch {
-                  toast.error("Não foi possível gerar o conteúdo das redes.");
+                } catch (err) {
+                  toast.error(
+                    err instanceof Error ? err.message : "Não foi possível gerar o conteúdo das redes.",
+                  );
                 } finally {
                   setSocialBusy("");
                 }
@@ -648,8 +659,12 @@ function AdminNewsletter() {
             <button
               type="button"
               className="rounded-md border border-accent px-4 py-2 text-sm font-semibold text-accent hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
-              disabled={socialBusy !== "" || subject.trim().length < 5}
+              disabled={socialBusy !== ""}
               onClick={async () => {
+                if (subject.trim().length < 5) {
+                  toast.error("Preencha primeiro o título da newsletter (mín. 5 caracteres).");
+                  return;
+                }
                 setSocialBusy("image");
                 try {
                   const r = await generateSocialImage({ data: { title: subject } });
@@ -664,8 +679,8 @@ function AdminNewsletter() {
                     );
                     toast.success("Imagem gerada para todas as redes.");
                   }
-                } catch {
-                  toast.error("Não foi possível gerar a imagem.");
+                } catch (err) {
+                  toast.error(err instanceof Error ? err.message : "Não foi possível gerar a imagem.");
                 } finally {
                   setSocialBusy("");
                 }

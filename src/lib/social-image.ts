@@ -52,14 +52,17 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
 }
 
 /**
- * Desenha a logomarca (PNG sem fundo) no canto inferior direito.
+ * Desenha a logomarca (PNG sem fundo) no canto superior direito, em tamanho
+ * reduzido, para que nunca seja cortada pelos recortes de cada rede.
  * Escolhe a versão clara ou escura conforme o brilho da área, garantindo leitura.
  */
 async function drawLogo(ctx: CanvasRenderingContext2D, width: number, height: number) {
   const pad = Math.round(width * 0.045);
-  const logoW = Math.round(width * (width > height ? 0.2 : 0.26));
+  // 40% menor do que o tamanho anterior
+  const logoW = Math.round(width * (width > height ? 0.2 : 0.26) * 0.6);
   const probeH = Math.round(height * 0.12);
-  const dark = areaLuminance(ctx, Math.max(0, width - logoW - pad * 2), Math.max(0, height - probeH), logoW + pad * 2, probeH) < 0.55;
+  const dark =
+    areaLuminance(ctx, Math.max(0, width - logoW - pad * 2), 0, logoW + pad * 2, probeH) < 0.55;
   try {
     const logo = await loadImage(dark ? "/logo-light.png" : "/logo.png");
     const logoH = Math.round((logo.height / logo.width) * logoW);
@@ -67,12 +70,13 @@ async function drawLogo(ctx: CanvasRenderingContext2D, width: number, height: nu
     ctx.shadowColor = dark ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.75)";
     ctx.shadowBlur = Math.round(width * 0.02);
     ctx.globalAlpha = 0.98;
-    ctx.drawImage(logo, width - logoW - pad, height - logoH - pad, logoW, logoH);
+    ctx.drawImage(logo, width - logoW - pad, pad, logoW, logoH);
     ctx.restore();
   } catch {
     /* sem logomarca disponível */
   }
 }
+
 
 /** Aplica somente a logomarca sobre uma imagem existente (ex.: cabeçalho do texto). */
 export async function stampLogo(baseImage: string): Promise<string> {
@@ -125,7 +129,8 @@ export async function composeSocialImage(
   ctx.fillStyle = fg;
   ctx.textBaseline = "top";
   ctx.font = `700 ${titleSize}px "Space Grotesk", "Helvetica Neue", Arial, sans-serif`;
-  const titleLines = wrap(ctx, headline.trim(), maxWidth);
+  // reserva o canto superior direito para a logomarca
+  const titleLines = wrap(ctx, headline.trim(), Math.round(maxWidth * 0.8));
   let y = pad;
   for (const line of titleLines) {
     ctx.fillText(line, pad, y);
