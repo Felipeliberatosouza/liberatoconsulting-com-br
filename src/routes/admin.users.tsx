@@ -68,13 +68,13 @@ const emptyForm = {
   rg: "",
   nationality: "Brasileira",
   marital_status: "",
+  address_zip: "",
   address_street: "",
   address_number: "",
   address_complement: "",
   address_district: "",
   address_city: "",
   address_state: "",
-  address_zip: "",
   address_country: "Brasil",
   bank_name: "",
   bank_branch: "",
@@ -95,26 +95,47 @@ function Field({
   onChange,
   type = "text",
   required = false,
+  error,
+  valid,
+  hint,
+  onBlur,
+  disabled,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   type?: string;
   required?: boolean;
+  error?: string;
+  valid?: boolean;
+  hint?: string;
+  onBlur?: () => void;
+  disabled?: boolean;
 }) {
   return (
     <label className="block text-xs font-medium text-muted-foreground">
       {label}
+      {required && <span className="ml-0.5 text-destructive">*</span>}
       <input
         type={type}
         required={required}
         value={value}
+        disabled={disabled}
+        onBlur={onBlur}
         onChange={(e) => onChange(e.target.value)}
-        className={`mt-1 ${input}`}
+        className={`mt-1 ${input} ${
+          error ? "border-destructive" : valid ? "border-emerald-500" : ""
+        } ${disabled ? "opacity-70" : ""}`}
       />
+      {error ? (
+        <span className="mt-1 block text-[11px] font-normal text-destructive">{error}</span>
+      ) : hint ? (
+        <span className="mt-1 block text-[11px] font-normal text-muted-foreground">{hint}</span>
+      ) : null}
     </label>
   );
 }
+
 
 function UsersPage() {
   const [tab, setTab] = useState<Tab>("team");
