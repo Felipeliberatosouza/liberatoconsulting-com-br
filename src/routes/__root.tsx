@@ -244,10 +244,11 @@ function RootComponent() {
     return (
       <QueryClientProvider client={queryClient}>
         <LanguageProvider>
-        <AudienceFilterProvider>
-          <Outlet />
-          <Toaster />
-        </AudienceFilterProvider>
+          <AudienceFilterProvider>
+            <RouteTracker />
+            <Outlet />
+            <Toaster />
+          </AudienceFilterProvider>
         </LanguageProvider>
       </QueryClientProvider>
     );
