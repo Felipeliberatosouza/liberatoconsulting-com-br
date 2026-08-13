@@ -16,6 +16,7 @@ import { Route as CareersRouteImport } from './routes/careers'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContentRouteImport } from './routes/content'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SitemapEnDotxmlRouteImport } from './routes/sitemap-en[.]xml'
 import { Route as SitemapPtDotxmlRouteImport } from './routes/sitemap-pt[.]xml'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -84,6 +85,11 @@ const ContentRoute = ContentRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapEnDotxmlRoute = SitemapEnDotxmlRouteImport.update({
+  id: '/sitemap-en.xml',
+  path: '/sitemap-en.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapPtDotxmlRoute = SitemapPtDotxmlRouteImport.update({
@@ -267,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-pt.xml': typeof SitemapPtDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -310,6 +317,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-pt.xml': typeof SitemapPtDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -354,6 +362,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/content': typeof ContentRouteWithChildren
   '/privacy': typeof PrivacyRoute
+  '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-pt.xml': typeof SitemapPtDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
@@ -399,6 +408,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/privacy'
+    | '/sitemap-en.xml'
     | '/sitemap-pt.xml'
     | '/sitemap.xml'
     | '/terms'
@@ -442,6 +452,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/privacy'
+    | '/sitemap-en.xml'
     | '/sitemap-pt.xml'
     | '/sitemap.xml'
     | '/terms'
@@ -485,6 +496,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/content'
     | '/privacy'
+    | '/sitemap-en.xml'
     | '/sitemap-pt.xml'
     | '/sitemap.xml'
     | '/terms'
@@ -529,6 +541,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ContentRoute: typeof ContentRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
+  SitemapEnDotxmlRoute: typeof SitemapEnDotxmlRoute
   SitemapPtDotxmlRoute: typeof SitemapPtDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
@@ -613,6 +626,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-en.xml': {
+      id: '/sitemap-en.xml'
+      path: '/sitemap-en.xml'
+      fullPath: '/sitemap-en.xml'
+      preLoaderRoute: typeof SitemapEnDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-pt.xml': {
@@ -875,6 +895,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ContentRoute: ContentRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
+  SitemapEnDotxmlRoute: SitemapEnDotxmlRoute,
   SitemapPtDotxmlRoute: SitemapPtDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
