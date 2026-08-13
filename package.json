@@ -9,6 +9,8 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
+    "check:jsonld": "bun run scripts/check-jsonld.ts",
+    "postbuild": "bun run scripts/check-jsonld.ts --if-available",
     "format": "prettier --write ."
   },
   "dependencies": {
