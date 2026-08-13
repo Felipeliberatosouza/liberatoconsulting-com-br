@@ -6,6 +6,7 @@ import {
   companyFooterText,
   type CompanyFooter,
 } from "./company-footer.server";
+import { emailLang, formatDateFor, labelsFor, type EmailLang } from "./email-i18n.server";
 import { DEFAULT_NEWSLETTER_SETTINGS, type NewsletterSettings } from "./newsletter.server";
 
 export type BulletinSubscriber = {
