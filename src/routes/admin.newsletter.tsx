@@ -574,7 +574,9 @@ function AdminNewsletter() {
                     setImageUrl(c.image_url ?? "");
                     setFullText(c.full_text ?? "");
                     setSources(c.sources ?? "");
-                    setReferenceDate(c.reference_date ?? "");
+                    setReferenceDate(c.reference_date ?? today());
+                    setLinkTouched(false);
+
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                 >
