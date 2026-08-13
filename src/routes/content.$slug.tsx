@@ -75,8 +75,11 @@ export const Route = createFileRoute("/content/$slug")({
             path: `/content/${params.slug}`,
             authorName: loaderData?.authors || null,
             image: image,
+            datePublished: loaderData?.publishedAt ?? null,
+            dateModified: loaderData?.updatedAt ?? null,
           }),
         ),
+
       ],
     };
   },
