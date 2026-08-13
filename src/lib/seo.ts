@@ -71,15 +71,8 @@ export function seoLinks(path: string, lang: string = "pt") {
   ];
 }
 
-/** `meta` de idioma: og:locale + alternativos. */
+/** `meta` de idioma: og:locale da versão servida. */
 export function seoLocaleMeta(lang: string = "pt") {
   const current = normalizeLang(lang);
-  return [
-    { property: "og:locale", content: OG_LOCALES[current] ?? "pt_BR" },
-    ...HREFLANGS.filter(([code]) => code !== current).map(([code]) => ({
-      property: "og:locale:alternate",
-      content: OG_LOCALES[code],
-    })),
-  ];
+  return [{ property: "og:locale", content: OG_LOCALES[current] ?? "pt_BR" }];
 }
-
