@@ -30,6 +30,10 @@ export type TeamRow = {
   notes?: string;
   email_opt_in?: boolean;
   active?: boolean;
+  contract_file_path?: string | null;
+  contract_file_name?: string | null;
+  contract_sent_at?: string | null;
+  contract_uploaded_at?: string | null;
   roles: string[];
   signed_at: string | null;
 };
