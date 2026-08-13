@@ -117,9 +117,15 @@ export const buildNewsletterPdf = createServerFn({ method: "POST" })
         supabaseAdmin.from("site_settings").select("value").eq("key", "branding").maybeSingle(),
         supabaseAdmin.from("company_profile").select("*").limit(1).maybeSingle(),
       ]);
-      const logoUrl = ((branding?.value ?? {}) as { logoUrl?: string }).logoUrl ?? null;
       const { formatCompanyAddress } = await import("./company-footer.server");
+      const { siteOrigin } = await import("./bulletin.server");
       const c = (company ?? {}) as Record<string, string>;
+      // Cabeçalho sempre com a logomarca: painel → marca, depois dados da consultoria,
+      // e por fim a logomarca padrão publicada no site.
+      const logoUrl =
+        ((branding?.value ?? {}) as { logoUrl?: string }).logoUrl ||
+        c["logo_url"] ||
+        `${siteOrigin()}/logo.png`;
       const contactLine1 = [c["phone"], c["email"]].filter(Boolean).join("  |  ");
       const contactLine2 = [formatCompanyAddress(c), c["cnpj"] ? `CNPJ ${c["cnpj"]}` : ""]
         .filter(Boolean)

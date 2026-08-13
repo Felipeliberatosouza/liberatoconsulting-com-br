@@ -6,6 +6,7 @@ import {
   SOCIAL_IMAGE_FORMATS,
   composeSocialImage,
   downloadDataUrl,
+  stampLogo,
   type SocialFormatKey,
 } from "@/lib/social-image";
 import { generateSocialImage, generateSocialPack } from "@/lib/social-ai.functions";
@@ -117,6 +118,7 @@ function AdminNewsletter() {
   const [socialArt, setSocialArt] = useState<Record<string, string>>({});
   const [socialBusy, setSocialBusy] = useState<"" | "text" | "image" | "art">("");
   const [previewId, setPreviewId] = useState<string | null>(null);
+  const [draftPreview, setDraftPreview] = useState(false);
   const [onlyAuthorized, setOnlyAuthorized] = useState(true);
 
   /** Redesenha as artes em todos os formatos a partir da mesma imagem base. */
@@ -332,7 +334,8 @@ function AdminNewsletter() {
                     const r = await generateNewsletterImage({ data: { title: subject } });
                     if (!r.ok) toast.error(r.error);
                     else {
-                      setImageUrl(r.imageUrl);
+                      // Aplica a logomarca (PNG sem fundo) no canto inferior direito.
+                      setImageUrl(await stampLogo(r.imageUrl).catch(() => r.imageUrl));
                       toast.success("Imagem de cabeçalho gerada.");
                     }
                   } catch {
@@ -557,13 +560,54 @@ function AdminNewsletter() {
             <button className={btn} type="submit" disabled={busy}>
               {busy ? "Salvando…" : editId ? "Salvar alterações" : "Criar newsletter"}
             </button>
+            <button
+              type="button"
+              className="rounded-md border border-border px-4 py-2 text-sm hover:border-accent"
+              onClick={() => setDraftPreview((v) => !v)}
+            >
+              {draftPreview ? "Ocultar prévia" : "Visualizar material"}
+            </button>
             {editId && (
               <button type="button" onClick={resetForm} className="text-sm text-muted-foreground hover:text-accent">
                 Cancelar edição
               </button>
             )}
+            <span className="text-xs text-muted-foreground">
+              Salve para que a newsletter apareça em “Campanhas”, onde é possível revisar, editar e
+              enviar.
+            </span>
           </div>
+
+          {draftPreview && (
+            <div className="rounded-md border border-border bg-secondary/40 p-4">
+              <p className="text-xs uppercase tracking-widest text-muted-foreground">
+                Prévia do material (antes do envio)
+              </p>
+              <p className="mt-2 font-display text-lg font-bold">{subject || "Sem título"}</p>
+              {preheader && <p className="text-sm text-muted-foreground">{preheader}</p>}
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt="Cabeçalho da newsletter"
+                  className="mt-3 max-h-64 w-full rounded-md object-cover"
+                />
+              )}
+              <div className="mt-3 space-y-2 text-sm leading-relaxed">
+                {body
+                  .split(/\n{2,}/)
+                  .filter(Boolean)
+                  .map((p, i) => (
+                    <p key={i}>{p}</p>
+                  ))}
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground">
+                {authors ? `Autoria: ${authors}` : ""}
+                {referenceDate ? ` • ${referenceDate}` : ""}
+              </p>
+            </div>
+          )}
         </form>
+
 
         {/* Formatos para redes sociais */}
         <div className="mt-8 border-t border-border pt-6">
@@ -612,7 +656,7 @@ function AdminNewsletter() {
                   if (!r.ok) toast.error(r.error);
                   else {
                     setSocialImage(r.imageUrl);
-                    if (!imageUrl) setImageUrl(r.imageUrl);
+                    if (!imageUrl) setImageUrl(await stampLogo(r.imageUrl).catch(() => r.imageUrl));
                     await renderArts(
                       r.imageUrl,
                       headline || `Você sabe o que é ${subject}?`,
@@ -869,7 +913,11 @@ function AdminNewsletter() {
             </div>
           ))}
           {campaigns.data?.length === 0 && (
-            <p className="text-sm text-muted-foreground">Nenhuma campanha criada ainda.</p>
+            <p className="text-sm text-muted-foreground">
+              Nenhuma campanha criada ainda. Preencha o título e o texto em “Nova newsletter” e
+              clique em <strong>Criar newsletter</strong>: a campanha aparece aqui para visualizar,
+              editar, enviar teste e disparar para a base autorizada.
+            </p>
           )}
         </div>
       </div>

@@ -51,6 +51,42 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
   return lines;
 }
 
+/**
+ * Desenha a logomarca (PNG sem fundo) no canto inferior direito.
+ * Escolhe a versão clara ou escura conforme o brilho da área, garantindo leitura.
+ */
+async function drawLogo(ctx: CanvasRenderingContext2D, width: number, height: number) {
+  const pad = Math.round(width * 0.045);
+  const logoW = Math.round(width * (width > height ? 0.2 : 0.26));
+  const probeH = Math.round(height * 0.12);
+  const dark = areaLuminance(ctx, Math.max(0, width - logoW - pad * 2), Math.max(0, height - probeH), logoW + pad * 2, probeH) < 0.55;
+  try {
+    const logo = await loadImage(dark ? "/logo-light.png" : "/logo.png");
+    const logoH = Math.round((logo.height / logo.width) * logoW);
+    ctx.save();
+    ctx.shadowColor = dark ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.75)";
+    ctx.shadowBlur = Math.round(width * 0.02);
+    ctx.globalAlpha = 0.98;
+    ctx.drawImage(logo, width - logoW - pad, height - logoH - pad, logoW, logoH);
+    ctx.restore();
+  } catch {
+    /* sem logomarca disponível */
+  }
+}
+
+/** Aplica somente a logomarca sobre uma imagem existente (ex.: cabeçalho do texto). */
+export async function stampLogo(baseImage: string): Promise<string> {
+  const img = await loadImage(baseImage);
+  const canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return baseImage;
+  ctx.drawImage(img, 0, 0);
+  await drawLogo(ctx, canvas.width, canvas.height);
+  return canvas.toDataURL("image/jpeg", 0.92);
+}
+
 export async function composeSocialImage(
   baseImage: string,
   format: SocialFormatKey,
@@ -114,6 +150,8 @@ export async function composeSocialImage(
     }
     y += bulletSize * 0.4;
   }
+
+  await drawLogo(ctx, f.width, f.height);
 
   return canvas.toDataURL(f.mime, 0.92);
 }
