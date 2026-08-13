@@ -359,7 +359,7 @@ function AdminNewsletter() {
               <img
                 src={imageUrl}
                 alt="Cabeçalho gerado para a newsletter"
-                className="mt-4 max-h-48 w-full rounded-md bg-muted object-contain"
+                className="mt-4 max-h-48 w-full rounded-md object-cover"
               />
             )}
           </div>
@@ -600,7 +600,7 @@ function AdminNewsletter() {
                 <img
                   src={imageUrl}
                   alt="Cabeçalho da newsletter"
-                  className="mt-3 max-h-64 w-full rounded-md bg-muted object-contain"
+                  className="mt-3 max-h-64 w-full rounded-md object-cover"
                 />
               )}
               <div className="mt-3 space-y-2 text-sm leading-relaxed">
@@ -846,7 +846,7 @@ function AdminNewsletter() {
                     <img
                       src={c.image_url}
                       alt="Cabeçalho da campanha"
-                      className="mt-3 max-h-56 w-full rounded-md bg-muted object-contain"
+                      className="mt-3 max-h-56 w-full rounded-md object-cover"
                     />
                   )}
                   <div className="mt-3 space-y-2 text-sm leading-relaxed">
