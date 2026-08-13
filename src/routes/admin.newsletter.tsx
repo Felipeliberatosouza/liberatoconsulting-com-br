@@ -475,8 +475,18 @@ function AdminNewsletter() {
           </div>
 
           <div>
-            <label className={label} htmlFor="nl-link">Link do conteúdo (opcional, usado nas redes)</label>
-            <input id="nl-link" className={input} value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://liberato.com/content/..." />
+            <label className={label} htmlFor="nl-link">Link do conteúdo (gerado a partir do título, pode ser editado)</label>
+            <input
+              id="nl-link"
+              className={input}
+              value={link}
+              onChange={(e) => {
+                setLinkTouched(true);
+                setLink(e.target.value);
+              }}
+              placeholder="https://liberatoconsulting.com.br/content/..."
+            />
+
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
