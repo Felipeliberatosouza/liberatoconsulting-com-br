@@ -420,3 +420,34 @@ export const reviewChangeRequest = createServerFn({ method: "POST" })
     if (upErr) return { ok: false as const, error: upErr.message };
     return { ok: true as const };
   });
+
+/* ------------------------------------------------------------------ */
+/* Opções de autoria (autores, consultores e administradores)          */
+/* ------------------------------------------------------------------ */
+
+/** Lista nomes e e-mails dos usuários que podem assinar publicações. */
+export const listAuthorOptions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { assertAnyRole } = await import("./access.server");
+    await assertAnyRole(context, ["consultor", "autor"]);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [{ data: roles }, { data: profiles }] = await Promise.all([
+      supabaseAdmin.from("user_roles").select("user_id, role"),
+      supabaseAdmin.from("profiles").select("user_id, full_name, email, active"),
+    ]);
+    const allowed = new Set(
+      (roles ?? [])
+        .filter((r) => ["admin", "consultor", "autor"].includes(r.role as string))
+        .map((r) => r.user_id as string),
+    );
+    return (profiles ?? [])
+      .filter((p) => allowed.has(p.user_id as string) && p.active !== false)
+      .map((p) => ({
+        userId: p.user_id as string,
+        name: (p.full_name as string) ?? "",
+        email: (p.email as string) ?? "",
+      }))
+      .filter((p) => p.name.trim())
+      .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+  });
