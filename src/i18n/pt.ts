@@ -813,7 +813,7 @@ export const pt = {
     errorRate: "Muitos envios em pouco tempo. Tente novamente mais tarde.",
     errorFileType: "Formato de arquivo não aceito. Envie PDF, DOC, DOCX, RTF ou ODT.",
     errorFileSize: "Arquivo muito grande. O limite é 3 MB.",
-    errorLinkedin: "Informe um link válido do LinkedIn.",
+    errorLinkedin: "Insira um link válido do LinkedIn com o formato completo: http://www.linkedin.com/in/seu-perfil. Não esqueça o 'http://'.",
     errorGeneric: "Não foi possível enviar agora. Tente novamente em instantes.",
     note: "As candidaturas são encaminhadas para contato@liberatoconsulting.com.br.",
   },
