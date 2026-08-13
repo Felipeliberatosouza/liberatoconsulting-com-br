@@ -124,22 +124,58 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@context": "https://schema.org",
           "@graph": [
             {
-              "@type": "Organization",
+              "@type": ["Organization", "ProfessionalService"],
+              "@id": "https://liberatoconsulting.com.br/#organization",
               name: "Liberato Consulting",
+              alternateName: "Liberato Consulting Gestão Empresarial",
               url: "https://liberatoconsulting.com.br",
-              logo: "https://liberatoconsulting.com.br/logo.png",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://liberatoconsulting.com.br/logo.png",
+              },
+              image: "https://liberatoconsulting.com.br/logo.png",
               email: "contato@liberatoconsulting.com.br",
+              telephone: "+55 11 91325-8668",
               description:
                 "Consultoria em gestão empresarial com inteligência artificial no centro de cada entrega.",
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "São Paulo",
+                addressRegion: "SP",
+                addressCountry: "BR",
+              },
+              areaServed: [
+                { "@type": "Country", name: "Brasil" },
+                { "@type": "Place", name: "Global" },
+              ],
+              knowsLanguage: ["pt-BR", "en", "es", "zh-Hans"],
+              contactPoint: [
+                {
+                  "@type": "ContactPoint",
+                  contactType: "customer service",
+                  email: "contato@liberatoconsulting.com.br",
+                  telephone: "+55 11 91325-8668",
+                  availableLanguage: ["Portuguese", "English", "Spanish", "Chinese"],
+                },
+                {
+                  "@type": "ContactPoint",
+                  contactType: "human resources",
+                  email: "parceria@liberatoconsulting.com.br",
+                  availableLanguage: ["Portuguese", "English"],
+                },
+              ],
             },
             {
               "@type": "WebSite",
+              "@id": "https://liberatoconsulting.com.br/#website",
               name: "Liberato Consulting",
               url: "https://liberatoconsulting.com.br",
-              inLanguage: "pt-BR",
+              publisher: { "@id": "https://liberatoconsulting.com.br/#organization" },
+              inLanguage: ["pt-BR", "en", "es", "zh-Hans"],
             },
           ],
         }),
+
       },
     ],
   }),
