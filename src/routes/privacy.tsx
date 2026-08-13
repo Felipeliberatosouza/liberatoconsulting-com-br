@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n";
 import { legal } from "@/i18n/legal";
+import { seoLinks } from "@/lib/seo";
 import { EmailText } from "@/components/EmailText";
 
 export const Route = createFileRoute("/privacy")({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/privacy")({
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
     ],
+    links: seoLinks("/privacy"),
   }),
   component: () => <LegalPage doc="privacy" />,
 });

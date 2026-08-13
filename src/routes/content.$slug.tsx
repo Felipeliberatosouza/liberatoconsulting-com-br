@@ -13,6 +13,7 @@ import {
   submitArticle,
 } from "@/lib/content.functions";
 import type { ArticleRecord } from "@/lib/site-config";
+import { seoLinks } from "@/lib/seo";
 
 export const Route = createFileRoute("/content/$slug")({
   head: ({ params }) => ({
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/content/$slug")({
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: seoLinks(`/content/${params.slug}`),
   }),
   component: ArticlePage,
 });

@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, ShieldCheck, Upload } from "lucide-react";
 import { pt } from "@/i18n/pt";
 import { EmailText } from "@/components/EmailText";
 import { useLanguage } from "@/i18n";
+import { seoLinks } from "@/lib/seo";
 import { submitApplication } from "@/lib/careers.functions";
 
 export const Route = createFileRoute("/careers")({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/careers")({
         { property: "og:type", content: "website" },
         { name: "twitter:card", content: "summary_large_image" },
       ],
+      links: seoLinks("/careers"),
     };
   },
   component: CareersPage,

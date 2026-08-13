@@ -12,6 +12,7 @@ import {
   useAudienceFilters,
 } from "@/lib/audience-filters";
 import { listPublicIndicators } from "@/lib/indicators.functions";
+import { seoLinks } from "@/lib/seo";
 import { getScopedBrazilSections } from "@/lib/brazil-scope.functions";
 
 export const Route = createFileRoute("/brasil")({
@@ -32,9 +33,9 @@ export const Route = createFileRoute("/brasil")({
         content:
           "Panorama econômico, setores estratégicos, IED, tributos, Mercosul, mercado consumidor e infraestrutura do Brasil.",
       },
-      { property: "og:url", content: "https://liberato-ai-insight.lovable.app/brasil" },
+      { property: "og:url", content: "https://liberatoconsulting.com.br/brasil" },
     ],
-    links: [{ rel: "canonical", href: "https://liberato-ai-insight.lovable.app/brasil" }],
+    links: seoLinks("/brasil"),
   }),
   component: BrazilPage,
 });
