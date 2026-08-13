@@ -6,6 +6,7 @@ import {
   companyFooterText,
   type CompanyFooter,
 } from "./company-footer.server";
+import { emailLang, formatDateFor, labelsFor, type EmailLang } from "./email-i18n.server";
 import { DEFAULT_NEWSLETTER_SETTINGS, type NewsletterSettings } from "./newsletter.server";
 
 export type BulletinSubscriber = {
@@ -19,6 +20,7 @@ export type BulletinSubscriber = {
   via_whatsapp: boolean;
   status: string;
   unsubscribe_token: string;
+  language?: string | null;
 };
 
 type Indicator = {
@@ -112,9 +114,14 @@ export async function buildBulletinContent(segment: string): Promise<BulletinCon
 
 }
 
-/** HTML do Boletim Semanal (corpo do e-mail). */
-export function renderBulletinHtml(content: BulletinContent, unsubscribeUrl: string) {
+/** HTML do Boletim Semanal (corpo do e-mail), no idioma do destinatário. */
+export function renderBulletinHtml(
+  content: BulletinContent,
+  unsubscribeUrl: string,
+  lang: EmailLang = "pt",
+) {
   const origin = siteOrigin();
+  const L = labelsFor(lang);
 
   const indicators =
     content.indicators.length > 0
@@ -134,45 +141,50 @@ export function renderBulletinHtml(content: BulletinContent, unsubscribeUrl: str
 </td></tr>`,
           )
           .join("")
-      : `<tr><td style="padding:10px 0;font-size:14px;color:#78716c">Sem indicadores publicados para este recorte nesta semana.</td></tr>`;
+      : `<tr><td style="padding:10px 0;font-size:14px;color:#78716c">${escapeHtml(L.noIndicators)}</td></tr>`;
+
+  const articleLink = (slug: string) =>
+    `${origin}/content/${encodeURIComponent(slug)}${lang === "pt" ? "" : `?lang=${lang}`}`;
 
   const articles =
     content.articles.length > 0
       ? content.articles
           .map(
             (a) => `<p style="margin:0 0 14px">
-<a href="${origin}/content/${encodeURIComponent(a.slug)}" style="font-size:15px;font-weight:600;color:#14192a;text-decoration:none">${escapeHtml(
+<a href="${articleLink(a.slug)}" style="font-size:15px;font-weight:600;color:#14192a;text-decoration:none">${escapeHtml(
               a.title,
             )}</a><br />
 <span style="font-size:13px;color:#57534e">${escapeHtml((a.summary || "").slice(0, 180))}</span><br />
-<a href="${origin}/content/${encodeURIComponent(a.slug)}" style="font-size:13px;color:#e2751f">Ler o conteúdo →</a>
+<a href="${articleLink(a.slug)}" style="font-size:13px;color:#e2751f">${escapeHtml(L.readContent)}</a>
 </p>`,
           )
           .join("")
-      : `<p style="font-size:14px;color:#78716c">Novos conteúdos serão publicados em breve.</p>`;
+      : `<p style="font-size:14px;color:#78716c">${escapeHtml(L.soonArticles)}</p>`;
 
-  return `<!doctype html><html><body style="margin:0;background:#f5f5f4;padding:28px 0;font-family:Helvetica,Arial,sans-serif">
+  return `<!doctype html><html lang="${lang}"><body style="margin:0;background:#f5f5f4;padding:28px 0;font-family:Helvetica,Arial,sans-serif">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:94%;background:#ffffff;border-radius:12px;overflow:hidden">
 
 <tr><td style="padding:28px 32px 20px;border-bottom:1px solid #e7e5e4" align="center">
   <img src="${escapeHtml(content.logoUrl)}" alt="Liberato Consulting" style="height:26px;width:auto" />
-  <h1 style="margin:18px 0 6px;font-size:24px;color:#14192a">Boletim Semanal</h1>
-  <div style="font-size:13px;color:#78716c">Atualizado em ${escapeHtml(content.dateLabel)}</div>
-  <div style="margin-top:6px;font-size:12px;color:#e2751f;font-weight:600">Segmento: ${escapeHtml(
-    content.segment,
-  )}</div>
+  <h1 style="margin:18px 0 6px;font-size:24px;color:#14192a">${escapeHtml(L.bulletinTitle)}</h1>
+  <div style="font-size:13px;color:#78716c">${escapeHtml(L.updatedOn)} ${escapeHtml(content.dateLabel)}</div>
+  <div style="margin-top:6px;font-size:12px;color:#e2751f;font-weight:600">${escapeHtml(
+    L.segment,
+  )}: ${escapeHtml(content.segment)}</div>
 </td></tr>
 
 <tr><td style="padding:24px 32px 8px">
-  <h2 style="margin:0 0 8px;font-size:16px;color:#14192a">Indicadores econômicos</h2>
+  <h2 style="margin:0 0 8px;font-size:16px;color:#14192a">${escapeHtml(L.indicators)}</h2>
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${indicators}</table>
 </td></tr>
 
 <tr><td style="padding:24px 32px 8px">
-  <h2 style="margin:0 0 12px;font-size:16px;color:#14192a">Últimos artigos</h2>
+  <h2 style="margin:0 0 12px;font-size:16px;color:#14192a">${escapeHtml(L.latestArticles)}</h2>
   ${articles}
-  <p style="margin:16px 0 0"><a href="${origin}/content" style="font-size:13px;font-weight:600;color:#e2751f">Ver todos os conteúdos →</a></p>
+  <p style="margin:16px 0 0"><a href="${origin}/content${lang === "pt" ? "" : `?lang=${lang}`}" style="font-size:13px;font-weight:600;color:#e2751f">${escapeHtml(
+    L.viewAll,
+  )}</a></p>
 </td></tr>
 
 <tr><td style="padding:22px 32px;background:#14192a;color:#f7f6f4">
@@ -181,61 +193,74 @@ export function renderBulletinHtml(content: BulletinContent, unsubscribeUrl: str
 
 
 <tr><td style="padding:18px 32px 26px;font-size:12px;color:#78716c">
-  Você recebe o Boletim Semanal da Liberato Consulting porque solicitou esta atualização.
-  <a href="${unsubscribeUrl}" style="color:#e2751f">Parar de receber</a>.
+  ${escapeHtml(L.bulletinWhy)}
+  <a href="${unsubscribeUrl}" style="color:#e2751f">${escapeHtml(L.stopReceiving)}</a>.
 </td></tr>
 
 </table></td></tr></table></body></html>`;
 }
 
-export function renderBulletinText(content: BulletinContent, unsubscribeUrl: string) {
+export function renderBulletinText(
+  content: BulletinContent,
+  unsubscribeUrl: string,
+  lang: EmailLang = "pt",
+) {
   const origin = siteOrigin();
+  const L = labelsFor(lang);
+  const suffix = lang === "pt" ? "" : `?lang=${lang}`;
   const indicators = content.indicators
     .map((i) => `• ${i.label}: ${i.value}${i.unit} (${i.reference_period})`)
     .join("\n");
   const articles = content.articles
-    .map((a) => `• ${a.title} — ${origin}/content/${a.slug}`)
+    .map((a) => `• ${a.title} — ${origin}/content/${a.slug}${suffix}`)
     .join("\n");
-  return `BOLETIM SEMANAL — Liberato Consulting
-Atualizado em ${content.dateLabel}
-Segmento: ${content.segment}
+  return `${L.bulletinTitle.toUpperCase()} — Liberato Consulting
+${L.updatedOn} ${content.dateLabel}
+${L.segment}: ${content.segment}
 
-INDICADORES ECONÔMICOS
-${indicators || "Sem indicadores para este recorte."}
+${L.indicators.toUpperCase()}
+${indicators || L.noIndicators}
 
-ÚLTIMOS ARTIGOS
-${articles || "Novos conteúdos em breve."}
+${L.latestArticles.toUpperCase()}
+${articles || L.soonArticles}
 
 ${companyFooterText(content.company)}
 
-Parar de receber: ${unsubscribeUrl}`;
+${L.stopReceiving}: ${unsubscribeUrl}`;
 }
 
 /** Mensagem enviada por WhatsApp (acompanha a imagem do boletim). */
-export function renderBulletinWhatsApp(content: BulletinContent, unsubscribeUrl: string) {
+export function renderBulletinWhatsApp(
+  content: BulletinContent,
+  unsubscribeUrl: string,
+  lang: EmailLang = "pt",
+) {
   const origin = siteOrigin();
+  const L = labelsFor(lang);
+  const suffix = lang === "pt" ? "" : `?lang=${lang}`;
   const indicators = content.indicators
     .slice(0, 5)
     .map((i) => `• ${i.label}: ${i.value}${i.unit}`)
     .join("\n");
   const articles = content.articles
     .slice(0, 3)
-    .map((a) => `• ${a.title}: ${origin}/content/${a.slug}`)
+    .map((a) => `• ${a.title}: ${origin}/content/${a.slug}${suffix}`)
     .join("\n");
-  return `*Boletim Semanal — Liberato Consulting*
-Atualizado em ${content.dateLabel}
-Segmento: ${content.segment}
+  return `*${L.bulletinTitle} — Liberato Consulting*
+${L.updatedOn} ${content.dateLabel}
+${L.segment}: ${content.segment}
 
-*Indicadores econômicos*
-${indicators || "Sem indicadores para este recorte."}
+*${L.indicators}*
+${indicators || L.noIndicators}
 
-*Últimos artigos*
-${articles || "Novos conteúdos em breve."}
+*${L.latestArticles}*
+${articles || L.soonArticles}
 
 ${companyFooterText(content.company)}
 
-Para parar de receber, acesse: ${unsubscribeUrl}`;
+${L.stopReceiving}: ${unsubscribeUrl}`;
 }
+
 
 async function newsletterSettings(): Promise<NewsletterSettings> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -334,13 +359,53 @@ export async function dispatchBulletin(options?: {
   testEmail?: string | undefined;
   testWhatsApp?: string | undefined;
   testSegment?: string | undefined;
+  testLanguage?: string | undefined;
 }) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { translateContent } = await import("./ai-translate.server");
   const origin = siteOrigin();
   const cache = new Map<string, BulletinContent>();
-  const contentFor = async (segment: string) => {
-    const key = segment || "Todos";
-    if (!cache.has(key)) cache.set(key, await buildBulletinContent(key));
+  const stamp = new Date().toISOString().slice(0, 10);
+
+  /** Conteúdo do boletim por segmento, traduzido para o idioma do inscrito. */
+  const contentFor = async (segment: string, lang: EmailLang): Promise<BulletinContent> => {
+    const key = `${segment || "Todos"}|${lang}`;
+    if (!cache.has(key)) {
+      const base = await buildBulletinContent(segment || "Todos");
+      if (lang === "pt") {
+        cache.set(key, base);
+      } else {
+        const translated = await translateContent(
+          `bulletin:${stamp}:${segment || "Todos"}`,
+          lang,
+          {
+            segment: base.segment,
+            indicators: base.indicators.map((i) => ({
+              label: i.label,
+              reference_period: i.reference_period,
+              note: i.note,
+            })),
+            articles: base.articles.map((a) => ({ title: a.title, summary: a.summary })),
+          },
+        );
+        cache.set(key, {
+          ...base,
+          dateLabel: formatDateFor(lang),
+          segment: translated.segment || base.segment,
+          indicators: base.indicators.map((i, idx) => ({
+            ...i,
+            label: translated.indicators[idx]?.label || i.label,
+            reference_period: translated.indicators[idx]?.reference_period ?? i.reference_period,
+            note: translated.indicators[idx]?.note ?? i.note,
+          })),
+          articles: base.articles.map((a, idx) => ({
+            ...a,
+            title: translated.articles[idx]?.title || a.title,
+            summary: translated.articles[idx]?.summary ?? a.summary,
+          })),
+        });
+      }
+    }
     return cache.get(key)!;
   };
 
@@ -358,13 +423,14 @@ export async function dispatchBulletin(options?: {
         via_whatsapp: Boolean(options.testWhatsApp),
         status: "active",
         unsubscribe_token: "00000000-0000-0000-0000-000000000000",
+        language: options.testLanguage ?? "pt",
       },
     ];
   } else {
     const { data } = await supabaseAdmin
       .from("bulletin_subscribers")
       .select(
-        "id, full_name, company, segment, email, whatsapp, via_email, via_whatsapp, status, unsubscribe_token",
+        "id, full_name, company, segment, email, whatsapp, via_email, via_whatsapp, status, unsubscribe_token, language",
       )
       .eq("status", "active")
       .limit(5000);
@@ -382,14 +448,15 @@ export async function dispatchBulletin(options?: {
   let snapshot: { subject: string; dateLabel: string; html: string } | null = null;
 
   for (const r of recipients) {
-    const content = await contentFor(r.segment);
+    const lang = emailLang(r.language);
+    const content = await contentFor(r.segment, lang);
     const unsubscribeUrl = `${origin}/boletim/cancelar?token=${r.unsubscribe_token}`;
-    const subject = `Boletim Semanal — ${content.dateLabel}`;
+    const subject = `${labelsFor(lang).bulletinTitle} — ${content.dateLabel}`;
     if (!snapshot) {
       snapshot = {
         subject,
         dateLabel: content.dateLabel,
-        html: renderBulletinHtml(content, unsubscribeUrl),
+        html: renderBulletinHtml(content, unsubscribeUrl, lang),
       };
     }
 
@@ -398,8 +465,8 @@ export async function dispatchBulletin(options?: {
         await sendBulletinEmail({
           to: r.email,
           subject,
-          html: renderBulletinHtml(content, unsubscribeUrl),
-          text: renderBulletinText(content, unsubscribeUrl),
+          html: renderBulletinHtml(content, unsubscribeUrl, lang),
+          text: renderBulletinText(content, unsubscribeUrl, lang),
         });
         sentEmail += 1;
       } catch (err) {
@@ -412,7 +479,7 @@ export async function dispatchBulletin(options?: {
       try {
         await sendWhatsAppMessage({
           to: r.whatsapp,
-          caption: renderBulletinWhatsApp(content, unsubscribeUrl),
+          caption: renderBulletinWhatsApp(content, unsubscribeUrl, lang),
           imageUrl: content.logoUrl,
         });
         sentWhatsApp += 1;
@@ -421,6 +488,7 @@ export async function dispatchBulletin(options?: {
         lastError = err instanceof Error ? err.message : String(err);
       }
     }
+
 
     if (r.id !== "test") {
       await supabaseAdmin
@@ -458,21 +526,25 @@ export async function sendUnsubscribeConfirmation(sub: {
   via_email: boolean;
   via_whatsapp: boolean;
   full_name: string;
+  language?: string | null;
 }) {
-  const message = `Olá${sub.full_name ? `, ${sub.full_name}` : ""}. Confirmamos o cancelamento do Boletim Semanal da Liberato Consulting. Você não receberá mais estes envios. Se quiser voltar, é só se cadastrar novamente em ${siteOrigin()}/brasil.`;
+  const lang = emailLang(sub.language);
+  const L = labelsFor(lang);
+  const message = L.cancelBody(sub.full_name ?? "", siteOrigin());
 
   if (sub.via_email && sub.email) {
     try {
       await sendBulletinEmail({
         to: sub.email,
-        subject: "Cancelamento confirmado — Boletim Semanal",
-        html: `<!doctype html><html><body style="font-family:Helvetica,Arial,sans-serif;background:#f5f5f4;padding:28px">
+        subject: L.cancelSubject,
+        html: `<!doctype html><html lang="${lang}"><body style="font-family:Helvetica,Arial,sans-serif;background:#f5f5f4;padding:28px">
 <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:12px;padding:28px">
-<h1 style="font-size:20px;color:#14192a;margin:0 0 12px">Cancelamento confirmado</h1>
+<h1 style="font-size:20px;color:#14192a;margin:0 0 12px">${escapeHtml(L.cancelTitle)}</h1>
 <p style="font-size:15px;color:#1f2328;line-height:1.6">${escapeHtml(message)}</p>
 </div></body></html>`,
         text: message,
       });
+
     } catch {
       /* confirmação é best-effort */
     }

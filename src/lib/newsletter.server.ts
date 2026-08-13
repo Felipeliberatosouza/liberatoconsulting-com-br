@@ -6,6 +6,8 @@ import {
   loadCompanyFooter,
   type CompanyFooter,
 } from "./company-footer.server";
+import { emailLang, labelsFor, type EmailLang } from "./email-i18n.server";
+
 
 export type NewsletterSettings = {
   fromName: string;
@@ -34,7 +36,9 @@ export function renderCampaignHtml(input: {
   body: string;
   unsubscribeUrl: string;
   company?: CompanyFooter;
+  lang?: EmailLang;
 }) {
+  const labels = labelsFor(input.lang ?? "pt");
   const paragraphs = input.body
     .split(/\n{2,}/)
     .map((p) => p.trim())
@@ -53,7 +57,7 @@ ${companyFooterHtml(input.company)}
 </td></tr>`
     : "";
 
-  return `<!doctype html><html><body style="margin:0;background:#f5f5f4;padding:32px 0;font-family:Helvetica,Arial,sans-serif">
+  return `<!doctype html><html lang="${input.lang ?? "pt"}"><body style="margin:0;background:#f5f5f4;padding:32px 0;font-family:Helvetica,Arial,sans-serif">
 <span style="display:none;opacity:0;color:transparent">${escapeHtml(input.preheader)}</span>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:92%;background:#ffffff;border-radius:12px;overflow:hidden">
@@ -67,8 +71,8 @@ ${paragraphs}
 </td></tr>
 ${companyBlock}
 <tr><td style="padding:20px 32px 28px;border-top:1px solid #e7e5e4;font-size:12px;color:#78716c">
-Você recebeu este e-mail porque se inscreveu na newsletter da Liberato Consulting.
-<a href="${input.unsubscribeUrl}" style="color:#ea580c">Cancelar inscrição</a>.
+${escapeHtml(labels.newsletterWhy)}
+<a href="${input.unsubscribeUrl}" style="color:#ea580c">${escapeHtml(labels.unsubscribe)}</a>.
 </td></tr>
 </table></td></tr></table></body></html>`;
 }
@@ -77,10 +81,12 @@ export function renderCampaignText(
   body: string,
   unsubscribeUrl: string,
   company?: CompanyFooter,
+  lang: EmailLang = "pt",
 ) {
   const footer = company ? `\n\n${companyFooterText(company)}` : "";
-  return `${body}${footer}\n\n—\nCancelar inscrição: ${unsubscribeUrl}`;
+  return `${body}${footer}\n\n—\n${labelsFor(lang).unsubscribe}: ${unsubscribeUrl}`;
 }
+
 
 
 /** Envia um e-mail da newsletter pelo serviço de e-mail da Lovable. */
@@ -143,14 +149,14 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
   const company = await loadCompanyFooter(origin);
 
 
-  type Recipient = { email: string; unsubscribe_token: string };
+  type Recipient = { email: string; unsubscribe_token: string; language?: string | null };
   let recipients: Recipient[];
   if (testEmail) {
     recipients = [{ email: testEmail, unsubscribe_token: "00000000-0000-0000-0000-000000000000" }];
   } else {
     const { data: subs } = await supabaseAdmin
       .from("newsletter_subscribers")
-      .select("email, unsubscribe_token")
+      .select("email, unsubscribe_token, language")
       .eq("status", "active")
       .limit(5000);
     recipients = (subs ?? []) as Recipient[];
@@ -169,29 +175,48 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
   let failed = 0;
   let lastError: string | null = null;
 
+  // Conteúdo traduzido uma única vez por idioma presente na lista.
+  const { translateContent } = await import("./ai-translate.server");
+  const variants = new Map<EmailLang, { subject: string; preheader: string; body: string }>();
+  const variantFor = async (lang: EmailLang) => {
+    if (!variants.has(lang)) {
+      variants.set(
+        lang,
+        await translateContent(`campaign:${campaignId}`, lang, {
+          subject: campaign.subject as string,
+          preheader: (campaign.preheader ?? "") as string,
+          body: (campaign.body ?? "") as string,
+        }),
+      );
+    }
+    return variants.get(lang)!;
+  };
 
   for (const r of recipients) {
+    const lang = emailLang(r.language);
     const unsubscribeUrl = `${origin}/newsletter/unsubscribe?token=${r.unsubscribe_token}`;
     try {
+      const v = await variantFor(lang);
       await sendNewsletterEmail({
         to: r.email,
         from,
-        subject: campaign.subject,
+        subject: v.subject,
         html: renderCampaignHtml({
-          subject: campaign.subject,
-          preheader: campaign.preheader ?? "",
-          body: campaign.body,
+          subject: v.subject,
+          preheader: v.preheader,
+          body: v.body,
           unsubscribeUrl,
           company,
+          lang,
         }),
-        text: renderCampaignText(campaign.body, unsubscribeUrl, company),
-        idempotencyKey: `nl-${campaignId}-${r.unsubscribe_token}-${r.email}`.slice(0, 200),
-
+        text: renderCampaignText(v.body, unsubscribeUrl, company, lang),
+        idempotencyKey: `nl-${campaignId}-${lang}-${r.unsubscribe_token}-${r.email}`.slice(0, 200),
       });
       sent += 1;
     } catch (err) {
       failed += 1;
       lastError = err instanceof Error ? err.message : String(err);
+
     }
   }
 
