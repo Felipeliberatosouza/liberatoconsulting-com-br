@@ -25,6 +25,8 @@ export const Route = createFileRoute("/contact")({
       { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Contato — Liberato Consulting" },
+      { name: "twitter:description", content: "Conte o desafio da sua empresa. Respondemos em até dois dias úteis." },
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/contact", headLang(ctx)),

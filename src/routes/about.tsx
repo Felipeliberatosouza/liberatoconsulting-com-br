@@ -25,6 +25,8 @@ export const Route = createFileRoute("/about")({
       { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Quem somos — Liberato Consulting" },
+      { name: "twitter:description", content: "Método de gestão, resultado medido e inteligência artificial como propósito." },
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/about", headLang(ctx)),
