@@ -129,7 +129,8 @@ export async function composeSocialImage(
   ctx.fillStyle = fg;
   ctx.textBaseline = "top";
   ctx.font = `700 ${titleSize}px "Space Grotesk", "Helvetica Neue", Arial, sans-serif`;
-  const titleLines = wrap(ctx, headline.trim(), maxWidth);
+  // reserva o canto superior direito para a logomarca
+  const titleLines = wrap(ctx, headline.trim(), Math.round(maxWidth * 0.8));
   let y = pad;
   for (const line of titleLines) {
     ctx.fillText(line, pad, y);
