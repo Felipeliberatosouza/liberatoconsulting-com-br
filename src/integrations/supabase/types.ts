@@ -865,6 +865,10 @@ export type Database = {
           bank_branch: string
           bank_name: string
           birth_date: string | null
+          contract_file_name: string | null
+          contract_file_path: string | null
+          contract_sent_at: string | null
+          contract_uploaded_at: string | null
           cpf: string
           created_at: string
           email: string
@@ -894,6 +898,10 @@ export type Database = {
           bank_branch?: string
           bank_name?: string
           birth_date?: string | null
+          contract_file_name?: string | null
+          contract_file_path?: string | null
+          contract_sent_at?: string | null
+          contract_uploaded_at?: string | null
           cpf?: string
           created_at?: string
           email?: string
@@ -923,6 +931,10 @@ export type Database = {
           bank_branch?: string
           bank_name?: string
           birth_date?: string | null
+          contract_file_name?: string | null
+          contract_file_path?: string | null
+          contract_sent_at?: string | null
+          contract_uploaded_at?: string | null
           cpf?: string
           created_at?: string
           email?: string
