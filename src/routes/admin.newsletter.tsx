@@ -779,6 +779,12 @@ function AdminNewsletter() {
               <div className="mt-3 flex flex-wrap gap-3 text-sm">
                 <button
                   className="text-muted-foreground hover:text-accent"
+                  onClick={() => setPreviewId((p) => (p === c.id ? null : c.id))}
+                >
+                  {previewId === c.id ? "Ocultar visualização" : "Visualizar"}
+                </button>
+                <button
+                  className="text-muted-foreground hover:text-accent"
                   onClick={() => {
                     setEditId(c.id);
                     setSubject(c.subject);
@@ -800,14 +806,21 @@ function AdminNewsletter() {
                 <button
                   className="font-semibold text-accent hover:underline"
                   onClick={async () => {
-                    if (!confirm(`Enviar “${c.subject}” para ${activeCount} inscritos?`)) return;
+                    if (!onlyAuthorized) {
+                      toast.error(
+                        "O envio só é permitido para inscritos que autorizam o recebimento.",
+                      );
+                      return;
+                    }
+                    if (!confirm(`Enviar “${c.subject}” para ${activeCount} inscritos autorizados?`))
+                      return;
                     const r = await sendCampaign({ data: { id: c.id } });
                     if (!r.ok) toast.error(r.error);
                     else toast.success(`Enviada para ${r.sent} inscritos.`);
                     await campaigns.refetch();
                   }}
                 >
-                  Enviar para todos
+                  Enviar para todos os autorizados
                 </button>
                 <button
                   className="text-muted-foreground hover:text-accent"
