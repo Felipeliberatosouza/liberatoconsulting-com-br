@@ -38,6 +38,27 @@ export const Route = createFileRoute("/sitemap.xml")({
           entries.push({ path: `/brasil/${section.id}`, changefreq: "monthly", priority: "0.7" });
         }
 
+        // Conteúdo dinâmico publicado (artigos e newsletters).
+        try {
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const [{ data: articles }, { data: campaigns }] = await Promise.all([
+            supabaseAdmin.from("content_articles").select("slug").eq("published", true),
+            supabaseAdmin
+              .from("newsletter_campaigns")
+              .select("slug")
+              .not("published_at", "is", null),
+          ]);
+          for (const a of articles ?? []) {
+            if (a?.slug) entries.push({ path: `/content/${a.slug}`, changefreq: "monthly", priority: "0.6" });
+          }
+          for (const c of campaigns ?? []) {
+            if (c?.slug) entries.push({ path: `/newsletter/${c.slug}`, changefreq: "monthly", priority: "0.5" });
+          }
+        } catch {
+          // Se o banco estiver indisponível, o sitemap continua válido com as rotas fixas.
+        }
+
+
         const urls = entries.map((e) =>
           [
             `  <url>`,
