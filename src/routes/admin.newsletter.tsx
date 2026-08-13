@@ -48,6 +48,22 @@ const btn =
   "rounded-md bg-ink px-4 py-2 text-sm font-semibold text-ink-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-60";
 const label = "mb-1 block text-sm font-semibold";
 
+const today = () => new Date().toISOString().slice(0, 10);
+
+/** Gera o endereço público sugerido a partir do título. */
+function contentLink(title: string) {
+  const slug = title
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 70);
+  return slug ? `https://liberatoconsulting.com.br/content/${slug}` : "";
+}
+
+
+
 
 function AdminNewsletter() {
   const subscribers = useQuery({ queryKey: ["nl-subs"], queryFn: () => listSubscribers(), retry: false });
