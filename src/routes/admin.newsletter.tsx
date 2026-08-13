@@ -913,7 +913,11 @@ function AdminNewsletter() {
             </div>
           ))}
           {campaigns.data?.length === 0 && (
-            <p className="text-sm text-muted-foreground">Nenhuma campanha criada ainda.</p>
+            <p className="text-sm text-muted-foreground">
+              Nenhuma campanha criada ainda. Preencha o título e o texto em “Nova newsletter” e
+              clique em <strong>Criar newsletter</strong>: a campanha aparece aqui para visualizar,
+              editar, enviar teste e disparar para a base autorizada.
+            </p>
           )}
         </div>
       </div>
