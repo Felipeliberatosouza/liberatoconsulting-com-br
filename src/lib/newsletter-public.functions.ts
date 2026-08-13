@@ -37,15 +37,28 @@ export const getPublishedNewsletter = createServerFn({ method: "GET" })
       row = similar?.[0] ?? null;
     }
     if (!row) return null;
-    return {
+    const base = {
       subject: row.subject as string,
       preheader: (row.preheader ?? "") as string,
-      body: (row.body ?? "") as string,
-      fullText: (row.full_text ?? "") as string,
+      fullText: ((row.full_text || row.body) ?? "") as string,
       sources: (row.sources ?? "") as string,
+    };
+    const lang = (data.lang ?? "pt") as Lang;
+    const translated =
+      lang === "pt"
+        ? base
+        : await (async () => {
+            const { translateNewsletter } = await import("./newsletter-translate.server");
+            return translateNewsletter(row!.slug as string, lang, base);
+          })();
+    return {
+      ...translated,
+      body: (row.body ?? "") as string,
       authors: (row.authors ?? "") as string,
       hasImage: Boolean(row.image_url),
       referenceDate: (row.reference_date ?? null) as string | null,
       slug: row.slug as string,
+      lang,
     };
+
   });
