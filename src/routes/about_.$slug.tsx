@@ -22,7 +22,6 @@ export const Route = createFileRoute("/about_/$slug")({
           { title: "Página não encontrada — Liberato Consulting" },
           { name: "robots", content: "noindex" },
         ],
-        links: seoLinks(`/about/${params.slug}`),
       };
     }
     const title = `${page.title} | Quem somos — Liberato Consulting`;
@@ -35,6 +34,7 @@ export const Route = createFileRoute("/about_/$slug")({
         { property: "og:type", content: "website" },
         { name: "twitter:card", content: "summary_large_image" },
       ],
+      links: seoLinks(`/about/${params.slug}`),
     };
   },
   component: AboutDetailPage,

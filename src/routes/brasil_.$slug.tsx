@@ -22,7 +22,6 @@ export const Route = createFileRoute("/brasil_/$slug")({
           { title: "Página não encontrada — Liberato Consulting" },
           { name: "robots", content: "noindex" },
         ],
-        links: seoLinks(`/brasil/${params.slug}`),
       };
     }
     const title = `${section.title} | Dados do Brasil — Liberato Consulting`;
@@ -36,6 +35,7 @@ export const Route = createFileRoute("/brasil_/$slug")({
         { property: "og:type", content: "article" },
         { name: "twitter:card", content: "summary_large_image" },
       ],
+      links: seoLinks(`/brasil/${params.slug}`),
     };
   },
   component: BrazilDetailPage,
