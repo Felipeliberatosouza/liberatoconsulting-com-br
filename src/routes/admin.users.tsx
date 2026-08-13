@@ -530,7 +530,7 @@ function TeamTab() {
             label="CEP"
             value={form.address_zip}
             onChange={(v) => set("address_zip", formatCep(v))}
-            onBlur={lookupCep}
+            onBlur={() => void lookupCep()}
             required
             valid={cepOk}
             error={form.address_zip && !cepOk ? "CEP inválido." : undefined}
