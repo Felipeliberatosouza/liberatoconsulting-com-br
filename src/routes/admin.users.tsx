@@ -17,6 +17,21 @@ import {
   updateTeamMember,
   type TeamRow,
 } from "@/lib/users.functions";
+import {
+  getSignedContractUrl,
+  resendContractEmail,
+  uploadSignedContract,
+} from "@/lib/users.functions";
+import {
+  formatCep,
+  formatCpf,
+  formatPhone,
+  isValidCep,
+  isValidCpf,
+  isValidEmail,
+  isValidPhone,
+  passwordRules,
+} from "@/lib/validation";
 import { getResumeUrl, listApplications, listLeads } from "@/lib/admin.functions";
 import { listSubscribers } from "@/lib/newsletter.functions";
 import {
@@ -68,13 +83,13 @@ const emptyForm = {
   rg: "",
   nationality: "Brasileira",
   marital_status: "",
+  address_zip: "",
   address_street: "",
   address_number: "",
   address_complement: "",
   address_district: "",
   address_city: "",
   address_state: "",
-  address_zip: "",
   address_country: "Brasil",
   bank_name: "",
   bank_branch: "",
@@ -95,26 +110,47 @@ function Field({
   onChange,
   type = "text",
   required = false,
+  error,
+  valid,
+  hint,
+  onBlur,
+  disabled,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   type?: string;
   required?: boolean;
+  error?: string | undefined;
+  valid?: boolean | undefined;
+  hint?: string | undefined;
+  onBlur?: (() => void) | undefined;
+  disabled?: boolean | undefined;
 }) {
   return (
     <label className="block text-xs font-medium text-muted-foreground">
       {label}
+      {required && <span className="ml-0.5 text-destructive">*</span>}
       <input
         type={type}
         required={required}
         value={value}
+        disabled={disabled}
+        onBlur={onBlur}
         onChange={(e) => onChange(e.target.value)}
-        className={`mt-1 ${input}`}
+        className={`mt-1 ${input} ${
+          error ? "border-destructive" : valid ? "border-emerald-500" : ""
+        } ${disabled ? "opacity-70" : ""}`}
       />
+      {error ? (
+        <span className="mt-1 block text-[11px] font-normal text-destructive">{error}</span>
+      ) : hint ? (
+        <span className="mt-1 block text-[11px] font-normal text-muted-foreground">{hint}</span>
+      ) : null}
     </label>
   );
 }
+
 
 function UsersPage() {
   const [tab, setTab] = useState<Tab>("team");
@@ -155,12 +191,150 @@ function UsersPage() {
 
 /* ------------------------------ equipe ------------------------------ */
 
+function contractStatus(row: TeamRow) {
+  const needs = row.roles.some((r) => r === "consultor" || r === "autor");
+  if (!needs) return { needs, ok: true, label: "não se aplica" };
+  const ok = Boolean(row.contract_uploaded_at);
+  return {
+    needs,
+    ok,
+    label: ok
+      ? `válido em ${new Date(row.contract_uploaded_at as string).toLocaleDateString("pt-BR")}`
+      : "contrato pendente",
+  };
+}
+
+function ContractCell({ row, onDone }: { row: TeamRow; onDone: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const status = contractStatus(row);
+
+  const upload = async (file: File) => {
+    setBusy(true);
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(",")[1] ?? "");
+        reader.onerror = () => reject(new Error("erro"));
+        reader.readAsDataURL(file);
+      });
+      const r = await uploadSignedContract({
+        data: {
+          user_id: row.user_id,
+          file_name: file.name,
+          content_type: file.type || "application/pdf",
+          file_base64: base64,
+        },
+      });
+      if (!r.ok) toast.error(r.error);
+      else {
+        toast.success("Contrato assinado registrado. Acesso liberado.");
+        onDone();
+      }
+    } catch {
+      toast.error("Não foi possível enviar o contrato.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (!status.needs) return <span className="text-muted-foreground">—</span>;
+
+  return (
+    <div className="space-y-1">
+      <span
+        className={`inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${
+          status.ok ? "bg-emerald-100 text-emerald-700" : "bg-destructive/10 text-destructive"
+        }`}
+      >
+        {status.ok ? "contrato válido" : "contrato pendente"}
+      </span>
+      {status.ok && row.contract_file_path && (
+        <button
+          className="block text-xs text-accent hover:underline"
+          onClick={async () => {
+            const r = await getSignedContractUrl({ data: { path: row.contract_file_path! } });
+            if (r.ok) window.open(r.url, "_blank", "noopener");
+            else toast.error(r.error);
+          }}
+        >
+          ver documento
+        </button>
+      )}
+      <label className="block cursor-pointer text-xs text-muted-foreground hover:text-accent">
+        {busy ? "enviando…" : status.ok ? "substituir arquivo" : "enviar contrato assinado"}
+        <input
+          type="file"
+          accept="application/pdf,image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) void upload(f);
+            e.target.value = "";
+          }}
+        />
+      </label>
+      {!status.ok && (
+        <button
+          className="block text-xs text-muted-foreground hover:text-accent"
+          onClick={async () => {
+            const r = await resendContractEmail({ data: { user_id: row.user_id } });
+            if (r.ok) toast.success("Contrato reenviado por e-mail.");
+            else toast.error(r.error);
+          }}
+        >
+          reenviar por e-mail
+        </button>
+      )}
+    </div>
+  );
+}
+
 function TeamTab() {
   const team = useQuery({ queryKey: ["admin-team"], queryFn: () => listTeam(), retry: false });
   const [form, setForm] = useState<Form>(emptyForm);
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [cepBusy, setCepBusy] = useState(false);
   const set = (k: keyof Form, v: string | boolean) => setForm((f) => ({ ...f, [k]: v }));
+
+  const rules = passwordRules(form.password, {
+    fullName: form.full_name,
+    email: form.email,
+    birthDate: form.birth_date,
+    cpf: form.cpf,
+  });
+  const passwordOk = rules.every((r) => r.ok);
+  const emailOk = isValidEmail(form.email);
+  const cpfOk = isValidCpf(form.cpf);
+  const phoneOk = !form.phone || isValidPhone(form.phone);
+  const cepOk = isValidCep(form.address_zip);
+
+  const lookupCep = async () => {
+    const digits = form.address_zip.replace(/\D+/g, "");
+    if (digits.length !== 8) return;
+    setCepBusy(true);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
+      const data = (await res.json()) as Record<string, string> & { erro?: boolean };
+      if (data.erro) {
+        toast.error("CEP não encontrado.");
+        return;
+      }
+      setForm((f) => ({
+        ...f,
+        address_street: data["logradouro"] || f.address_street,
+        address_district: data["bairro"] || f.address_district,
+        address_city: data["localidade"] || f.address_city,
+        address_state: data["uf"] || f.address_state,
+        address_country: f.address_country || "Brasil",
+      }));
+    } catch {
+      toast.error("Não foi possível consultar o CEP.");
+    } finally {
+      setCepBusy(false);
+    }
+  };
 
   const startEdit = (row: TeamRow) => {
     setEditing(true);
@@ -169,6 +343,9 @@ function TeamTab() {
       ...(row as unknown as Partial<Form>),
       user_id: row.user_id,
       birth_date: row.birth_date ?? "",
+      phone: formatPhone(row.phone ?? ""),
+      cpf: formatCpf(row.cpf ?? ""),
+      address_zip: formatCep(row.address_zip ?? ""),
       role: ((row.roles[0] as PanelRole) ?? "consultor") as PanelRole,
       password: "",
       email_opt_in: row.email_opt_in ?? true,
@@ -179,6 +356,26 @@ function TeamTab() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!emailOk) {
+      toast.error("Informe um e-mail válido.");
+      return;
+    }
+    if (!cpfOk) {
+      toast.error("Informe um CPF válido.");
+      return;
+    }
+    if (!phoneOk) {
+      toast.error("Informe o celular no formato (11) 91234-5678.");
+      return;
+    }
+    if (!cepOk) {
+      toast.error("Informe um CEP válido.");
+      return;
+    }
+    if ((!editing || form.password) && !passwordOk) {
+      toast.error("A senha não atende às regras de segurança.");
+      return;
+    }
     setBusy(true);
     try {
       const { user_id, password, ...rest } = form;
@@ -189,7 +386,16 @@ function TeamTab() {
         : await createTeamMember({ data: { ...rest, password } });
       if (!r.ok) toast.error(r.error);
       else {
-        toast.success(editing ? "Cadastro atualizado." : "Usuário criado.");
+        const created = r as { needsContract?: boolean; contractWarning?: string };
+        if (!editing && created.needsContract) {
+          if (created.contractWarning) toast.error(created.contractWarning);
+          else
+            toast.success(
+              "Usuário criado e contrato enviado por e-mail. O acesso será liberado após o upload do contrato assinado.",
+            );
+        } else {
+          toast.success(editing ? "Cadastro atualizado." : "Usuário criado.");
+        }
         setForm(emptyForm);
         setEditing(false);
         await team.refetch();
@@ -207,13 +413,14 @@ function TeamTab() {
         <h2 className="font-display text-lg font-bold">
           {editing ? "Editar membro da equipe" : "Novo cadastro com acesso"}
         </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {ROLE_DESCRIPTION[form.role]}
+        <p className="mt-1 text-sm text-muted-foreground">{ROLE_DESCRIPTION[form.role]}</p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Campos com <span className="text-destructive">*</span> são obrigatórios.
         </p>
 
         <div className="mt-4 grid gap-4 md:grid-cols-3">
           <label className="block text-xs font-medium text-muted-foreground">
-            Tipo de usuário
+            Tipo de usuário<span className="ml-0.5 text-destructive">*</span>
             <select
               value={form.role}
               onChange={(e) => set("role", e.target.value)}
@@ -226,31 +433,150 @@ function TeamTab() {
               ))}
             </select>
           </label>
-          <Field label="Nome completo" value={form.full_name} onChange={(v) => set("full_name", v)} required />
-          <Field label="E-mail" type="email" value={form.email} onChange={(v) => set("email", v)} required />
           <Field
-            label={editing ? "Nova senha (opcional)" : "Senha (mín. 8)"}
-            type="password"
-            value={form.password}
-            onChange={(v) => set("password", v)}
+            label="Nome completo"
+            value={form.full_name}
+            onChange={(v) => set("full_name", v)}
+            required
           />
-          <Field label="Celular" value={form.phone} onChange={(v) => set("phone", v)} />
-          <Field label="Data de nascimento" type="date" value={form.birth_date} onChange={(v) => set("birth_date", v)} />
-          <Field label="CPF" value={form.cpf} onChange={(v) => set("cpf", v)} />
+          <Field
+            label="E-mail"
+            type="email"
+            value={form.email}
+            onChange={(v) => set("email", v)}
+            required
+            valid={emailOk}
+            error={form.email && !emailOk ? "E-mail inválido." : undefined}
+          />
+          <Field
+            label="CPF"
+            value={form.cpf}
+            onChange={(v) => set("cpf", formatCpf(v))}
+            required
+            valid={cpfOk}
+            error={form.cpf && !cpfOk ? "CPF inválido." : undefined}
+            hint="000.000.000-00"
+          />
+          <Field
+            label="Data de nascimento"
+            type="date"
+            value={form.birth_date}
+            onChange={(v) => set("birth_date", v)}
+            required
+          />
+          <Field
+            label="Celular"
+            value={form.phone}
+            onChange={(v) => set("phone", formatPhone(v))}
+            valid={Boolean(form.phone) && phoneOk}
+            error={form.phone && !phoneOk ? "Celular inválido." : undefined}
+            hint="(11) 91234-5678"
+          />
+        </div>
+
+        <div className="mt-4 grid gap-4 md:grid-cols-3">
+          <div>
+            <label className="block text-xs font-medium text-muted-foreground">
+              {editing ? "Nova senha (opcional)" : "Senha"}
+              {!editing && <span className="ml-0.5 text-destructive">*</span>}
+              <span className="relative mt-1 block">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={(e) => set("password", e.target.value)}
+                  className={`${input} pr-16 ${
+                    form.password ? (passwordOk ? "border-emerald-500" : "border-destructive") : ""
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-accent"
+                >
+                  {showPassword ? "ocultar" : "ver"}
+                </button>
+              </span>
+            </label>
+            <ul className="mt-2 space-y-1">
+              {rules.map((r) => (
+                <li
+                  key={r.id}
+                  className={`flex items-start gap-2 text-[11px] ${
+                    r.ok ? "text-emerald-600" : "text-muted-foreground"
+                  }`}
+                >
+                  <span>{r.ok ? "✓" : "•"}</span>
+                  <span>{r.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
           <Field label="RG" value={form.rg} onChange={(v) => set("rg", v)} />
-          <Field label="Nacionalidade" value={form.nationality} onChange={(v) => set("nationality", v)} />
-          <Field label="Estado civil" value={form.marital_status} onChange={(v) => set("marital_status", v)} />
+          <Field
+            label="Nacionalidade"
+            value={form.nationality}
+            onChange={(v) => set("nationality", v)}
+          />
+          <Field
+            label="Estado civil"
+            value={form.marital_status}
+            onChange={(v) => set("marital_status", v)}
+          />
+        </div>
+
+        <h3 className="mt-6 text-sm font-semibold">Endereço</h3>
+        <div className="mt-2 grid gap-4 md:grid-cols-3">
+          <Field
+            label="CEP"
+            value={form.address_zip}
+            onChange={(v) => set("address_zip", formatCep(v))}
+            onBlur={() => void lookupCep()}
+            required
+            valid={cepOk}
+            error={form.address_zip && !cepOk ? "CEP inválido." : undefined}
+            hint={cepBusy ? "buscando endereço…" : "00000-000 — preenche o endereço automaticamente"}
+          />
           <Field label="Rua" value={form.address_street} onChange={(v) => set("address_street", v)} />
-          <Field label="Número" value={form.address_number} onChange={(v) => set("address_number", v)} />
-          <Field label="Complemento" value={form.address_complement} onChange={(v) => set("address_complement", v)} />
-          <Field label="Bairro" value={form.address_district} onChange={(v) => set("address_district", v)} />
+          <Field
+            label="Número"
+            value={form.address_number}
+            onChange={(v) => set("address_number", v)}
+            required
+          />
+          <Field
+            label="Complemento"
+            value={form.address_complement}
+            onChange={(v) => set("address_complement", v)}
+          />
+          <Field
+            label="Bairro"
+            value={form.address_district}
+            onChange={(v) => set("address_district", v)}
+          />
           <Field label="Cidade" value={form.address_city} onChange={(v) => set("address_city", v)} />
           <Field label="Estado" value={form.address_state} onChange={(v) => set("address_state", v)} />
-          <Field label="CEP" value={form.address_zip} onChange={(v) => set("address_zip", v)} />
-          <Field label="País" value={form.address_country} onChange={(v) => set("address_country", v)} />
-          <Field label="Banco" value={form.bank_name} onChange={(v) => set("bank_name", v)} />
-          <Field label="Agência" value={form.bank_branch} onChange={(v) => set("bank_branch", v)} />
-          <Field label="Conta" value={form.bank_account} onChange={(v) => set("bank_account", v)} />
+          <Field
+            label="País"
+            value={form.address_country}
+            onChange={(v) => set("address_country", v)}
+          />
+        </div>
+
+        <h3 className="mt-6 text-sm font-semibold">Dados bancários</h3>
+        <div className="mt-2 grid gap-4 md:grid-cols-3">
+          <Field label="Banco" value={form.bank_name} onChange={(v) => set("bank_name", v)} required />
+          <Field
+            label="Agência"
+            value={form.bank_branch}
+            onChange={(v) => set("bank_branch", v)}
+            required
+          />
+          <Field
+            label="Conta"
+            value={form.bank_account}
+            onChange={(v) => set("bank_account", v)}
+            required
+          />
           <Field label="Chave PIX" value={form.pix_key} onChange={(v) => set("pix_key", v)} />
         </div>
 
@@ -282,6 +608,13 @@ function TeamTab() {
             Cadastro ativo
           </label>
         </div>
+
+        {(form.role === "consultor" || form.role === "autor") && (
+          <p className="mt-4 rounded-md bg-secondary/60 px-4 py-3 text-xs text-muted-foreground">
+            Ao criar o cadastro, o contrato é enviado automaticamente por e-mail. O acesso ao painel
+            só é liberado depois que o contrato assinado for enviado na lista abaixo.
+          </p>
+        )}
 
         <div className="mt-6 flex gap-3">
           <button
@@ -320,14 +653,14 @@ function TeamTab() {
           </thead>
           <tbody>
             {(team.data ?? []).map((row) => (
-              <tr key={row.user_id} className="border-t border-border">
+              <tr key={row.user_id} className="border-t border-border align-top">
                 <td className="px-4 py-3">{row.full_name || "—"}</td>
                 <td className="px-4 py-3">{row.email || "—"}</td>
                 <td className="px-4 py-3">
                   {row.roles.map((r) => ROLE_LABEL[r as PanelRole] ?? r).join(", ") || "—"}
                 </td>
                 <td className="px-4 py-3">
-                  {row.signed_at ? new Date(row.signed_at).toLocaleDateString("pt-BR") : "pendente"}
+                  <ContractCell row={row} onDone={() => void team.refetch()} />
                 </td>
                 <td className="px-4 py-3">{row.email_opt_in === false ? "não" : "sim"}</td>
                 <td className="px-4 py-3 text-right">
@@ -364,6 +697,7 @@ function TeamTab() {
     </div>
   );
 }
+
 
 /* --------------------------- assinantes ----------------------------- */
 
