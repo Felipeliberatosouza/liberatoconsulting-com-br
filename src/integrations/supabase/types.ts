@@ -762,9 +762,11 @@ export type Database = {
           image_url: string | null
           last_error: string | null
           preheader: string
+          published_at: string | null
           reference_date: string | null
           sent_at: string | null
           sent_count: number
+          slug: string | null
           sources: string
           status: string
           subject: string
@@ -783,9 +785,11 @@ export type Database = {
           image_url?: string | null
           last_error?: string | null
           preheader?: string
+          published_at?: string | null
           reference_date?: string | null
           sent_at?: string | null
           sent_count?: number
+          slug?: string | null
           sources?: string
           status?: string
           subject: string
@@ -804,9 +808,11 @@ export type Database = {
           image_url?: string | null
           last_error?: string | null
           preheader?: string
+          published_at?: string | null
           reference_date?: string | null
           sent_at?: string | null
           sent_count?: number
+          slug?: string | null
           sources?: string
           status?: string
           subject?: string
