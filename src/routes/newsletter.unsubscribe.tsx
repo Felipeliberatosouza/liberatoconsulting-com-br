@@ -16,6 +16,8 @@ export const Route = createFileRoute("/newsletter/unsubscribe")({
       { property: "og:description", content: "Cancele o recebimento da newsletter da Liberato Consulting." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Cancelar inscrição na newsletter" },
+      { name: "twitter:description", content: "Cancele o recebimento da newsletter da Liberato Consulting." },
     ],
     links: [{ rel: "canonical", href: absoluteUrl("/newsletter/unsubscribe") }],
   }),

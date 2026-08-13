@@ -28,6 +28,8 @@ export const Route = createFileRoute("/services/$slug")({
         { property: "og:description", content: page.lead },
         { property: "og:type", content: "website" },
         { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: page.lead },
         ...seoLocaleMeta(headLang(ctx)),
       ],
       links: seoLinks(`/services/${params.slug}`, headLang(ctx)),

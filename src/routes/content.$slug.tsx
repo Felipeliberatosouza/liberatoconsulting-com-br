@@ -57,6 +57,8 @@ export const Route = createFileRoute("/content/$slug")({
         { property: "og:type", content: "article" },
         { property: "og:image", content: image },
         { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: pageTitle },
+        { name: "twitter:description", content: summary.slice(0, 158) },
         { name: "twitter:image", content: image },
         ...seoLocaleMeta(headLang(ctx)),
       ],
