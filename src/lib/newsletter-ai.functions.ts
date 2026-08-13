@@ -37,10 +37,14 @@ export const generateNewsletterAI = createServerFn({ method: "POST" })
             preheader: "chamada curta de até 160 caracteres",
             body: "texto da newsletter com NO MÁXIMO 500 palavras, em parágrafos curtos",
             fullText:
-              "material completo de 2000 a 5000 palavras, com subtítulos, tabelas em texto " +
-              "(linhas separadas por | ) e descrição dos gráficos sugeridos",
+              "material completo e aprofundado, de 8000 a 15000 palavras, em markdown: " +
+              "subtítulos com ##, listas com -, tabelas em markdown (| col | col | e linha |---|---|). " +
+              "Nunca escreva 'gráfico sugerido': sempre que houver dados comparáveis, insira o gráfico " +
+              "no ponto exato do texto usando um bloco ```chart com 'titulo: ...' e uma linha por série " +
+              "no formato 'Rótulo | número' (apenas números, sem % nem texto no valor).",
             sources: ["referências: Instituição (ano). Título. URL"],
           },
+
         }),
       );
       return {
