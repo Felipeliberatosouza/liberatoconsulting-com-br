@@ -18,13 +18,13 @@ import { CtaBand } from "@/components/CtaBand";
 import { FilterScopeBadge } from "@/components/SiteFilterBar";
 import { useAudienceFilters } from "@/lib/audience-filters";
 import { useLanguage } from "@/i18n";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { DEFAULT_AUTOPLAY_MS, heroSlideOrder } from "@/lib/site-config";
 
 
 export const Route = createFileRoute("/")({
-  head: () => ({
+  head: (ctx) => ({
     meta: [
       {
         title: "Pesquisas de mercado e gestão com IA — Liberato Consulting",
@@ -47,8 +47,9 @@ export const Route = createFileRoute("/")({
       { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      ...seoLocaleMeta(headLang(ctx)),
     ],
-    links: seoLinks("/"),
+    links: seoLinks("/", headLang(ctx)),
     scripts: [
       jsonLd(
         webPageSchema({

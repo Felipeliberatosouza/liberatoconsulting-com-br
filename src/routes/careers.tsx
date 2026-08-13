@@ -6,12 +6,12 @@ import { ArrowLeft, ArrowRight, ShieldCheck, Upload } from "lucide-react";
 import { pt } from "@/i18n/pt";
 import { EmailText } from "@/components/EmailText";
 import { useLanguage } from "@/i18n";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jobBoardSchema, jsonLd } from "@/lib/schema";
 import { submitApplication } from "@/lib/careers.functions";
 
 export const Route = createFileRoute("/careers")({
-  head: () => {
+  head: (ctx) => {
     const title = "Trabalhe Conosco — Liberato Consulting";
     return {
       meta: [
@@ -23,8 +23,9 @@ export const Route = createFileRoute("/careers")({
         { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
         { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
         { name: "twitter:card", content: "summary_large_image" },
+        ...seoLocaleMeta(headLang(ctx)),
       ],
-      links: seoLinks("/careers"),
+      links: seoLinks("/careers", headLang(ctx)),
       scripts: [
         jsonLd(
           breadcrumb([

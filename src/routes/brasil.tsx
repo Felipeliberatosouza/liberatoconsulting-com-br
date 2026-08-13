@@ -13,12 +13,12 @@ import {
 } from "@/lib/audience-filters";
 import { listPublicIndicators } from "@/lib/indicators.functions";
 import { pt } from "@/i18n/pt";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { getScopedBrazilSections } from "@/lib/brazil-scope.functions";
 
 export const Route = createFileRoute("/brasil")({
-  head: () => ({
+  head: (ctx) => ({
     meta: [
       { title: "Dados do Brasil para investidores — Liberato Consulting" },
       {
@@ -39,8 +39,9 @@ export const Route = createFileRoute("/brasil")({
       { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      ...seoLocaleMeta(headLang(ctx)),
     ],
-    links: seoLinks("/brasil"),
+    links: seoLinks("/brasil", headLang(ctx)),
     scripts: [
       jsonLd(
         breadcrumb([

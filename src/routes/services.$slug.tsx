@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Check, Clock, Sparkles, Users } from "lucide-react";
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, serviceSchema } from "@/lib/schema";
 import { ServiceLeadForm } from "@/components/ServiceLeadForm";
 
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/services/$slug")({
     if (!SLUGS.includes(params.slug)) throw notFound();
     return null;
   },
-  head: ({ params }) => {
+  head: ({ params, ...ctx }) => {
     const page = pt.serviceDetail.pages.find((p) => p.id === params.slug);
     if (!page) {
       return { meta: [{ title: "Serviço não encontrado — Liberato Consulting" }, { name: "robots", content: "noindex" }] };
@@ -28,8 +28,9 @@ export const Route = createFileRoute("/services/$slug")({
         { property: "og:description", content: page.lead },
         { property: "og:type", content: "website" },
         { name: "twitter:card", content: "summary_large_image" },
+        ...seoLocaleMeta(headLang(ctx)),
       ],
-      links: seoLinks(`/services/${params.slug}`),
+      links: seoLinks(`/services/${params.slug}`, headLang(ctx)),
       scripts: [
         jsonLd(
           breadcrumb([

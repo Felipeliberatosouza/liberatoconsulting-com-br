@@ -2,12 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { CtaBand } from "@/components/CtaBand";
 import { pt } from "@/i18n/pt";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, itemList, jsonLd } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
 export const Route = createFileRoute("/services/")({
-  head: () => ({
+  head: (ctx) => ({
     meta: [
       { title: "Serviços | Services — Liberato Consulting" },
       {
@@ -25,8 +25,9 @@ export const Route = createFileRoute("/services/")({
       { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      ...seoLocaleMeta(headLang(ctx)),
     ],
-    links: seoLinks("/services"),
+    links: seoLinks("/services", headLang(ctx)),
     scripts: [
       jsonLd(
         breadcrumb([

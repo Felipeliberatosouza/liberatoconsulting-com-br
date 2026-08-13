@@ -13,7 +13,7 @@ import {
   submitArticle,
 } from "@/lib/content.functions";
 import type { ArticleRecord } from "@/lib/site-config";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { articleSchema, breadcrumb, jsonLd } from "@/lib/schema";
 import { getPublishedNewsletter } from "@/lib/newsletter-public.functions";
 
@@ -38,7 +38,7 @@ export const Route = createFileRoute("/content/$slug")({
     if (news) throw redirect({ to: "/newsletter/$slug", params: { slug: params.slug } });
     return null;
   },
-  head: ({ params, loaderData }) => {
+  head: ({ params, loaderData, ...ctx }) => {
     const fallbackTitle = params.slug.replace(/-/g, " ");
     const title = loaderData?.title || fallbackTitle;
     const summary =
@@ -58,8 +58,9 @@ export const Route = createFileRoute("/content/$slug")({
         { property: "og:image", content: image },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:image", content: image },
+        ...seoLocaleMeta(headLang(ctx)),
       ],
-      links: seoLinks(`/content/${params.slug}`),
+      links: seoLinks(`/content/${params.slug}`, headLang(ctx)),
       scripts: [
         jsonLd(
           breadcrumb([

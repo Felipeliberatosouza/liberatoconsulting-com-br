@@ -4,7 +4,7 @@ import { ConsultantsTeam } from "@/components/ConsultantsTeam";
 import { ResultBanner } from "@/components/ResultBanner";
 
 import { pt } from "@/i18n/pt";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/about_/$slug")({
     if (!SLUGS.includes(params.slug)) throw notFound();
     return null;
   },
-  head: ({ params }) => {
+  head: ({ params, ...ctx }) => {
     const page = pt.aboutDetail.pages.find((p) => p.id === params.slug);
     if (!page) {
       return {
@@ -34,8 +34,9 @@ export const Route = createFileRoute("/about_/$slug")({
         { property: "og:description", content: page.lead },
         { property: "og:type", content: "website" },
         { name: "twitter:card", content: "summary_large_image" },
+        ...seoLocaleMeta(headLang(ctx)),
       ],
-      links: seoLinks(`/about/${params.slug}`),
+      links: seoLinks(`/about/${params.slug}`, headLang(ctx)),
       scripts: [
         jsonLd(
           breadcrumb([

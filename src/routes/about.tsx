@@ -4,12 +4,12 @@ import { ConsultantsTeam } from "@/components/ConsultantsTeam";
 import { CtaBand } from "@/components/CtaBand";
 
 import { ResultBanner } from "@/components/ResultBanner";
-import { seoLinks } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
+  head: (ctx) => ({
     meta: [
       { title: "Quem somos | About — Liberato Consulting" },
       {
@@ -25,8 +25,9 @@ export const Route = createFileRoute("/about")({
       { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:card", content: "summary_large_image" },
+      ...seoLocaleMeta(headLang(ctx)),
     ],
-    links: seoLinks("/about"),
+    links: seoLinks("/about", headLang(ctx)),
     scripts: [
       jsonLd(
         breadcrumb([
