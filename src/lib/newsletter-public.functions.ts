@@ -1,10 +1,20 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+import { LANGS, type Lang } from "@/i18n/config";
+
 /** Leitura pública de uma newsletter já publicada, pelo endereço amigável (slug). */
 export const getPublishedNewsletter = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => z.object({ slug: z.string().trim().min(1).max(160) }).parse(d))
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        slug: z.string().trim().min(1).max(160),
+        lang: z.enum(LANGS as unknown as [Lang, ...Lang[]]).optional(),
+      })
+      .parse(d),
+  )
   .handler(async ({ data }) => {
+
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const cols =
       "subject, preheader, body, full_text, sources, authors, image_url, reference_date, published_at, slug";
