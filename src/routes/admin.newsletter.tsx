@@ -274,12 +274,14 @@ function AdminNewsletter() {
               });
               if (!r.ok) toast.error(r.error);
               else {
+                if (r.id) setEditId(r.id);
                 toast.success(
                   "pending" in r && r.pending
                     ? "Newsletter enviada para aprovação do administrador."
-                    : "Newsletter salva.",
+                    : editId
+                      ? "Alterações salvas. O material foi mantido aberto para revisão."
+                      : "Newsletter criada. O material foi mantido aberto para revisão.",
                 );
-                resetForm();
                 await campaigns.refetch();
               }
             } finally {
