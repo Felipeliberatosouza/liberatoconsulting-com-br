@@ -57,16 +57,9 @@ function CareersPage() {
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
+    if (!form.reportValidity()) return;
     const fd = new FormData(form);
     const file = fd.get("resume");
-
-    const linkedin = form.elements.namedItem("linkedin") as HTMLInputElement | null;
-    console.log("linkedin debug", { value: linkedin?.value, valid: linkedin?.checkValidity(), message: linkedin?.validationMessage, errorLinkedin: C.errorLinkedin });
-    if (linkedin && linkedin.value && !linkedin.checkValidity()) {
-      linkedin.setCustomValidity(C.errorLinkedin);
-      linkedin.reportValidity();
-      return;
-    }
 
     if (!(file instanceof File) || file.size === 0) {
       setError(C.errorFileType);
