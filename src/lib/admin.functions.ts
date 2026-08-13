@@ -394,7 +394,7 @@ export const getResumeUrl = createServerFn({ method: "POST" })
   });
 
 
-const DEFAULT_ALERT_EMAIL = "felipesza@yahoo.com.br";
+const DEFAULT_ALERT_EMAIL = "contato@liberatoconsulting.com.br";
 
 /** E-mail que recebe os alertas de novos leads e candidaturas. */
 export const getAlertEmail = createServerFn({ method: "GET" })

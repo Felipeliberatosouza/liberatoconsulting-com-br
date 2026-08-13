@@ -292,7 +292,7 @@ function AdminContent() {
             <input
               value={draft.author_contact}
               onChange={(e) => setDraft((d) => ({ ...d, author_contact: e.target.value }))}
-              placeholder="autores@liberatoconsulting.com.br"
+              placeholder="contato@liberatoconsulting.com.br"
               className={input}
             />
           </label>
