@@ -21,6 +21,8 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { CopyProtection } from "@/components/CopyProtection";
 import { normalizeLang } from "@/lib/seo";
+import { trackPageView } from "@/lib/gtag";
+
 
 
 
@@ -122,6 +124,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     scripts: [
       {
+        src: "https://www.googletagmanager.com/gtag/js?id=G-44WQ42SD3T",
+        async: true,
+      },
+      {
+        type: "text/javascript",
+        children: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-44WQ42SD3T');`,
+      },
+      {
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
@@ -214,6 +227,15 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function RouteTracker() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const search = useRouterState({ select: (s) => s.location.searchStr });
+  useEffect(() => {
+    trackPageView(pathname + search);
+  }, [pathname, search]);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const isAdmin = useRouterState({ select: (s) => s.location.pathname.startsWith("/admin") });
@@ -222,10 +244,11 @@ function RootComponent() {
     return (
       <QueryClientProvider client={queryClient}>
         <LanguageProvider>
-        <AudienceFilterProvider>
-          <Outlet />
-          <Toaster />
-        </AudienceFilterProvider>
+          <AudienceFilterProvider>
+            <RouteTracker />
+            <Outlet />
+            <Toaster />
+          </AudienceFilterProvider>
         </LanguageProvider>
       </QueryClientProvider>
     );
@@ -235,6 +258,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <AudienceFilterProvider>
+        <RouteTracker />
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
           <main className="flex-1">

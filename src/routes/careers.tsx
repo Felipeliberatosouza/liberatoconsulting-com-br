@@ -7,8 +7,10 @@ import { pt } from "@/i18n/pt";
 import { EmailText } from "@/components/EmailText";
 import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { trackEvent } from "@/lib/gtag";
 import { breadcrumb, jobBoardSchema, jsonLd } from "@/lib/schema";
 import { submitApplication } from "@/lib/careers.functions";
+
 
 export const Route = createFileRoute("/careers")({
   head: (ctx) => {
@@ -117,6 +119,7 @@ function CareersPage() {
 
       if (result.ok) {
         setStatus("done");
+        trackEvent("form_submit", { form_name: "careers", area: String(fd.get("area") ?? "") });
         form.reset();
         setFileName("");
         if (typeof window !== "undefined") {
