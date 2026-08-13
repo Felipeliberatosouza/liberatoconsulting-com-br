@@ -258,6 +258,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <AudienceFilterProvider>
+        <RouteTracker />
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
           <main className="flex-1">
