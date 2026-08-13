@@ -231,7 +231,12 @@ function RootShell({ children }: { children: ReactNode }) {
 function RouteTracker() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const search = useRouterState({ select: (s) => s.location.searchStr });
+  const hasTracked = useRef(false);
   useEffect(() => {
+    if (!hasTracked.current) {
+      hasTracked.current = true;
+      return;
+    }
     trackPageView(pathname + search);
   }, [pathname, search]);
   return null;
