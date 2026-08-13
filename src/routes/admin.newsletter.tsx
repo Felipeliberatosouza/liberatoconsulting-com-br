@@ -550,36 +550,166 @@ function AdminNewsletter() {
         <div className="mt-8 border-t border-border pt-6">
           <h3 className="font-display text-base font-bold">Formatos para redes sociais</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            Gerados a partir do título e do texto acima. Edite se quiser e copie com um clique.
+            A mesma arte é gerada nos formatos ideais de cada rede, com título em forma de pergunta
+            e até 5 bullets conceituais sobre a imagem. O texto traz o link com a chamada
+            “Leia mais! Acesse:”.
           </p>
-          <div className="mt-4 grid gap-4 lg:grid-cols-3">
-            {socialFormats.map((f) => (
-              <div key={f.key} className="rounded-md border border-border p-4">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-sm">{f.label}</span>
-                  <button
-                    type="button"
-                    className="ml-auto text-xs font-semibold text-accent hover:underline"
-                    onClick={async () => {
-                      try {
-                        await navigator.clipboard.writeText(f.value);
-                        toast.success(`Texto para ${f.label} copiado.`);
-                      } catch {
-                        toast.error("Não foi possível copiar.");
-                      }
-                    }}
-                  >
-                    Copiar
-                  </button>
+
+          <div className="mt-4 flex flex-wrap gap-3">
+            <button
+              type="button"
+              className={btn}
+              disabled={socialBusy !== "" || subject.trim().length < 5}
+              onClick={async () => {
+                setSocialBusy("text");
+                try {
+                  const r = await generateSocialPack({ data: { title: subject, body } });
+                  if (!r.ok) toast.error(r.error);
+                  else {
+                    setHeadline(r.headline);
+                    setBullets(r.bullets);
+                    setLinkedinText(r.linkedinText);
+                    setSocialDrafts({});
+                    if (socialImage) await renderArts(socialImage, r.headline, r.bullets);
+                    toast.success("Título e bullets gerados.");
+                  }
+                } catch {
+                  toast.error("Não foi possível gerar o conteúdo das redes.");
+                } finally {
+                  setSocialBusy("");
+                }
+              }}
+            >
+              {socialBusy === "text" ? "Escrevendo…" : "Gerar título e bullets"}
+            </button>
+            <button
+              type="button"
+              className="rounded-md border border-accent px-4 py-2 text-sm font-semibold text-accent hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
+              disabled={socialBusy !== "" || subject.trim().length < 5}
+              onClick={async () => {
+                setSocialBusy("image");
+                try {
+                  const r = await generateSocialImage({ data: { title: subject } });
+                  if (!r.ok) toast.error(r.error);
+                  else {
+                    setSocialImage(r.imageUrl);
+                    if (!imageUrl) setImageUrl(r.imageUrl);
+                    await renderArts(
+                      r.imageUrl,
+                      headline || `Você sabe o que é ${subject}?`,
+                      bullets,
+                    );
+                    toast.success("Imagem gerada para todas as redes.");
+                  }
+                } catch {
+                  toast.error("Não foi possível gerar a imagem.");
+                } finally {
+                  setSocialBusy("");
+                }
+              }}
+            >
+              {socialBusy === "image" ? "Criando imagem…" : "Gerar imagem das redes"}
+            </button>
+            {(socialImage || imageUrl) && (
+              <button
+                type="button"
+                className="rounded-md border border-border px-4 py-2 text-sm hover:border-accent disabled:opacity-60"
+                disabled={socialBusy !== ""}
+                onClick={() =>
+                  renderArts(
+                    socialImage || imageUrl,
+                    headline || `Você sabe o que é ${subject}?`,
+                    bullets,
+                  )
+                }
+              >
+                {socialBusy === "art" ? "Montando artes…" : "Atualizar artes"}
+              </button>
+            )}
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className={label} htmlFor="nl-headline">Título sobre a imagem (pergunta)</label>
+              <input
+                id="nl-headline"
+                className={input}
+                value={headline}
+                onChange={(e) => setHeadline(e.target.value)}
+                placeholder="Você sabe o que é solopreneurship?"
+              />
+            </div>
+            <div>
+              <label className={label} htmlFor="nl-bullets">Bullets (um por linha, máx. 5)</label>
+              <textarea
+                id="nl-bullets"
+                className={`${input} min-h-24 text-sm`}
+                value={bullets.join("\n")}
+                onChange={(e) =>
+                  setBullets(e.target.value.split("\n").map((b) => b).slice(0, 5))
+                }
+                placeholder={"Empresa de uma pessoa só\nIA como equipe virtual"}
+              />
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-3">
+            {socialFormats.map((f) => {
+              const fmt = SOCIAL_IMAGE_FORMATS[f.key as SocialFormatKey];
+              const art = socialArt[f.key];
+              return (
+                <div key={f.key} className="rounded-md border border-border p-4">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-sm">{f.label}</span>
+                    <span className="text-[11px] text-muted-foreground">
+                      {fmt.width}×{fmt.height} · {fmt.ext.toUpperCase()}
+                    </span>
+                    <button
+                      type="button"
+                      className="ml-auto text-xs font-semibold text-accent hover:underline"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(f.value);
+                          toast.success(`Texto para ${f.label} copiado.`);
+                        } catch {
+                          toast.error("Não foi possível copiar.");
+                        }
+                      }}
+                    >
+                      Copiar
+                    </button>
+                  </div>
+                  {art ? (
+                    <div className="mt-3">
+                      <img
+                        src={art}
+                        alt={`Arte para ${f.label}`}
+                        className="w-full rounded-md border border-border"
+                      />
+                      <button
+                        type="button"
+                        className="mt-2 text-xs font-semibold text-accent hover:underline"
+                        onClick={() =>
+                          downloadDataUrl(art, `${f.key}-${fmt.width}x${fmt.height}.${fmt.ext}`)
+                        }
+                      >
+                        Baixar imagem ({fmt.ext.toUpperCase()})
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="mt-3 rounded-md border border-dashed border-border p-3 text-xs text-muted-foreground">
+                      Gere a imagem das redes para ver a arte neste formato.
+                    </p>
+                  )}
+                  <textarea
+                    className={`${input} mt-2 min-h-48 text-xs leading-relaxed`}
+                    value={f.value}
+                    onChange={(e) => setSocialDrafts((d) => ({ ...d, [f.key]: e.target.value }))}
+                  />
+                  <p className="mt-1 text-[11px] text-muted-foreground">{f.value.length} caracteres</p>
                 </div>
-                <textarea
-                  className={`${input} mt-2 min-h-48 text-xs leading-relaxed`}
-                  value={f.value}
-                  onChange={(e) => setSocialDrafts((d) => ({ ...d, [f.key]: e.target.value }))}
-                />
-                <p className="mt-1 text-[11px] text-muted-foreground">{f.value.length} caracteres</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
