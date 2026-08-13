@@ -1,7 +1,7 @@
 import type { Dict } from "../pt";
 
 // Gerado automaticamente por scripts/translate-i18n.ts — não editar à mão.
-export const sourceHash = "j6uv3t";
+export const sourceHash = "fas7xd";
 
 export const dict: Dict = {
   "nav": {
@@ -1427,6 +1427,14 @@ export const dict: Dict = {
     "chooseChannel": "Choose at least one delivery method.",
     "success": "Successfully registered.",
     "error": "Registration could not be completed."
+  },
+  "newsletterPage": {
+    "eyebrow": "Newsletter",
+    "by": "By",
+    "sources": "Sources",
+    "notFound": "Newsletter not found.",
+    "seeContent": "See content",
+    "translating": "Translating content…"
   },
   "newsletterForm": {
     "done": "Subscription confirmed. Thank you!",
