@@ -100,7 +100,9 @@ export const buildNewsletterPdf = createServerFn({ method: "POST" })
         authorContact: z.string().trim().max(500).optional().default(""),
         body: z.string().trim().min(20).max(400000),
         sources: z.string().trim().max(100000).optional().default(""),
-        imageUrl: z.string().trim().max(3000).optional().default(""),
+        // A imagem pode chegar como data URL (base64), portanto o limite precisa
+        // acompanhar o permitido no cadastro da campanha, e não o de uma URL curta.
+        imageUrl: z.string().trim().max(3_000_000).optional().default(""),
       })
       .parse(d),
   )
