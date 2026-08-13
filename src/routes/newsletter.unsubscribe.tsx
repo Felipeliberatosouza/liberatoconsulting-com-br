@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { absoluteUrl } from "@/lib/seo";
 import { unsubscribeNewsletter } from "@/lib/newsletter.functions";
 
 export const Route = createFileRoute("/newsletter/unsubscribe")({
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/newsletter/unsubscribe")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
+    links: [{ rel: "canonical", href: absoluteUrl("/newsletter/unsubscribe") }],
   }),
   component: UnsubscribePage,
 });

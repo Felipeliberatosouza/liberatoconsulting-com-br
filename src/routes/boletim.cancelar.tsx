@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { absoluteUrl } from "@/lib/seo";
 import { unsubscribeBulletin } from "@/lib/bulletin.functions";
 
 export const Route = createFileRoute("/boletim/cancelar")({
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/boletim/cancelar")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
+    links: [{ rel: "canonical", href: absoluteUrl("/boletim/cancelar") }],
   }),
   component: BulletinUnsubscribePage,
 });
