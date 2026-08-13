@@ -12,6 +12,36 @@ export const ORG_ID = `${SITE_URL}/#organization`;
 /** Referência curta à organização (evita repetir o objeto inteiro). */
 export const orgRef = { "@id": ORG_ID };
 
+/** Imagem padrão usada quando a página não tem capa própria. */
+export const DEFAULT_IMAGE = `${SITE_URL}/og-default.png`;
+
+/**
+ * Organização explícita (nome + logo). O Rich Results Test exige `name` e
+ * `logo` visíveis em `publisher`, então não basta apenas a referência `@id`.
+ */
+export const publisherOrg = {
+  "@type": "Organization",
+  "@id": ORG_ID,
+  name: "Liberato Consulting",
+  url: SITE_URL,
+  logo: {
+    "@type": "ImageObject",
+    url: `${SITE_URL}/logo.png`,
+    width: 1400,
+    height: 395,
+  },
+};
+
+/** Rótulos legíveis para as categorias de serviço. */
+const SERVICE_CATEGORY_LABELS: Record<string, string> = {
+  estrategia: "Gestão estratégica",
+  operacoes: "Excelência operacional",
+  empreendedorismo: "Empreendedorismo e novos negócios",
+  pesquisas: "Pesquisas de mercado",
+  mercado: "Pesquisas de mercado",
+};
+
+
 /** Cria um script JSON-LD pronto para o array `scripts` do head(). */
 export function jsonLd(data: unknown) {
   return {
