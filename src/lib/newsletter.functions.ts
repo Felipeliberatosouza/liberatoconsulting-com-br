@@ -198,6 +198,8 @@ export const saveCampaign = createServerFn({ method: "POST" })
       full_text: data.full_text ?? "",
       sources: data.sources ?? "",
       reference_date: data.reference_date || null,
+      slug: await uniqueSlug(context.supabase, newsletterSlug(data.subject), data.id ?? null),
+      published_at: new Date().toISOString(),
     };
     if (!(await isAdmin(context))) {
       const queued = await queueChangeRequest(context, {
