@@ -53,11 +53,12 @@ export const Route = createFileRoute("/newsletter/$slug")({
 });
 
 function NewsletterNotFound() {
+  const { t } = useLanguage();
   return (
     <div className="mx-auto max-w-3xl px-6 py-32">
-      <p className="text-sm text-muted-foreground">Newsletter não encontrada.</p>
+      <p className="text-sm text-muted-foreground">{t.newsletterPage.notFound}</p>
       <Link to="/content" className="mt-4 inline-block text-sm font-semibold text-accent">
-        Ver conteúdos
+        {t.newsletterPage.seeContent}
       </Link>
     </div>
   );
@@ -71,8 +72,19 @@ function paragraphs(text: string) {
 }
 
 function NewsletterPage() {
-  const data = Route.useLoaderData();
+  const loaded = Route.useLoaderData();
   const { slug } = Route.useParams();
+  const { lang, t } = useLanguage();
+
+  // Conteúdo traduzido por IA quando o visitante não está em português.
+  const translated = useQuery({
+    queryKey: ["newsletter-public", slug, lang],
+    queryFn: () => getPublishedNewsletter({ data: { slug, lang } }),
+    enabled: lang !== "pt",
+    staleTime: 1000 * 60 * 60,
+  });
+
+  const data = (lang !== "pt" && translated.data) || loaded;
   const cover = data.hasImage ? `/api/public/newsletter-image/${slug}` : "";
   const text = data.fullText.trim() || data.body;
 
@@ -88,19 +100,26 @@ function NewsletterPage() {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/30" />
         <div className="relative mx-auto flex min-h-[340px] max-w-4xl flex-col justify-end px-6 py-16">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Newsletter</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
+            {t.newsletterPage.eyebrow}
+          </p>
           <h1 className="mt-4 max-w-3xl font-display text-3xl font-bold leading-tight md:text-5xl">
             {data.subject}
           </h1>
           {data.authors && (
             <p className="mt-4 text-sm text-ink-foreground/80">
-              Por <span className="font-semibold">{data.authors}</span>
+              {t.newsletterPage.by} <span className="font-semibold">{data.authors}</span>
             </p>
           )}
         </div>
       </section>
 
       <article className="mx-auto max-w-3xl px-6 py-14">
+        {translated.isFetching && (
+          <p className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            {t.newsletterPage.translating}
+          </p>
+        )}
         {data.preheader && (
           <div className="border-l-4 border-accent bg-secondary/50 p-6">
             <p className="text-sm leading-relaxed">{data.preheader}</p>
@@ -114,8 +133,9 @@ function NewsletterPage() {
         {data.sources.trim() && (
           <div className="mt-10 border-t border-border pt-6">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Fontes
+              {t.newsletterPage.sources}
             </p>
+
             <div className="mt-2 space-y-1 text-sm text-muted-foreground">
               {paragraphs(data.sources).map((p, i) => (
                 <p key={i}>{p}</p>
