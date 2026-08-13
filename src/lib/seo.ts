@@ -29,15 +29,57 @@ export function localizedUrl(path: string, lang: string): string {
   return lang === "pt" ? base : `${base}${base.includes("?") ? "&" : "?"}lang=${lang}`;
 }
 
-/** `links` do head(): canonical + alternates hreflang. */
-export function seoLinks(path: string) {
+/** Códigos OG (`og:locale`) por idioma. */
+export const OG_LOCALES: Record<string, string> = {
+  pt: "pt_BR",
+  en: "en_US",
+  es: "es_ES",
+  zh: "zh_CN",
+};
+
+/** Normaliza um valor arbitrário de `?lang=` para um idioma publicado. */
+export function normalizeLang(value: unknown): string {
+  const v = String(value ?? "").toLowerCase().slice(0, 2);
+  return HREFLANGS.some(([lang]) => lang === v) ? v : "pt";
+}
+
+/**
+ * Lê o idioma atual a partir do contexto do `head()` de uma rota
+ * (`?lang=en`, `?lang=es`, `?lang=zh`); sem parâmetro, assume português.
+ */
+export function headLang(ctx?: { match?: { search?: Record<string, unknown> } }): string {
+  return normalizeLang(ctx?.match?.search?.["lang"]);
+}
+
+/**
+ * `links` do head(): canonical autorreferente ao idioma servido +
+ * alternates hreflang recíprocos para todos os idiomas + x-default.
+ *
+ * O canonical precisa apontar para a própria URL do idioma (com `?lang=`),
+ * caso contrário o Google descarta os hreflang por conflito de canonical.
+ */
+export function seoLinks(path: string, lang: string = "pt") {
+  const current = normalizeLang(lang);
   return [
-    { rel: "canonical", href: absoluteUrl(path) },
-    ...HREFLANGS.map(([lang, hreflang]) => ({
+    { rel: "canonical", href: localizedUrl(path, current) },
+    ...HREFLANGS.map(([code, hreflang]) => ({
       rel: "alternate",
       hrefLang: hreflang,
-      href: localizedUrl(path, lang),
+      href: localizedUrl(path, code),
     })),
     { rel: "alternate", hrefLang: "x-default", href: absoluteUrl(path) },
   ];
 }
+
+/** `meta` de idioma: og:locale + alternativos. */
+export function seoLocaleMeta(lang: string = "pt") {
+  const current = normalizeLang(lang);
+  return [
+    { property: "og:locale", content: OG_LOCALES[current] ?? "pt_BR" },
+    ...HREFLANGS.filter(([code]) => code !== current).map(([code]) => ({
+      property: "og:locale:alternate",
+      content: OG_LOCALES[code],
+    })),
+  ];
+}
+
