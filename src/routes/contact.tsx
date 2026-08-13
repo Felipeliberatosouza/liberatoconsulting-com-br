@@ -22,6 +22,9 @@ export const Route = createFileRoute("/contact")({
         content: "Conte o desafio da sua empresa. Respondemos em até dois dias úteis.",
       },
       { property: "og:url", content: "https://liberatoconsulting.com.br/contact" },
+      { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
+      { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: seoLinks("/contact"),
     scripts: [

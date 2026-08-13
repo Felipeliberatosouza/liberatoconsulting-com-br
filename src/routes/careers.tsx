@@ -20,6 +20,8 @@ export const Route = createFileRoute("/careers")({
         { property: "og:title", content: title },
         { property: "og:description", content: pt.careers.metaDescription },
         { property: "og:type", content: "website" },
+        { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
+        { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
         { name: "twitter:card", content: "summary_large_image" },
       ],
       links: seoLinks("/careers"),
