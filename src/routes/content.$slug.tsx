@@ -68,7 +68,7 @@ export const Route = createFileRoute("/content/$slug")({
             headline: title,
             description: summary,
             path: `/content/${params.slug}`,
-            author: loaderData?.authors || undefined,
+            authorName: loaderData?.authors || undefined,
             image: image,
           }),
         ),
