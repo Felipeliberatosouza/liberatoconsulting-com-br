@@ -21,6 +21,8 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { CopyProtection } from "@/components/CopyProtection";
 import { normalizeLang } from "@/lib/seo";
+import { trackPageView } from "@/lib/gtag";
+
 
 
 
