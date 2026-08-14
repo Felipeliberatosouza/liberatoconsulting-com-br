@@ -71,18 +71,18 @@ function xmlResponse(xml: string) {
 }
 
 /** Sitemap de um idioma, com alternates hreflang recíprocos. */
-export async function buildLanguageSitemap(lang: string): Promise<Response> {
+export async function buildLanguageSitemap(lang: string, origin: string = SITE_URL): Promise<Response> {
   const entries = await collectEntries();
 
   const urls = entries.map((e) =>
     [
       `  <url>`,
-      `    <loc>${localizedUrl(e.path, lang)}</loc>`,
+      `    <loc>${localizedUrl(e.path, lang, origin)}</loc>`,
       ...HREFLANGS.map(
         ([code, hreflang]) =>
-          `    <xhtml:link rel="alternate" hreflang="${hreflang}" href="${localizedUrl(e.path, code)}" />`,
+          `    <xhtml:link rel="alternate" hreflang="${hreflang}" href="${localizedUrl(e.path, code, origin)}" />`,
       ),
-      `    <xhtml:link rel="alternate" hreflang="x-default" href="${absoluteUrl(e.path)}" />`,
+      `    <xhtml:link rel="alternate" hreflang="x-default" href="${absoluteUrl(e.path, origin)}" />`,
       e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
       e.priority ? `    <priority>${e.priority}</priority>` : null,
       `  </url>`,
@@ -102,13 +102,13 @@ export async function buildLanguageSitemap(lang: string): Promise<Response> {
 }
 
 /** Índice apontando para os sitemaps de cada idioma. */
-export function buildSitemapIndex(): Response {
+export function buildSitemapIndex(origin: string = SITE_URL): Response {
   return xmlResponse(
     [
       `<?xml version="1.0" encoding="UTF-8"?>`,
       `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
       ...SITEMAP_LANGS.map((lang) =>
-        [`  <sitemap>`, `    <loc>${SITE_URL}/sitemap-${lang}.xml</loc>`, `  </sitemap>`].join("\n"),
+        [`  <sitemap>`, `    <loc>${origin}/sitemap-${lang}.xml</loc>`, `  </sitemap>`].join("\n"),
       ),
       `</sitemapindex>`,
     ].join("\n"),
