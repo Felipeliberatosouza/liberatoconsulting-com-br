@@ -24,7 +24,7 @@ interface Props {
   sourcePath?: string
 }
 
-const Row = ({ label, value }: { label: string; value?: string }) =>
+const Row = ({ label, value }: { label: string; value?: string | undefined }) =>
   value ? (
     <Text style={row}>
       <span style={rowLabel}>{label}: </span>
