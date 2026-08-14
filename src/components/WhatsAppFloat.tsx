@@ -1,5 +1,5 @@
 import { useLanguage } from "@/i18n";
-import { normalizeWhatsApp, whatsappHref } from "@/lib/whatsapp";
+import { normalizeWhatsApp, openWhatsApp, whatsappHref } from "@/lib/whatsapp";
 import { trackEvent } from "@/lib/gtag";
 
 
