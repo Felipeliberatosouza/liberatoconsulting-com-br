@@ -87,7 +87,10 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
       <p className="mt-2 max-w-xl text-sm text-muted-foreground">{F.body}</p>
 
       {status === "done" ? (
-        <p className="mt-6 rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-sm font-medium">
+        <p
+          ref={successRef}
+          className="mt-6 scroll-mt-28 rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-sm font-medium"
+        >
           {F.success}
         </p>
       ) : (
