@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, ArrowRight, ShieldCheck, Upload } from "lucide-react";
@@ -74,6 +74,13 @@ function CareersPage() {
   );
 
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
+  const successRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (status === "done") {
+      successRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [status]);
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
 
@@ -122,9 +129,6 @@ function CareersPage() {
         trackEvent("form_submit", { form_name: "careers", area: String(fd.get("area") ?? "") });
         form.reset();
         setFileName("");
-        if (typeof window !== "undefined") {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }
         return;
       }
       setStatus("idle");
@@ -169,7 +173,10 @@ function CareersPage() {
       <section className="py-16">
         <div className="mx-auto max-w-3xl px-6">
           {status === "done" ? (
-            <p className="rounded-2xl border border-accent/40 bg-accent/10 px-6 py-5 text-sm font-medium">
+            <p
+              ref={successRef}
+              className="scroll-mt-28 rounded-2xl border border-accent/40 bg-accent/10 px-6 py-5 text-sm font-medium"
+            >
               {C.success}
             </p>
           ) : (

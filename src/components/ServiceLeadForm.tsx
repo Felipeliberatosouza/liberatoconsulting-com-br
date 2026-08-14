@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 
@@ -22,6 +22,13 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
 
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [error, setError] = useState<string | null>(null);
+  const successRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (status === "done") {
+      successRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [status]);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -80,7 +87,10 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
       <p className="mt-2 max-w-xl text-sm text-muted-foreground">{F.body}</p>
 
       {status === "done" ? (
-        <p className="mt-6 rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-sm font-medium">
+        <p
+          ref={successRef}
+          className="mt-6 scroll-mt-28 rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-sm font-medium"
+        >
           {F.success}
         </p>
       ) : (

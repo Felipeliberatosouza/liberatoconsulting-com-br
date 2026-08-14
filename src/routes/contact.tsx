@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
@@ -110,6 +110,13 @@ function ContactPage() {
   const send = useServerFn(submitLead);
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [error, setError] = useState<string | null>(null);
+  const successRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (status === "done") {
+      successRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [status]);
 
   const startedAt = useRef(Date.now());
   const challenge = useMemo(
@@ -185,7 +192,10 @@ function ContactPage() {
 
       <section className="mx-auto grid max-w-7xl gap-14 px-6 py-24 md:grid-cols-[1.2fr_1fr]">
         {status === "done" ? (
-          <p className="rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-sm font-medium">
+          <p
+            ref={successRef}
+            className="scroll-mt-28 self-start rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-sm font-medium"
+          >
             {F.success}
           </p>
         ) : (
