@@ -161,11 +161,41 @@ export async function composeSocialImage(
   return canvas.toDataURL(f.mime, 0.92);
 }
 
+/** Converte data URL em Blob (evita navegar para URLs gigantes no celular). */
+function dataUrlToBlob(dataUrl: string): Blob {
+  const match = /^data:([^;,]+)?(;base64)?,(.*)$/is.exec(dataUrl);
+  if (!match) throw new Error("Imagem inválida.");
+  const mime = match[1] || "image/jpeg";
+  const payload = match[3] ?? "";
+  if (match[2]) {
+    const bin = atob(payload);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new Blob([bytes], { type: mime });
+  }
+  return new Blob([decodeURIComponent(payload)], { type: mime });
+}
+
 export function downloadDataUrl(dataUrl: string, filename: string) {
+  // Em navegadores móveis, um href com data URL muito grande abre uma aba em
+  // branco/quebrada. Usar Blob + objectURL mantém o download estável.
+  let url = dataUrl;
+  let revoke = false;
+  try {
+    if (dataUrl.startsWith("data:")) {
+      url = URL.createObjectURL(dataUrlToBlob(dataUrl));
+      revoke = true;
+    }
+  } catch {
+    url = dataUrl;
+  }
   const a = document.createElement("a");
-  a.href = dataUrl;
+  a.href = url;
   a.download = filename;
+  a.rel = "noopener";
   document.body.appendChild(a);
   a.click();
   a.remove();
+  if (revoke) setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
+
