@@ -74,6 +74,13 @@ function CareersPage() {
   );
 
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
+  const successRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (status === "done") {
+      successRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [status]);
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
 
