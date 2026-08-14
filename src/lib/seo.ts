@@ -20,15 +20,43 @@ export const HREFLANGS = [
   ["zh", "zh-Hans"],
 ] as const;
 
+/**
+ * Hosts em que o site é servido. O host oficial vem primeiro: é o usado
+ * como fallback quando não há requisição (build, prerender).
+ */
+export const KNOWN_HOSTS = [
+  "liberatoconsulting.com.br",
+  "www.liberatoconsulting.com.br",
+  "liberatoconsulting-com-br.lovable.app",
+];
+
+/**
+ * Origem a usar em sitemap/robots: reflete o host que está sendo rastreado
+ * (evita divergência entre o domínio próprio e o domínio do projeto),
+ * com fallback para o host oficial.
+ */
+export function requestOrigin(request?: { url?: string }): string {
+  try {
+    const url = new URL(request?.url ?? "");
+    const host = url.hostname.toLowerCase();
+    if (KNOWN_HOSTS.includes(host) || host.endsWith(".lovable.app") || host === "localhost") {
+      return `${url.protocol}//${url.host}`;
+    }
+  } catch {
+    // sem requisição válida: usa o host oficial
+  }
+  return SITE_URL;
+}
+
 /** URL absoluta de um caminho interno. */
-export function absoluteUrl(path: string): string {
+export function absoluteUrl(path: string, origin: string = SITE_URL): string {
   const p = path.startsWith("/") ? path : `/${path}`;
-  return `${SITE_URL}${p === "/" ? "/" : p.replace(/\/$/, "")}`;
+  return `${origin}${p === "/" ? "/" : p.replace(/\/$/, "")}`;
 }
 
 /** URL absoluta de um caminho em um idioma específico. */
-export function localizedUrl(path: string, lang: string): string {
-  const base = absoluteUrl(path);
+export function localizedUrl(path: string, lang: string, origin: string = SITE_URL): string {
+  const base = absoluteUrl(path, origin);
   return lang === "pt" ? base : `${base}${base.includes("?") ? "&" : "?"}lang=${lang}`;
 }
 

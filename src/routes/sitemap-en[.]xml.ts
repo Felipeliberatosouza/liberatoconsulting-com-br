@@ -2,11 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
 import { buildLanguageSitemap } from "@/lib/sitemap.server";
+import { requestOrigin } from "@/lib/seo";
 
 export const Route = createFileRoute("/sitemap-en.xml")({
   server: {
     handlers: {
-      GET: async () => buildLanguageSitemap("en"),
+      GET: async ({ request }) => buildLanguageSitemap("en", requestOrigin(request)),
     },
   },
 });
