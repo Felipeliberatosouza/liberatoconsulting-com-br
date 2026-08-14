@@ -192,7 +192,10 @@ function ContactPage() {
 
       <section className="mx-auto grid max-w-7xl gap-14 px-6 py-24 md:grid-cols-[1.2fr_1fr]">
         {status === "done" ? (
-          <p className="rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-sm font-medium">
+          <p
+            ref={successRef}
+            className="scroll-mt-28 self-start rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-sm font-medium"
+          >
             {F.success}
           </p>
         ) : (
