@@ -18,10 +18,8 @@ export function WhatsAppFloat() {
       rel="noopener noreferrer"
       onClick={(event) => {
         trackEvent("cta_click", { label: "whatsapp_float", category: "engagement" });
-        if (window.self !== window.top) {
-          event.preventDefault();
-          window.open(whatsappHref(number), "_top");
-        }
+        event.preventDefault();
+        openWhatsApp(whatsappHref(number));
       }}
       aria-label={label}
       title={title}
