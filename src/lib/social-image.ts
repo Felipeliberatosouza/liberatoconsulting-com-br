@@ -26,7 +26,14 @@ function loadImage(src: string) {
 
 /** Média de luminância da área onde o texto será escrito (0 = escuro, 1 = claro). */
 function areaLuminance(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
-  const data = ctx.getImageData(x, y, Math.max(1, w), Math.max(1, h)).data;
+  // Imagens de outra origem podem "contaminar" o canvas; nesse caso o navegador
+  // lança SecurityError. Retornamos um valor neutro em vez de quebrar a arte.
+  let data: Uint8ClampedArray;
+  try {
+    data = ctx.getImageData(x, y, Math.max(1, w), Math.max(1, h)).data;
+  } catch {
+    return 0.5;
+  }
   let sum = 0;
   let n = 0;
   for (let i = 0; i < data.length; i += 4 * 16) {
@@ -35,6 +42,7 @@ function areaLuminance(ctx: CanvasRenderingContext2D, x: number, y: number, w: n
   }
   return n ? sum / n : 0.5;
 }
+
 
 function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
   const words = text.split(/\s+/);
