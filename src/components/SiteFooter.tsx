@@ -57,10 +57,8 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(event) => {
-                  if (window.self !== window.top) {
-                    event.preventDefault();
-                    window.open(whatsappHref(whatsappNumber), "_top");
-                  }
+                  event.preventDefault();
+                  openWhatsApp(whatsappHref(whatsappNumber));
                 }}
                 aria-label="WhatsApp"
                 title="WhatsApp"
