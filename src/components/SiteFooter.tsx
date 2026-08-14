@@ -3,7 +3,7 @@ import { Linkedin, Youtube } from "lucide-react";
 import { useLanguage } from "@/i18n";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { legal } from "@/i18n/legal";
-import { normalizeWhatsApp, whatsappHref } from "@/lib/whatsapp";
+import { normalizeWhatsApp, openWhatsApp, whatsappHref } from "@/lib/whatsapp";
 
 export function SiteFooter() {
   const { t, logoUrl, lang, whatsapp } = useLanguage();
