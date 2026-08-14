@@ -84,7 +84,7 @@ export async function saveApplication(data: ApplicationInput, ipHash: string | n
     return { ok: false as const, reason: "error" as const };
   }
 
-  const { error } = await supabaseAdmin.from("job_applications").insert({
+  const { data: inserted, error } = await supabaseAdmin.from("job_applications").insert({
     full_name: data.fullName,
     phone: data.phone,
     email: data.email,
@@ -95,12 +95,36 @@ export async function saveApplication(data: ApplicationInput, ipHash: string | n
     language: data.language || null,
     source_path: data.sourcePath || null,
     ip_hash: ipHash,
-  });
+  }).select("id").single();
 
   if (error) {
     console.error("application insert failed", error.message);
     return { ok: false as const, reason: "error" as const };
   }
 
+  await notifyNewApplication(data, inserted?.id ?? null);
+
   return { ok: true as const };
+}
+
+async function notifyNewApplication(data: ApplicationInput, applicationId: string | null) {
+  try {
+    const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+    await sendTemplateEmail("application-notification", "contato@liberatoconsulting.com.br", {
+      templateData: {
+        fullName: data.fullName,
+        email: data.email,
+        phone: data.phone,
+        area: data.area,
+        linkedin: data.linkedin || "",
+        resumeName: data.resumeName,
+        language: data.language || "",
+        sourcePath: data.sourcePath || "",
+      },
+      ...(applicationId ? { idempotencyKey: `application-notification-${applicationId}` } : {}),
+      replyTo: data.email,
+    });
+  } catch (err) {
+    console.error("application notification email failed", err);
+  }
 }
