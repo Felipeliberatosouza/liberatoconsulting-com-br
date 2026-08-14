@@ -173,7 +173,10 @@ function CareersPage() {
       <section className="py-16">
         <div className="mx-auto max-w-3xl px-6">
           {status === "done" ? (
-            <p className="rounded-2xl border border-accent/40 bg-accent/10 px-6 py-5 text-sm font-medium">
+            <p
+              ref={successRef}
+              className="scroll-mt-28 rounded-2xl border border-accent/40 bg-accent/10 px-6 py-5 text-sm font-medium"
+            >
               {C.success}
             </p>
           ) : (
