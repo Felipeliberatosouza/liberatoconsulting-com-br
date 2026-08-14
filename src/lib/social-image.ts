@@ -14,19 +14,31 @@ export const SOCIAL_IMAGE_FORMATS: Record<
   linkedin: { label: "LinkedIn", width: 1200, height: 627, mime: "image/png", ext: "png" },
 };
 
-function loadImage(src: string) {
+function loadImage(src: string, anonymous = true) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = "anonymous";
+    if (anonymous && !src.startsWith("data:")) img.crossOrigin = "anonymous";
     img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error("Não foi possível carregar a imagem base."));
+    img.onerror = () => {
+      // Alguns servidores não enviam cabeçalhos CORS: tenta de novo sem anonymous.
+      if (anonymous && !src.startsWith("data:")) loadImage(src, false).then(resolve, reject);
+      else reject(new Error("Não foi possível carregar a imagem base."));
+    };
     img.src = src;
   });
 }
 
+
 /** Média de luminância da área onde o texto será escrito (0 = escuro, 1 = claro). */
 function areaLuminance(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
-  const data = ctx.getImageData(x, y, Math.max(1, w), Math.max(1, h)).data;
+  // Imagens de outra origem podem "contaminar" o canvas; nesse caso o navegador
+  // lança SecurityError. Retornamos um valor neutro em vez de quebrar a arte.
+  let data: Uint8ClampedArray;
+  try {
+    data = ctx.getImageData(x, y, Math.max(1, w), Math.max(1, h)).data;
+  } catch {
+    return 0.5;
+  }
   let sum = 0;
   let n = 0;
   for (let i = 0; i < data.length; i += 4 * 16) {
@@ -35,6 +47,7 @@ function areaLuminance(ctx: CanvasRenderingContext2D, x: number, y: number, w: n
   }
   return n ? sum / n : 0.5;
 }
+
 
 function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
   const words = text.split(/\s+/);
@@ -161,11 +174,41 @@ export async function composeSocialImage(
   return canvas.toDataURL(f.mime, 0.92);
 }
 
+/** Converte data URL em Blob (evita navegar para URLs gigantes no celular). */
+function dataUrlToBlob(dataUrl: string): Blob {
+  const match = /^data:([^;,]+)?(;base64)?,(.*)$/is.exec(dataUrl);
+  if (!match) throw new Error("Imagem inválida.");
+  const mime = match[1] || "image/jpeg";
+  const payload = match[3] ?? "";
+  if (match[2]) {
+    const bin = atob(payload);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return new Blob([bytes], { type: mime });
+  }
+  return new Blob([decodeURIComponent(payload)], { type: mime });
+}
+
 export function downloadDataUrl(dataUrl: string, filename: string) {
+  // Em navegadores móveis, um href com data URL muito grande abre uma aba em
+  // branco/quebrada. Usar Blob + objectURL mantém o download estável.
+  let url = dataUrl;
+  let revoke = false;
+  try {
+    if (dataUrl.startsWith("data:")) {
+      url = URL.createObjectURL(dataUrlToBlob(dataUrl));
+      revoke = true;
+    }
+  } catch {
+    url = dataUrl;
+  }
   const a = document.createElement("a");
-  a.href = dataUrl;
+  a.href = url;
   a.download = filename;
+  a.rel = "noopener";
   document.body.appendChild(a);
   a.click();
   a.remove();
+  if (revoke) setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
+
