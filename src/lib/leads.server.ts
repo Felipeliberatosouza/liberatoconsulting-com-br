@@ -54,7 +54,7 @@ export async function insertLead(data: LeadInput, ipHash: string | null) {
     if ((count ?? 0) >= MAX_PER_HOUR) return { ok: false as const, reason: "rateLimited" as const };
   }
 
-  const { error } = await supabaseAdmin.from("leads").insert({
+  const { data: inserted, error } = await supabaseAdmin.from("leads").insert({
     name: data.name,
     company: data.company,
     country: data.country,
@@ -65,11 +65,37 @@ export async function insertLead(data: LeadInput, ipHash: string | null) {
     language: data.language || null,
     source_path: data.sourcePath || null,
     ip_hash: ipHash,
-  });
+  }).select("id").single();
 
   if (error) {
     console.error("lead insert failed", error.message);
     return { ok: false as const, reason: "error" as const };
   }
+
+  await notifyNewLead(data, inserted?.id ?? null);
+
   return { ok: true as const };
+}
+
+async function notifyNewLead(data: LeadInput, leadId: string | null) {
+  try {
+    const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+    await sendTemplateEmail("lead-notification", "contato@liberatoconsulting.com.br", {
+      templateData: {
+        name: data.name,
+        company: data.company,
+        country: data.country,
+        email: data.email || "",
+        serviceTitle: data.serviceTitle || "",
+        serviceSlug: data.serviceSlug,
+        message: data.message || "",
+        language: data.language || "",
+        sourcePath: data.sourcePath || "",
+      },
+      ...(leadId ? { idempotencyKey: `lead-notification-${leadId}` } : {}),
+      ...(data.email ? { replyTo: data.email } : {}),
+    });
+  } catch (err) {
+    console.error("lead notification email failed", err);
+  }
 }
