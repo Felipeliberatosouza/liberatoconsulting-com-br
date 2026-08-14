@@ -15,3 +15,18 @@ export function whatsappHref(number: string, text?: string): string {
   return text ? `${base}?text=${encodeURIComponent(text)}` : base;
 }
 
+/**
+ * Abre o WhatsApp de forma confiável, inclusive dentro de iframes de pré-visualização,
+ * onde a navegação padrão do link pode ser bloqueada.
+ */
+export function openWhatsApp(href: string) {
+  const win = window.open(href, "_blank", "noopener,noreferrer");
+  if (win) return true;
+  try {
+    window.top!.location.href = href;
+    return true;
+  } catch {
+    window.location.href = href;
+    return true;
+  }
+}
