@@ -14,15 +14,20 @@ export const SOCIAL_IMAGE_FORMATS: Record<
   linkedin: { label: "LinkedIn", width: 1200, height: 627, mime: "image/png", ext: "png" },
 };
 
-function loadImage(src: string) {
+function loadImage(src: string, anonymous = true) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = "anonymous";
+    if (anonymous && !src.startsWith("data:")) img.crossOrigin = "anonymous";
     img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error("Não foi possível carregar a imagem base."));
+    img.onerror = () => {
+      // Alguns servidores não enviam cabeçalhos CORS: tenta de novo sem anonymous.
+      if (anonymous && !src.startsWith("data:")) loadImage(src, false).then(resolve, reject);
+      else reject(new Error("Não foi possível carregar a imagem base."));
+    };
     img.src = src;
   });
 }
+
 
 /** Média de luminância da área onde o texto será escrito (0 = escuro, 1 = claro). */
 function areaLuminance(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
