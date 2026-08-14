@@ -7,6 +7,10 @@
 import { fileURLToPath } from "node:url";
 
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { loadEnv } from "vite";
+
+// Load all env vars (including non-VITE_ server secrets) into process.env for server code.
+Object.assign(process.env, loadEnv(process.env['NODE_ENV'] || "development", process.cwd(), ""));
 
 export default defineConfig({
   tanstackStart: {
@@ -22,7 +26,16 @@ export default defineConfig({
         "pdf-lib": fileURLToPath(
           new URL("./node_modules/pdf-lib/dist/pdf-lib.esm.js", import.meta.url),
         ),
+        "entities/lib/decode.js": fileURLToPath(
+          new URL("./node_modules/entities/lib/decode.js", import.meta.url),
+        ),
+        "entities/lib/encode.js": fileURLToPath(
+          new URL("./node_modules/entities/lib/encode.js", import.meta.url),
+        ),
+        entities: fileURLToPath(new URL("./node_modules/entities", import.meta.url)),
       },
     },
   },
+});
+
 });
