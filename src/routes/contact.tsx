@@ -110,6 +110,13 @@ function ContactPage() {
   const send = useServerFn(submitLead);
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [error, setError] = useState<string | null>(null);
+  const successRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (status === "done") {
+      successRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [status]);
 
   const startedAt = useRef(Date.now());
   const challenge = useMemo(
