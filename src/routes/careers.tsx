@@ -129,9 +129,6 @@ function CareersPage() {
         trackEvent("form_submit", { form_name: "careers", area: String(fd.get("area") ?? "") });
         form.reset();
         setFileName("");
-        if (typeof window !== "undefined") {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }
         return;
       }
       setStatus("idle");
