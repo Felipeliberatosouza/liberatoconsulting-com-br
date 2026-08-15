@@ -12,7 +12,9 @@ const SITE_NAME = "Liberato Consulting"
 const SENDER_DOMAIN = "notify.liberatoconsulting.com.br"
 // FROM_DOMAIN is the domain shown in the From: header (e.g., "example.com").
 // Can be the root domain when display_from_root is enabled — this is cosmetic only.
-const FROM_DOMAIN = "liberatoconsulting.com.br"
+// Usamos o subdomínio verificado no From para que SPF/DKIM/DMARC fiquem
+// totalmente alinhados (o SPF do domínio raiz é da Hostinger, não do envio).
+const FROM_DOMAIN = SENDER_DOMAIN
 
 export type SendTemplateEmailResult =
   | { sent: true }
