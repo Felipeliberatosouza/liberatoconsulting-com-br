@@ -291,6 +291,15 @@ export function renderBulletinHtml(
   )}</a></p>
 </td></tr>
 
+<tr><td style="padding:4px 32px 20px">
+  ${
+    content.articles[0]
+      ? `<p style="margin:0;font-size:14px;color:#14192a">${escapeHtml(L.readLatest)}
+        <a href="${origin}/content/${content.articles[0].slug}${lang === "pt" ? "" : `?lang=${lang}`}" style="font-weight:700;color:#e2751f">${escapeHtml(content.articles[0].title)}</a></p>`
+      : ""
+  }
+</td></tr>
+
 <tr><td style="padding:22px 32px;background:#14192a;color:#f7f6f4">
   ${companyFooterHtml(content.company)}
 </td></tr>
@@ -330,7 +339,11 @@ ${indicators || L.noIndicators}
 
 ${L.latestArticles.toUpperCase()}
 ${articles || L.soonArticles}
-
+${
+  content.articles[0]
+    ? `\n${L.readLatest} ${content.articles[0].title} — ${origin}/content/${content.articles[0].slug}${suffix}\n`
+    : ""
+}
 ${companyFooterText(content.company)}
 
 ${L.stopReceiving}: ${unsubscribeUrl}`;
@@ -362,7 +375,11 @@ ${indicators || L.noIndicators}
 
 *${L.latestArticles}*
 ${articles || L.soonArticles}
-
+${
+  content.articles[0]
+    ? `\n${L.readLatest} ${content.articles[0].title}: ${origin}/content/${content.articles[0].slug}${suffix}\n`
+    : ""
+}
 ${L.socialCta}
 
 ${companyFooterText(content.company)}
