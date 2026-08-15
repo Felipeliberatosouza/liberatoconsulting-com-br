@@ -256,8 +256,10 @@ function AdminBulletin() {
               <div className="mt-6 border-t border-border pt-5">
                 <h3 className="font-display text-base font-bold">Imagem com os indicadores</h3>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Gera a arte com os indicadores do segmento sobre um fundo com o tema de dados
-                  econômicos do Brasil. A cor do texto se ajusta ao brilho da imagem.
+                  Gera a arte com os indicadores do segmento (atual, variação e tendência) sobre um
+                  fundo com o tema de dados econômicos do Brasil. A cor do texto se ajusta ao brilho
+                  da imagem. As fontes não aparecem nas redes sociais: a arte traz a chamada para
+                  acessar liberatoconsulting.com.br e consultar as fontes.
                 </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {(["whatsapp", "instagram", "linkedin"] as SocialFormatKey[]).map((key) => (
