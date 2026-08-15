@@ -125,6 +125,7 @@ export const pt = {
   brazilMenu: {
     label: "Dados do Brasil",
     more: "ver todos os dados sobre o Brasil",
+    indicatorsItem: "Indicadores macroeconômicos",
     items: [
       { id: "panorama-economico", label: "Panorama econômico" },
       { id: "setores-estrategicos", label: "Setores estratégicos" },

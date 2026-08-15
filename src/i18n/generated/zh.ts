@@ -262,6 +262,7 @@ export const dict: Dict = {
   "brazilMenu": {
     "label": "巴西数据",
     "more": "查看所有巴西数据",
+    "indicatorsItem": "宏观经济指标",
     "items": [
       {
         "id": "panorama-economico",

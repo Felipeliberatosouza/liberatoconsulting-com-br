@@ -262,6 +262,7 @@ export const dict: Dict = {
   "brazilMenu": {
     "label": "Brazil Data",
     "more": "view all data on Brazil",
+    "indicatorsItem": "Macroeconomic indicators",
     "items": [
       {
         "id": "panorama-economico",
