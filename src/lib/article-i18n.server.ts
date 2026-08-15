@@ -130,7 +130,9 @@ async function fullDocumentBody(
 
   try {
     const source = await originalDocumentText(article);
-    if (!source) return null;
+    // PDF sem camada de texto (digitalizado): o próprio modelo lê o arquivo.
+    if (!source) return await translateFileWithAi(article, lang);
+
 
     const { askText } = await import("./ai.server");
     const chunks = chunkText(source);
