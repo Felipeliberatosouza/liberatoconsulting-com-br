@@ -209,7 +209,7 @@ async function fullDocumentBody(
 
 
     const latest = (article.translations ?? {}) as Record<string, Record<string, string>>;
-    const merged = { ...latest, [lang]: { ...(latest[lang] ?? {}), doc_body: body } };
+    const merged = { ...latest, [lang]: { ...(latest[lang] ?? {}), [key]: body } };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin
       .from("content_articles")
