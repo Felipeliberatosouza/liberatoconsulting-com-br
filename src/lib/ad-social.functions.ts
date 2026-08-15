@@ -11,6 +11,7 @@ export const AD_GOALS = [
   { id: "servicos", label: "Conheça os serviços da Liberato Consulting" },
   { id: "insights", label: "Insights da Liberato Consulting" },
   { id: "seguidor", label: "Seja seguidor da Liberato Consulting" },
+  { id: "trabalhe-conosco", label: "Trabalhe conosco na Liberato Consulting" },
 ] as const;
 
 export type AdGoalId = (typeof AD_GOALS)[number]["id"];

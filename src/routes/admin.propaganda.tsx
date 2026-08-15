@@ -38,9 +38,12 @@ export const Route = createFileRoute("/admin/propaganda")({
   component: AdPage,
 });
 
-const SERVICES = pt.megaMenu.groups.flatMap((g) =>
-  g.items.map((i) => ({ id: i.id, label: `${g.title} · ${i.label}` })),
-);
+const SERVICES = [
+  ...pt.megaMenu.groups.flatMap((g) =>
+    g.items.map((i) => ({ id: i.id, label: `${g.title} · ${i.label}` })),
+  ),
+  { id: "trabalhe-conosco", label: "Trabalhe conosco" },
+];
 
 const FORMATS: SocialFormatKey[] = ["linkedin", "instagram", "whatsapp"];
 
