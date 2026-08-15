@@ -200,6 +200,8 @@ export const previewBulletin = createServerFn({ method: "POST" })
         reference_period: i.reference_period,
         previous_value: i.previous_value,
         previous_period: i.previous_period,
+        forecast_value: i.forecast_value,
+        forecast_period: i.forecast_period,
       })),
       articles: content.articles.length,
     };
