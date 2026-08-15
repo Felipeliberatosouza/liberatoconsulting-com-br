@@ -65,7 +65,7 @@ function camel(value: string, max: number) {
 /**
  * Devolve o caminho do PDF no idioma pedido, gerando-o na primeira vez.
  * Idiomas com alfabeto latino (EN/ES) ganham um PDF institucional traduzido;
- * demais idiomas continuam recebendo o arquivo original enviado pelo autor.
+ * em mandarim entregamos a versão em inglês, pois a fonte do PDF não tem ideogramas.
  */
 export async function ensureTranslatedPdf(
   article: ArticleRecord,
@@ -74,16 +74,19 @@ export async function ensureTranslatedPdf(
   const original = article.file_path
     ? { path: article.file_path, name: article.file_name || "artigo.pdf" }
     : null;
-  if (lang === "pt" || lang === "zh") return original;
+  if (lang === "pt") return original;
+
+  const fileLang: TargetLang = lang === "zh" ? "en" : (lang as TargetLang);
 
   // Traduz primeiro: se o texto mudou, os PDFs antigos são descartados.
-  const withTr = await ensureArticleTranslations(article, lang);
+  const withTr = await ensureArticleTranslations(article, fileLang);
   const stored = ((withTr as unknown as Record<string, unknown>)["translated_files"] ?? {}) as
     Record<string, { path: string; name: string }>;
-  if (stored[lang]?.path) return stored[lang]!;
+  if (stored[fileLang]?.path) return stored[fileLang]!;
 
-  const tr = (withTr.translations?.[lang] ?? {}) as Record<string, string>;
+  const tr = (withTr.translations?.[fileLang] ?? {}) as Record<string, string>;
   if (!tr["title"]) return original;
+
 
 
   try {
