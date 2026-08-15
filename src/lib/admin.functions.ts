@@ -224,6 +224,10 @@ const articleSchema = z.object({
   author_contact: z.string().trim().max(300).optional(),
   file_path: z.string().trim().max(500).nullable().optional(),
   file_name: z.string().trim().max(200).nullable().optional(),
+  article_date: z.string().trim().max(20).nullable().optional(),
+  chart_data: z.string().max(8000).optional(),
+  table_data: z.string().max(12000).optional(),
+
 });
 
 export const saveArticle = createServerFn({ method: "POST" })
