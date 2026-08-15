@@ -295,7 +295,7 @@ export async function composeIndicatorsImage(
   const rowGap = Math.round(labelSize * 2.5);
 
   for (const r of list) {
-    if (y > f.height - pad - rowGap) break;
+    if (y > f.height - pad * 2.4 - rowGap) break;
     const delta = compareIndicator(r.value, r.previous_value, r.unit);
 
     ctx.font = `600 ${labelSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
