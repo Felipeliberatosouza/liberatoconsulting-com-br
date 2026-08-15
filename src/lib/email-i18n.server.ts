@@ -37,6 +37,9 @@ export type EmailLabels = {
   segment: string;
   allSegments: string;
   indicators: string;
+  currentLabel: string;
+  previousLabel: string;
+  changeLabel: string;
   latestArticles: string;
   noIndicators: string;
   soonArticles: string;
@@ -58,6 +61,9 @@ export const LABELS: Record<EmailLang, EmailLabels> = {
     segment: "Segmento",
     allSegments: "Todos os segmentos",
     indicators: "Indicadores econômicos",
+    currentLabel: "Atual",
+    previousLabel: "Anterior",
+    changeLabel: "Variação",
     latestArticles: "Últimos artigos",
     noIndicators: "Sem indicadores publicados para este recorte nesta semana.",
     soonArticles: "Novos conteúdos serão publicados em breve.",
@@ -80,6 +86,9 @@ export const LABELS: Record<EmailLang, EmailLabels> = {
     segment: "Segment",
     allSegments: "All segments",
     indicators: "Economic indicators",
+    currentLabel: "Current",
+    previousLabel: "Previous",
+    changeLabel: "Change",
     latestArticles: "Latest articles",
     noIndicators: "No indicators published for this selection this week.",
     soonArticles: "New content will be published soon.",
@@ -101,6 +110,9 @@ export const LABELS: Record<EmailLang, EmailLabels> = {
     segment: "Segmento",
     allSegments: "Todos los segmentos",
     indicators: "Indicadores económicos",
+    currentLabel: "Actual",
+    previousLabel: "Anterior",
+    changeLabel: "Variación",
     latestArticles: "Últimos artículos",
     noIndicators: "No hay indicadores publicados para esta selección esta semana.",
     soonArticles: "Pronto se publicarán nuevos contenidos.",
@@ -123,6 +135,9 @@ export const LABELS: Record<EmailLang, EmailLabels> = {
     segment: "行业板块",
     allSegments: "全部板块",
     indicators: "经济指标",
+    currentLabel: "当前",
+    previousLabel: "上期",
+    changeLabel: "变化",
     latestArticles: "最新文章",
     noIndicators: "本周该筛选条件下暂无已发布的指标。",
     soonArticles: "新内容即将发布。",
