@@ -305,7 +305,10 @@ export function renderBulletinText(
   const L = labelsFor(lang);
   const suffix = lang === "pt" ? "" : `?lang=${lang}`;
   const indicators = content.indicators
-    .map((i) => `• ${i.label}: ${i.value}${i.unit} (${i.reference_period})${indicatorDeltaText(i, lang)}`)
+    .map(
+      (i) =>
+        `• ${i.label}: ${i.value}${i.unit} (${i.reference_period})${indicatorDeltaText(i, lang)}\n${indicatorSourceText(i, lang)}`.trimEnd(),
+    )
     .join("\n");
   const articles = content.articles
     .map((a) => `• ${a.title} — ${origin}/content/${a.slug}${suffix}`)
