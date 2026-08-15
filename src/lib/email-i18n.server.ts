@@ -67,6 +67,10 @@ export const LABELS: Record<EmailLang, EmailLabels> = {
     currentLabel: "Atual",
     previousLabel: "Anterior",
     changeLabel: "Variação",
+    forecastLabel: "Tendência",
+    sourceLabel: "Fonte",
+    socialCta:
+      "Acesse liberatoconsulting.com.br para mais detalhes e para ter as fontes de informação.",
     latestArticles: "Últimos artigos",
     noIndicators: "Sem indicadores publicados para este recorte nesta semana.",
     soonArticles: "Novos conteúdos serão publicados em breve.",
@@ -92,6 +96,10 @@ export const LABELS: Record<EmailLang, EmailLabels> = {
     currentLabel: "Current",
     previousLabel: "Previous",
     changeLabel: "Change",
+    forecastLabel: "Outlook",
+    sourceLabel: "Source",
+    socialCta:
+      "Visit liberatoconsulting.com.br for more details and the data sources.",
     latestArticles: "Latest articles",
     noIndicators: "No indicators published for this selection this week.",
     soonArticles: "New content will be published soon.",
@@ -116,6 +124,10 @@ export const LABELS: Record<EmailLang, EmailLabels> = {
     currentLabel: "Actual",
     previousLabel: "Anterior",
     changeLabel: "Variación",
+    forecastLabel: "Tendencia",
+    sourceLabel: "Fuente",
+    socialCta:
+      "Acceda a liberatoconsulting.com.br para más detalles y para consultar las fuentes de información.",
     latestArticles: "Últimos artículos",
     noIndicators: "No hay indicadores publicados para esta selección esta semana.",
     soonArticles: "Pronto se publicarán nuevos contenidos.",
@@ -141,6 +153,10 @@ export const LABELS: Record<EmailLang, EmailLabels> = {
     currentLabel: "当前",
     previousLabel: "上期",
     changeLabel: "变化",
+    forecastLabel: "趋势",
+    sourceLabel: "来源",
+    socialCta:
+      "访问 liberatoconsulting.com.br 了解更多详情及数据来源。",
     latestArticles: "最新文章",
     noIndicators: "本周该筛选条件下暂无已发布的指标。",
     soonArticles: "新内容即将发布。",
