@@ -348,12 +348,15 @@ export type Database = {
           full_name: string
           headline: string
           id: string
+          lattes_url: string
+          orcid_url: string
           photo_url: string
           position: number
           published: boolean
           segments: Json
           specialties: Json
           updated_at: string
+          website_url: string
           works: string
         }
         Insert: {
@@ -365,12 +368,15 @@ export type Database = {
           full_name: string
           headline?: string
           id?: string
+          lattes_url?: string
+          orcid_url?: string
           photo_url?: string
           position?: number
           published?: boolean
           segments?: Json
           specialties?: Json
           updated_at?: string
+          website_url?: string
           works?: string
         }
         Update: {
@@ -382,12 +388,15 @@ export type Database = {
           full_name?: string
           headline?: string
           id?: string
+          lattes_url?: string
+          orcid_url?: string
           photo_url?: string
           position?: number
           published?: boolean
           segments?: Json
           specialties?: Json
           updated_at?: string
+          website_url?: string
           works?: string
         }
         Relationships: []
@@ -1036,10 +1045,13 @@ export type Database = {
           full_name: string
           headline: string
           id: string
+          lattes_url: string
+          orcid_url: string
           photo_url: string
           segments: Json
           sort_order: number
           specialties: Json
+          website_url: string
           works: string
         }[]
       }
