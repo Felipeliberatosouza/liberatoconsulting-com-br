@@ -698,7 +698,7 @@ export const pt = {
       back: "Voltar para Conteúdo",
       publishTitle: "Publique você também! Envie o seu artigo!",
       publishLead:
-        "Tem um artigo sobre gestão, empreendedorismo, pesquisas de mercado ou inteligência artificial? Envie para nossa curadoria.",
+        "Tem um artigo sobre gestão, empreendedorismo, operação ou pesquisa de mercado? Envie para nossa curadoria.",
       publishCta: "Publique você também! Envie o seu artigo!",
       formName: "Nome completo",
       formRole: "Identificação (autor, pesquisador, estudante…)",
