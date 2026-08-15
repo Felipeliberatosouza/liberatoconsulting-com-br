@@ -225,7 +225,8 @@ async function fullDocumentBody(
 
 /**
  * Devolve o caminho do PDF no idioma pedido, gerando-o na primeira vez.
- * EN/ES usam as fontes padrão; o mandarim usa uma fonte com ideogramas.
+ * Todos os idiomas — inclusive o português — usam o mesmo layout institucional;
+ * EN/ES usam as fontes padrão e o mandarim uma fonte com ideogramas.
  */
 export async function ensureTranslatedPdf(
   article: ArticleRecord,
@@ -234,16 +235,26 @@ export async function ensureTranslatedPdf(
   const original = article.file_path
     ? { path: article.file_path, name: article.file_name || "artigo.pdf" }
     : null;
-  if (lang === "pt") return original;
 
-  const fileLang = lang as TargetLang;
+  const fileLang = lang;
+  const isPt = lang === "pt";
 
   // Traduz primeiro: se o texto mudou, os PDFs antigos são descartados.
-  const withTr = await ensureArticleTranslations(article, fileLang);
+  const withTr = isPt ? article : await ensureArticleTranslations(article, fileLang);
   const stored = ((withTr as unknown as Record<string, unknown>)["translated_files"] ?? {}) as
     Record<string, { path: string; name: string }>;
-  const tr = (withTr.translations?.[fileLang] ?? {}) as Record<string, string>;
-  // Só reaproveitamos o PDF salvo se ele já foi gerado a partir da íntegra traduzida.
+  const tr = isPt
+    ? {
+        title: article.title ?? "",
+        summary: article.summary ?? "",
+        body: article.body ?? "",
+        table_data: (article as unknown as Record<string, string>)["table_data"] ?? "",
+        chart_data: (article as unknown as Record<string, string>)["chart_data"] ?? "",
+        doc_body:
+          ((withTr.translations?.["pt"] ?? {}) as Record<string, string>)["doc_md"] ?? "",
+      }
+    : ((withTr.translations?.[fileLang] ?? {}) as Record<string, string>);
+  // Só reaproveitamos o PDF salvo se ele já foi gerado a partir da íntegra do documento.
   const hasFullDoc = Boolean(tr["doc_body"]?.trim()) || !article.file_path;
   if (stored[fileLang]?.path && hasFullDoc) return stored[fileLang]!;
   if (!tr["title"]) return original;
@@ -267,11 +278,12 @@ export async function ensureTranslatedPdf(
       `${siteOrigin()}/logo.png`;
     const companyName = c["trade_name"] || c["legal_name"] || "Liberato Consulting";
 
-    // Preferimos a íntegra do PDF original traduzida; o resumo publicado é só o fallback.
+    // Preferimos a íntegra do PDF original; o resumo publicado é só o fallback.
     const fullDoc = await fullDocumentBody(withTr, fileLang);
     const bodyParts = fullDoc
       ? [fullDoc]
       : [tr["body"] ?? "", tr["table_data"] ?? "", tr["chart_data"] ?? ""].filter(Boolean);
+
 
     const bytes = await buildBrandedPdf({
       title: tr["title"]!,
