@@ -53,6 +53,10 @@ const empty = {
   reference_period: "",
   previous_value: "",
   previous_period: "",
+  forecast_value: "",
+  forecast_period: "",
+  forecast_source_name: "",
+  forecast_source_url: "",
 
   trend: "",
   note: "",
