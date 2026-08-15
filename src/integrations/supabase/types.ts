@@ -550,6 +550,10 @@ export type Database = {
       economic_indicators: {
         Row: {
           created_at: string
+          forecast_period: string
+          forecast_source_name: string
+          forecast_source_url: string
+          forecast_value: string
           id: string
           label: string
           last_checked_at: string | null
@@ -574,6 +578,10 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          forecast_period?: string
+          forecast_source_name?: string
+          forecast_source_url?: string
+          forecast_value?: string
           id?: string
           label: string
           last_checked_at?: string | null
@@ -598,6 +606,10 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          forecast_period?: string
+          forecast_source_name?: string
+          forecast_source_url?: string
+          forecast_value?: string
           id?: string
           label?: string
           last_checked_at?: string | null
