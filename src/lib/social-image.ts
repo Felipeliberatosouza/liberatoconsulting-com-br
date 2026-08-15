@@ -292,17 +292,38 @@ export async function composeIndicatorsImage(
   const labelSize = Math.round(f.width * (format === "linkedin" ? 0.028 : 0.032));
   const valueSize = Math.round(labelSize * 1.25);
   const smallSize = Math.round(labelSize * 0.78);
-  const rowGap = Math.round(labelSize * 2.5);
+  const rowGap = Math.round(labelSize * 2.7);
+  const colGap = Math.round(f.width * 0.03);
+
+  /** Reduz o texto até caber na largura disponível, com reticências. */
+  const fit = (text: string, max: number) => {
+    if (ctx.measureText(text).width <= max) return text;
+    let t = text;
+    while (t.length > 1 && ctx.measureText(`${t}…`).width > max) t = t.slice(0, -1);
+    return `${t.trim()}…`;
+  };
+
 
   for (const r of list) {
     if (y > f.height - pad * 2.4 - rowGap) break;
     const delta = compareIndicator(r.value, r.previous_value, r.unit);
 
+    // Primeiro medimos a coluna da direita para reservar o espaço dela.
+    const valueText = `${r.value}${r.unit}`;
+    ctx.font = `700 ${valueSize}px "Space Grotesk", "Helvetica Neue", Arial, sans-serif`;
+    let rightW = ctx.measureText(valueText).width;
+    const deltaText = delta.direction !== "none" ? `${delta.arrow} ${delta.label}` : "";
+    if (deltaText) {
+      ctx.font = `700 ${smallSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+      rightW = Math.max(rightW, ctx.measureText(deltaText).width);
+    }
+    rightW = Math.min(rightW, maxWidth * 0.45);
+    const leftW = maxWidth - rightW - colGap;
+
     ctx.font = `600 ${labelSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
     ctx.fillStyle = fg;
     ctx.textAlign = "left";
-    const label = wrap(ctx, r.label, Math.round(maxWidth * 0.55))[0] ?? r.label;
-    ctx.fillText(label, pad, y);
+    ctx.fillText(fit(r.label, leftW), pad, y);
 
     ctx.font = `500 ${smallSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
     ctx.fillStyle = muted;
@@ -316,24 +337,26 @@ export async function composeIndicatorsImage(
           r.forecast_period ? ` (${r.forecast_period})` : ""
         }`
       : "";
-    ctx.fillText(`${prev}${forecast}`, pad, y + labelSize * 1.2);
+    ctx.fillText(fit(`${prev}${forecast}`, leftW), pad, y + labelSize * 1.2);
 
     ctx.textAlign = "right";
     ctx.font = `700 ${valueSize}px "Space Grotesk", "Helvetica Neue", Arial, sans-serif`;
     ctx.fillStyle = fg;
-    ctx.fillText(`${r.value}${r.unit}`, f.width - pad, y);
+    ctx.fillText(valueText, f.width - pad, y, rightW);
 
-    if (delta.direction !== "none") {
+    if (deltaText) {
       ctx.font = `700 ${smallSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
-      ctx.fillStyle = delta.direction === "up" ? "#22c55e" : delta.direction === "down" ? "#ef4444" : muted;
-      ctx.fillText(`${delta.arrow} ${delta.label}`, f.width - pad, y + labelSize * 1.2);
+      ctx.fillStyle =
+        delta.direction === "up" ? "#22c55e" : delta.direction === "down" ? "#ef4444" : muted;
+      ctx.fillText(deltaText, f.width - pad, y + labelSize * 1.2, rightW);
     }
     ctx.textAlign = "left";
 
     y += rowGap;
     ctx.fillStyle = light ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.16)";
-    ctx.fillRect(pad, y - Math.round(labelSize * 0.7), maxWidth, 1);
+    ctx.fillRect(pad, y - Math.round(labelSize * 0.8), maxWidth, 1);
   }
+
 
   // Sem fontes na arte: apenas a chamada para o site.
   const ctaSize = Math.round(f.width * (format === "linkedin" ? 0.022 : 0.026));
