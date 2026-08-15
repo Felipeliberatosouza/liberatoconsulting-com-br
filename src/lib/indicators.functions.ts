@@ -147,6 +147,8 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
         value: string;
         unit?: string;
         reference_period: string;
+        previous_value?: string;
+        previous_period?: string;
         trend?: string;
         note?: string;
         source_name: string;
@@ -159,6 +161,10 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
         "Você é um economista sênior brasileiro. Informe os dados macroeconômicos mais " +
           "recentes que você conhece do Brasil, sempre citando a fonte oficial (IBGE, Banco " +
           "Central do Brasil, MDIC/Comex Stat, Ipeadata) e o período de referência exato. " +
+          "Para CADA indicador é obrigatório informar também a leitura imediatamente anterior " +
+          "da mesma série oficial (previous_value) e o período dessa leitura (previous_period). " +
+          "Nunca deixe previous_value ou previous_period em branco: se a leitura anterior for " +
+          "a do período anterior da série (mês, trimestre ou ano), informe-a mesmo assim. " +
           "Use vírgula como separador decimal. Não invente fontes.",
         JSON.stringify({
           formato: {
@@ -168,6 +174,8 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
                 value: "string",
                 unit: "string",
                 reference_period: "string",
+                previous_value: "string (obrigatório)",
+                previous_period: "string (obrigatório)",
                 trend: "alta|baixa|estável",
                 note: "1 frase de contexto",
                 source_name: "string",
@@ -184,13 +192,17 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
       for (const item of out.indicators ?? []) {
         const target = list.find((i) => i.slug === item.slug);
         if (!target) continue;
+        // Preferência: leitura anterior informada pela fonte; senão, arquiva o valor atual.
+        const previous =
+          item.previous_value && item.previous_value.trim()
+            ? { previous_value: item.previous_value, previous_period: item.previous_period ?? "" }
+            : item.value && item.value !== target.value && target.value
+              ? { previous_value: target.value, previous_period: target.reference_period ?? "" }
+              : {};
         const { error } = await context.supabase
           .from("economic_indicators")
           .update({
-            // guarda o dado anterior para a comparação do Boletim Semanal
-            ...(item.value && item.value !== target.value && target.value
-              ? { previous_value: target.value, previous_period: target.reference_period ?? "" }
-              : {}),
+            ...previous,
             value: item.value ?? "",
             unit: item.unit ?? target.unit,
             reference_period: item.reference_period ?? "",
@@ -209,6 +221,77 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
       return { ok: false as const, error: (err as Error).message };
     }
   });
+
+/**
+ * Preenche com IA apenas o "valor anterior" e o "período anterior" dos indicadores
+ * que estão em branco, buscando a leitura imediatamente anterior da série oficial.
+ */
+export const fillPreviousIndicatorsAI = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("./access.server");
+    await assertAdmin(context);
+    const { askJson } = await import("./ai.server");
+
+    const { data: rows } = await context.supabase
+      .from("economic_indicators")
+      .select("id, slug, label, unit, value, reference_period, previous_value, previous_period");
+    const pending = ((rows ?? []) as Array<{
+      id: string;
+      slug: string;
+      label: string;
+      unit: string;
+      value: string;
+      reference_period: string;
+      previous_value: string;
+      previous_period: string;
+    }>).filter((r) => !r.previous_value?.trim() || !r.previous_period?.trim());
+    if (pending.length === 0) return { ok: true as const, updated: 0 };
+
+    type Out = {
+      indicators: Array<{ slug: string; previous_value: string; previous_period: string }>;
+    };
+
+    try {
+      const out = await askJson<Out>(
+        "Você é um economista sênior brasileiro. Para cada indicador informado, devolva a " +
+          "leitura imediatamente anterior da mesma série oficial (IBGE, Banco Central do Brasil, " +
+          "MDIC/Comex Stat, Ipeadata), com o período exato dessa leitura. Nunca deixe campos em " +
+          "branco. Use vírgula como separador decimal e não invente dados.",
+        JSON.stringify({
+          formato: {
+            indicators: [{ slug: "string", previous_value: "string", previous_period: "string" }],
+          },
+          indicadores: pending.map((i) => ({
+            slug: i.slug,
+            label: i.label,
+            unit: i.unit,
+            valor_atual: i.value,
+            periodo_atual: i.reference_period,
+          })),
+        }),
+      );
+
+      let updated = 0;
+      for (const item of out.indicators ?? []) {
+        const target = pending.find((i) => i.slug === item.slug);
+        if (!target || !item.previous_value?.trim()) continue;
+        const { error } = await context.supabase
+          .from("economic_indicators")
+          .update({
+            previous_value: item.previous_value,
+            previous_period: item.previous_period ?? "",
+          })
+          .eq("id", target.id);
+        if (!error) updated += 1;
+      }
+      return { ok: true as const, updated };
+    } catch (err) {
+      return { ok: false as const, error: (err as Error).message };
+    }
+  });
+
+
 
 /**
  * Gera com IA um texto acadêmico atualizado para um subitem de "Dados do Brasil",
