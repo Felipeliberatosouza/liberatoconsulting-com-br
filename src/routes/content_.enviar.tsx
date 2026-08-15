@@ -9,7 +9,7 @@ import { formatCpf, formatPhone, isValidCpf, isValidEmail, isValidPhone } from "
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 
-export const Route = createFileRoute("/content/enviar")({
+export const Route = createFileRoute("/content_/enviar")({
   head: (ctx) => ({
     meta: [
       { title: "Envie seu artigo | Conteúdo — Liberato Consulting" },
