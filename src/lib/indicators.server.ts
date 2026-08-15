@@ -101,7 +101,17 @@ export async function fillMissingIndicatorSeries() {
 
   for (const target of pending) {
     const item = returned.get(target.slug);
-    const patch: Record<string, string> = {};
+    const patch: Partial<
+      Pick<
+        PendingIndicator,
+        | "previous_value"
+        | "previous_period"
+        | "forecast_value"
+        | "forecast_period"
+        | "forecast_source_name"
+        | "forecast_source_url"
+      >
+    > = {};
 
     const previousValue = item?.previous_value?.trim() ?? "";
     const previousPeriod = item?.previous_period?.trim() ?? "";
