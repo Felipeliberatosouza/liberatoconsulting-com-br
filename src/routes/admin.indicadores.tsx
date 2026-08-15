@@ -77,6 +77,30 @@ function IndicatorsPage() {
   const [form, setForm] = useState<Form>(empty);
   const [busy, setBusy] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [filling, setFilling] = useState(false);
+  const autoFilled = useRef(false);
+
+  // Preenche sozinho, uma vez, os "dados anteriores" que estiverem em branco.
+  useEffect(() => {
+    const rows = q.data;
+    if (!rows || autoFilled.current) return;
+    const pending = rows.some(
+      (r) => !(r.previous_value ?? "").trim() || !(r.previous_period ?? "").trim(),
+    );
+    if (!pending) return;
+    autoFilled.current = true;
+    setFilling(true);
+    fillPreviousIndicatorsAI()
+      .then((r) => {
+        if (r.ok && r.updated > 0) {
+          toast.success(`${r.updated} períodos anteriores preenchidos automaticamente.`);
+          void q.refetch();
+        }
+      })
+      .catch(() => undefined)
+      .finally(() => setFilling(false));
+  }, [q.data]);
+
   const set = (k: keyof Form, v: string | number | boolean) =>
     setForm((f) => ({ ...f, [k]: v }));
 
