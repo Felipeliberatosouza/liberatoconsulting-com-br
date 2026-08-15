@@ -308,7 +308,7 @@ function IndicatorsPage() {
 
 
           <label className="text-xs font-medium text-muted-foreground">
-            Tendência
+            Direção (alta / baixa / estável)
             <input value={form.trend} onChange={(e) => set("trend", e.target.value)} placeholder="alta" className={`mt-1 ${input}`} />
           </label>
           <label className="text-xs font-medium text-muted-foreground">
