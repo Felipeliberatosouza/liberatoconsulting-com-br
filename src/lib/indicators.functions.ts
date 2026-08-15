@@ -157,6 +157,10 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
         reference_period: string;
         previous_value?: string;
         previous_period?: string;
+        forecast_value?: string;
+        forecast_period?: string;
+        forecast_source_name?: string;
+        forecast_source_url?: string;
         trend?: string;
         note?: string;
         source_name: string;
@@ -169,10 +173,13 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
         "Você é um economista sênior brasileiro. Informe os dados macroeconômicos mais " +
           "recentes que você conhece do Brasil, sempre citando a fonte oficial (IBGE, Banco " +
           "Central do Brasil, MDIC/Comex Stat, Ipeadata) e o período de referência exato. " +
-          "Para CADA indicador é obrigatório informar também a leitura imediatamente anterior " +
-          "da mesma série oficial (previous_value) e o período dessa leitura (previous_period). " +
-          "Nunca deixe previous_value ou previous_period em branco: se a leitura anterior for " +
-          "a do período anterior da série (mês, trimestre ou ano), informe-a mesmo assim. " +
+          "Regra obrigatória: o valor atual (value) e a leitura anterior (previous_value) " +
+          "devem vir da MESMA série e da MESMA fonte oficial informada em source_name/source_url. " +
+          "Nunca deixe previous_value ou previous_period em branco. " +
+          "Informe também uma estimativa/projeção oficial (forecast_value) para o próximo período " +
+          "(forecast_period), preferencialmente de instituições responsáveis pelos dados no Brasil " +
+          "(Banco Central — Relatório Focus, IBGE, Ministério da Fazenda, Ipea), com o nome " +
+          "(forecast_source_name) e o link (forecast_source_url) dessa fonte. " +
           "Use vírgula como separador decimal. Não invente fontes.",
         JSON.stringify({
           formato: {
@@ -182,8 +189,12 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
                 value: "string",
                 unit: "string",
                 reference_period: "string",
-                previous_value: "string (obrigatório)",
+                previous_value: "string (obrigatório, mesma fonte do valor atual)",
                 previous_period: "string (obrigatório)",
+                forecast_value: "string (obrigatório)",
+                forecast_period: "string (obrigatório)",
+                forecast_source_name: "string (obrigatório)",
+                forecast_source_url: "string (obrigatório)",
                 trend: "alta|baixa|estável",
                 note: "1 frase de contexto",
                 source_name: "string",
@@ -207,10 +218,19 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
             : item.value && item.value !== target.value && target.value
               ? { previous_value: target.value, previous_period: target.reference_period ?? "" }
               : {};
+        const forecast = item.forecast_value?.trim()
+          ? {
+              forecast_value: item.forecast_value,
+              forecast_period: item.forecast_period ?? "",
+              forecast_source_name: item.forecast_source_name ?? "",
+              forecast_source_url: item.forecast_source_url ?? "",
+            }
+          : {};
         const { error } = await context.supabase
           .from("economic_indicators")
           .update({
             ...previous,
+            ...forecast,
             value: item.value ?? "",
             unit: item.unit ?? target.unit,
             reference_period: item.reference_period ?? "",
@@ -231,8 +251,8 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
   });
 
 /**
- * Preenche com IA apenas o "valor anterior" e o "período anterior" dos indicadores
- * que estão em branco, buscando a leitura imediatamente anterior da série oficial.
+ * Preenche com IA o "valor anterior" (mesma fonte do valor atual) e a
+ * "estimativa" dos indicadores que estiverem em branco.
  */
 export const fillPreviousIndicatorsAI = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -240,8 +260,8 @@ export const fillPreviousIndicatorsAI = createServerFn({ method: "POST" })
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
     try {
-      const { fillMissingPreviousIndicators } = await import("./indicators.server");
-      return await fillMissingPreviousIndicators();
+      const { fillMissingIndicatorSeries } = await import("./indicators.server");
+      return await fillMissingIndicatorSeries();
     } catch (err) {
       return { ok: false as const, error: (err as Error).message };
     }
