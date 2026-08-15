@@ -210,7 +210,7 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
           lang,
         }),
         text: renderCampaignText(v.body, unsubscribeUrl, company, lang),
-        idempotencyKey: `nl-${campaignId}-${lang}-${r.unsubscribe_token}-${r.email}`.slice(0, 200),
+        idempotencyKey: `nl-${campaignId}-${runId}-${lang}-${r.unsubscribe_token}-${r.email}`.slice(0, 200),
       });
       sent += 1;
     } catch (err) {
