@@ -103,7 +103,10 @@ export async function ensureTranslatedPdf(
       `${siteOrigin()}/logo.png`;
     const companyName = c["trade_name"] || c["legal_name"] || "Liberato Consulting";
 
-    const bodyParts = [tr["body"] ?? "", tr["table_data"] ?? ""].filter(Boolean);
+    const bodyParts = [tr["body"] ?? "", tr["table_data"] ?? "", tr["chart_data"] ?? ""].filter(
+      Boolean,
+    );
+
     const bytes = await buildBrandedPdf({
       title: tr["title"]!,
       subtitle: tr["summary"] ?? "",
