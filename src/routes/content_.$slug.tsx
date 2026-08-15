@@ -325,15 +325,15 @@ function ArticlePage() {
         {/* Compartilhar */}
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <span className="text-sm font-medium">{a.share}</span>
-          <a
-            href={`https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => openWhatsApp(whatsappShareHref(`${shareText} ${shareUrl}`))}
             aria-label="WhatsApp"
             className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-accent hover:text-accent"
           >
             <MessageCircle className="h-4 w-4" />
-          </a>
+          </button>
+
           <a
             href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
             target="_blank"
