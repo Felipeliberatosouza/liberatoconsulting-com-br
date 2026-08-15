@@ -296,12 +296,13 @@ export async function composeIndicatorsImage(
   const colGap = Math.round(f.width * 0.03);
 
   /** Reduz o texto até caber na largura disponível, com reticências. */
-  function fit(text: string, max: number) {
+  const fit = (text: string, max: number) => {
     if (ctx.measureText(text).width <= max) return text;
     let t = text;
     while (t.length > 1 && ctx.measureText(`${t}…`).width > max) t = t.slice(0, -1);
     return `${t.trim()}…`;
-  }
+  };
+
 
   for (const r of list) {
     if (y > f.height - pad * 2.4 - rowGap) break;
