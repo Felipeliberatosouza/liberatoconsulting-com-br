@@ -265,6 +265,42 @@ function IndicatorsPage() {
               className={`mt-1 ${input}`}
             />
           </label>
+          <label className="text-xs font-medium text-muted-foreground">
+            Tendência (valor projetado)
+            <input
+              value={form.forecast_value}
+              onChange={(e) => set("forecast_value", e.target.value)}
+              placeholder="3,1"
+              className={`mt-1 ${input}`}
+            />
+          </label>
+          <label className="text-xs font-medium text-muted-foreground">
+            Período da tendência
+            <input
+              value={form.forecast_period}
+              onChange={(e) => set("forecast_period", e.target.value)}
+              placeholder="2026"
+              className={`mt-1 ${input}`}
+            />
+          </label>
+          <label className="text-xs font-medium text-muted-foreground">
+            Fonte da tendência
+            <input
+              value={form.forecast_source_name}
+              onChange={(e) => set("forecast_source_name", e.target.value)}
+              placeholder="Banco Central — Relatório Focus"
+              className={`mt-1 ${input}`}
+            />
+          </label>
+          <label className="text-xs font-medium text-muted-foreground">
+            Link da fonte da tendência
+            <input
+              value={form.forecast_source_url}
+              onChange={(e) => set("forecast_source_url", e.target.value)}
+              className={`mt-1 ${input}`}
+            />
+          </label>
+
 
           <label className="text-xs font-medium text-muted-foreground">
             Tendência
