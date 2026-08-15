@@ -33,9 +33,14 @@ type Indicator = {
   trend: string;
   note: string;
   source_name: string;
+  source_url: string;
   segment: string;
   previous_value: string;
   previous_period: string;
+  forecast_value: string;
+  forecast_period: string;
+  forecast_source_name: string;
+  forecast_source_url: string;
 };
 
 type Article = { slug: string; title: string; summary: string; kind: string };
