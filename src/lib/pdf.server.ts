@@ -226,7 +226,7 @@ export async function buildBrandedPdf(input: PdfDocInput): Promise<Uint8Array> {
       const hh = Math.min(logo.height * hs, 18);
       p.drawImage(logo, { x: M, y: H - 34 - hh / 2 + 4, width: hw, height: hh });
     } else {
-      p.drawText(sanitize(input.contact.name), {
+      p.drawText(S(input.contact.name), {
         x: M,
         y: H - 34,
         size: 11,
@@ -246,11 +246,11 @@ export async function buildBrandedPdf(input: PdfDocInput): Promise<Uint8Array> {
       thickness: 0.6,
       color: rgb(0.8, 0.8, 0.8),
     });
-    p.drawText(sanitize(input.contact.name), { x: M, y: 48, size: 8, font: bold, color: rgb(0.3, 0.3, 0.3) });
-    p.drawText(sanitize(input.contact.line1), { x: M, y: 37, size: 8, font, color: rgb(0.4, 0.4, 0.4) });
-    p.drawText(sanitize(input.contact.line2), { x: M, y: 27, size: 8, font, color: rgb(0.4, 0.4, 0.4) });
+    p.drawText(S(input.contact.name), { x: M, y: 48, size: 8, font: bold, color: rgb(0.3, 0.3, 0.3) });
+    p.drawText(S(input.contact.line1), { x: M, y: 37, size: 8, font, color: rgb(0.4, 0.4, 0.4) });
+    p.drawText(S(input.contact.line2), { x: M, y: 27, size: 8, font, color: rgb(0.4, 0.4, 0.4) });
     if (input.contact.website) {
-      p.drawText(sanitize(input.contact.website), { x: M, y: 17, size: 8, font: bold, color: accent });
+      p.drawText(S(input.contact.website), { x: M, y: 17, size: 8, font: bold, color: accent });
     }
   };
 
@@ -273,7 +273,7 @@ export async function buildBrandedPdf(input: PdfDocInput): Promise<Uint8Array> {
     indent = 0,
     color = ink,
   ) => {
-    const lines = wrap(sanitize(text), useBold ? bold : font, size, contentWidth - indent);
+    const lines = WRAP(S(text), useBold ? bold : font, size, contentWidth - indent);
     for (const line of lines) {
       ensure(size + 6);
       page.drawText(line, { x: M + indent, y, size, font: useBold ? bold : font, color });
@@ -293,7 +293,7 @@ export async function buildBrandedPdf(input: PdfDocInput): Promise<Uint8Array> {
     const pad = 5;
     // Larguras proporcionais ao conteúdo, com mínimo razoável.
     const weights = Array.from({ length: cols }, (_, c) =>
-      Math.max(...norm.map((r) => font.widthOfTextAtSize(sanitize(r[c] ?? ""), size)), 30),
+      Math.max(...norm.map((r) => font.widthOfTextAtSize(S(r[c] ?? ""), size)), 30),
     );
     const total = weights.reduce((a, b) => a + b, 0);
     const widths = weights.map((w) => Math.max(50, (w / total) * contentWidth));
@@ -304,7 +304,7 @@ export async function buildBrandedPdf(input: PdfDocInput): Promise<Uint8Array> {
     norm.forEach((row, rowIndex) => {
       const isHead = rowIndex === 0;
       const cells = row.map((cell, c) =>
-        wrap(sanitize(cell), isHead ? bold : font, size, cw[c]! - pad * 2),
+        WRAP(S(cell), isHead ? bold : font, size, cw[c]! - pad * 2),
       );
       const rowHeight = Math.max(...cells.map((l) => l.length)) * (size + 3) + pad * 2;
       ensure(rowHeight + 4);
@@ -344,17 +344,17 @@ export async function buildBrandedPdf(input: PdfDocInput): Promise<Uint8Array> {
     const chartH = data.length * (barH + gapH) + (title ? 22 : 0) + 12;
     ensure(chartH);
     if (title) {
-      page.drawText(sanitize(stripMd(title)), { x: M, y, size: 10, font: bold, color: ink });
+      page.drawText(S(stripMd(title)), { x: M, y, size: 10, font: bold, color: ink });
       y -= 18;
     }
     const labelW = Math.min(
       170,
-      Math.max(...data.map((d) => font.widthOfTextAtSize(sanitize(d.label), 8.5))) + 8,
+      Math.max(...data.map((d) => font.widthOfTextAtSize(S(d.label), 8.5))) + 8,
     );
     const max = Math.max(...data.map((d) => Math.abs(d.value)), 1);
     const trackW = contentWidth - labelW - 46;
     for (const d of data) {
-      page.drawText(sanitize(d.label).slice(0, 46), {
+      page.drawText(S(d.label).slice(0, 46), {
         x: M,
         y: y - barH + 5,
         size: 8.5,
