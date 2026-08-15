@@ -97,7 +97,9 @@ function IndicatorsPage() {
           void q.refetch();
         }
       })
-      .catch(() => undefined)
+      .catch((error: unknown) =>
+        toast.error(error instanceof Error ? error.message : "Não foi possível buscar os dados anteriores."),
+      )
       .finally(() => setFilling(false));
   }, [q.data]);
 

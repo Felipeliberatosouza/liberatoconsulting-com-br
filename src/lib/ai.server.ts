@@ -11,7 +11,7 @@ function apiKey() {
 async function chat(body: Record<string, unknown>) {
   const res = await fetch(`${GATEWAY}/chat/completions`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey()}` },
+    headers: { "Content-Type": "application/json", "Lovable-API-Key": apiKey() },
     body: JSON.stringify(body),
   });
   if (res.status === 429) throw new Error("Limite de uso da IA atingido. Tente em instantes.");
