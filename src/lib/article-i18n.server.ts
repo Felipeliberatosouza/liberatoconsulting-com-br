@@ -76,13 +76,15 @@ export async function ensureTranslatedPdf(
     : null;
   if (lang === "pt" || lang === "zh") return original;
 
-  const stored = ((article as unknown as Record<string, unknown>)["translated_files"] ?? {}) as
+  // Traduz primeiro: se o texto mudou, os PDFs antigos são descartados.
+  const withTr = await ensureArticleTranslations(article, lang);
+  const stored = ((withTr as unknown as Record<string, unknown>)["translated_files"] ?? {}) as
     Record<string, { path: string; name: string }>;
   if (stored[lang]?.path) return stored[lang]!;
 
-  const withTr = await ensureArticleTranslations(article, lang);
   const tr = (withTr.translations?.[lang] ?? {}) as Record<string, string>;
   if (!tr["title"]) return original;
+
 
   try {
     const { buildBrandedPdf } = await import("./pdf.server");
