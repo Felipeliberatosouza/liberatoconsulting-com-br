@@ -256,7 +256,11 @@ export const saveArticle = createServerFn({ method: "POST" })
       file_path: data.file_path || null,
       file_name: data.file_name || null,
       link_url: data.link_url || null,
+      article_date: data.article_date || null,
+      chart_data: data.chart_data ?? "",
+      table_data: data.table_data ?? "",
       translations: { en: t.en, es: t.es, zh: t.zh },
+
     };
 
     if (!(await checkAdmin(context))) {
