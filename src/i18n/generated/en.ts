@@ -262,6 +262,7 @@ export const dict: Dict = {
   "brazilMenu": {
     "label": "Brazil Data",
     "more": "view all data on Brazil",
+    "indicatorsItem": "Macroeconomic indicators",
     "items": [
       {
         "id": "panorama-economico",
@@ -934,7 +935,7 @@ export const dict: Dict = {
       "share": "Share",
       "back": "Back to Content",
       "publishTitle": "Publish with us!",
-      "publishLead": "Have an article on management, entrepreneurship, market research, or AI? Submit it to our curators.",
+      "publishLead": "Have an article on management, entrepreneurship, operations, or market research? Submit it to our curators.",
       "publishCta": "Publish with us! Submit your article!",
       "formName": "Full name",
       "formRole": "Identification (author, researcher, student…)",

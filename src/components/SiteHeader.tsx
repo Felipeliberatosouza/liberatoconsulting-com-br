@@ -281,7 +281,15 @@ export function SiteHeader() {
             <div className="invisible absolute inset-x-0 top-full z-40 border-b border-border bg-background opacity-0 shadow-lg transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100">
               <div className="mx-auto max-w-7xl px-6 py-8">
                 <p className="mb-5 text-sm font-semibold text-accent">{t.brazilMenu.label}</p>
+                <Link
+                  to="/brasil"
+                  hash="indicadores"
+                  className="mb-5 block text-sm font-semibold text-foreground transition-colors hover:text-accent"
+                >
+                  {t.brazilMenu.indicatorsItem}
+                </Link>
                 <div className="grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4">
+
                   {Array.from({ length: 4 }, (_, col) =>
                     brazilItems.slice(col * 2, col * 2 + 2),
                   ).map((chunk, col) => (
@@ -393,6 +401,14 @@ export function SiteHeader() {
           </MobileAccordion>
 
           <MobileAccordion title={t.brazilMenu.label} to="/brasil" onNavigate={closeAll}>
+            <Link
+              to="/brasil"
+              hash="indicadores"
+              onClick={closeAll}
+              className="block py-1.5 text-sm font-semibold text-foreground"
+            >
+              {t.brazilMenu.indicatorsItem}
+            </Link>
             <div className="grid grid-cols-2 gap-x-4">
               {brazilItems.map((item) => (
                 <Link

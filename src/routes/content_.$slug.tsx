@@ -17,6 +17,7 @@ import type { ArticleRecord } from "@/lib/site-config";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { articleSchema, breadcrumb, jsonLd } from "@/lib/schema";
 import { getPublishedNewsletter } from "@/lib/newsletter-public.functions";
+import { openWhatsApp, whatsappShareHref } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/content_/$slug")({
   /** Endereços antigos de newsletter (/content/...) seguem para a página da newsletter. */
@@ -104,7 +105,7 @@ function ArticlePage() {
 
   useEffect(() => {
     let cancelled = false;
-    getPublicArticle({ data: { slug } })
+    getPublicArticle({ data: { slug, lang } })
       .then((r) => {
         if (cancelled) return;
         setArticle(r);
@@ -120,7 +121,7 @@ function ArticlePage() {
     return () => {
       cancelled = true;
     };
-  }, [slug]);
+  }, [slug, lang]);
 
   // Contabiliza uma leitura por visitante (por navegador).
   useEffect(() => {
@@ -170,7 +171,7 @@ function ArticlePage() {
     }
     setDownloading(true);
     try {
-      const r = await getArticleFileUrl({ data: { slug } });
+      const r = await getArticleFileUrl({ data: { slug, lang } });
       if (r.ok) window.open(r.url, "_blank", "noopener,noreferrer");
       else toast.error(r.error);
     } finally {
@@ -325,15 +326,15 @@ function ArticlePage() {
         {/* Compartilhar */}
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <span className="text-sm font-medium">{a.share}</span>
-          <a
-            href={`https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => openWhatsApp(whatsappShareHref(`${shareText} ${shareUrl}`))}
             aria-label="WhatsApp"
             className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-accent hover:text-accent"
           >
             <MessageCircle className="h-4 w-4" />
-          </a>
+          </button>
+
           <a
             href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
             target="_blank"

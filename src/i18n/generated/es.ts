@@ -262,6 +262,7 @@ export const dict: Dict = {
   "brazilMenu": {
     "label": "Datos de Brasil",
     "more": "ver todos los datos sobre Brasil",
+    "indicatorsItem": "Indicadores macroeconómicos",
     "items": [
       {
         "id": "panorama-economico",
@@ -934,7 +935,7 @@ export const dict: Dict = {
       "share": "Compartir",
       "back": "Volver a Contenido",
       "publishTitle": "¡Publique usted también! ¡Envíe su artículo!",
-      "publishLead": "¿Tiene un artículo sobre gestión, emprendimiento, investigación de mercado o inteligencia artificial? Envíelo a nuestra curaduría.",
+      "publishLead": "¿Tiene un artículo sobre gestión, emprendimiento, operaciones o investigación de mercado? Envíelo a nuestra curaduría.",
       "publishCta": "¡Publique usted también! ¡Envíe su artículo!",
       "formName": "Nombre completo",
       "formRole": "Identificación (autor, investigador, estudiante…)",

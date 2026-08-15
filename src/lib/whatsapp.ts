@@ -11,8 +11,13 @@ export function normalizeWhatsApp(raw: string | undefined): string | null {
 
 /** Link universal (wa.me): abre o app no celular e o WhatsApp Web no desktop. */
 export function whatsappHref(number: string, text?: string): string {
-  const base = `https://wa.me/${number}`;
-  return text ? `${base}?text=${encodeURIComponent(text)}` : base;
+  const ua = typeof navigator === "undefined" ? "" : navigator.userAgent;
+  const isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(ua);
+  // No computador vamos direto ao WhatsApp Web; no celular, direto ao aplicativo.
+  const base = isMobile
+    ? `https://api.whatsapp.com/send?phone=${number}`
+    : `https://web.whatsapp.com/send?phone=${number}`;
+  return text ? `${base}&text=${encodeURIComponent(text)}` : base;
 }
 
 /**
@@ -29,4 +34,17 @@ export function openWhatsApp(href: string) {
     window.location.href = href;
     return true;
   }
+}
+
+/**
+ * Link de compartilhamento sem a tela intermediária "usar o WhatsApp Web?":
+ * no celular abre direto o aplicativo; no computador vai para o WhatsApp Web.
+ */
+export function whatsappShareHref(text: string): string {
+  const encoded = encodeURIComponent(text);
+  const ua = typeof navigator === "undefined" ? "" : navigator.userAgent;
+  const isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(ua);
+  return isMobile
+    ? `https://api.whatsapp.com/send?text=${encoded}`
+    : `https://web.whatsapp.com/send?text=${encoded}`;
 }

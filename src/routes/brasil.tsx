@@ -121,6 +121,15 @@ function BrazilPage() {
             {b.sectionsLabel}
           </p>
           <ul className="mt-4 space-y-2 border-l border-border pl-4">
+            <li>
+              <Link
+                to="/brasil"
+                hash="indicadores"
+                className="block text-sm font-semibold text-foreground transition-colors hover:text-accent"
+              >
+                {t.brazilMenu.indicatorsItem}
+              </Link>
+            </li>
             {b.sections.map((s) => (
               <li key={s.id}>
                 <Link

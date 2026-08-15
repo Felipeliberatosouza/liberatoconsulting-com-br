@@ -444,6 +444,7 @@ export type Database = {
           summary: string
           table_data: string
           title: string
+          translated_files: Json
           translations: Json
           updated_at: string
         }
@@ -471,6 +472,7 @@ export type Database = {
           summary?: string
           table_data?: string
           title: string
+          translated_files?: Json
           translations?: Json
           updated_at?: string
         }
@@ -498,6 +500,7 @@ export type Database = {
           summary?: string
           table_data?: string
           title?: string
+          translated_files?: Json
           translations?: Json
           updated_at?: string
         }

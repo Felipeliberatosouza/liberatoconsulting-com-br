@@ -3,9 +3,16 @@ import { z } from "zod";
 
 import type { ArticleRecord } from "./site-config";
 
-/** Artigo publicado, visível para qualquer visitante. */
+/** Artigo publicado, visível para qualquer visitante (já traduzido para o idioma pedido). */
 export const getPublicArticle = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => z.object({ slug: z.string().trim().min(1).max(160) }).parse(d))
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        slug: z.string().trim().min(1).max(160),
+        lang: z.enum(["pt", "en", "es", "zh"]).optional(),
+      })
+      .parse(d),
+  )
   .handler(async ({ data }): Promise<ArticleRecord | null> => {
     const { publicClient } = await import("./admin.server");
     const { data: row } = await publicClient()
@@ -14,8 +21,12 @@ export const getPublicArticle = createServerFn({ method: "GET" })
       .eq("slug", data.slug)
       .eq("published", true)
       .maybeSingle();
-    return (row ?? null) as unknown as ArticleRecord | null;
+    const article = (row ?? null) as unknown as ArticleRecord | null;
+    if (!article || !data.lang || data.lang === "pt") return article;
+    const { ensureArticleTranslations } = await import("./article-i18n.server");
+    return ensureArticleTranslations(article, data.lang);
   });
+
 
 /** Contabiliza uma leitura do artigo (chamado uma vez por visitante). */
 export const registerArticleRead = createServerFn({ method: "POST" })
@@ -59,25 +70,40 @@ export const rateArticle = createServerFn({ method: "POST" })
     return { ok: true as const, average: sum / count, count };
   });
 
-/** Link temporário para baixar o arquivo do artigo completo. */
+/** Link temporário para baixar o artigo completo no idioma do visitante. */
 export const getArticleFileUrl = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ slug: z.string().trim().min(1).max(160) }).parse(d))
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        slug: z.string().trim().min(1).max(160),
+        lang: z.enum(["pt", "en", "es", "zh"]).optional(),
+      })
+      .parse(d),
+  )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row } = await supabaseAdmin
       .from("content_articles")
-      .select("file_path, file_name")
+      .select("*")
       .eq("slug", data.slug)
       .eq("published", true)
       .maybeSingle();
-    if (!row?.file_path) return { ok: false as const, error: "Arquivo indisponível." };
+    if (!row) return { ok: false as const, error: "Arquivo indisponível." };
+
+    const { ensureTranslatedPdf } = await import("./article-i18n.server");
+    const file = await ensureTranslatedPdf(
+      row as unknown as import("./site-config").ArticleRecord,
+      data.lang ?? "pt",
+    );
+    if (!file?.path) return { ok: false as const, error: "Arquivo indisponível." };
+
     const { data: signed, error } = await supabaseAdmin.storage
       .from("content")
-      .createSignedUrl(row.file_path, 300, row.file_name ? { download: row.file_name } : undefined);
+      .createSignedUrl(file.path, 300, file.name ? { download: file.name } : undefined);
     if (error || !signed) return { ok: false as const, error: "Falha ao gerar link." };
     return { ok: true as const, url: signed.signedUrl };
-
   });
+
 
 const submissionSchema = z.object({
   full_name: z.string().trim().min(2).max(160),
