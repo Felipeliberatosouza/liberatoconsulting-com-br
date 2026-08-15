@@ -30,3 +30,16 @@ export function openWhatsApp(href: string) {
     return true;
   }
 }
+
+/**
+ * Link de compartilhamento sem a tela intermediária "usar o WhatsApp Web?":
+ * no celular abre direto o aplicativo; no computador vai para o WhatsApp Web.
+ */
+export function whatsappShareHref(text: string): string {
+  const encoded = encodeURIComponent(text);
+  const ua = typeof navigator === "undefined" ? "" : navigator.userAgent;
+  const isMobile = /Android|iPhone|iPad|iPod|Windows Phone/i.test(ua);
+  return isMobile
+    ? `https://api.whatsapp.com/send?text=${encoded}`
+    : `https://web.whatsapp.com/send?text=${encoded}`;
+}
