@@ -265,8 +265,9 @@ function ArticlePage() {
         )}
 
         {/* Tabela e gráfico opcionais */}
-        {article.table_data && <ArticleTable data={article.table_data} />}
-        {article.chart_data && <ArticleChart data={article.chart_data} />}
+        {view.tableData && <ArticleTable data={view.tableData} />}
+        {view.chartData && <ArticleChart data={view.chartData} />}
+
 
         {/* Ações: download, leituras, contato dos autores */}
         <div className="mt-12 flex flex-wrap items-center gap-4 border-t border-border pt-8">
