@@ -935,7 +935,7 @@ export const dict: Dict = {
       "share": "分享",
       "back": "返回内容",
       "publishTitle": "您也可以发布！提交您的文章！",
-      "publishLead": "有关于管理、创业、市场研究或 AI 的文章？提交给我们审阅。",
+      "publishLead": "有关于管理、创业、运营或市场研究的文章？提交给我们审阅。",
       "publishCta": "您也可以发布！提交您的文章！",
       "formName": "全名",
       "formRole": "身份（作者、研究员、学生…）",
