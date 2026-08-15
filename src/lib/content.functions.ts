@@ -134,8 +134,15 @@ export const submitArticle = createServerFn({ method: "POST" })
       summary: data.summary,
       message: data.message,
       language: data.language ?? null,
+      phone: data.phone ?? "",
+      cpf: data.cpf ?? "",
+      role_label: data.role_label ?? "",
+      institution: data.institution ?? "",
+      group_id: data.group_id ?? "",
+      service: data.service ?? "",
       file_path,
       file_name,
+
     });
     if (error) return { ok: false as const, error: "Não foi possível registrar o envio." };
     return { ok: true as const };
