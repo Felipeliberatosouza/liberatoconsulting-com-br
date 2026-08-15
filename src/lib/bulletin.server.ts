@@ -1,3 +1,4 @@
+import { SENDER_DOMAIN } from "@/lib/email-templates/send-email";
 import { sendLovableEmail } from "@lovable.dev/email-js";
 
 import {
@@ -288,12 +289,13 @@ export async function sendBulletinEmail(params: {
   if (!settings.fromEmail) {
     throw new Error("Configure o e-mail remetente em Newsletter → Configurações.");
   }
-  const from = `${settings.fromName} <${settings.fromEmail}>`;
+  const from = `${settings.fromName} <noreply@${SENDER_DOMAIN}>`;
   return sendLovableEmail(
     {
       to: params.to,
       from,
-      sender_domain: settings.fromEmail.split("@")[1] ?? "",
+      sender_domain: SENDER_DOMAIN,
+      reply_to: settings.fromEmail,
       subject: params.subject,
       html: params.html,
       text: params.text,
