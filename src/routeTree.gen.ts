@@ -47,8 +47,8 @@ import { Route as AdminThemeRouteImport } from './routes/admin.theme'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as BoletimCancelarRouteImport } from './routes/boletim.cancelar'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
-import { Route as ContentSlugRouteImport } from './routes/content.$slug'
-import { Route as ContentEnviarRouteImport } from './routes/content.enviar'
+import { Route as ContentSlugRouteImport } from './routes/content_.$slug'
+import { Route as ContentEnviarRouteImport } from './routes/content_.enviar'
 import { Route as NewsletterSlugRouteImport } from './routes/newsletter.$slug'
 import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
@@ -250,14 +250,14 @@ const BrasilSlugRoute = BrasilSlugRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContentSlugRoute = ContentSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => ContentRoute,
+  id: '/content_/$slug',
+  path: '/content/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ContentEnviarRoute = ContentEnviarRouteImport.update({
-  id: '/enviar',
-  path: '/enviar',
-  getParentRoute: () => ContentRoute,
+  id: '/content_/enviar',
+  path: '/content/enviar',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const NewsletterSlugRoute = NewsletterSlugRouteImport.update({
   id: '/newsletter/$slug',
@@ -314,7 +314,7 @@ export interface FileRoutesByFullPath {
   '/brasil': typeof BrasilRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
-  '/content': typeof ContentRouteWithChildren
+  '/content': typeof ContentRoute
   '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
@@ -365,7 +365,7 @@ export interface FileRoutesByTo {
   '/brasil': typeof BrasilRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
-  '/content': typeof ContentRouteWithChildren
+  '/content': typeof ContentRoute
   '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
@@ -417,7 +417,7 @@ export interface FileRoutesById {
   '/brasil': typeof BrasilRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
-  '/content': typeof ContentRouteWithChildren
+  '/content': typeof ContentRoute
   '/privacy': typeof PrivacyRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
@@ -449,8 +449,8 @@ export interface FileRoutesById {
   '/admin/users': typeof AdminUsersRoute
   '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil_/$slug': typeof BrasilSlugRoute
-  '/content/$slug': typeof ContentSlugRoute
-  '/content/enviar': typeof ContentEnviarRoute
+  '/content_/$slug': typeof ContentSlugRoute
+  '/content_/enviar': typeof ContentEnviarRoute
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
@@ -604,8 +604,8 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/boletim/cancelar'
     | '/brasil_/$slug'
-    | '/content/$slug'
-    | '/content/enviar'
+    | '/content_/$slug'
+    | '/content_/enviar'
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
@@ -624,7 +624,7 @@ export interface RootRouteChildren {
   BrasilRoute: typeof BrasilRoute
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
-  ContentRoute: typeof ContentRouteWithChildren
+  ContentRoute: typeof ContentRoute
   PrivacyRoute: typeof PrivacyRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapEnDotxmlRoute: typeof SitemapEnDotxmlRoute
@@ -656,6 +656,8 @@ export interface RootRouteChildren {
   AdminUsersRoute: typeof AdminUsersRoute
   BoletimCancelarRoute: typeof BoletimCancelarRoute
   BrasilSlugRoute: typeof BrasilSlugRoute
+  ContentSlugRoute: typeof ContentSlugRoute
+  ContentEnviarRoute: typeof ContentEnviarRoute
   NewsletterSlugRoute: typeof NewsletterSlugRoute
   NewsletterUnsubscribeRoute: typeof NewsletterUnsubscribeRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
@@ -936,19 +938,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BrasilSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/content/$slug': {
-      id: '/content/$slug'
-      path: '/$slug'
+    '/content_/$slug': {
+      id: '/content_/$slug'
+      path: '/content/$slug'
       fullPath: '/content/$slug'
       preLoaderRoute: typeof ContentSlugRouteImport
-      parentRoute: typeof ContentRoute
+      parentRoute: typeof rootRouteImport
     }
-    '/content/enviar': {
-      id: '/content/enviar'
-      path: '/enviar'
+    '/content_/enviar': {
+      id: '/content_/enviar'
+      path: '/content/enviar'
       fullPath: '/content/enviar'
       preLoaderRoute: typeof ContentEnviarRouteImport
-      parentRoute: typeof ContentRoute
+      parentRoute: typeof rootRouteImport
     }
     '/newsletter/$slug': {
       id: '/newsletter/$slug'
@@ -1016,26 +1018,13 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface ContentRouteChildren {
-  ContentSlugRoute: typeof ContentSlugRoute
-  ContentEnviarRoute: typeof ContentEnviarRoute
-}
-
-const ContentRouteChildren: ContentRouteChildren = {
-  ContentSlugRoute: ContentSlugRoute,
-  ContentEnviarRoute: ContentEnviarRoute,
-}
-
-const ContentRouteWithChildren =
-  ContentRoute._addFileChildren(ContentRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   BrasilRoute: BrasilRoute,
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
-  ContentRoute: ContentRouteWithChildren,
+  ContentRoute: ContentRoute,
   PrivacyRoute: PrivacyRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapEnDotxmlRoute: SitemapEnDotxmlRoute,
@@ -1067,6 +1056,8 @@ const rootRouteChildren: RootRouteChildren = {
   AdminUsersRoute: AdminUsersRoute,
   BoletimCancelarRoute: BoletimCancelarRoute,
   BrasilSlugRoute: BrasilSlugRoute,
+  ContentSlugRoute: ContentSlugRoute,
+  ContentEnviarRoute: ContentEnviarRoute,
   NewsletterSlugRoute: NewsletterSlugRoute,
   NewsletterUnsubscribeRoute: NewsletterUnsubscribeRoute,
   ServicesSlugRoute: ServicesSlugRoute,
