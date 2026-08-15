@@ -105,7 +105,7 @@ function ArticlePage() {
 
   useEffect(() => {
     let cancelled = false;
-    getPublicArticle({ data: { slug } })
+    getPublicArticle({ data: { slug, lang } })
       .then((r) => {
         if (cancelled) return;
         setArticle(r);
@@ -121,7 +121,7 @@ function ArticlePage() {
     return () => {
       cancelled = true;
     };
-  }, [slug]);
+  }, [slug, lang]);
 
   // Contabiliza uma leitura por visitante (por navegador).
   useEffect(() => {
