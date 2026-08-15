@@ -290,25 +290,31 @@ export async function sendBulletinEmail(params: {
     throw new Error("Configure o e-mail remetente em Newsletter → Configurações.");
   }
   const from = `${settings.fromName} <contato@${SENDER_DOMAIN}>`;
-  return sendLovableEmail(
-    {
-      to: params.to,
-      from,
-      sender_domain: SENDER_DOMAIN,
-      reply_to: settings.fromEmail,
-      subject: params.subject,
-      html: params.html,
-      text: params.text,
-      purpose: "transactional",
-      label: "boletim-semanal",
-      idempotency_key: `${
-        params.idempotencyKey ??
-        `bol-${new Date().toISOString().slice(0, 10)}-${params.to}`
-      }-${crypto.randomUUID().slice(0, 8)}`.slice(0, 200),
-    },
-    { apiKey },
-  );
+  try {
+    return await sendLovableEmail(
+      {
+        to: params.to,
+        from,
+        sender_domain: SENDER_DOMAIN,
+        reply_to: settings.fromEmail,
+        subject: params.subject,
+        html: params.html,
+        text: params.text,
+        purpose: "transactional",
+        label: "boletim-semanal",
+        idempotency_key: `${
+          params.idempotencyKey ??
+          `bol-${new Date().toISOString().slice(0, 10)}-${params.to}`
+        }-${crypto.randomUUID().slice(0, 8)}`.slice(0, 200),
+      },
+      { apiKey },
+    );
+  } catch (error) {
+    const { translateSuppressed } = await import("./newsletter.server");
+    throw translateSuppressed(error, params.to);
+  }
 }
+
 
 /** Normaliza o número para o padrão internacional exigido pela API do WhatsApp. */
 export function normalizeWhatsAppNumber(raw: string) {

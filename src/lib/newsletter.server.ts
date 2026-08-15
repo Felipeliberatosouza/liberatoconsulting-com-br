@@ -103,22 +103,40 @@ export async function sendNewsletterEmail(params: {
   const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) throw new Error("Serviço de e-mail indisponível (chave ausente).");
   const senderDomain = SENDER_DOMAIN;
-  return sendLovableEmail(
-    {
-      to: params.to,
-      from: params.from,
-      sender_domain: senderDomain,
-      ...(params.replyTo ? { reply_to: params.replyTo } : {}),
-      subject: params.subject,
-      html: params.html,
-      text: params.text,
-      purpose: "transactional",
-      label: "newsletter",
-      idempotency_key: params.idempotencyKey,
-    },
-    { apiKey },
-  );
+  try {
+    return await sendLovableEmail(
+      {
+        to: params.to,
+        from: params.from,
+        sender_domain: senderDomain,
+        ...(params.replyTo ? { reply_to: params.replyTo } : {}),
+        subject: params.subject,
+        html: params.html,
+        text: params.text,
+        purpose: "transactional",
+        label: "newsletter",
+        idempotency_key: params.idempotencyKey,
+      },
+      { apiKey },
+    );
+  } catch (error) {
+    throw translateSuppressed(error, params.to);
+  }
 }
+
+/** Converte o erro de destinatário descadastrado em uma mensagem clara. */
+export function translateSuppressed(error: unknown, to: string) {
+  const code = (error as { code?: string } | null)?.code;
+  const msg = error instanceof Error ? error.message : String(error);
+  if (code === "recipient_suppressed" || /recipient_suppressed|suppressed/i.test(msg)) {
+    return new Error(
+      `O e-mail ${to} cancelou o recebimento (Unsubscribe) e por isso não pode receber envios. ` +
+        `Para voltar a receber, o próprio destinatário precisa clicar em "Resubscribe" na página de cancelamento, ou use outro e-mail para o teste.`,
+    );
+  }
+  return error instanceof Error ? error : new Error(msg);
+}
+
 
 /** Envia uma campanha para todos os inscritos ativos (ou para um e-mail de teste). */
 export async function dispatchCampaign(campaignId: string, testEmail?: string) {
