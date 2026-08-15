@@ -355,6 +355,8 @@ ${indicators || L.noIndicators}
 *${L.latestArticles}*
 ${articles || L.soonArticles}
 
+${L.socialCta}
+
 ${companyFooterText(content.company)}
 
 ${L.stopReceiving}: ${unsubscribeUrl}`;
