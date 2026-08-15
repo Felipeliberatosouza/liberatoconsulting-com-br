@@ -175,8 +175,15 @@ function ArticlePage() {
     setDownloading(true);
     try {
       const r = await getArticleFileUrl({ data: { slug, lang } });
-      if (r.ok) window.open(r.url, "_blank", "noopener,noreferrer");
-      else toast.error(r.error);
+      if (r.ok) {
+        // Depois de um await o navegador bloqueia window.open: baixamos via link temporário.
+        const link = document.createElement("a");
+        link.href = r.url;
+        link.rel = "noopener";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } else toast.error(r.error);
     } finally {
       setDownloading(false);
     }

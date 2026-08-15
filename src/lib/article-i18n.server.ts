@@ -68,10 +68,90 @@ const LANG_NAME: Record<TargetLang, string> = {
   zh: "inglês",
 };
 
+/** Extrai o texto integral do PDF original (português) e guarda em cache. */
+async function originalDocumentText(article: ArticleRecord): Promise<string | null> {
+  const current = (article.translations ?? {}) as Record<string, Record<string, string>>;
+  const cached = current["pt"]?.["doc_body"];
+  if (cached && cached.trim()) return cached;
+  if (!article.file_path) return null;
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.storage.from("content").download(article.file_path);
+  if (error || !data) return null;
+  const bytes = new Uint8Array(await data.arrayBuffer());
+  if (bytes.byteLength > 20_000_000) return null;
+
+  const { extractText, getDocumentProxy } = await import("unpdf");
+  const pdf = await getDocumentProxy(bytes);
+  const { text } = await extractText(pdf, { mergePages: true });
+  const clean = String(text ?? "")
+    .replace(/\r/g, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+  if (clean.length < 200) return null;
+
+  const merged = { ...current, pt: { ...(current["pt"] ?? {}), doc_body: clean } };
+  await supabaseAdmin.from("content_articles").update({ translations: merged }).eq("id", article.id);
+  (article as unknown as Record<string, unknown>)["translations"] = merged;
+  return clean;
+}
+
+/** Divide o texto em blocos de tamanho parecido, sempre em quebras de parágrafo. */
+function chunkText(text: string, size = 4500): string[] {
+  const parts: string[] = [];
+  let buffer = "";
+  for (const paragraph of text.split(/\n\n+/)) {
+    if (buffer && buffer.length + paragraph.length + 2 > size) {
+      parts.push(buffer);
+      buffer = "";
+    }
+    buffer = buffer ? `${buffer}\n\n${paragraph}` : paragraph;
+    while (buffer.length > size * 1.6) {
+      parts.push(buffer.slice(0, size));
+      buffer = buffer.slice(size);
+    }
+  }
+  if (buffer.trim()) parts.push(buffer);
+  return parts;
+}
+
+/** Fallback para PDFs digitalizados: o modelo lê o arquivo e devolve a tradução integral. */
+async function translateFileWithAi(
+  article: ArticleRecord,
+  lang: TargetLang,
+): Promise<string | null> {
+  if (!article.file_path) return null;
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.storage.from("content").download(article.file_path);
+  if (error || !data) {
+    console.error("[content i18n] download do PDF falhou", error?.message);
+    return null;
+  }
+  const buf = Buffer.from(await data.arrayBuffer());
+  if (buf.byteLength > 20_000_000) return null;
+  console.log("[content i18n] traduzindo PDF via IA", lang, buf.byteLength);
+
+
+  const { askJsonWithFile } = await import("./ai.server");
+  const out = await askJsonWithFile<{ body?: string }>(
+    "Você é tradutor técnico de documentos de consultoria empresarial.",
+    `Transcreva o documento anexo por completo e traduza para ${LANG_NAME[lang]}.\n` +
+      `Regras: não resuma, não omita seções, mantenha a ordem original, títulos em markdown (##), ` +
+      `listas com "-", tabelas em markdown e legendas de imagens/gráficos como texto. ` +
+      `Não inclua cabeçalho/rodapé institucional nem numeração de página.\n` +
+      `Devolva {"body":"<markdown traduzido completo>"}.`,
+    {
+      name: article.file_name || "artigo.pdf",
+      dataUrl: `data:application/pdf;base64,${buf.toString("base64")}`,
+    },
+  );
+  return (out?.body ?? "").trim() || null;
+}
+
 /**
- * Traduz o PDF original (íntegra em português) para o idioma pedido.
- * Usa o próprio arquivo como fonte — e não o resumo publicado — e guarda o
- * resultado em translations[lang].doc_body para não repetir o custo.
+ * Traduz a íntegra do PDF original para o idioma pedido, em blocos paralelos,
+ * e guarda o resultado em translations[lang].doc_body para não repetir o custo.
  */
 async function fullDocumentBody(
   article: ArticleRecord,
@@ -80,30 +160,45 @@ async function fullDocumentBody(
   const current = (article.translations ?? {}) as Record<string, Record<string, string>>;
   const cached = current[lang]?.["doc_body"];
   if (cached && cached.trim()) return cached;
-  if (!article.file_path) return null;
 
   try {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin.storage.from("content").download(article.file_path);
-    if (error || !data) return null;
-    const buf = Buffer.from(await data.arrayBuffer());
-    if (buf.byteLength > 12_000_000) return null;
-    const dataUrl = `data:application/pdf;base64,${buf.toString("base64")}`;
+    const source = await originalDocumentText(article);
+    let body: string | null = null;
 
-    const { askJsonWithFile } = await import("./ai.server");
-    const out = await askJsonWithFile<{ body?: string }>(
-      "Você é tradutor técnico de documentos de consultoria empresarial.",
-      `Transcreva o documento anexo por completo e traduza para ${LANG_NAME[lang]}.\n` +
-        `Regras: não resuma, não omita seções, mantenha a ordem original, títulos em markdown (##), ` +
-        `listas com "-", tabelas em markdown e legendas de imagens/gráficos como texto. ` +
-        `Não inclua cabeçalho/rodapé institucional nem numeração de página.\n` +
-        `Devolva {"body":"<markdown traduzido completo>"}.`,
-      { name: article.file_name || "artigo.pdf", dataUrl },
-    );
-    const body = (out?.body ?? "").trim();
+    if (!source) {
+      // PDF sem camada de texto (digitalizado): o próprio modelo lê o arquivo.
+      body = await translateFileWithAi(article, lang);
+    } else {
+      const { askText } = await import("./ai.server");
+      const chunks = chunkText(source);
+      const system =
+        "Você é tradutor técnico de documentos de consultoria empresarial. Responda apenas com a tradução.";
+      const translated: string[] = [];
+      const CONCURRENCY = 4;
+      for (let i = 0; i < chunks.length; i += CONCURRENCY) {
+        const slice = chunks.slice(i, i + CONCURRENCY);
+        const done = await Promise.all(
+          slice.map((chunk, j) =>
+            askText(
+              system,
+              `Traduza para ${LANG_NAME[lang]} o trecho ${i + j + 1} de ${chunks.length} de um artigo. ` +
+                `Não resuma, não comente, não adicione títulos novos: traduza integralmente, mantendo a ordem, ` +
+                `listas com "-" e tabelas em markdown.\n\n---\n${chunk}`,
+            ).catch(() => ""),
+          ),
+        );
+        if (done.some((d) => !d.trim())) return null;
+        translated.push(...done);
+      }
+      body = translated.join("\n\n").trim();
+    }
+
     if (!body) return null;
 
-    const merged = { ...current, [lang]: { ...(current[lang] ?? {}), doc_body: body } };
+
+    const latest = (article.translations ?? {}) as Record<string, Record<string, string>>;
+    const merged = { ...latest, [lang]: { ...(latest[lang] ?? {}), doc_body: body } };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin
       .from("content_articles")
       .update({ translations: merged })
