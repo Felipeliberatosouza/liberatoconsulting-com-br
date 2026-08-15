@@ -144,6 +144,23 @@ export const pt = {
     ctaBody: "Produzimos pesquisas de mercado sobre o Brasil para empresas internacionais, com dimensionamento, análise competitiva, leitura regulatória e mapeamento de parceiros locais.",
     sectionsLabel: "Temas",
     sourcesLabel: "Onde verificar os dados oficiais",
+    indicators: {
+      title: "Indicadores econômicos",
+      intro:
+        "Números macroeconômicos monitorados nas fontes oficiais brasileiras e revisados pela nossa equipe.",
+      scopeNote: "Exibindo apenas os dados do recorte",
+      empty:
+        "Ainda não há indicadores publicados para o recorte selecionado. Ajuste os filtros acima ou fale com a nossa equipe para uma pesquisa sob medida.",
+      previous: "Últimos dados",
+      change: "Comparativo",
+      forecast: "Tendência",
+      source: "Fonte",
+      forecastSource: "Fonte da estimativa",
+      filterNote:
+        "Observação: os dados e textos desta seção correspondem aos filtros aplicados —",
+      updating: "atualizando os textos para este recorte...",
+    },
+
     sources: [
       { label: "IBGE — estatísticas oficiais", url: "https://www.ibge.gov.br" },
       { label: "Banco Central do Brasil", url: "https://www.bcb.gov.br" },
