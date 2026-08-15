@@ -1,0 +1,1 @@
+update public.content_articles set translations = translations - 'es', translated_files = translated_files - 'es' where slug like 'metas%';
