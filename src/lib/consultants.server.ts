@@ -1,6 +1,7 @@
 import { sendLovableEmail } from "@lovable.dev/email-js";
 
 import { DEFAULT_NEWSLETTER_SETTINGS, type NewsletterSettings } from "./newsletter.server";
+import { SENDER_DOMAIN } from "./email-templates/send-email";
 
 function escapeHtml(value: string) {
   return value
@@ -55,28 +56,31 @@ export async function sendConsultantMessage(input: {
   const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) return { ok: false as const, error: "Serviço de e-mail indisponível." };
 
-  const subject = `Contato pelo site para ${consultant.full_name}`;
+  const subject = `${consultant.full_name}, novo contato de ${input.fromName} pelo site`;
   const html = `<!doctype html><html><body style="font-family:Helvetica,Arial,sans-serif;color:#1f2328">
-<h2 style="margin:0 0 16px">Nova mensagem pelo site</h2>
+<p style="margin:0 0 10px">Olá, ${escapeHtml(consultant.full_name)}.</p>
+<h2 style="margin:0 0 16px">Você recebeu uma nova mensagem pelo site oficial da Liberato Consulting</h2>
 <p><strong>Para:</strong> ${escapeHtml(consultant.full_name)}</p>
 <p><strong>Nome:</strong> ${escapeHtml(input.fromName)}</p>
 <p><strong>E-mail:</strong> ${escapeHtml(input.fromEmail)}</p>
 <p><strong>Empresa:</strong> ${escapeHtml(input.company || "—")}</p>
 <p style="white-space:pre-wrap;margin-top:16px">${escapeHtml(input.message)}</p>
+<p style="margin-top:20px;font-size:13px;color:#57534e">Responda diretamente a este e-mail para falar com ${escapeHtml(input.fromName)}. Esta mensagem foi enviada porque o visitante escolheu o seu perfil no site liberatoconsulting.com.br.</p>
 </body></html>`;
-  const text = `Nova mensagem pelo site\nPara: ${consultant.full_name}\nNome: ${input.fromName}\nE-mail: ${input.fromEmail}\nEmpresa: ${input.company || "—"}\n\n${input.message}`;
+  const text = `Olá, ${consultant.full_name}.\n\nVocê recebeu uma nova mensagem pelo site oficial da Liberato Consulting.\n\nNome: ${input.fromName}\nE-mail: ${input.fromEmail}\nEmpresa: ${input.company || "—"}\n\n${input.message}\n\nResponda diretamente a este e-mail para falar com ${input.fromName}. Esta mensagem foi enviada porque o visitante escolheu o seu perfil no site liberatoconsulting.com.br.`;
 
   await sendLovableEmail(
     {
       to: consultant.contact_email,
-      from: `${settings.fromName} <${settings.fromEmail}>`,
-      sender_domain: settings.fromEmail.split("@")[1] ?? "",
+      from: `${settings.fromName} <noreply@${SENDER_DOMAIN}>`,
+      sender_domain: SENDER_DOMAIN,
       reply_to: input.fromEmail,
       subject,
       html,
       text,
       purpose: "transactional",
       label: "consultant-contact",
+      idempotency_key: `consultant-contact-${input.consultantId}-${crypto.randomUUID()}`.slice(0, 200),
     } as never,
     { apiKey },
   );

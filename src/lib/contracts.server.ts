@@ -1,6 +1,7 @@
 import { sendLovableEmail } from "@lovable.dev/email-js";
 
 import { companyFooterHtml, companyFooterText, loadCompanyFooter } from "./company-footer.server";
+import { SENDER_DOMAIN } from "./email-templates/send-email";
 
 function escapeHtml(value: string) {
   return (value ?? "")
@@ -33,7 +34,7 @@ export async function sendContractEmail(input: {
   if (!apiKey) return { ok: false as const, error: "Serviço de e-mail indisponível." };
 
   const company = await loadCompanyFooter("https://liberatoconsulting.com.br");
-  const fromEmail = company.email || "contato@liberatoconsulting.com.br";
+  const replyTo = company.email || "contato@liberatoconsulting.com.br";
   const fromName = company.name || "Liberato Consulting";
 
   const paragraphs = String(tpl.body)
@@ -54,25 +55,27 @@ export async function sendContractEmail(input: {
 </td></tr>
 <tr><td style="padding:28px 30px">
 <p style="margin:0 0 18px;font-size:15px">Olá, ${escapeHtml(input.toName || "")}.</p>
-<p style="margin:0 0 18px;font-size:15px">Segue o contrato para leitura e assinatura. Após assinar, devolva o documento assinado para que o seu acesso ao painel seja liberado.</p>
+<p style="margin:0 0 18px;font-size:15px">Este documento foi preparado para você após o seu cadastro como ${input.audience}. Segue o contrato para leitura e assinatura. Após assinar, responda diretamente a este e-mail para que o seu acesso ao painel seja liberado.</p>
 <h1 style="margin:0 0 16px;font-size:20px;color:#111111">${escapeHtml(tpl.title)} (versão ${tpl.version})</h1>
 ${paragraphs}
 </td></tr>
 <tr><td style="padding:20px 30px;background:#14192a;color:#f7f6f4">${companyFooterHtml(company)}</td></tr>
 </table></td></tr></table></body></html>`;
 
-  const text = `Olá, ${input.toName}.\n\nSegue o contrato para leitura e assinatura. Após assinar, devolva o documento assinado para que o seu acesso ao painel seja liberado.\n\n${tpl.title} (versão ${tpl.version})\n\n${tpl.body}\n\n${companyFooterText(company)}`;
+  const text = `Olá, ${input.toName}.\n\nEste documento foi preparado para você após o seu cadastro como ${input.audience}. Segue o contrato para leitura e assinatura. Após assinar, responda diretamente a este e-mail para que o seu acesso ao painel seja liberado.\n\n${tpl.title} (versão ${tpl.version})\n\n${tpl.body}\n\n${companyFooterText(company)}`;
 
   await sendLovableEmail(
     {
       to: input.toEmail,
-      from: `${fromName} <${fromEmail}>`,
-      sender_domain: fromEmail.split("@")[1] ?? "",
-      subject: `Contrato para assinatura — ${fromName}`,
+      from: `${fromName} <noreply@${SENDER_DOMAIN}>`,
+      sender_domain: SENDER_DOMAIN,
+      reply_to: replyTo,
+      subject: `${input.toName}, seu contrato para assinatura — ${fromName}`,
       html,
       text,
       purpose: "transactional",
       label: "team-contract",
+      idempotency_key: `team-contract-${input.audience}-${input.toEmail}-${tpl.version}`.slice(0, 200),
     } as never,
     { apiKey },
   );

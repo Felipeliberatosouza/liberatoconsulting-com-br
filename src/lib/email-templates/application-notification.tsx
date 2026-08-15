@@ -48,8 +48,9 @@ const Email = ({
       <Container style={container}>
         <Heading style={heading}>Nova candidatura — Trabalhe Conosco</Heading>
         <Text style={intro}>
-          Um currículo foi enviado pelo site. O arquivo está disponível no painel
-          administrativo, em Candidaturas.
+          {fullName ?? 'Uma pessoa candidata'} enviou uma candidatura pelo site oficial
+          liberatoconsulting.com.br. O arquivo está disponível no painel administrativo,
+          em Candidaturas, e você pode responder diretamente a este e-mail.
         </Text>
         <Hr style={hr} />
         <Section>
@@ -64,7 +65,9 @@ const Email = ({
         </Section>
         <Hr style={hr} />
         <Text style={footer}>
-          Liberato Consulting — este aviso é gerado automaticamente pelo site.
+          Liberato Consulting · liberatoconsulting.com.br ·
+          contato@liberatoconsulting.com.br. Este aviso individual foi gerado após o
+          envio do formulário Trabalhe Conosco.
         </Text>
       </Container>
     </Body>
