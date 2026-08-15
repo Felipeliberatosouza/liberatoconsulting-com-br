@@ -222,14 +222,29 @@ function ArticlePage() {
       </section>
 
       <article className="mx-auto max-w-3xl px-6 py-14">
+        {/* Data do artigo */}
+        {article.article_date && (
+          <p className="text-sm text-muted-foreground">
+            {new Date(`${article.article_date}T12:00:00`).toLocaleDateString(
+              lang === "pt" ? "pt-BR" : lang === "es" ? "es-ES" : lang === "zh" ? "zh-CN" : "en-US",
+              { day: "2-digit", month: "long", year: "numeric" },
+            )}
+          </p>
+        )}
+
         {/* Resumo */}
         {view.summary && (
-          <div className="border-l-4 border-accent bg-secondary/50 p-6">
+          <div className="mt-6 border-l-4 border-accent bg-secondary/50 p-6">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
               {a.summaryLabel}
             </p>
             <p className="mt-2 text-lg leading-relaxed text-foreground/90">{view.summary}</p>
           </div>
+        )}
+
+        {/* Vídeo (quando o conteúdo for do tipo Vídeo) */}
+        {article.kind === "Vídeo" && article.link_url && (
+          <ArticleVideo url={article.link_url} title={view.title} />
         )}
 
         {/* Texto (até 500 palavras) */}
@@ -244,15 +259,21 @@ function ArticlePage() {
           </div>
         )}
 
+        {/* Tabela e gráfico opcionais */}
+        {article.table_data && <ArticleTable data={article.table_data} />}
+        {article.chart_data && <ArticleChart data={article.chart_data} />}
+
         {/* Ações: download, leituras, contato dos autores */}
         <div className="mt-12 flex flex-wrap items-center gap-4 border-t border-border pt-8">
-          <button
-            onClick={onDownload}
-            disabled={downloading}
-            className="rounded-md bg-ink px-5 py-3 text-sm font-semibold text-ink-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
-          >
-            {downloading ? a.downloading : a.download}
-          </button>
+          {(article.file_path || article.link_url) && (
+            <button
+              onClick={onDownload}
+              disabled={downloading}
+              className="rounded-md bg-ink px-5 py-3 text-sm font-semibold text-ink-foreground transition-colors hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
+            >
+              {downloading ? a.downloading : a.download}
+            </button>
+          )}
           <span className="text-sm text-muted-foreground">
             <strong className="text-foreground">{reads}</strong> {a.reads}
           </span>
@@ -260,7 +281,7 @@ function ArticlePage() {
             <a
               href={
                 article.author_contact.includes("@")
-                  ? `mailto:${article.author_contact}`
+                  ? `mailto:${article.author_contact.split(",")[0]?.trim()}`
                   : article.author_contact
               }
               className="text-sm font-semibold text-accent hover:underline"
@@ -269,6 +290,7 @@ function ArticlePage() {
             </a>
           )}
         </div>
+
 
         {/* Avaliação */}
         <div className="mt-8 flex flex-wrap items-center gap-3">
