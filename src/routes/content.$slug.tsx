@@ -12,7 +12,6 @@ import {
   getPublicArticle,
   rateArticle,
   registerArticleRead,
-  submitArticle,
 } from "@/lib/content.functions";
 import type { ArticleRecord } from "@/lib/site-config";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
