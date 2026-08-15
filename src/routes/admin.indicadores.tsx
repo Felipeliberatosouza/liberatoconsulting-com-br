@@ -91,11 +91,15 @@ function IndicatorsPage() {
       (r) => !(r.previous_value ?? "").trim() || !(r.previous_period ?? "").trim(),
     );
     if (!pending) return;
-    autoFilled.current = true;
     setFilling(true);
     fillPreviousIndicatorsAI()
       .then((r) => {
-        if (r.ok && r.updated > 0) {
+        if (!r.ok) {
+          toast.error(r.error);
+          return;
+        }
+        autoFilled.current = true;
+        if (r.updated > 0) {
           toast.success(`${r.updated} períodos anteriores preenchidos automaticamente.`);
           void q.refetch();
         }
