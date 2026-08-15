@@ -40,6 +40,9 @@ export type EmailLabels = {
   currentLabel: string;
   previousLabel: string;
   changeLabel: string;
+  forecastLabel: string;
+  sourceLabel: string;
+  socialCta: string;
   latestArticles: string;
   noIndicators: string;
   soonArticles: string;
