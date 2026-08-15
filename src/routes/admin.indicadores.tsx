@@ -6,11 +6,13 @@ import { toast } from "sonner";
 import { AdminShell } from "@/components/AdminShell";
 import {
   deleteIndicator,
+  fillPreviousIndicatorsAI,
   listIndicators,
   refreshIndicatorsAI,
   saveIndicator,
   type Indicator,
 } from "@/lib/indicators.functions";
+
 import {
   ALL_REGIONS,
   ALL_SEGMENTS,
