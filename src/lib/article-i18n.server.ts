@@ -160,9 +160,11 @@ export async function ensureTranslatedPdf(
       `${siteOrigin()}/logo.png`;
     const companyName = c["trade_name"] || c["legal_name"] || "Liberato Consulting";
 
-    const bodyParts = [tr["body"] ?? "", tr["table_data"] ?? "", tr["chart_data"] ?? ""].filter(
-      Boolean,
-    );
+    // Preferimos a íntegra do PDF original traduzida; o resumo publicado é só o fallback.
+    const fullDoc = await fullDocumentBody(withTr, fileLang);
+    const bodyParts = fullDoc
+      ? [fullDoc]
+      : [tr["body"] ?? "", tr["table_data"] ?? "", tr["chart_data"] ?? ""].filter(Boolean);
 
     const bytes = await buildBrandedPdf({
       title: tr["title"]!,
