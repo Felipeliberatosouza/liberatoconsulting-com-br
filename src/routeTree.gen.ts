@@ -48,6 +48,7 @@ import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as BoletimCancelarRouteImport } from './routes/boletim.cancelar'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
 import { Route as ContentSlugRouteImport } from './routes/content.$slug'
+import { Route as ContentEnviarRouteImport } from './routes/content.enviar'
 import { Route as NewsletterSlugRouteImport } from './routes/newsletter.$slug'
 import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
@@ -253,6 +254,11 @@ const ContentSlugRoute = ContentSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => ContentRoute,
 } as any)
+const ContentEnviarRoute = ContentEnviarRouteImport.update({
+  id: '/enviar',
+  path: '/enviar',
+  getParentRoute: () => ContentRoute,
+} as any)
 const NewsletterSlugRoute = NewsletterSlugRouteImport.update({
   id: '/newsletter/$slug',
   path: '/newsletter/$slug',
@@ -341,6 +347,7 @@ export interface FileRoutesByFullPath {
   '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
+  '/content/enviar': typeof ContentEnviarRoute
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
@@ -391,6 +398,7 @@ export interface FileRoutesByTo {
   '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
+  '/content/enviar': typeof ContentEnviarRoute
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
@@ -442,6 +450,7 @@ export interface FileRoutesById {
   '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil_/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
+  '/content/enviar': typeof ContentEnviarRoute
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
@@ -494,6 +503,7 @@ export interface FileRouteTypes {
     | '/boletim/cancelar'
     | '/brasil/$slug'
     | '/content/$slug'
+    | '/content/enviar'
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
@@ -544,6 +554,7 @@ export interface FileRouteTypes {
     | '/boletim/cancelar'
     | '/brasil/$slug'
     | '/content/$slug'
+    | '/content/enviar'
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
@@ -594,6 +605,7 @@ export interface FileRouteTypes {
     | '/boletim/cancelar'
     | '/brasil_/$slug'
     | '/content/$slug'
+    | '/content/enviar'
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
@@ -931,6 +943,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContentSlugRouteImport
       parentRoute: typeof ContentRoute
     }
+    '/content/enviar': {
+      id: '/content/enviar'
+      path: '/enviar'
+      fullPath: '/content/enviar'
+      preLoaderRoute: typeof ContentEnviarRouteImport
+      parentRoute: typeof ContentRoute
+    }
     '/newsletter/$slug': {
       id: '/newsletter/$slug'
       path: '/newsletter/$slug'
@@ -999,10 +1018,12 @@ declare module '@tanstack/react-router' {
 
 interface ContentRouteChildren {
   ContentSlugRoute: typeof ContentSlugRoute
+  ContentEnviarRoute: typeof ContentEnviarRoute
 }
 
 const ContentRouteChildren: ContentRouteChildren = {
   ContentSlugRoute: ContentSlugRoute,
+  ContentEnviarRoute: ContentEnviarRoute,
 }
 
 const ContentRouteWithChildren =

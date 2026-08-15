@@ -224,6 +224,10 @@ const articleSchema = z.object({
   author_contact: z.string().trim().max(300).optional(),
   file_path: z.string().trim().max(500).nullable().optional(),
   file_name: z.string().trim().max(200).nullable().optional(),
+  article_date: z.string().trim().max(20).nullable().optional(),
+  chart_data: z.string().max(8000).optional(),
+  table_data: z.string().max(12000).optional(),
+
 });
 
 export const saveArticle = createServerFn({ method: "POST" })
@@ -252,7 +256,11 @@ export const saveArticle = createServerFn({ method: "POST" })
       file_path: data.file_path || null,
       file_name: data.file_name || null,
       link_url: data.link_url || null,
+      article_date: data.article_date || null,
+      chart_data: data.chart_data ?? "",
+      table_data: data.table_data ?? "",
       translations: { en: t.en, es: t.es, zh: t.zh },
+
     };
 
     if (!(await checkAdmin(context))) {

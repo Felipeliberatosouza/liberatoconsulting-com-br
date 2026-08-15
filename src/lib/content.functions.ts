@@ -86,6 +86,12 @@ const submissionSchema = z.object({
   summary: z.string().trim().max(2000),
   message: z.string().trim().max(4000),
   language: z.string().trim().max(8).optional(),
+  phone: z.string().trim().max(40).optional(),
+  cpf: z.string().trim().max(20).optional(),
+  role_label: z.string().trim().max(120).optional(),
+  institution: z.string().trim().max(160).optional(),
+  group_id: z.string().trim().max(60).optional(),
+  service: z.string().trim().max(120).optional(),
   website: z.string().max(200).optional(), // honeypot
   file: z
     .object({
@@ -95,6 +101,7 @@ const submissionSchema = z.object({
     .nullable()
     .optional(),
 });
+
 
 /** "Publique você também": envio de artigo por visitantes. */
 export const submitArticle = createServerFn({ method: "POST" })
@@ -127,8 +134,15 @@ export const submitArticle = createServerFn({ method: "POST" })
       summary: data.summary,
       message: data.message,
       language: data.language ?? null,
+      phone: data.phone ?? "",
+      cpf: data.cpf ?? "",
+      role_label: data.role_label ?? "",
+      institution: data.institution ?? "",
+      group_id: data.group_id ?? "",
+      service: data.service ?? "",
       file_path,
       file_name,
+
     });
     if (error) return { ok: false as const, error: "Não foi possível registrar o envio." };
     return { ok: true as const };

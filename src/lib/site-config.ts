@@ -36,7 +36,11 @@ export type ArticleRecord = {
   read_count: number;
   rating_sum: number;
   rating_count: number;
+  article_date: string | null;
+  chart_data: string;
+  table_data: string;
   translations: Record<string, { kind?: string; title?: string; summary?: string; body?: string }>;
+
 };
 
 

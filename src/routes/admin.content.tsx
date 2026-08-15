@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -11,6 +12,10 @@ import {
   saveArticle,
   uploadArticleFile,
 } from "@/lib/admin.functions";
+import { analyzeArticleFile, generateArticleCover } from "@/lib/content-ai.functions";
+import { listAuthorOptions } from "@/lib/users.functions";
+import { useAuthReady } from "@/hooks/useAuthReady";
+import { stampLogo } from "@/lib/social-image";
 import type { ArticleRecord } from "@/lib/site-config";
 import { pt } from "@/i18n/pt";
 
@@ -46,7 +51,12 @@ type Draft = {
   author_contact: string;
   file_path: string;
   file_name: string;
+  article_date: string;
+  chart_data: string;
+  table_data: string;
 };
+
+const today = () => new Date().toISOString().slice(0, 10);
 
 const EMPTY: Draft = {
   slug: "",
@@ -64,6 +74,9 @@ const EMPTY: Draft = {
   author_contact: "",
   file_path: "",
   file_name: "",
+  article_date: today(),
+  chart_data: "",
+  table_data: "",
 };
 
 function slugify(v: string) {
@@ -74,6 +87,11 @@ function slugify(v: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
+}
+
+/** Endereço público do conteúdo, gerado a partir do título (igual à Newsletter). */
+function contentLink(slug: string) {
+  return slug ? `https://liberatoconsulting.com.br/content/${slug}` : "";
 }
 
 function countWords(v: string) {
@@ -90,6 +108,7 @@ function readAsDataUrl(file: File): Promise<string> {
 }
 
 function AdminContent() {
+  const authReady = useAuthReady();
   const groups = pt.megaMenu.groups;
   const services = groups.flatMap((g) =>
     g.items.map((i) => ({ id: i.id, label: i.label, group: g.id })),
@@ -107,13 +126,26 @@ function AdminContent() {
       file_path: string | null;
       file_name: string | null;
       created_at: string;
+      phone?: string;
+      cpf?: string;
+      role_label?: string;
+      institution?: string;
     }>
   >([]);
   const [draft, setDraft] = useState<Draft>(EMPTY);
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [coverBusy, setCoverBusy] = useState(false);
+  const [linkTouched, setLinkTouched] = useState(false);
   const [groupFilter, setGroupFilter] = useState("all");
   const [serviceFilter, setServiceFilter] = useState("all");
+
+  const authorOptions = useQuery({
+    queryKey: ["content-authors"],
+    queryFn: () => listAuthorOptions(),
+    retry: false,
+    enabled: authReady,
+  });
 
   async function refresh() {
     try {
@@ -132,6 +164,11 @@ function AdminContent() {
     void refresh();
   }, []);
 
+  // O link externo acompanha o título até ser editado manualmente.
+  useEffect(() => {
+    if (!linkTouched) setDraft((d) => ({ ...d, link_url: contentLink(d.slug) }));
+  }, [draft.slug, linkTouched]);
+
   const words = countWords(draft.body);
   const overLimit = words > 500;
 
@@ -145,11 +182,28 @@ function AdminContent() {
     [items, groupFilter, serviceFilter],
   );
 
-  const serviceOptions = services.filter(
-    (s) => groupFilter === "all" || s.group === groupFilter,
+  const history = useMemo(
+    () =>
+      [...items].sort((a, b) =>
+        (b.article_date ?? "").localeCompare(a.article_date ?? ""),
+      ),
+    [items],
   );
 
+  const serviceOptions = services.filter((s) => groupFilter === "all" || s.group === groupFilter);
+  const serviceLabel = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const s of services) map[s.id] = s.label;
+    return map;
+  }, [services]);
+  const groupLabel = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const g of groups) map[g.id] = g.title;
+    return map;
+  }, [groups]);
+
   function edit(a: ArticleRecord) {
+    setLinkTouched(true);
     setDraft({
       id: a.id,
       slug: a.slug,
@@ -167,6 +221,9 @@ function AdminContent() {
       author_contact: a.author_contact ?? "",
       file_path: a.file_path ?? "",
       file_name: a.file_name ?? "",
+      article_date: a.article_date ?? today(),
+      chart_data: a.chart_data ?? "",
+      table_data: a.table_data ?? "",
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -180,6 +237,31 @@ function AdminContent() {
     setDraft((d) => ({ ...d, cover_url: dataUrl }));
   }
 
+  async function onGenerateCover() {
+    if (draft.title.trim().length < 5) {
+      toast.error("Informe o título antes de gerar a imagem.");
+      return;
+    }
+    setCoverBusy(true);
+    try {
+      const r = await generateArticleCover({
+        data: { title: draft.title, summary: draft.summary.slice(0, 900) },
+      });
+      if (!r.ok) {
+        toast.error(r.error);
+        return;
+      }
+      const stamped = await stampLogo(r.imageUrl).catch(() => r.imageUrl);
+      setDraft((d) => ({ ...d, cover_url: stamped }));
+      toast.success("Imagem de capa gerada.");
+    } catch {
+      toast.error("Não foi possível gerar a imagem.");
+    } finally {
+      setCoverBusy(false);
+    }
+  }
+
+  /** Upload do artigo completo: envia o arquivo e preenche os demais campos. */
   async function onFile(file: File) {
     if (file.size > 10_000_000) {
       toast.error("Arquivo acima de 10 MB.");
@@ -193,8 +275,45 @@ function AdminContent() {
         toast.error(r.error);
         return;
       }
-      setDraft((d) => ({ ...d, file_path: r.path, file_name: r.name }));
-      toast.success("Arquivo do artigo enviado.");
+      const nextPosition =
+        items.reduce((max, a) => Math.max(max, a.position ?? 0), 0) + 1;
+      setDraft((d) => ({
+        ...d,
+        file_path: r.path,
+        file_name: r.name,
+        article_date: d.article_date || today(),
+        position: d.id ? d.position : nextPosition,
+      }));
+      toast.success("Arquivo enviado. Lendo o conteúdo…");
+
+      const a = await analyzeArticleFile({
+        data: {
+          name: file.name,
+          dataUrl,
+          groups: groups.map((g) => ({ id: g.id, title: g.title })),
+          services: services.map((s) => ({ id: s.id, label: s.label })),
+        },
+      });
+      if (!a.ok) {
+        toast.error(a.error);
+        return;
+      }
+      setDraft((d) => ({
+        ...d,
+        title: d.title || a.title,
+        slug: d.slug || slugify(a.title),
+        summary: d.summary || a.summary,
+        body: d.body || a.body,
+        group_id: a.group_id || d.group_id,
+        service: d.service || a.service,
+        kind: d.kind || a.kind,
+        table_data: d.table_data || a.table_data,
+        chart_data: d.chart_data || a.chart_data,
+        article_date: d.article_date || today(),
+      }));
+      toast.success("Campos preenchidos a partir do arquivo. Revise antes de publicar.");
+    } catch {
+      toast.error("Não foi possível ler o arquivo automaticamente.");
     } finally {
       setUploading(false);
     }
@@ -231,6 +350,9 @@ function AdminContent() {
         author_contact: draft.author_contact,
         file_path: draft.file_path || null,
         file_name: draft.file_name || null,
+        article_date: draft.article_date || null,
+        chart_data: draft.chart_data,
+        table_data: draft.table_data,
       };
       const r = await saveArticle({ data: payload });
       if (!r.ok) {
@@ -239,6 +361,7 @@ function AdminContent() {
       }
       toast.success("Conteúdo salvo e traduzido para EN, ES e ZH.");
       setDraft(EMPTY);
+      setLinkTouched(false);
       await refresh();
     } catch {
       toast.error("Não foi possível salvar o conteúdo.");
@@ -250,10 +373,15 @@ function AdminContent() {
   const input =
     "mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
 
+  const authorList = draft.authors
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
   return (
     <AdminShell
       title="Conteúdos"
-      description="Cada conteúdo aparece na seção Conteúdo do site, dentro da categoria e do serviço escolhidos. Ao salvar, as traduções para inglês, espanhol e mandarim são geradas automaticamente."
+      description="Comece pelo upload do artigo completo: os demais campos são preenchidos automaticamente e podem ser editados. Ao salvar, as traduções para inglês, espanhol e mandarim são geradas."
     >
       <form onSubmit={onSubmit} className="rounded-lg border border-border bg-background p-6">
         <h2 className="font-display text-lg font-bold">
@@ -261,6 +389,46 @@ function AdminContent() {
         </h2>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
+          {/* 1) Arquivo completo — primeira informação da tela */}
+          <div className="rounded-md border border-accent/40 bg-accent/5 p-4 text-sm font-medium md:col-span-2">
+            1. Artigo completo para download (PDF ou DOC, até 10 MB)
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx,.rtf,.odt"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) void onFile(f);
+              }}
+              className={input}
+            />
+            <p className="mt-1 text-xs font-normal text-muted-foreground">
+              Ao enviar um PDF, a leitura automática preenche título, resumo, texto, categoria,
+              serviço, tabela, gráfico e a data do artigo.
+            </p>
+            {uploading && (
+              <span className="text-xs text-muted-foreground">Enviando e lendo o arquivo…</span>
+            )}
+            {draft.file_path && (
+              <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
+                <span className="text-muted-foreground">{draft.file_name}</span>
+                <button
+                  type="button"
+                  onClick={() => void openFile(draft.file_path)}
+                  className="font-medium text-accent hover:underline"
+                >
+                  Abrir
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDraft((d) => ({ ...d, file_path: "", file_name: "" }))}
+                  className="text-destructive hover:underline"
+                >
+                  Remover
+                </button>
+              </div>
+            )}
+          </div>
+
           <label className="text-sm font-medium md:col-span-2">
             Título
             <input
@@ -277,24 +445,53 @@ function AdminContent() {
             />
           </label>
 
-          <label className="text-sm font-medium">
+          {/* 2) Autores (seleção) + e-mails automáticos */}
+          <div className="text-sm font-medium">
             Autores
-            <input
-              value={draft.authors}
-              onChange={(e) => setDraft((d) => ({ ...d, authors: e.target.value }))}
-              placeholder="Ana Souza, João Lima"
-              className={input}
-            />
-          </label>
+            <div className="mt-1 max-h-40 space-y-1 overflow-auto rounded-md border border-input bg-background p-2 text-sm font-normal">
+              {(authorOptions.data ?? []).length === 0 && (
+                <p className="text-xs text-muted-foreground">
+                  {authorOptions.isLoading
+                    ? "Carregando…"
+                    : "Nenhum usuário com papel de administrador, autor ou consultor."}
+                </p>
+              )}
+              {(authorOptions.data ?? []).map((a) => (
+                <label key={a.userId} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={authorList.includes(a.name)}
+                    onChange={(e) => {
+                      const next = e.target.checked
+                        ? [...authorList, a.name]
+                        : authorList.filter((n) => n !== a.name);
+                      const emails = (authorOptions.data ?? [])
+                        .filter((o) => next.includes(o.name) && o.email)
+                        .map((o) => o.email);
+                      setDraft((d) => ({
+                        ...d,
+                        authors: next.join(", "),
+                        author_contact: emails.join(", "),
+                      }));
+                    }}
+                  />
+                  {a.name}
+                </label>
+              ))}
+            </div>
+          </div>
 
           <label className="text-sm font-medium">
-            Contato dos autores (e-mail ou link)
+            E-mail dos autores
             <input
               value={draft.author_contact}
               onChange={(e) => setDraft((d) => ({ ...d, author_contact: e.target.value }))}
               placeholder="contato@liberatoconsulting.com.br"
               className={input}
             />
+            <span className="mt-1 block text-xs font-normal text-muted-foreground">
+              Preenchido a partir dos autores selecionados e editável.
+            </span>
           </label>
 
           <label className="text-sm font-medium">
@@ -323,6 +520,12 @@ function AdminContent() {
                 <option key={k}>{k}</option>
               ))}
             </select>
+            {draft.kind === "Vídeo" && (
+              <span className="mt-1 block text-xs font-normal text-muted-foreground">
+                Para vídeo, informe no campo de link o endereço do YouTube, Vimeo ou de um arquivo
+                MP4: o player é exibido dentro da página do conteúdo.
+              </span>
+            )}
           </label>
 
           <label className="text-sm font-medium">
@@ -342,33 +545,54 @@ function AdminContent() {
           </label>
 
           <label className="text-sm font-medium">
-            Link externo (opcional)
+            {draft.kind === "Vídeo" ? "Link do vídeo" : "Link do conteúdo"} (gerado a partir do
+            título, pode ser editado)
             <input
               value={draft.link_url}
-              onChange={(e) => setDraft((d) => ({ ...d, link_url: e.target.value }))}
+              onChange={(e) => {
+                setLinkTouched(true);
+                setDraft((d) => ({ ...d, link_url: e.target.value }));
+              }}
               placeholder="https://…"
               className={input}
             />
           </label>
 
-          <div className="text-sm font-medium md:col-span-2">
-            Imagem de capa (o título aparece sobreposto a ela)
+          <label className="text-sm font-medium">
+            Data do artigo
             <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) void onCover(f);
-              }}
+              type="date"
+              value={draft.article_date}
+              onChange={(e) => setDraft((d) => ({ ...d, article_date: e.target.value }))}
               className={input}
             />
+          </label>
+
+          {/* Capa: geração por IA ou upload */}
+          <div className="text-sm font-medium md:col-span-2">
+            Imagem de capa (o título aparece sobreposto a ela)
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => void onGenerateCover()}
+                disabled={coverBusy}
+                className="rounded-md border border-accent px-4 py-2 text-sm font-semibold text-accent hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
+              >
+                {coverBusy ? "Criando imagem…" : "Gerar imagem com IA"}
+              </button>
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) void onCover(f);
+                }}
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+              />
+            </div>
             {draft.cover_url && (
               <div className="mt-3 flex items-center gap-3">
-                <img
-                  src={draft.cover_url}
-                  alt="Capa"
-                  className="h-20 w-36 rounded object-cover"
-                />
+                <img src={draft.cover_url} alt="Capa" className="h-20 w-36 rounded object-cover" />
                 <button
                   type="button"
                   onClick={() => setDraft((d) => ({ ...d, cover_url: "" }))}
@@ -405,38 +629,30 @@ function AdminContent() {
             </span>
           </label>
 
-          <div className="text-sm font-medium md:col-span-2">
-            Artigo completo para download (PDF ou DOC, até 10 MB)
-            <input
-              type="file"
-              accept=".pdf,.doc,.docx,.rtf,.odt"
-              onChange={(e) => {
-                const f = e.target.files?.[0];
-                if (f) void onFile(f);
-              }}
+          <label className="text-sm font-medium md:col-span-2">
+            Tabela (opcional, em markdown)
+            <textarea
+              rows={5}
+              value={draft.table_data}
+              onChange={(e) => setDraft((d) => ({ ...d, table_data: e.target.value }))}
+              placeholder={"| Camada | Pergunta |\n|---|---|\n| Objetivo anual | O que muda? |"}
               className={input}
             />
-            {uploading && <span className="text-xs text-muted-foreground">Enviando arquivo…</span>}
-            {draft.file_path && (
-              <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
-                <span className="text-muted-foreground">{draft.file_name}</span>
-                <button
-                  type="button"
-                  onClick={() => void openFile(draft.file_path)}
-                  className="font-medium text-accent hover:underline"
-                >
-                  Abrir
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setDraft((d) => ({ ...d, file_path: "", file_name: "" }))}
-                  className="text-destructive hover:underline"
-                >
-                  Remover
-                </button>
-              </div>
-            )}
-          </div>
+          </label>
+
+          <label className="text-sm font-medium md:col-span-2">
+            Gráfico (opcional)
+            <textarea
+              rows={5}
+              value={draft.chart_data}
+              onChange={(e) => setDraft((d) => ({ ...d, chart_data: e.target.value }))}
+              placeholder={"titulo: Evolução das metas\nPlanejamento | 30\nExecução | 45"}
+              className={input}
+            />
+            <span className="mt-1 block text-xs font-normal text-muted-foreground">
+              Primeira linha “titulo: …” e uma linha por barra no formato “Rótulo | número”.
+            </span>
+          </label>
 
           <label className="text-sm font-medium">
             Ordem
@@ -470,7 +686,10 @@ function AdminContent() {
           {draft.id && (
             <button
               type="button"
-              onClick={() => setDraft(EMPTY)}
+              onClick={() => {
+                setDraft(EMPTY);
+                setLinkTouched(false);
+              }}
               className="rounded-md border border-input px-4 py-2 text-sm font-medium hover:border-accent hover:text-accent"
             >
               Cancelar
@@ -570,6 +789,13 @@ function AdminContent() {
         <h2 className="font-display text-lg font-bold">
           Artigos enviados pelo público ({submissions.length})
         </h2>
+        <p className="text-sm text-muted-foreground">
+          Os leitores enviam artigos pela página{" "}
+          <a href="/content/enviar" target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+            Envie seu artigo
+          </a>
+          .
+        </p>
         {submissions.length === 0 && (
           <p className="text-sm text-muted-foreground">Nenhum envio recebido até agora.</p>
         )}
@@ -577,7 +803,12 @@ function AdminContent() {
           <div key={s.id} className="rounded-lg border border-border bg-background p-4">
             <p className="font-medium">{s.title}</p>
             <p className="text-xs text-muted-foreground">
-              {s.full_name} · {s.email} · {new Date(s.created_at).toLocaleString("pt-BR")}
+              {s.full_name}
+              {s.role_label ? ` · ${s.role_label}` : ""} · {s.email}
+              {s.phone ? ` · ${s.phone}` : ""}
+              {s.cpf ? ` · CPF ${s.cpf}` : ""}
+              {s.institution ? ` · ${s.institution}` : ""} ·{" "}
+              {new Date(s.created_at).toLocaleString("pt-BR")}
             </p>
             {s.summary && <p className="mt-2 text-sm text-muted-foreground">{s.summary}</p>}
             {s.message && <p className="mt-2 text-sm text-muted-foreground">{s.message}</p>}
@@ -591,6 +822,72 @@ function AdminContent() {
             )}
           </div>
         ))}
+      </div>
+
+      <div className="mt-12 space-y-3">
+        <h2 className="font-display text-lg font-bold">
+          Histórico de Conteúdos Publicados ({history.length})
+        </h2>
+        <div className="overflow-x-auto rounded-lg border border-border bg-background">
+          <table className="w-full text-left text-sm">
+            <thead className="border-b border-border text-xs uppercase text-muted-foreground">
+              <tr>
+                <th className="px-4 py-3">Nome</th>
+                <th className="px-4 py-3">Autores</th>
+                <th className="px-4 py-3">Link</th>
+                <th className="px-4 py-3">Categoria</th>
+                <th className="px-4 py-3">Arquivo</th>
+                <th className="px-4 py-3">Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-4 py-4 text-muted-foreground">
+                    Nenhum conteúdo publicado até agora.
+                  </td>
+                </tr>
+              )}
+              {history.map((a) => (
+                <tr key={a.id} className="border-b border-border/60 last:border-0">
+                  <td className="px-4 py-3 font-medium">{a.title}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{a.authors || "—"}</td>
+                  <td className="px-4 py-3">
+                    <a
+                      href={`/content/${a.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-accent hover:underline"
+                    >
+                      /content/{a.slug}
+                    </a>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {groupLabel[a.group_id] ?? a.group_id}
+                    {a.service ? ` · ${serviceLabel[a.service] ?? a.service}` : ""}
+                  </td>
+                  <td className="px-4 py-3">
+                    {a.file_path ? (
+                      <button
+                        onClick={() => void openFile(a.file_path!)}
+                        className="text-accent hover:underline"
+                      >
+                        Baixar
+                      </button>
+                    ) : (
+                      <span className="text-muted-foreground">—</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">
+                    {a.article_date
+                      ? new Date(`${a.article_date}T12:00:00`).toLocaleDateString("pt-BR")
+                      : "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </AdminShell>
   );
