@@ -18,8 +18,6 @@ export async function ensureArticleTranslations(
 ): Promise<ArticleRecord> {
   if (lang === "pt") return article;
   const current = (article.translations ?? {}) as Record<string, Record<string, string>>;
-  const missing = TARGETS.filter((l) => !current[l]?.["title"]);
-  if (!missing.includes(lang as TargetLang)) return article;
 
   const source: Record<string, string> = {};
   for (const f of FIELDS) {
@@ -28,22 +26,29 @@ export async function ensureArticleTranslations(
   }
   if (!source["title"]) return article;
 
+  // Falta algum campo (ex.: tabela ou gráfico adicionados depois) na tradução atual?
+  const target = current[lang] ?? {};
+  const complete = Object.keys(source).every((f) => target[f] && String(target[f]).trim());
+  if (complete) return article;
+
   try {
     const { translateRecord } = await import("./admin.server");
     const t = await translateRecord(source);
     const merged = { ...current };
-    for (const l of TARGETS) if (t[l] && Object.keys(t[l]).length) merged[l] = t[l];
+    for (const l of TARGETS) if (t[l] && Object.keys(t[l]).length) merged[l] = { ...(merged[l] ?? {}), ...t[l] };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Textos mudaram: os PDFs traduzidos precisam ser gerados novamente.
     await supabaseAdmin
       .from("content_articles")
-      .update({ translations: merged })
+      .update({ translations: merged, translated_files: {} })
       .eq("id", article.id);
-    return { ...article, translations: merged } as ArticleRecord;
+    return { ...article, translations: merged, translated_files: {} } as ArticleRecord;
   } catch (err) {
     console.error("[content i18n] falha ao traduzir artigo", err);
     return article;
   }
 }
+
 
 function camel(value: string, max: number) {
   return value
@@ -71,13 +76,15 @@ export async function ensureTranslatedPdf(
     : null;
   if (lang === "pt" || lang === "zh") return original;
 
-  const stored = ((article as unknown as Record<string, unknown>)["translated_files"] ?? {}) as
+  // Traduz primeiro: se o texto mudou, os PDFs antigos são descartados.
+  const withTr = await ensureArticleTranslations(article, lang);
+  const stored = ((withTr as unknown as Record<string, unknown>)["translated_files"] ?? {}) as
     Record<string, { path: string; name: string }>;
   if (stored[lang]?.path) return stored[lang]!;
 
-  const withTr = await ensureArticleTranslations(article, lang);
   const tr = (withTr.translations?.[lang] ?? {}) as Record<string, string>;
   if (!tr["title"]) return original;
+
 
   try {
     const { buildBrandedPdf } = await import("./pdf.server");
@@ -96,7 +103,10 @@ export async function ensureTranslatedPdf(
       `${siteOrigin()}/logo.png`;
     const companyName = c["trade_name"] || c["legal_name"] || "Liberato Consulting";
 
-    const bodyParts = [tr["body"] ?? "", tr["table_data"] ?? ""].filter(Boolean);
+    const bodyParts = [tr["body"] ?? "", tr["table_data"] ?? "", tr["chart_data"] ?? ""].filter(
+      Boolean,
+    );
+
     const bytes = await buildBrandedPdf({
       title: tr["title"]!,
       subtitle: tr["summary"] ?? "",

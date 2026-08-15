@@ -146,8 +146,11 @@ function ArticlePage() {
       title: tr.title ?? article.title,
       summary: tr.summary ?? article.summary,
       body: tr.body ?? article.body,
+      tableData: tr.table_data ?? article.table_data,
+      chartData: tr.chart_data ?? article.chart_data,
     };
   }, [article, lang]);
+
 
   async function onRate(value: number) {
     if (myRating) return;
@@ -262,8 +265,9 @@ function ArticlePage() {
         )}
 
         {/* Tabela e gráfico opcionais */}
-        {article.table_data && <ArticleTable data={article.table_data} />}
-        {article.chart_data && <ArticleChart data={article.chart_data} />}
+        {view.tableData && <ArticleTable data={view.tableData} />}
+        {view.chartData && <ArticleChart data={view.chartData} />}
+
 
         {/* Ações: download, leituras, contato dos autores */}
         <div className="mt-12 flex flex-wrap items-center gap-4 border-t border-border pt-8">

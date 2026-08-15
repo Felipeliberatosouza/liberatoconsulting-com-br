@@ -39,7 +39,18 @@ export type ArticleRecord = {
   article_date: string | null;
   chart_data: string;
   table_data: string;
-  translations: Record<string, { kind?: string; title?: string; summary?: string; body?: string }>;
+  translations: Record<
+    string,
+    {
+      kind?: string;
+      title?: string;
+      summary?: string;
+      body?: string;
+      table_data?: string;
+      chart_data?: string;
+    }
+  >;
+
 
 };
 
