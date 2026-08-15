@@ -60,6 +60,10 @@ export async function fillMissingPreviousIndicators() {
     }),
   );
 
+  if (!Array.isArray(output.indicators)) {
+    throw new Error("A pesquisa não retornou os períodos anteriores no formato esperado.");
+  }
+
   const returned = new Map(
     (output.indicators ?? []).map((item) => [item.slug, item]),
   );
