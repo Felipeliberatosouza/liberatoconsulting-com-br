@@ -191,8 +191,31 @@ function parseBlocks(body: string): Block[] {
  */
 export async function buildBrandedPdf(input: PdfDocInput): Promise<Uint8Array> {
   const pdf = await PDFDocument.create();
-  const font = await pdf.embedFont(StandardFonts.Helvetica);
-  const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+
+  // Em mandarim usamos uma fonte com ideogramas; as fontes padrão do PDF não os têm.
+  const cjk = Boolean(input.cjk);
+  let font: any;
+  let bold: any;
+  if (cjk) {
+    const [{ default: fontkit }, cjkBytes] = await Promise.all([
+      import("@pdf-lib/fontkit"),
+      loadCjkFont(),
+    ]);
+    pdf.registerFontkit(fontkit as never);
+    // subset:false — o subconjunto CFF gerado pelo fontkit não abre em vários leitores.
+    font = await pdf.embedFont(cjkBytes, { subset: false });
+    bold = font;
+  } else {
+    font = await pdf.embedFont(StandardFonts.Helvetica);
+    bold = await pdf.embedFont(StandardFonts.HelveticaBold);
+  }
+
+  /** Mantém os ideogramas quando a fonte os suporta. */
+  const S = (text: string) => (cjk ? text : sanitize(text));
+  /** Em mandarim a quebra de linha acontece entre caracteres, não entre espaços. */
+  const WRAP = (text: string, f: any, size: number, maxWidth: number) =>
+    wrap(text, f, size, maxWidth, cjk);
+
   const logo = await embedImage(pdf, input.logoDataUrl ?? null);
   const cover = await embedImage(pdf, input.coverImageUrl ?? null);
 
