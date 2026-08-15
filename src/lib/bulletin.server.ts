@@ -104,7 +104,7 @@ export async function buildBulletinContent(segment: string): Promise<BulletinCon
       supabaseAdmin
         .from("economic_indicators")
         .select(
-          "label, value, unit, reference_period, trend, note, source_name, segment, previous_value, previous_period, position, published",
+          "label, value, unit, reference_period, trend, note, source_name, source_url, segment, previous_value, previous_period, forecast_value, forecast_period, forecast_source_name, forecast_source_url, position, published",
         )
         .eq("published", true)
         .order("position", { ascending: true }),
