@@ -3,9 +3,16 @@ import { z } from "zod";
 
 import type { ArticleRecord } from "./site-config";
 
-/** Artigo publicado, visível para qualquer visitante. */
+/** Artigo publicado, visível para qualquer visitante (já traduzido para o idioma pedido). */
 export const getPublicArticle = createServerFn({ method: "GET" })
-  .inputValidator((d: unknown) => z.object({ slug: z.string().trim().min(1).max(160) }).parse(d))
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        slug: z.string().trim().min(1).max(160),
+        lang: z.enum(["pt", "en", "es", "zh"]).optional(),
+      })
+      .parse(d),
+  )
   .handler(async ({ data }): Promise<ArticleRecord | null> => {
     const { publicClient } = await import("./admin.server");
     const { data: row } = await publicClient()
@@ -14,8 +21,12 @@ export const getPublicArticle = createServerFn({ method: "GET" })
       .eq("slug", data.slug)
       .eq("published", true)
       .maybeSingle();
-    return (row ?? null) as unknown as ArticleRecord | null;
+    const article = (row ?? null) as unknown as ArticleRecord | null;
+    if (!article || !data.lang || data.lang === "pt") return article;
+    const { ensureArticleTranslations } = await import("./article-i18n.server");
+    return ensureArticleTranslations(article, data.lang);
   });
+
 
 /** Contabiliza uma leitura do artigo (chamado uma vez por visitante). */
 export const registerArticleRead = createServerFn({ method: "POST" })
