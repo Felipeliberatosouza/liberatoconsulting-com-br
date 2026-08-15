@@ -268,7 +268,8 @@ export function renderBulletinHtml(
       <th align="left" style="padding:0 8px 6px 0;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.indicators)}</th>
       <th align="right" style="padding:0 8px 6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.currentLabel)}</th>
       <th align="right" style="padding:0 8px 6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.previousLabel)}</th>
-      <th align="right" style="padding:0 0 6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.changeLabel)}</th>
+      <th align="right" style="padding:0 8px 6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.changeLabel)}</th>
+      <th align="right" style="padding:0 0 6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.forecastLabel)}</th>
     </tr>
     ${indicators}
   </table>
