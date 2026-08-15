@@ -373,120 +373,18 @@ function ArticlePage() {
 }
 
 function SubmitArticleBlock() {
-  const { t, lang } = useLanguage();
+  const { t } = useLanguage();
   const a = t.content.article;
-  const [open, setOpen] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [done, setDone] = useState(false);
-
-  const input =
-    "mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
-
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    const fileEntry = form.get("file");
-    setBusy(true);
-    try {
-      let file: { name: string; dataUrl: string } | null = null;
-      if (fileEntry instanceof File && fileEntry.size > 0) {
-        if (fileEntry.size > 4_000_000) {
-          toast.error(a.formError);
-          return;
-        }
-        const dataUrl: string = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(String(reader.result));
-          reader.onerror = reject;
-          reader.readAsDataURL(fileEntry);
-        });
-        file = { name: fileEntry.name, dataUrl };
-      }
-      const r = await submitArticle({
-        data: {
-          full_name: String(form.get("full_name") ?? ""),
-          email: String(form.get("email") ?? ""),
-          title: String(form.get("title") ?? ""),
-          summary: String(form.get("summary") ?? ""),
-          message: String(form.get("message") ?? ""),
-          website: String(form.get("website") ?? ""),
-          language: lang,
-          file,
-        },
-      });
-      if (r.ok) {
-        setDone(true);
-        toast.success(a.formSuccess);
-      } else toast.error(r.error);
-    } catch {
-      toast.error(a.formError);
-    } finally {
-      setBusy(false);
-    }
-  }
-
   return (
     <div className="mt-12 rounded-lg border border-border bg-secondary/40 p-6">
-      {!open ? (
-        <button
-          onClick={() => setOpen(true)}
-          className="rounded-md border-2 border-accent px-5 py-3 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-accent-foreground"
-        >
-          {a.publishCta}
-        </button>
-      ) : done ? (
-        <p className="text-sm font-medium text-foreground">{a.formSuccess}</p>
-      ) : (
-        <form onSubmit={onSubmit}>
-          <h2 className="font-display text-lg font-bold">{a.publishTitle}</h2>
-          <p className="mt-2 text-sm text-muted-foreground">{a.publishLead}</p>
-          <input
-            name="website"
-            tabIndex={-1}
-            autoComplete="off"
-            className="hidden"
-            aria-hidden="true"
-          />
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <label className="text-sm font-medium">
-              {a.formName}
-              <input name="full_name" required maxLength={160} className={input} />
-            </label>
-            <label className="text-sm font-medium">
-              {a.formEmail}
-              <input name="email" type="email" required maxLength={255} className={input} />
-            </label>
-            <label className="text-sm font-medium md:col-span-2">
-              {a.formTitle}
-              <input name="title" required maxLength={300} className={input} />
-            </label>
-            <label className="text-sm font-medium md:col-span-2">
-              {a.formSummary}
-              <textarea name="summary" rows={3} maxLength={2000} className={input} />
-            </label>
-            <label className="text-sm font-medium md:col-span-2">
-              {a.formMessage}
-              <textarea name="message" rows={3} maxLength={4000} className={input} />
-            </label>
-            <label className="text-sm font-medium md:col-span-2">
-              {a.formFile}
-              <input
-                name="file"
-                type="file"
-                accept=".pdf,.doc,.docx,.rtf,.odt"
-                className={input}
-              />
-            </label>
-          </div>
-          <button
-            type="submit"
-            disabled={busy}
-            className="mt-5 rounded-md bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground disabled:opacity-60"
-          >
-            {busy ? a.formSending : a.formSubmit}
-          </button>
-        </form>
-      )}
+      <h2 className="font-display text-lg font-bold">{a.publishTitle}</h2>
+      <p className="mt-2 text-sm text-muted-foreground">{a.publishLead}</p>
+      <Link
+        to="/content/enviar"
+        className="mt-5 inline-block rounded-md border-2 border-accent px-5 py-3 text-sm font-semibold text-accent transition-colors hover:bg-accent hover:text-accent-foreground"
+      >
+        {a.publishCta}
+      </Link>
     </div>
   );
 }
