@@ -1,0 +1,2 @@
+ALTER TABLE public.content_articles ADD COLUMN IF NOT EXISTS translated_files jsonb NOT NULL DEFAULT '{}'::jsonb;
+UPDATE public.content_articles SET file_name = 'Artigo_metas_estrategia_rotina_v4.pdf', translated_files = '{}'::jsonb WHERE file_path = 'articles/2026-08-15-metas-que-saem-do-papel.pdf';
