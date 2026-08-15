@@ -41,14 +41,17 @@ export async function fillMissingPreviousIndicators() {
       "a observação imediatamente anterior da MESMA série e unidade, publicada pela fonte " +
       "original indicada. O período anterior deve ser anterior ao período atual e ter a mesma " +
       "frequência (dia, mês, trimestre ou ano). Não use projeções, estimativas ou outra série. " +
-      "Nunca deixe campos vazios. Preserve o slug exatamente e use vírgula como separador decimal.",
+      "Nunca deixe campos vazios. Preserve o slug exatamente e use vírgula como separador decimal. " +
+      "Execute a tarefa: não repita nem reformate o objeto de entrada. O objeto raiz da resposta " +
+      "deve conter exclusivamente a chave indicators.",
     JSON.stringify({
-      formato: {
+      tarefa: "Preencha o array indicators com um resultado para cada registro de entrada.",
+      formato_de_resposta: {
         indicators: [
           { slug: "string", previous_value: "string", previous_period: "string exato" },
         ],
       },
-      indicadores: pending.map((row) => ({
+      entrada: pending.map((row) => ({
         slug: row.slug,
         indicador: row.label,
         unidade: row.unit,
