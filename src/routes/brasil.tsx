@@ -11,7 +11,9 @@ import {
   ALL_STATES,
   useAudienceFilters,
 } from "@/lib/audience-filters";
-import { listPublicIndicators } from "@/lib/indicators.functions";
+import { listPublicIndicatorsI18n } from "@/lib/indicators.functions";
+import { compareIndicator } from "@/lib/indicator-compare";
+
 import { pt } from "@/i18n/pt";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, itemList, jsonLd, webPageSchema } from "@/lib/schema";
