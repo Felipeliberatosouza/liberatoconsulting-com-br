@@ -17,6 +17,7 @@ import type { ArticleRecord } from "@/lib/site-config";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { articleSchema, breadcrumb, jsonLd } from "@/lib/schema";
 import { getPublishedNewsletter } from "@/lib/newsletter-public.functions";
+import { openWhatsApp, whatsappShareHref } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/content_/$slug")({
   /** Endereços antigos de newsletter (/content/...) seguem para a página da newsletter. */
