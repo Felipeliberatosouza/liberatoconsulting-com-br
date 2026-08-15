@@ -305,6 +305,19 @@ export const dict: Dict = {
     "ctaBody": "我们为跨国企业提供巴西市场研究，包括规模评估、竞争分析、法规解读及当地合作伙伴匹配。",
     "sectionsLabel": "主题",
     "sourcesLabel": "官方数据核实渠道",
+    "indicators": {
+      "title": "经济指标",
+      "intro": "来自巴西官方渠道并经我们团队复核的宏观经济数据。",
+      "scopeNote": "仅显示所选范围的数据",
+      "empty": "所选范围暂无已发布的指标。请调整上方筛选条件，或联系我们的团队定制研究。",
+      "previous": "上期数据",
+      "change": "对比",
+      "forecast": "趋势",
+      "source": "来源",
+      "forecastSource": "预测来源",
+      "filterNote": "说明：本节的数据与文字对应所应用的筛选条件 —",
+      "updating": "正在为该范围更新文本……"
+    },
     "sources": [
       {
         "label": "IBGE — 官方统计局",
