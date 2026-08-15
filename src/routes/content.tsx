@@ -221,7 +221,16 @@ function ContentPage() {
 
         </div>
 
-        <p className="mt-12 text-sm text-muted-foreground">{c.emptyNote}</p>
+        <div className="mt-12 flex flex-wrap items-center gap-4">
+          <p className="text-sm text-muted-foreground">{c.emptyNote}</p>
+          <Link
+            to="/content/enviar"
+            className="rounded-md bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground"
+          >
+            {c.article.publishCta}
+          </Link>
+        </div>
+
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-6 pb-20">
