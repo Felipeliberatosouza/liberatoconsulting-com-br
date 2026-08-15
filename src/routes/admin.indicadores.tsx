@@ -87,7 +87,7 @@ function IndicatorsPage() {
   const [filling, setFilling] = useState(false);
   const autoFilled = useRef(false);
 
-  // Preenche sozinho, uma vez, os "dados anteriores" que estiverem em branco.
+  // Preenche sozinho, uma vez, os "dados anteriores" e a "tendência" em branco.
   useEffect(() => {
     const rows = q.data;
     if (!authReady || !rows || autoFilled.current) return;
@@ -109,12 +109,12 @@ function IndicatorsPage() {
         }
         autoFilled.current = true;
         if (r.updated > 0) {
-          toast.success(`${r.updated} períodos anteriores preenchidos automaticamente.`);
+          toast.success(`${r.updated} indicadores complementados automaticamente (dados anteriores e tendência).`);
           void q.refetch();
         }
       })
       .catch((error: unknown) =>
-        toast.error(error instanceof Error ? error.message : "Não foi possível buscar os dados anteriores."),
+        toast.error(error instanceof Error ? error.message : "Não foi possível buscar os dados anteriores e a tendência."),
       )
       .finally(() => setFilling(false));
   }, [authReady, q.data]);
@@ -170,18 +170,18 @@ function IndicatorsPage() {
                 const r = await fillPreviousIndicatorsAI();
                 if (!r.ok) toast.error(r.error);
                 else {
-                  toast.success(`${r.updated} períodos anteriores preenchidos.`);
+                  toast.success(`${r.updated} indicadores complementados.`);
                   await q.refetch();
                 }
               } catch {
-                toast.error("Não foi possível buscar os dados anteriores.");
+                toast.error("Não foi possível buscar os dados anteriores e a tendência.");
               } finally {
                 setFilling(false);
               }
             }}
             className="rounded-md border border-border px-5 py-2.5 text-sm font-semibold hover:border-accent hover:text-accent disabled:opacity-60"
           >
-            {filling ? "Buscando dados anteriores…" : "Preencher dados anteriores com IA"}
+            {filling ? "Buscando dados oficiais…" : "Preencher dados anteriores e tendência com IA"}
           </button>
         </div>
       </div>
@@ -443,6 +443,7 @@ function IndicatorsPage() {
               <th className="px-4 py-3">Indicador</th>
               <th className="px-4 py-3">Valor</th>
               <th className="px-4 py-3">Referência</th>
+              <th className="px-4 py-3">Tendência</th>
               <th className="px-4 py-3">Fonte</th>
               <th className="px-4 py-3">Recorte</th>
               <th className="px-4 py-3">Atualizado</th>
@@ -457,6 +458,11 @@ function IndicatorsPage() {
                   {i.value} {i.unit}
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">{i.reference_period || "—"}</td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {i.forecast_value
+                    ? `${i.forecast_value} ${i.unit}${i.forecast_period ? ` (${i.forecast_period})` : ""}`
+                    : "—"}
+                </td>
                 <td className="px-4 py-3 text-muted-foreground">{i.source_name || "—"}</td>
                 <td className="px-4 py-3 text-muted-foreground">
                   {[
@@ -497,7 +503,7 @@ function IndicatorsPage() {
             ))}
             {(q.data ?? []).length === 0 && (
               <tr>
-                <td className="px-4 py-6 text-muted-foreground" colSpan={7}>
+                <td className="px-4 py-6 text-muted-foreground" colSpan={8}>
                   Nenhum indicador cadastrado.
                 </td>
               </tr>
