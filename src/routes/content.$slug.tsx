@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { Linkedin, Instagram, MessageCircle, Star } from "lucide-react";
 
 import { CtaBand } from "@/components/CtaBand";
+import { ArticleChart, ArticleTable, ArticleVideo } from "@/components/ArticleExtras";
+
 import { useLanguage } from "@/i18n";
 import {
   getArticleFileUrl,
