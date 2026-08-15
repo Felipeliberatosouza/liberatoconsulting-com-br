@@ -11,12 +11,59 @@ export type PdfDocInput = {
   logoDataUrl?: string | null;
   /** Imagem de capa exibida logo abaixo de "Atualizado em:". */
   coverImageUrl?: string | null;
+  /** Usa fonte com ideogramas (mandarim). */
+  cjk?: boolean;
   contact: { name: string; line1: string; line2: string; website?: string };
 };
 
-function wrap(text: string, font: any, size: number, maxWidth: number): string[] {
+const CJK_FONT_URL =
+  "https://cdn.jsdelivr.net/gh/notofonts/noto-cjk@main/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf";
+const CJK_FONT_PATH = "fonts/NotoSansSC-Regular.otf";
+let cjkFontCache: Uint8Array | null = null;
+
+/** Baixa (e guarda no storage) a fonte com ideogramas usada nos PDFs em mandarim. */
+async function loadCjkFont(): Promise<Uint8Array> {
+  if (cjkFontCache) return cjkFontCache;
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const cached = await supabaseAdmin.storage.from("content").download(CJK_FONT_PATH);
+  if (cached.data) {
+    cjkFontCache = new Uint8Array(await cached.data.arrayBuffer());
+    return cjkFontCache;
+  }
+  const res = await fetch(CJK_FONT_URL);
+  if (!res.ok) throw new Error(`Falha ao baixar a fonte chinesa (${res.status})`);
+  const bytes = new Uint8Array(await res.arrayBuffer());
+  await supabaseAdmin.storage
+    .from("content")
+    .upload(CJK_FONT_PATH, bytes, { contentType: "font/otf", upsert: true });
+  cjkFontCache = bytes;
+  return bytes;
+}
+
+function wrap(
+  text: string,
+  font: any,
+  size: number,
+  maxWidth: number,
+  breakAnywhere = false,
+): string[] {
   const out: string[] = [];
   for (const rawLine of text.split(/\r?\n/)) {
+    if (breakAnywhere) {
+      // Mandarim: quebra caractere a caractere, respeitando espaços quando houver.
+      let line = "";
+      for (const ch of rawLine) {
+        const candidate = line + ch;
+        if (font.widthOfTextAtSize(candidate, size) > maxWidth && line) {
+          out.push(line);
+          line = ch === " " ? "" : ch;
+        } else {
+          line = candidate;
+        }
+      }
+      out.push(line);
+      continue;
+    }
     const words = rawLine.split(/\s+/).filter(Boolean);
     if (words.length === 0) {
       out.push("");
