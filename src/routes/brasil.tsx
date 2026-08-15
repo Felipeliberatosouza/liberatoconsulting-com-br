@@ -236,9 +236,11 @@ function BrazilPage() {
 
 function IndicatorsPanel() {
   const scope = useAudienceFilters();
+  const { t, lang } = useLanguage();
+  const labels = t.brazil.indicators;
   const indicators = useQuery({
-    queryKey: ["public-indicators"],
-    queryFn: () => listPublicIndicators(),
+    queryKey: ["public-indicators", lang],
+    queryFn: () => listPublicIndicatorsI18n({ data: { lang } }),
     staleTime: 300_000,
   });
   const all = indicators.data ?? [];
@@ -254,23 +256,19 @@ function IndicatorsPanel() {
   // Quando há filtros aplicados, priorizamos os indicadores específicos daquele recorte.
   const specific = scope.applied
     ? compatible.filter(
-        (i) =>
-          i.segment !== ALL_SEGMENTS || i.region !== ALL_REGIONS || i.uf !== ALL_STATES,
+        (i) => i.segment !== ALL_SEGMENTS || i.region !== ALL_REGIONS || i.uf !== ALL_STATES,
       )
     : [];
   // Com filtros aplicados exibimos apenas os indicadores daquele recorte.
   const rows = scope.applied ? specific : compatible;
-  const onlyNational = false;
 
   if (rows.length === 0) {
     if (!scope.applied) return null;
     return (
       <section id="indicadores" className="scroll-mt-24">
-        <h2 className="text-2xl font-bold md:text-3xl">Indicadores econômicos</h2>
+        <h2 className="text-2xl font-bold md:text-3xl">{labels.title}</h2>
         <p className="mt-3 max-w-3xl rounded-md border-l-4 border-accent bg-secondary px-4 py-3 text-sm text-muted-foreground">
-          Ainda não há indicadores publicados para o recorte selecionado (
-          <span className="font-semibold text-foreground">{scope.label}</span>). Ajuste os
-          filtros acima ou fale com a nossa equipe para uma pesquisa sob medida.
+          {labels.empty} <span className="font-semibold text-foreground">{scope.label}</span>
         </p>
       </section>
     );
@@ -278,53 +276,112 @@ function IndicatorsPanel() {
 
   return (
     <section id="indicadores" className="scroll-mt-24">
-      <h2 className="text-2xl font-bold md:text-3xl">Indicadores econômicos</h2>
+      <h2 className="text-2xl font-bold md:text-3xl">{labels.title}</h2>
       <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-        Números macroeconômicos monitorados nas fontes oficiais brasileiras e revisados pela
-        nossa equipe.
+        {labels.intro}
         {scope.applied && (
           <>
             {" "}
-            Exibindo apenas os dados do recorte{" "}
-            <span className="font-semibold text-foreground">{scope.label}</span>
-            {onlyNational ? " — no momento, com indicadores nacionais de referência." : "."}
+            {labels.scopeNote}{" "}
+            <span className="font-semibold text-foreground">{scope.label}</span>.
           </>
         )}
       </p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {rows.map((i) => (
-          <article key={i.id} className="rounded-lg border border-border bg-background p-5">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              {i.label}
-            </p>
-            <p className="mt-2 font-display text-2xl font-bold">
-              {i.value}
-              {i.unit ? <span className="ml-1 text-base font-semibold">{i.unit}</span> : null}
-            </p>
-            {i.reference_period && (
-              <p className="mt-1 text-xs text-muted-foreground">{i.reference_period}</p>
-            )}
-            {i.note && <p className="mt-3 text-sm text-muted-foreground">{i.note}</p>}
-            {i.source_name && (
-              <p className="mt-3 text-xs text-muted-foreground">
-                Fonte:{" "}
-                {i.source_url ? (
-                  <a
-                    href={i.source_url}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    className="text-accent hover:underline"
-                  >
-                    {i.source_name}
-                  </a>
-                ) : (
-                  i.source_name
-                )}
+        {rows.map((i) => {
+          const delta = compareIndicator(i.value, i.previous_value, i.unit);
+          return (
+            <article key={i.id} className="rounded-lg border border-border bg-background p-5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {i.label}
               </p>
-            )}
-          </article>
-        ))}
+              <p className="mt-2 font-display text-2xl font-bold">
+                {i.value}
+                {i.unit ? <span className="ml-1 text-base font-semibold">{i.unit}</span> : null}
+              </p>
+              {i.reference_period && (
+                <p className="mt-1 text-xs text-muted-foreground">{i.reference_period}</p>
+              )}
+
+              <dl className="mt-4 space-y-2 border-t border-border pt-3 text-xs">
+                {i.previous_value && (
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-muted-foreground">{labels.previous}</dt>
+                    <dd className="text-right font-semibold">
+                      {i.previous_value}
+                      {i.unit ? ` ${i.unit}` : ""}
+                      {i.previous_period ? (
+                        <span className="ml-1 font-normal text-muted-foreground">
+                          ({i.previous_period})
+                        </span>
+                      ) : null}
+                    </dd>
+                  </div>
+                )}
+                {delta.direction !== "none" && (
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-muted-foreground">{labels.change}</dt>
+                    <dd className="text-right font-semibold" style={{ color: delta.color }}>
+                      {delta.arrow} {delta.label}
+                    </dd>
+                  </div>
+                )}
+                {i.forecast_value && (
+                  <div className="flex items-baseline justify-between gap-3">
+                    <dt className="text-muted-foreground">{labels.forecast}</dt>
+                    <dd className="text-right font-semibold">
+                      {i.forecast_value}
+                      {i.unit ? ` ${i.unit}` : ""}
+                      {i.forecast_period ? (
+                        <span className="ml-1 font-normal text-muted-foreground">
+                          ({i.forecast_period})
+                        </span>
+                      ) : null}
+                    </dd>
+                  </div>
+                )}
+              </dl>
+
+              {i.note && <p className="mt-3 text-sm text-muted-foreground">{i.note}</p>}
+              {i.source_name && (
+                <p className="mt-3 text-xs text-muted-foreground">
+                  {labels.source}:{" "}
+                  {i.source_url ? (
+                    <a
+                      href={i.source_url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="text-accent hover:underline"
+                    >
+                      {i.source_name}
+                    </a>
+                  ) : (
+                    i.source_name
+                  )}
+                </p>
+              )}
+              {i.forecast_value && i.forecast_source_name && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {labels.forecastSource}:{" "}
+                  {i.forecast_source_url ? (
+                    <a
+                      href={i.forecast_source_url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="text-accent hover:underline"
+                    >
+                      {i.forecast_source_name}
+                    </a>
+                  ) : (
+                    i.forecast_source_name
+                  )}
+                </p>
+              )}
+            </article>
+          );
+        })}
       </div>
     </section>
   );
 }
+
