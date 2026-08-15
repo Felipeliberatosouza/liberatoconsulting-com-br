@@ -270,6 +270,7 @@ export async function ensureTranslatedPdf(
       body: bodyParts.join("\n\n"),
       logoDataUrl: logoUrl,
       coverImageUrl: article.cover_url || null,
+      cjk: fileLang === "zh",
       contact: {
         name: companyName,
         line1:
