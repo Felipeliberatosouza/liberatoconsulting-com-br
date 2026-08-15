@@ -220,7 +220,13 @@ export type IndicatorArtRow = {
   reference_period: string;
   previous_value: string;
   previous_period: string;
+  forecast_value?: string;
+  forecast_period?: string;
 };
+
+/** Chamada exibida na arte no lugar das fontes de informação. */
+export const SOCIAL_SOURCES_CTA =
+  "Acesse liberatoconsulting.com.br para mais detalhes e para ter as fontes de informação.";
 
 /**
  * Arte com os indicadores do Boletim Semanal sobre uma imagem de fundo com o
