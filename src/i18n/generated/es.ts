@@ -305,6 +305,19 @@ export const dict: Dict = {
     "ctaBody": "Producimos investigaciones de mercado sobre Brasil para empresas internacionales, con dimensionamiento, análisis competitivo, lectura regulatoria y mapeo de socios locales.",
     "sectionsLabel": "Temas",
     "sourcesLabel": "Dónde verificar los datos oficiales",
+    "indicators": {
+      "title": "Indicadores económicos",
+      "intro": "Cifras macroeconómicas monitoreadas en fuentes oficiales brasileñas y revisadas por nuestro equipo.",
+      "scopeNote": "Mostrando solo los datos del recorte",
+      "empty": "Todavía no hay indicadores publicados para el recorte seleccionado. Ajuste los filtros de arriba o hable con nuestro equipo para una investigación a medida.",
+      "previous": "Últimos datos",
+      "change": "Comparativo",
+      "forecast": "Tendencia",
+      "source": "Fuente",
+      "forecastSource": "Fuente de la estimación",
+      "filterNote": "Observación: los datos y textos de esta sección corresponden a los filtros aplicados —",
+      "updating": "actualizando los textos para este recorte..."
+    },
     "sources": [
       {
         "label": "IBGE — estadísticas oficiales",

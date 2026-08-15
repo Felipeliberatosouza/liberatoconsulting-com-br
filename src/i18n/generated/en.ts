@@ -305,6 +305,19 @@ export const dict: Dict = {
     "ctaBody": "We produce Brazil market research for international companies, including sizing, competitive analysis, regulatory landscape, and local partner mapping.",
     "sectionsLabel": "Topics",
     "sourcesLabel": "Official data sources",
+    "indicators": {
+      "title": "Economic indicators",
+      "intro": "Macroeconomic figures monitored from official Brazilian sources and reviewed by our team.",
+      "scopeNote": "Showing only data for the selected scope",
+      "empty": "There are no published indicators for the selected scope yet. Adjust the filters above or talk to our team for a tailored research project.",
+      "previous": "Previous data",
+      "change": "Change",
+      "forecast": "Outlook",
+      "source": "Source",
+      "forecastSource": "Forecast source",
+      "filterNote": "Note: the data and texts in this section reflect the applied filters —",
+      "updating": "updating the texts for this scope..."
+    },
     "sources": [
       {
         "label": "IBGE — official statistics",
