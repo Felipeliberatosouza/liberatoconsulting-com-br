@@ -311,7 +311,12 @@ export async function composeIndicatorsImage(
           r.previous_period ? ` (${r.previous_period})` : ""
         }`
       : r.reference_period;
-    ctx.fillText(prev, pad, y + labelSize * 1.2);
+    const forecast = r.forecast_value
+      ? ` · tendência: ${r.forecast_value}${r.unit}${
+          r.forecast_period ? ` (${r.forecast_period})` : ""
+        }`
+      : "";
+    ctx.fillText(`${prev}${forecast}`, pad, y + labelSize * 1.2);
 
     ctx.textAlign = "right";
     ctx.font = `700 ${valueSize}px "Space Grotesk", "Helvetica Neue", Arial, sans-serif`;
@@ -328,6 +333,17 @@ export async function composeIndicatorsImage(
     y += rowGap;
     ctx.fillStyle = light ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.16)";
     ctx.fillRect(pad, y - Math.round(labelSize * 0.7), maxWidth, 1);
+  }
+
+  // Sem fontes na arte: apenas a chamada para o site.
+  const ctaSize = Math.round(f.width * (format === "linkedin" ? 0.022 : 0.026));
+  ctx.font = `600 ${ctaSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+  ctx.fillStyle = fg;
+  const ctaLines = wrap(ctx, SOCIAL_SOURCES_CTA, maxWidth);
+  let ctaY = f.height - pad - ctaLines.length * ctaSize * 1.25;
+  for (const line of ctaLines) {
+    ctx.fillText(line, pad, ctaY);
+    ctaY += ctaSize * 1.25;
   }
 
   await drawLogo(ctx, f.width, f.height);
