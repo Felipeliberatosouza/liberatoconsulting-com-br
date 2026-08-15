@@ -299,9 +299,10 @@ export async function sendBulletinEmail(params: {
       text: params.text,
       purpose: "transactional",
       label: "boletim-semanal",
-      idempotency_key:
+      idempotency_key: `${
         params.idempotencyKey ??
-        `bol-${new Date().toISOString().slice(0, 10)}-${params.to}`.slice(0, 200),
+        `bol-${new Date().toISOString().slice(0, 10)}-${params.to}`
+      }-${crypto.randomUUID().slice(0, 8)}`.slice(0, 200),
     },
     { apiKey },
   );

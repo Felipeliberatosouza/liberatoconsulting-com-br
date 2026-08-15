@@ -121,7 +121,7 @@ async function notifyNewApplication(data: ApplicationInput, applicationId: strin
         language: data.language || "",
         sourcePath: data.sourcePath || "",
       },
-      ...(applicationId ? { idempotencyKey: `application-notification-${applicationId}` } : {}),
+      ...(applicationId ? { idempotencyKey: `application-notification-${applicationId}-${crypto.randomUUID().slice(0, 8)}` } : {}),
       replyTo: data.email,
     });
   } catch (err) {

@@ -120,6 +120,8 @@ export async function sendNewsletterEmail(params: {
 /** Envia uma campanha para todos os inscritos ativos (ou para um e-mail de teste). */
 export async function dispatchCampaign(campaignId: string, testEmail?: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  // Chave única por tentativa de disparo: reenvios após falha não colidem (HTTP 409).
+  const runId = crypto.randomUUID().slice(0, 8);
 
   const { data: campaign } = await supabaseAdmin
     .from("newsletter_campaigns")
@@ -210,7 +212,7 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
           lang,
         }),
         text: renderCampaignText(v.body, unsubscribeUrl, company, lang),
-        idempotencyKey: `nl-${campaignId}-${lang}-${r.unsubscribe_token}-${r.email}`.slice(0, 200),
+        idempotencyKey: `nl-${campaignId}-${runId}-${lang}-${r.unsubscribe_token}-${r.email}`.slice(0, 200),
       });
       sent += 1;
     } catch (err) {

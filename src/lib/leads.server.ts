@@ -92,7 +92,7 @@ async function notifyNewLead(data: LeadInput, leadId: string | null) {
         language: data.language || "",
         sourcePath: data.sourcePath || "",
       },
-      ...(leadId ? { idempotencyKey: `lead-notification-${leadId}` } : {}),
+      ...(leadId ? { idempotencyKey: `lead-notification-${leadId}-${crypto.randomUUID().slice(0, 8)}` } : {}),
       ...(data.email ? { replyTo: data.email } : {}),
     });
   } catch (err) {
