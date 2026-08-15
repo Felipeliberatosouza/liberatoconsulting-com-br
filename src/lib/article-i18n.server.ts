@@ -213,8 +213,7 @@ async function fullDocumentBody(
 
 /**
  * Devolve o caminho do PDF no idioma pedido, gerando-o na primeira vez.
- * Idiomas com alfabeto latino (EN/ES) ganham um PDF institucional traduzido;
- * em mandarim entregamos a versão em inglês, pois a fonte do PDF não tem ideogramas.
+ * EN/ES usam as fontes padrão; o mandarim usa uma fonte com ideogramas.
  */
 export async function ensureTranslatedPdf(
   article: ArticleRecord,
@@ -225,7 +224,7 @@ export async function ensureTranslatedPdf(
     : null;
   if (lang === "pt") return original;
 
-  const fileLang: TargetLang = lang === "zh" ? "en" : (lang as TargetLang);
+  const fileLang = lang as TargetLang;
 
   // Traduz primeiro: se o texto mudou, os PDFs antigos são descartados.
   const withTr = await ensureArticleTranslations(article, fileLang);
