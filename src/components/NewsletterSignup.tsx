@@ -19,67 +19,75 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
 
   const dark = variant === "footer";
 
-  if (done) {
-    return (
-      <p className={dark ? "text-sm text-ink-foreground/80" : "text-sm text-muted-foreground"}>
-        {tn.done}
-      </p>
-    );
-  }
+  const inputBase =
+    "w-full rounded-md px-3 py-2 text-sm outline-none focus:border-accent";
+  const inputVariant = dark
+    ? "border border-ink-foreground/20 bg-transparent text-ink-foreground placeholder:text-ink-foreground/40"
+    : "border border-input bg-background";
 
   return (
-    <form
-      className="mt-4 flex w-full max-w-md flex-col gap-2 sm:flex-row"
-      onSubmit={async (e) => {
-        e.preventDefault();
-        setBusy(true);
-        try {
-          const r = await subscribeNewsletter({
-            data: { email, name, language: lang, sourcePath: pathname, website },
-          });
-          if (!r.ok) toast.error(r.error);
-          else {
-            setDone(true);
-            setEmail("");
-            setName("");
-            toast.success(tn.success);
-            trackEvent("form_submit", { form_name: "newsletter", location: pathname });
+    <div className="mt-4 w-full max-w-md">
+      {done && (
+        <p className={dark ? "text-sm text-ink-foreground/80" : "text-sm text-muted-foreground"}>
+          {tn.done}
+        </p>
+      )}
+      <form
+        className={`${done ? "mt-3" : ""} flex w-full flex-col gap-2 sm:flex-row`}
+        onSubmit={async (e) => {
+          e.preventDefault();
+          setBusy(true);
+          try {
+            const r = await subscribeNewsletter({
+              data: { email, name, language: lang, sourcePath: pathname, website },
+            });
+            if (!r.ok) {
+              setDone(false);
+              toast.error(r.error || tn.error);
+            } else {
+              setDone(true);
+              setEmail("");
+              setName("");
+              setWebsite("");
+              toast.success(tn.success);
+              trackEvent("form_submit", { form_name: "newsletter", location: pathname });
+            }
+          } catch {
+            setDone(false);
+            toast.error(tn.error);
+          } finally {
+            setBusy(false);
           }
-        } catch {
-          toast.error(tn.error);
-        } finally {
-          setBusy(false);
-        }
-      }}
-    >
-      <input
-        type="text"
-        tabIndex={-1}
-        autoComplete="off"
-        value={website}
-        onChange={(e) => setWebsite(e.target.value)}
-        className="hidden"
-        aria-hidden="true"
-      />
-      <input
-        type="email"
-        required
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder={tn.emailPlaceholder}
-        className={
-          dark
-            ? "w-full rounded-md border border-ink-foreground/20 bg-transparent px-3 py-2 text-sm text-ink-foreground placeholder:text-ink-foreground/40 outline-none focus:border-accent"
-            : "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
-        }
-      />
-      <button
-        type="submit"
-        disabled={busy}
-        className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+        }}
       >
-        {busy ? tn.sending : tn.submit}
-      </button>
-    </form>
+        <input
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+          className="hidden"
+          aria-hidden="true"
+        />
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setDone(false);
+          }}
+          placeholder={tn.emailPlaceholder}
+          className={`${inputBase} ${inputVariant}`}
+        />
+        <button
+          type="submit"
+          disabled={busy}
+          className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
+        >
+          {busy ? tn.sending : tn.submit}
+        </button>
+      </form>
+    </div>
   );
 }
