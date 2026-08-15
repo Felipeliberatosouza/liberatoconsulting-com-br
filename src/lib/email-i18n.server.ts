@@ -48,6 +48,7 @@ export type EmailLabels = {
   soonArticles: string;
   readContent: string;
   viewAll: string;
+  readLatest: string;
   bulletinWhy: string;
   stopReceiving: string;
   newsletterWhy: string;
@@ -76,6 +77,7 @@ export const LABELS: Record<EmailLang, EmailLabels> = {
     soonArticles: "Novos conteúdos serão publicados em breve.",
     readContent: "Ler o conteúdo →",
     viewAll: "Ver todos os conteúdos →",
+    readLatest: "Leia o último artigo publicado pela Liberato Consulting:",
     bulletinWhy:
       "Você recebe o Boletim Semanal da Liberato Consulting porque solicitou esta atualização.",
     stopReceiving: "Parar de receber",
@@ -105,6 +107,7 @@ export const LABELS: Record<EmailLang, EmailLabels> = {
     soonArticles: "New content will be published soon.",
     readContent: "Read the article →",
     viewAll: "See all content →",
+    readLatest: "Read the latest article published by Liberato Consulting:",
     bulletinWhy:
       "You receive the Liberato Consulting Weekly Briefing because you requested this update.",
     stopReceiving: "Stop receiving",
@@ -133,6 +136,7 @@ export const LABELS: Record<EmailLang, EmailLabels> = {
     soonArticles: "Pronto se publicarán nuevos contenidos.",
     readContent: "Leer el contenido →",
     viewAll: "Ver todos los contenidos →",
+    readLatest: "Lea el último artículo publicado por Liberato Consulting:",
     bulletinWhy:
       "Usted recibe el Boletín Semanal de Liberato Consulting porque solicitó esta actualización.",
     stopReceiving: "Dejar de recibir",
@@ -162,6 +166,7 @@ export const LABELS: Record<EmailLang, EmailLabels> = {
     soonArticles: "新内容即将发布。",
     readContent: "阅读内容 →",
     viewAll: "查看全部内容 →",
+    readLatest: "阅读 Liberato Consulting 最新发布的文章：",
     bulletinWhy: "您收到这封 Liberato Consulting 每周简报，是因为您订阅了该更新。",
     stopReceiving: "取消接收",
     newsletterWhy: "您收到这封邮件，是因为您订阅了 Liberato Consulting 的电子报。",
