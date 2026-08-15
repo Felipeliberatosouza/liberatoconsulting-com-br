@@ -171,17 +171,38 @@ export function renderBulletinHtml(
   const origin = siteOrigin();
   const L = labelsFor(lang);
 
+  const sourceLink = (name: string, url: string) =>
+    url
+      ? `<a href="${escapeHtml(url)}" style="color:#e2751f;text-decoration:none">${escapeHtml(name)}</a>`
+      : escapeHtml(name);
+
   const indicators =
     content.indicators.length > 0
       ? content.indicators
           .map((i) => {
             const delta = compareIndicator(i.value, i.previous_value, i.unit, LOCALE[lang]);
+            const sources = [
+              i.source_name ? sourceLink(i.source_name, i.source_url) : "",
+              i.forecast_source_name
+                ? `${escapeHtml(L.forecastLabel)}: ${sourceLink(
+                    i.forecast_source_name,
+                    i.forecast_source_url,
+                  )}`
+                : "",
+            ].filter(Boolean);
             return `<tr>
 <td style="padding:10px 8px 10px 0;border-bottom:1px solid #eeece9">
   <div style="font-size:14px;color:#1f2328;font-weight:600">${escapeHtml(i.label)}</div>
   <div style="font-size:12px;color:#78716c">${escapeHtml(i.reference_period || "")}${
     i.note ? ` — ${escapeHtml(i.note)}` : ""
   }</div>
+  ${
+    sources.length
+      ? `<div style="font-size:11px;color:#a8a29e">${escapeHtml(L.sourceLabel)}: ${sources.join(
+          " · ",
+        )}</div>`
+      : ""
+  }
 </td>
 <td align="right" style="padding:10px 8px;border-bottom:1px solid #eeece9;white-space:nowrap">
   <span style="font-size:16px;font-weight:700;color:#14192a">${escapeHtml(i.value)}${escapeHtml(
@@ -194,14 +215,20 @@ export function renderBulletinHtml(
   }</span>
   <div style="font-size:11px;color:#a8a29e">${escapeHtml(i.previous_period || "")}</div>
 </td>
-<td align="right" style="padding:10px 0 10px 8px;border-bottom:1px solid #eeece9;white-space:nowrap">
+<td align="right" style="padding:10px 8px;border-bottom:1px solid #eeece9;white-space:nowrap">
   <span style="font-size:14px;font-weight:700;color:${delta.color}">${delta.arrow} ${escapeHtml(
     delta.label,
   )}</span>
+</td>
+<td align="right" style="padding:10px 0 10px 8px;border-bottom:1px solid #eeece9;white-space:nowrap">
+  <span style="font-size:14px;color:#1f2328">${
+    i.forecast_value ? `${escapeHtml(i.forecast_value)}${escapeHtml(i.unit || "")}` : "—"
+  }</span>
+  <div style="font-size:11px;color:#a8a29e">${escapeHtml(i.forecast_period || "")}</div>
 </td></tr>`;
           })
           .join("")
-      : `<tr><td colspan="4" style="padding:10px 0;font-size:14px;color:#78716c">${escapeHtml(L.noIndicators)}</td></tr>`;
+      : `<tr><td colspan="5" style="padding:10px 0;font-size:14px;color:#78716c">${escapeHtml(L.noIndicators)}</td></tr>`;
 
   const articleLink = (slug: string) =>
     `${origin}/content/${encodeURIComponent(slug)}${lang === "pt" ? "" : `?lang=${lang}`}`;
