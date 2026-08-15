@@ -91,12 +91,16 @@ export function SiteFooter() {
           <Link to="/about" className="text-ink-foreground/70 hover:text-ink-foreground">
             {t.nav.about}
           </Link>
+          <Link to="/brasil" className="text-ink-foreground/70 hover:text-ink-foreground">
+            {t.brazilMenu.label}
+          </Link>
           <Link to="/content" className="text-ink-foreground/70 hover:text-ink-foreground">
             {t.nav.content}
           </Link>
           <Link to="/contact" className="text-ink-foreground/70 hover:text-ink-foreground">
             {t.nav.cta}
           </Link>
+
           <div className="mt-4 border-t border-ink-foreground/10 pt-4">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
               {t.footer.careers}
