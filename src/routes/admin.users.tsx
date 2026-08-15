@@ -706,6 +706,8 @@ function SubscribersTab() {
     queryKey: ["admin-subscribers"],
     queryFn: () => listSubscribers(),
     retry: false,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
   });
   return (
     <div className="overflow-x-auto rounded-lg border border-border bg-background">
@@ -767,6 +769,8 @@ function BulletinTab() {
     queryKey: ["admin-bulletin-subscribers"],
     queryFn: () => listBulletinSubscribers(),
     retry: false,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
   });
   const rows = q.data ?? [];
   const active = rows.filter((r) => r.status === "active").length;

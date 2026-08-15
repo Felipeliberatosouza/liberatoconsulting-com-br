@@ -48,9 +48,19 @@ export const subscribeBulletin = createServerFn({ method: "POST" })
     const email = data.email.toLowerCase();
     const { data: existing } = await supabaseAdmin
       .from("bulletin_subscribers")
-      .select("id")
+      .select("id, status")
       .ilike("email", email)
       .maybeSingle();
+
+    if (existing?.status === "unsubscribed" && data.viaEmail) {
+      try {
+        const { setRecipientEmailConsent } = await import("./email-consent.server");
+        await setRecipientEmailConsent(email, true);
+      } catch (error) {
+        const { consentErrorMessage } = await import("./email-consent.server");
+        return { ok: false as const, error: consentErrorMessage(error) };
+      }
+    }
 
     const payload = {
       full_name: data.fullName,
@@ -86,6 +96,11 @@ export const unsubscribeBulletin = createServerFn({ method: "POST" })
       .select("full_name, email, whatsapp, via_email, via_whatsapp, language")
       .maybeSingle();
     if (error || !row) return { ok: false as const, error: "Link inválido ou já utilizado." };
+
+    if (row.via_email) {
+      const { setRecipientEmailConsent } = await import("./email-consent.server");
+      await setRecipientEmailConsent(row.email, false);
+    }
 
     const { sendUnsubscribeConfirmation } = await import("./bulletin.server");
     await sendUnsubscribeConfirmation({
@@ -220,6 +235,21 @@ export const unsubscribeBulletinByAdmin = createServerFn({ method: "POST" })
         : { ok: false as const, error: queued.error };
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: subscriber } = await supabaseAdmin
+      .from("bulletin_subscribers")
+      .select("email, via_email")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!subscriber) return { ok: false as const, error: "Cadastro não encontrado." };
+    if (subscriber.via_email) {
+      try {
+        const { setRecipientEmailConsent } = await import("./email-consent.server");
+        await setRecipientEmailConsent(subscriber.email, false);
+      } catch (error) {
+        const { consentErrorMessage } = await import("./email-consent.server");
+        return { ok: false as const, error: consentErrorMessage(error) };
+      }
+    }
     const { error } = await supabaseAdmin
       .from("bulletin_subscribers")
       .update({ status: "unsubscribed", unsubscribed_at: new Date().toISOString() })
