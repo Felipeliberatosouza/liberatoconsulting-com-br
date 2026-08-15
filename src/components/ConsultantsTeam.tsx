@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Mail, GraduationCap, Briefcase, Users, Award, Loader2 } from "lucide-react";
+import { Mail, GraduationCap, Briefcase, Users, Award, Loader2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
