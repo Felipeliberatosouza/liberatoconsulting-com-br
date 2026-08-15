@@ -69,7 +69,12 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
  * reduzido, para que nunca seja cortada pelos recortes de cada rede.
  * Escolhe a versão clara ou escura conforme o brilho da área, garantindo leitura.
  */
-async function drawLogo(ctx: CanvasRenderingContext2D, width: number, height: number) {
+async function drawLogo(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  logoSrc?: string,
+) {
   const pad = Math.round(width * 0.045);
   // 40% menor do que o tamanho anterior (aplicado duas vezes: 0.6 * 0.6)
   const logoW = Math.round(width * (width > height ? 0.2 : 0.26) * 0.36);
@@ -77,7 +82,7 @@ async function drawLogo(ctx: CanvasRenderingContext2D, width: number, height: nu
   const dark =
     areaLuminance(ctx, Math.max(0, width - logoW - pad * 2), 0, logoW + pad * 2, probeH) < 0.55;
   try {
-    const logo = await loadImage(dark ? "/logo-light.png" : "/logo.png");
+    const logo = await loadImage(logoSrc || (dark ? "/logo-light.png" : "/logo.png"));
     const logoH = Math.round((logo.height / logo.width) * logoW);
     ctx.save();
     ctx.shadowColor = dark ? "rgba(0,0,0,0.55)" : "rgba(255,255,255,0.75)";
@@ -88,6 +93,84 @@ async function drawLogo(ctx: CanvasRenderingContext2D, width: number, height: nu
   } catch {
     /* sem logomarca disponível */
   }
+}
+
+/** Arte de propaganda: 4 bullets (PT, EN, ZH, ES), logomarca do painel e rodapé de contato. */
+export async function composeAdImage(opts: {
+  baseImage: string;
+  format: SocialFormatKey;
+  lines: string[];
+  logoUrl?: string;
+  footer: string;
+}): Promise<string> {
+  const f = SOCIAL_IMAGE_FORMATS[opts.format];
+  const img = await loadImage(opts.baseImage);
+  const canvas = document.createElement("canvas");
+  canvas.width = f.width;
+  canvas.height = f.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas indisponível neste navegador.");
+
+  const scale = Math.max(f.width / img.width, f.height / img.height);
+  const dw = img.width * scale;
+  const dh = img.height * scale;
+  ctx.drawImage(img, (f.width - dw) / 2, (f.height - dh) / 2, dw, dh);
+
+  const light = areaLuminance(ctx, 0, 0, f.width, f.height) > 0.55;
+  const fg = light ? "#0b0b0b" : "#ffffff";
+  const base = light ? "255,255,255" : "0,0,0";
+  const veil = ctx.createLinearGradient(0, 0, 0, f.height);
+  veil.addColorStop(0, `rgba(${base},0.72)`);
+  veil.addColorStop(0.55, `rgba(${base},0.55)`);
+  veil.addColorStop(1, `rgba(${base},0.82)`);
+  ctx.fillStyle = veil;
+  ctx.fillRect(0, 0, f.width, f.height);
+
+  const pad = Math.round(f.width * 0.07);
+  const maxWidth = f.width - pad * 2;
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+
+  const lines = opts.lines.filter((l) => l.trim()).slice(0, 4);
+  const size = Math.round(f.width * (opts.format === "linkedin" ? 0.042 : 0.05));
+  const blockGap = Math.round(size * 0.85);
+
+  // altura total para centralizar verticalmente o bloco de frases
+  ctx.font = `700 ${size}px "Space Grotesk", "Helvetica Neue", Arial, sans-serif`;
+  const wrapped = lines.map((l) => wrap(ctx, l.trim(), maxWidth - Math.round(size * 1.1)));
+  const totalH =
+    wrapped.reduce((acc, ls) => acc + ls.length * size * 1.18, 0) + blockGap * (lines.length - 1);
+  let y = Math.max(
+    Math.round(f.height * 0.22),
+    Math.round((f.height - totalH) / 2 - f.height * 0.04),
+  );
+
+  for (const ls of wrapped) {
+    ctx.fillStyle = "#d1622a";
+    const dot = Math.max(6, Math.round(size * 0.18));
+    ctx.beginPath();
+    ctx.arc(pad + dot, y + size * 0.55, dot, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = fg;
+    for (const line of ls) {
+      ctx.fillText(line, pad + Math.round(size * 1.1), y);
+      y += size * 1.18;
+    }
+    y += blockGap;
+  }
+
+  const footSize = Math.round(f.width * (opts.format === "linkedin" ? 0.022 : 0.026));
+  ctx.font = `600 ${footSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+  ctx.fillStyle = fg;
+  const footLines = wrap(ctx, opts.footer, maxWidth);
+  let fy = f.height - pad - footLines.length * footSize * 1.3;
+  for (const line of footLines) {
+    ctx.fillText(line, pad, fy);
+    fy += footSize * 1.3;
+  }
+
+  await drawLogo(ctx, f.width, f.height, opts.logoUrl);
+  return canvas.toDataURL(f.mime, 0.92);
 }
 
 
