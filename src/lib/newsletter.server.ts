@@ -206,6 +206,7 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
       await sendNewsletterEmail({
         to: r.email,
         from,
+        replyTo: settings.fromEmail,
         subject: v.subject,
         html: renderCampaignHtml({
           subject: v.subject,
