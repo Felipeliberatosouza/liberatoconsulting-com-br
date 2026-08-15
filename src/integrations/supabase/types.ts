@@ -16,41 +16,59 @@ export type Database = {
     Tables: {
       article_submissions: {
         Row: {
+          cpf: string
           created_at: string
           email: string
           file_name: string | null
           file_path: string | null
           full_name: string
+          group_id: string
           id: string
+          institution: string
           ip_hash: string | null
           language: string | null
           message: string
+          phone: string
+          role_label: string
+          service: string
           summary: string
           title: string
         }
         Insert: {
+          cpf?: string
           created_at?: string
           email: string
           file_name?: string | null
           file_path?: string | null
           full_name: string
+          group_id?: string
           id?: string
+          institution?: string
           ip_hash?: string | null
           language?: string | null
           message?: string
+          phone?: string
+          role_label?: string
+          service?: string
           summary?: string
           title: string
         }
         Update: {
+          cpf?: string
           created_at?: string
           email?: string
           file_name?: string | null
           file_path?: string | null
           full_name?: string
+          group_id?: string
           id?: string
+          institution?: string
           ip_hash?: string | null
           language?: string | null
           message?: string
+          phone?: string
+          role_label?: string
+          service?: string
           summary?: string
           title?: string
         }
@@ -403,9 +421,11 @@ export type Database = {
       }
       content_articles: {
         Row: {
+          article_date: string | null
           author_contact: string
           authors: string
           body: string
+          chart_data: string
           cover_url: string | null
           created_at: string
           file_name: string | null
@@ -422,14 +442,17 @@ export type Database = {
           service: string
           slug: string
           summary: string
+          table_data: string
           title: string
           translations: Json
           updated_at: string
         }
         Insert: {
+          article_date?: string | null
           author_contact?: string
           authors?: string
           body?: string
+          chart_data?: string
           cover_url?: string | null
           created_at?: string
           file_name?: string | null
@@ -446,14 +469,17 @@ export type Database = {
           service?: string
           slug: string
           summary?: string
+          table_data?: string
           title: string
           translations?: Json
           updated_at?: string
         }
         Update: {
+          article_date?: string | null
           author_contact?: string
           authors?: string
           body?: string
+          chart_data?: string
           cover_url?: string | null
           created_at?: string
           file_name?: string | null
@@ -470,6 +496,7 @@ export type Database = {
           service?: string
           slug?: string
           summary?: string
+          table_data?: string
           title?: string
           translations?: Json
           updated_at?: string
