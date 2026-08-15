@@ -158,34 +158,38 @@ async function fullDocumentBody(
 
   try {
     const source = await originalDocumentText(article);
-    // PDF sem camada de texto (digitalizado): o próprio modelo lê o arquivo.
-    if (!source) return await translateFileWithAi(article, lang);
+    let body: string | null = null;
 
-
-    const { askText } = await import("./ai.server");
-    const chunks = chunkText(source);
-    const system =
-      "Você é tradutor técnico de documentos de consultoria empresarial. Responda apenas com a tradução.";
-    const translated: string[] = [];
-    const CONCURRENCY = 4;
-    for (let i = 0; i < chunks.length; i += CONCURRENCY) {
-      const slice = chunks.slice(i, i + CONCURRENCY);
-      const done = await Promise.all(
-        slice.map((chunk, j) =>
-          askText(
-            system,
-            `Traduza para ${LANG_NAME[lang]} o trecho ${i + j + 1} de ${chunks.length} de um artigo. ` +
-              `Não resuma, não comente, não adicione títulos novos: traduza integralmente, mantendo a ordem, ` +
-              `listas com "-" e tabelas em markdown.\n\n---\n${chunk}`,
-          ).catch(() => ""),
-        ),
-      );
-      if (done.some((d) => !d.trim())) return null;
-      translated.push(...done);
+    if (!source) {
+      // PDF sem camada de texto (digitalizado): o próprio modelo lê o arquivo.
+      body = await translateFileWithAi(article, lang);
+    } else {
+      const { askText } = await import("./ai.server");
+      const chunks = chunkText(source);
+      const system =
+        "Você é tradutor técnico de documentos de consultoria empresarial. Responda apenas com a tradução.";
+      const translated: string[] = [];
+      const CONCURRENCY = 4;
+      for (let i = 0; i < chunks.length; i += CONCURRENCY) {
+        const slice = chunks.slice(i, i + CONCURRENCY);
+        const done = await Promise.all(
+          slice.map((chunk, j) =>
+            askText(
+              system,
+              `Traduza para ${LANG_NAME[lang]} o trecho ${i + j + 1} de ${chunks.length} de um artigo. ` +
+                `Não resuma, não comente, não adicione títulos novos: traduza integralmente, mantendo a ordem, ` +
+                `listas com "-" e tabelas em markdown.\n\n---\n${chunk}`,
+            ).catch(() => ""),
+          ),
+        );
+        if (done.some((d) => !d.trim())) return null;
+        translated.push(...done);
+      }
+      body = translated.join("\n\n").trim();
     }
 
-    const body = translated.join("\n\n").trim();
     if (!body) return null;
+
 
     const latest = (article.translations ?? {}) as Record<string, Record<string, string>>;
     const merged = { ...latest, [lang]: { ...(latest[lang] ?? {}), doc_body: body } };
