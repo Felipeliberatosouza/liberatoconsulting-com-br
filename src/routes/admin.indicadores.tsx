@@ -92,7 +92,12 @@ function IndicatorsPage() {
     const rows = q.data;
     if (!authReady || !rows || autoFilled.current) return;
     const pending = rows.some(
-      (r) => !(r.previous_value ?? "").trim() || !(r.previous_period ?? "").trim(),
+      (r) =>
+        !(r.previous_value ?? "").trim() ||
+        !(r.previous_period ?? "").trim() ||
+        !(r.forecast_value ?? "").trim() ||
+        !(r.forecast_period ?? "").trim() ||
+        !(r.forecast_source_name ?? "").trim(),
     );
     if (!pending) return;
     setFilling(true);
