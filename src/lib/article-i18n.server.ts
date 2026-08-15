@@ -136,9 +136,10 @@ export async function ensureTranslatedPdf(
   const withTr = await ensureArticleTranslations(article, fileLang);
   const stored = ((withTr as unknown as Record<string, unknown>)["translated_files"] ?? {}) as
     Record<string, { path: string; name: string }>;
-  if (stored[fileLang]?.path) return stored[fileLang]!;
-
   const tr = (withTr.translations?.[fileLang] ?? {}) as Record<string, string>;
+  // Só reaproveitamos o PDF salvo se ele já foi gerado a partir da íntegra traduzida.
+  const hasFullDoc = Boolean(tr["doc_body"]?.trim()) || !article.file_path;
+  if (stored[fileLang]?.path && hasFullDoc) return stored[fileLang]!;
   if (!tr["title"]) return original;
 
 
