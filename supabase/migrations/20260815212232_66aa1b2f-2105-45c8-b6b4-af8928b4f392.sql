@@ -1,0 +1,10 @@
+insert into public.content_articles (slug, group_id, kind, title, summary, service, position, published)
+values
+('a-rotina-que-sustenta-o-resultado-depois-do-projeto','operacoes','Artigo','A rotina que sustenta o resultado depois do projeto','Por que ganhos operacionais se perdem em seis meses e quais rituais de gestão evitam a regressão.','gestao-da-rotina',10,true),
+('process-mining-e-ia-encontrando-perdas-invisiveis','operacoes','Estudo','Process mining e IA: encontrando perdas invisíveis','O que os dados de sistema revelam sobre gargalos, retrabalho e desvios de padrão que a observação em campo não captura.','excelencia-em-processos',20,true),
+('unit-economics-antes-de-escalar','empreendedorismo','Guia','Unit economics antes de escalar','Como montar a conta por cliente, por pedido e por canal para descobrir se o crescimento aumenta ou destrói margem.','precificacao-unit-economics',30,true),
+('validar-mercado-em-8-semanas-com-apoio-de-ia','empreendedorismo','Artigo','Validar mercado em 8 semanas com apoio de IA','Um roteiro enxuto de entrevistas, testes e análise assistida por IA para confirmar demanda antes de investir pesado.','validacao-de-mercado',40,true),
+('entrar-no-brasil-o-que-empresas-estrangeiras-subestimam','pesquisas','Estudo','Entrar no Brasil: o que empresas estrangeiras subestimam','Tributos, logística, cultura de negociação e ciclo de venda: os fatores que mais alteram o business case de entrada.','estudos-setoriais-brasil',50,true),
+('dimensionar-mercado-com-dados-publicos-brasileiros','pesquisas','Guia','Dimensionar mercado com dados públicos brasileiros','Como combinar bases oficiais e IA para estimar TAM, SAM e SOM com transparência sobre premissas.','dimensionamento-de-mercado',60,true),
+('ia-na-priorizacao-de-projetos-de-capital','estrategia','Guia','IA na priorização de projetos de capital','Como usar modelos preditivos para comparar cenários de investimento, estimar risco de prazo e escolher o portfólio com maior retorno.','projetos-de-capital',70,true)
+on conflict (slug) do nothing;
