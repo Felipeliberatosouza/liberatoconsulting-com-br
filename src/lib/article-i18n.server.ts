@@ -62,11 +62,13 @@ function camel(value: string, max: number) {
     .slice(0, max);
 }
 
-const LANG_NAME: Record<TargetLang, string> = {
+const LANG_NAME: Record<Lang, string> = {
+  pt: "português",
   en: "inglês",
   es: "espanhol",
   zh: "chinês simplificado (mandarim)",
 };
+
 
 /** Extrai o texto integral do PDF original (português) e guarda em cache. */
 async function originalDocumentText(article: ArticleRecord): Promise<string | null> {
@@ -116,10 +118,10 @@ function chunkText(text: string, size = 4500): string[] {
   return parts;
 }
 
-/** Fallback para PDFs digitalizados: o modelo lê o arquivo e devolve a tradução integral. */
+/** O modelo lê o PDF e devolve o texto integral em markdown (traduzido, ou transcrito em PT). */
 async function translateFileWithAi(
   article: ArticleRecord,
-  lang: TargetLang,
+  lang: Lang,
 ): Promise<string | null> {
   if (!article.file_path) return null;
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -130,17 +132,21 @@ async function translateFileWithAi(
   }
   const buf = Buffer.from(await data.arrayBuffer());
   if (buf.byteLength > 20_000_000) return null;
-  console.log("[content i18n] traduzindo PDF via IA", lang, buf.byteLength);
+  console.log("[content i18n] lendo PDF via IA", lang, buf.byteLength);
 
 
   const { askJsonWithFile } = await import("./ai.server");
+  const task =
+    lang === "pt"
+      ? "Transcreva o documento anexo por completo, mantendo o português original (não traduza)."
+      : `Transcreva o documento anexo por completo e traduza para ${LANG_NAME[lang]}.`;
   const out = await askJsonWithFile<{ body?: string }>(
     "Você é tradutor técnico de documentos de consultoria empresarial.",
-    `Transcreva o documento anexo por completo e traduza para ${LANG_NAME[lang]}.\n` +
+    `${task}\n` +
       `Regras: não resuma, não omita seções, mantenha a ordem original, títulos em markdown (##), ` +
       `listas com "-", tabelas em markdown e legendas de imagens/gráficos como texto. ` +
       `Não inclua cabeçalho/rodapé institucional nem numeração de página.\n` +
-      `Devolva {"body":"<markdown traduzido completo>"}.`,
+      `Devolva {"body":"<markdown completo>"}.`,
     {
       name: article.file_name || "artigo.pdf",
       dataUrl: `data:application/pdf;base64,${buf.toString("base64")}`,
@@ -152,23 +158,29 @@ async function translateFileWithAi(
 /**
  * Traduz a íntegra do PDF original para o idioma pedido, em blocos paralelos,
  * e guarda o resultado em translations[lang].doc_body para não repetir o custo.
+ * Em português devolve a íntegra original em markdown (translations.pt.doc_md).
  */
 async function fullDocumentBody(
   article: ArticleRecord,
-  lang: TargetLang,
+  lang: Lang,
 ): Promise<string | null> {
   const current = (article.translations ?? {}) as Record<string, Record<string, string>>;
-  const cached = current[lang]?.["doc_body"];
+  const key = lang === "pt" ? "doc_md" : "doc_body";
+  const cached = current[lang]?.[key];
   if (cached && cached.trim()) return cached;
 
   try {
     const source = await originalDocumentText(article);
     let body: string | null = null;
 
-    if (!source) {
+    if (lang === "pt") {
+      // Português: só precisamos da íntegra estruturada em markdown.
+      body = (await translateFileWithAi(article, "pt")) || source;
+    } else if (!source) {
       // PDF sem camada de texto (digitalizado): o próprio modelo lê o arquivo.
       body = await translateFileWithAi(article, lang);
     } else {
+
       const { askText } = await import("./ai.server");
       const chunks = chunkText(source);
       const system =
@@ -197,7 +209,7 @@ async function fullDocumentBody(
 
 
     const latest = (article.translations ?? {}) as Record<string, Record<string, string>>;
-    const merged = { ...latest, [lang]: { ...(latest[lang] ?? {}), doc_body: body } };
+    const merged = { ...latest, [lang]: { ...(latest[lang] ?? {}), [key]: body } };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin
       .from("content_articles")
@@ -213,7 +225,8 @@ async function fullDocumentBody(
 
 /**
  * Devolve o caminho do PDF no idioma pedido, gerando-o na primeira vez.
- * EN/ES usam as fontes padrão; o mandarim usa uma fonte com ideogramas.
+ * Todos os idiomas — inclusive o português — usam o mesmo layout institucional;
+ * EN/ES usam as fontes padrão e o mandarim uma fonte com ideogramas.
  */
 export async function ensureTranslatedPdf(
   article: ArticleRecord,
@@ -222,16 +235,26 @@ export async function ensureTranslatedPdf(
   const original = article.file_path
     ? { path: article.file_path, name: article.file_name || "artigo.pdf" }
     : null;
-  if (lang === "pt") return original;
 
-  const fileLang = lang as TargetLang;
+  const fileLang = lang;
+  const isPt = lang === "pt";
 
   // Traduz primeiro: se o texto mudou, os PDFs antigos são descartados.
-  const withTr = await ensureArticleTranslations(article, fileLang);
+  const withTr = isPt ? article : await ensureArticleTranslations(article, fileLang);
   const stored = ((withTr as unknown as Record<string, unknown>)["translated_files"] ?? {}) as
     Record<string, { path: string; name: string }>;
-  const tr = (withTr.translations?.[fileLang] ?? {}) as Record<string, string>;
-  // Só reaproveitamos o PDF salvo se ele já foi gerado a partir da íntegra traduzida.
+  const tr = isPt
+    ? {
+        title: article.title ?? "",
+        summary: article.summary ?? "",
+        body: article.body ?? "",
+        table_data: (article as unknown as Record<string, string>)["table_data"] ?? "",
+        chart_data: (article as unknown as Record<string, string>)["chart_data"] ?? "",
+        doc_body:
+          ((withTr.translations?.["pt"] ?? {}) as Record<string, string>)["doc_md"] ?? "",
+      }
+    : ((withTr.translations?.[fileLang] ?? {}) as Record<string, string>);
+  // Só reaproveitamos o PDF salvo se ele já foi gerado a partir da íntegra do documento.
   const hasFullDoc = Boolean(tr["doc_body"]?.trim()) || !article.file_path;
   if (stored[fileLang]?.path && hasFullDoc) return stored[fileLang]!;
   if (!tr["title"]) return original;
@@ -255,11 +278,12 @@ export async function ensureTranslatedPdf(
       `${siteOrigin()}/logo.png`;
     const companyName = c["trade_name"] || c["legal_name"] || "Liberato Consulting";
 
-    // Preferimos a íntegra do PDF original traduzida; o resumo publicado é só o fallback.
+    // Preferimos a íntegra do PDF original; o resumo publicado é só o fallback.
     const fullDoc = await fullDocumentBody(withTr, fileLang);
     const bodyParts = fullDoc
       ? [fullDoc]
       : [tr["body"] ?? "", tr["table_data"] ?? "", tr["chart_data"] ?? ""].filter(Boolean);
+
 
     const bytes = await buildBrandedPdf({
       title: tr["title"]!,
