@@ -116,6 +116,34 @@ function chunkText(text: string, size = 4500): string[] {
   return parts;
 }
 
+/** Fallback para PDFs digitalizados: o modelo lê o arquivo e devolve a tradução integral. */
+async function translateFileWithAi(
+  article: ArticleRecord,
+  lang: TargetLang,
+): Promise<string | null> {
+  if (!article.file_path) return null;
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.storage.from("content").download(article.file_path);
+  if (error || !data) return null;
+  const buf = Buffer.from(await data.arrayBuffer());
+  if (buf.byteLength > 20_000_000) return null;
+
+  const { askJsonWithFile } = await import("./ai.server");
+  const out = await askJsonWithFile<{ body?: string }>(
+    "Você é tradutor técnico de documentos de consultoria empresarial.",
+    `Transcreva o documento anexo por completo e traduza para ${LANG_NAME[lang]}.\n` +
+      `Regras: não resuma, não omita seções, mantenha a ordem original, títulos em markdown (##), ` +
+      `listas com "-", tabelas em markdown e legendas de imagens/gráficos como texto. ` +
+      `Não inclua cabeçalho/rodapé institucional nem numeração de página.\n` +
+      `Devolva {"body":"<markdown traduzido completo>"}.`,
+    {
+      name: article.file_name || "artigo.pdf",
+      dataUrl: `data:application/pdf;base64,${buf.toString("base64")}`,
+    },
+  );
+  return (out?.body ?? "").trim() || null;
+}
+
 /**
  * Traduz a íntegra do PDF original para o idioma pedido, em blocos paralelos,
  * e guarda o resultado em translations[lang].doc_body para não repetir o custo.
