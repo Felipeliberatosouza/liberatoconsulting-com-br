@@ -62,11 +62,13 @@ function camel(value: string, max: number) {
     .slice(0, max);
 }
 
-const LANG_NAME: Record<TargetLang, string> = {
+const LANG_NAME: Record<Lang, string> = {
+  pt: "português",
   en: "inglês",
   es: "espanhol",
   zh: "chinês simplificado (mandarim)",
 };
+
 
 /** Extrai o texto integral do PDF original (português) e guarda em cache. */
 async function originalDocumentText(article: ArticleRecord): Promise<string | null> {
