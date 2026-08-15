@@ -210,7 +210,7 @@ async function main() {
   }
 
   const base = ["/", "/services", "/about", "/brasil", "/content", "/contact", "/careers"];
-  const fromSitemap = await sitemapPaths();
+  const fromSitemap = (await sitemapPaths()).filter((p) => !p.endsWith(".xml"));
   const all = [...new Set([...base, ...fromSitemap])].slice(0, MAX_URLS);
 
   console.log(`Verificando JSON-LD em ${all.length} páginas (${BASE})...`);
