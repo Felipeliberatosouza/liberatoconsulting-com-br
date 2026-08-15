@@ -508,6 +508,21 @@ export const updateSubscriberRecord = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { id, ...patch } = data;
+    if (data.status) {
+      const { data: subscriber } = await supabaseAdmin
+        .from("newsletter_subscribers")
+        .select("email")
+        .eq("id", id)
+        .maybeSingle();
+      if (!subscriber) return { ok: false as const, error: "Assinante não encontrado." };
+      try {
+        const { setRecipientEmailConsent } = await import("./email-consent.server");
+        await setRecipientEmailConsent(subscriber.email, data.status === "active");
+      } catch (error) {
+        const { consentErrorMessage } = await import("./email-consent.server");
+        return { ok: false as const, error: consentErrorMessage(error) };
+      }
+    }
     const { error } = await supabaseAdmin
       .from("newsletter_subscribers")
       .update(patch as never)

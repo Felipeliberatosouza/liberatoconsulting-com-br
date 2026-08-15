@@ -48,9 +48,19 @@ export const subscribeBulletin = createServerFn({ method: "POST" })
     const email = data.email.toLowerCase();
     const { data: existing } = await supabaseAdmin
       .from("bulletin_subscribers")
-      .select("id")
+      .select("id, status")
       .ilike("email", email)
       .maybeSingle();
+
+    if (existing?.status === "unsubscribed" && data.viaEmail) {
+      try {
+        const { setRecipientEmailConsent } = await import("./email-consent.server");
+        await setRecipientEmailConsent(email, true);
+      } catch (error) {
+        const { consentErrorMessage } = await import("./email-consent.server");
+        return { ok: false as const, error: consentErrorMessage(error) };
+      }
+    }
 
     const payload = {
       full_name: data.fullName,
@@ -87,6 +97,11 @@ export const unsubscribeBulletin = createServerFn({ method: "POST" })
       .maybeSingle();
     if (error || !row) return { ok: false as const, error: "Link inválido ou já utilizado." };
 
+    if (row.via_email) {
+      const { setRecipientEmailConsent } = await import("./email-consent.server");
+      await setRecipientEmailConsent(row.email, false);
+    }
+
     const { sendUnsubscribeConfirmation } = await import("./bulletin.server");
     await sendUnsubscribeConfirmation({
       full_name: row.full_name ?? "",
@@ -118,7 +133,29 @@ export const listBulletinSubscribers = createServerFn({ method: "GET" })
       )
       .order("created_at", { ascending: false })
       .limit(2000);
-    return (data ?? []) as BulletinSubscriberRow[];
+    const rows = (data ?? []) as BulletinSubscriberRow[];
+    const { getRecipientEmailConsent } = await import("./email-consent.server");
+    await Promise.all(
+      rows.map(async (row) => {
+        if (!row.via_email) return;
+        try {
+          const consent = await getRecipientEmailConsent(row.email);
+          const status = consent.subscribed ? "active" : "unsubscribed";
+          if (row.status !== status) {
+            const unsubscribedAt = consent.subscribed ? null : new Date().toISOString();
+            await supabaseAdmin
+              .from("bulletin_subscribers")
+              .update({ status, unsubscribed_at: unsubscribedAt })
+              .eq("id", row.id);
+            row.status = status;
+            row.unsubscribed_at = unsubscribedAt;
+          }
+        } catch {
+          // Mantém o estado local quando a consulta ao serviço de e-mail estiver indisponível.
+        }
+      }),
+    );
+    return rows;
   });
 
 /** Pré-visualização do boletim para um segmento. */
@@ -220,6 +257,21 @@ export const unsubscribeBulletinByAdmin = createServerFn({ method: "POST" })
         : { ok: false as const, error: queued.error };
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: subscriber } = await supabaseAdmin
+      .from("bulletin_subscribers")
+      .select("email, via_email")
+      .eq("id", data.id)
+      .maybeSingle();
+    if (!subscriber) return { ok: false as const, error: "Cadastro não encontrado." };
+    if (subscriber.via_email) {
+      try {
+        const { setRecipientEmailConsent } = await import("./email-consent.server");
+        await setRecipientEmailConsent(subscriber.email, false);
+      } catch (error) {
+        const { consentErrorMessage } = await import("./email-consent.server");
+        return { ok: false as const, error: consentErrorMessage(error) };
+      }
+    }
     const { error } = await supabaseAdmin
       .from("bulletin_subscribers")
       .update({ status: "unsubscribed", unsubscribed_at: new Date().toISOString() })
