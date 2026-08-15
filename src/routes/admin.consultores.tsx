@@ -44,6 +44,9 @@ const EMPTY: ConsultantRecord = {
   works: "",
   specialties: [],
   segments: [],
+  orcid_url: "",
+  lattes_url: "",
+  website_url: "",
   contact_email: "",
   position: 0,
   published: true,
@@ -247,6 +250,33 @@ function AdminConsultantsPage() {
                 className="size-24 rounded-full object-cover"
               />
             )}
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div>
+              <Label>ORCID</Label>
+              <Input
+                placeholder="https://orcid.org/0000-0000-0000-0000"
+                value={draft.orcid_url}
+                onChange={(e) => setDraft({ ...draft, orcid_url: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Currículo Lattes</Label>
+              <Input
+                placeholder="http://lattes.cnpq.br/0000000000000000"
+                value={draft.lattes_url}
+                onChange={(e) => setDraft({ ...draft, lattes_url: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Site próprio</Label>
+              <Input
+                placeholder="https://exemplo.com.br"
+                value={draft.website_url}
+                onChange={(e) => setDraft({ ...draft, website_url: e.target.value })}
+              />
+            </div>
           </div>
 
           <div>

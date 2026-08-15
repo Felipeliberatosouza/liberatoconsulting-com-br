@@ -14,6 +14,9 @@ export type PublicConsultant = {
   works: string;
   specialties: string[];
   segments: string[];
+  orcid_url: string;
+  lattes_url: string;
+  website_url: string;
   sort_order: number;
 };
 
@@ -33,6 +36,9 @@ export const listPublicConsultants = createServerFn({ method: "GET" }).handler(
       ...c,
       specialties: Array.isArray(c.specialties) ? c.specialties : [],
       segments: Array.isArray(c.segments) ? c.segments : [],
+      orcid_url: c.orcid_url ?? "",
+      lattes_url: c.lattes_url ?? "",
+      website_url: c.website_url ?? "",
     }));
   },
 );
@@ -63,6 +69,9 @@ const consultantSchema = z.object({
   works: z.string().trim().max(6000).default(""),
   specialties: z.array(z.string().trim().max(160)).max(60).default([]),
   segments: z.array(z.string().trim().max(120)).max(40).default([]),
+  orcid_url: z.string().trim().max(300).default(""),
+  lattes_url: z.string().trim().max(300).default(""),
+  website_url: z.string().trim().max(300).default(""),
   contact_email: z.string().trim().email().max(255).or(z.literal("")).default(""),
   position: z.number().int().min(0).max(9999).default(0),
   published: z.boolean().default(true),

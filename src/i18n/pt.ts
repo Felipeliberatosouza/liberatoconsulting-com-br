@@ -1185,8 +1185,13 @@ export const pt = {
     works: "Trabalhos realizados",
     specialties: "Especializações",
     segments: "Segmentos",
+    links: "Links",
+    orcid: "ORCID",
+    lattes: "Currículo Lattes",
+    website: "Site próprio",
     contactTitle: "Enviar e-mail para",
     contactDescription:
+
       "Sua mensagem é encaminhada diretamente ao consultor. O contato dele permanece privado.",
     namePlaceholder: "Seu nome",
     emailPlaceholder: "Seu e-mail",

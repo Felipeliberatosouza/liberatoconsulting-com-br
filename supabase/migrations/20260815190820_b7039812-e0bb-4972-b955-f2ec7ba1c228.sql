@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.list_public_consultants() FROM authenticated;
