@@ -147,6 +147,8 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
         value: string;
         unit?: string;
         reference_period: string;
+        previous_value?: string;
+        previous_period?: string;
         trend?: string;
         note?: string;
         source_name: string;
@@ -159,6 +161,10 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
         "Você é um economista sênior brasileiro. Informe os dados macroeconômicos mais " +
           "recentes que você conhece do Brasil, sempre citando a fonte oficial (IBGE, Banco " +
           "Central do Brasil, MDIC/Comex Stat, Ipeadata) e o período de referência exato. " +
+          "Para CADA indicador é obrigatório informar também a leitura imediatamente anterior " +
+          "da mesma série oficial (previous_value) e o período dessa leitura (previous_period). " +
+          "Nunca deixe previous_value ou previous_period em branco: se a leitura anterior for " +
+          "a do período anterior da série (mês, trimestre ou ano), informe-a mesmo assim. " +
           "Use vírgula como separador decimal. Não invente fontes.",
         JSON.stringify({
           formato: {
@@ -168,6 +174,8 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
                 value: "string",
                 unit: "string",
                 reference_period: "string",
+                previous_value: "string (obrigatório)",
+                previous_period: "string (obrigatório)",
                 trend: "alta|baixa|estável",
                 note: "1 frase de contexto",
                 source_name: "string",
@@ -184,13 +192,17 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
       for (const item of out.indicators ?? []) {
         const target = list.find((i) => i.slug === item.slug);
         if (!target) continue;
+        // Preferência: leitura anterior informada pela fonte; senão, arquiva o valor atual.
+        const previous =
+          item.previous_value && item.previous_value.trim()
+            ? { previous_value: item.previous_value, previous_period: item.previous_period ?? "" }
+            : item.value && item.value !== target.value && target.value
+              ? { previous_value: target.value, previous_period: target.reference_period ?? "" }
+              : {};
         const { error } = await context.supabase
           .from("economic_indicators")
           .update({
-            // guarda o dado anterior para a comparação do Boletim Semanal
-            ...(item.value && item.value !== target.value && target.value
-              ? { previous_value: target.value, previous_period: target.reference_period ?? "" }
-              : {}),
+            ...previous,
             value: item.value ?? "",
             unit: item.unit ?? target.unit,
             reference_period: item.reference_period ?? "",
@@ -205,6 +217,7 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
         if (!error) updated += 1;
       }
       return { ok: true as const, updated };
+
     } catch (err) {
       return { ok: false as const, error: (err as Error).message };
     }
