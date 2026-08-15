@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
+import { useAuthReady } from "@/hooks/useAuthReady";
 import {
   deleteIndicator,
   fillPreviousIndicatorsAI,
@@ -69,9 +70,11 @@ const input =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
 
 function IndicatorsPage() {
+  const authReady = useAuthReady();
   const q = useQuery({
     queryKey: ["admin-indicators"],
     queryFn: () => listIndicators(),
+    enabled: authReady,
     retry: false,
   });
   const [form, setForm] = useState<Form>(empty);
@@ -83,23 +86,29 @@ function IndicatorsPage() {
   // Preenche sozinho, uma vez, os "dados anteriores" que estiverem em branco.
   useEffect(() => {
     const rows = q.data;
-    if (!rows || autoFilled.current) return;
+    if (!authReady || !rows || autoFilled.current) return;
     const pending = rows.some(
       (r) => !(r.previous_value ?? "").trim() || !(r.previous_period ?? "").trim(),
     );
     if (!pending) return;
-    autoFilled.current = true;
     setFilling(true);
     fillPreviousIndicatorsAI()
       .then((r) => {
-        if (r.ok && r.updated > 0) {
+        if (!r.ok) {
+          toast.error(r.error);
+          return;
+        }
+        autoFilled.current = true;
+        if (r.updated > 0) {
           toast.success(`${r.updated} períodos anteriores preenchidos automaticamente.`);
           void q.refetch();
         }
       })
-      .catch(() => undefined)
+      .catch((error: unknown) =>
+        toast.error(error instanceof Error ? error.message : "Não foi possível buscar os dados anteriores."),
+      )
       .finally(() => setFilling(false));
-  }, [q.data]);
+  }, [authReady, q.data]);
 
   const set = (k: keyof Form, v: string | number | boolean) =>
     setForm((f) => ({ ...f, [k]: v }));

@@ -164,6 +164,8 @@ export const previewBulletin = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ segment: z.string().trim().max(80) }).parse(d))
   .handler(async ({ data, context }) => {
     await assertPanel(context);
+    const { fillMissingPreviousIndicators } = await import("./indicators.server");
+    await fillMissingPreviousIndicators();
     const {
       buildBulletinContent,
       renderBulletinHtml,

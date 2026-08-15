@@ -231,61 +231,9 @@ export const fillPreviousIndicatorsAI = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
-    const { askJson } = await import("./ai.server");
-
-    const { data: rows } = await context.supabase
-      .from("economic_indicators")
-      .select("id, slug, label, unit, value, reference_period, previous_value, previous_period");
-    const pending = ((rows ?? []) as Array<{
-      id: string;
-      slug: string;
-      label: string;
-      unit: string;
-      value: string;
-      reference_period: string;
-      previous_value: string;
-      previous_period: string;
-    }>).filter((r) => !r.previous_value?.trim() || !r.previous_period?.trim());
-    if (pending.length === 0) return { ok: true as const, updated: 0 };
-
-    type Out = {
-      indicators: Array<{ slug: string; previous_value: string; previous_period: string }>;
-    };
-
     try {
-      const out = await askJson<Out>(
-        "Você é um economista sênior brasileiro. Para cada indicador informado, devolva a " +
-          "leitura imediatamente anterior da mesma série oficial (IBGE, Banco Central do Brasil, " +
-          "MDIC/Comex Stat, Ipeadata), com o período exato dessa leitura. Nunca deixe campos em " +
-          "branco. Use vírgula como separador decimal e não invente dados.",
-        JSON.stringify({
-          formato: {
-            indicators: [{ slug: "string", previous_value: "string", previous_period: "string" }],
-          },
-          indicadores: pending.map((i) => ({
-            slug: i.slug,
-            label: i.label,
-            unit: i.unit,
-            valor_atual: i.value,
-            periodo_atual: i.reference_period,
-          })),
-        }),
-      );
-
-      let updated = 0;
-      for (const item of out.indicators ?? []) {
-        const target = pending.find((i) => i.slug === item.slug);
-        if (!target || !item.previous_value?.trim()) continue;
-        const { error } = await context.supabase
-          .from("economic_indicators")
-          .update({
-            previous_value: item.previous_value,
-            previous_period: item.previous_period ?? "",
-          })
-          .eq("id", target.id);
-        if (!error) updated += 1;
-      }
-      return { ok: true as const, updated };
+      const { fillMissingPreviousIndicators } = await import("./indicators.server");
+      return await fillMissingPreviousIndicators();
     } catch (err) {
       return { ok: false as const, error: (err as Error).message };
     }
