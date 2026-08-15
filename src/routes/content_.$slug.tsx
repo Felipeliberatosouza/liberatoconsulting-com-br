@@ -171,7 +171,7 @@ function ArticlePage() {
     }
     setDownloading(true);
     try {
-      const r = await getArticleFileUrl({ data: { slug } });
+      const r = await getArticleFileUrl({ data: { slug, lang } });
       if (r.ok) window.open(r.url, "_blank", "noopener,noreferrer");
       else toast.error(r.error);
     } finally {
