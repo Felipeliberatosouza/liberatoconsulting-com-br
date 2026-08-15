@@ -48,6 +48,9 @@ const empty = {
   value: "",
   unit: "",
   reference_period: "",
+  previous_value: "",
+  previous_period: "",
+
   trend: "",
   note: "",
   source_name: "",
