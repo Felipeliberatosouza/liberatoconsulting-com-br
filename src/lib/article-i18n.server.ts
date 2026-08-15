@@ -65,7 +65,7 @@ function camel(value: string, max: number) {
 const LANG_NAME: Record<TargetLang, string> = {
   en: "inglês",
   es: "espanhol",
-  zh: "inglês",
+  zh: "chinês simplificado (mandarim)",
 };
 
 /** Extrai o texto integral do PDF original (português) e guarda em cache. */
