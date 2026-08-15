@@ -2,7 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import bulletinBg from "@/assets/bulletin-indicators-bg.jpg";
 import { AdminShell } from "@/components/AdminShell";
+import {
+  SOCIAL_IMAGE_FORMATS,
+  composeIndicatorsImage,
+  downloadDataUrl,
+  type IndicatorArtRow,
+  type SocialFormatKey,
+} from "@/lib/social-image";
 import {
   listBulletinSubscribers,
   previewBulletin,
@@ -34,7 +42,14 @@ function AdminBulletin() {
   const { segments } = useLanguage();
   const [rows, setRows] = useState<BulletinSubscriberRow[]>([]);
   const [segment, setSegment] = useState("Todos");
-  const [preview, setPreview] = useState<{ html: string; whatsapp: string } | null>(null);
+  const [preview, setPreview] = useState<{
+    html: string;
+    whatsapp: string;
+    dateLabel: string;
+    rows: IndicatorArtRow[];
+  } | null>(null);
+  const [art, setArt] = useState<"" | SocialFormatKey>("");
+  const [arts, setArts] = useState<Array<{ key: SocialFormatKey; dataUrl: string }>>([]);
   const [testEmail, setTestEmail] = useState("");
   const [testWhatsApp, setTestWhatsApp] = useState("");
   const [busy, setBusy] = useState(false);
@@ -55,7 +70,15 @@ function AdminBulletin() {
     setBusy(true);
     try {
       const r = await previewBulletin({ data: { segment: seg } });
-      if (r.ok) setPreview({ html: r.html, whatsapp: r.whatsapp });
+      if (r.ok) {
+        setPreview({
+          html: r.html,
+          whatsapp: r.whatsapp,
+          dateLabel: r.dateLabel,
+          rows: r.indicatorRows,
+        });
+        setArts([]);
+      }
     } catch {
       toast.error("Não foi possível gerar a pré-visualização.");
     } finally {
@@ -67,6 +90,30 @@ function AdminBulletin() {
     void loadPreview(segment);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [segment]);
+
+  /** Monta a arte dos indicadores no formato escolhido. */
+  async function makeArt(key: SocialFormatKey) {
+    if (!preview) return;
+    if (preview.rows.length === 0) {
+      toast.error("Não há indicadores publicados para este segmento.");
+      return;
+    }
+    setArt(key);
+    try {
+      const dataUrl = await composeIndicatorsImage(
+        bulletinBg,
+        key,
+        "Indicadores econômicos do Brasil",
+        `${segment === "Todos" ? "Todos os segmentos" : segment} · ${preview.dateLabel}`,
+        preview.rows,
+      );
+      setArts((prev) => [...prev.filter((a) => a.key !== key), { key, dataUrl }]);
+    } catch {
+      toast.error("Não foi possível gerar a imagem.");
+    } finally {
+      setArt("");
+    }
+  }
 
   const active = rows.filter((r) => r.status === "active");
   const field =
