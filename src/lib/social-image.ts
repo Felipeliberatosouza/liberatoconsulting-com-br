@@ -212,3 +212,118 @@ export function downloadDataUrl(dataUrl: string, filename: string) {
   if (revoke) setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
+
+export type IndicatorArtRow = {
+  label: string;
+  value: string;
+  unit: string;
+  reference_period: string;
+  previous_value: string;
+  previous_period: string;
+};
+
+/**
+ * Arte com os indicadores do Boletim Semanal sobre uma imagem de fundo com o
+ * tema de dados econômicos do Brasil. A cor do texto acompanha o brilho da
+ * imagem: fonte escura em fundo claro e fonte clara em fundo escuro.
+ */
+export async function composeIndicatorsImage(
+  baseImage: string,
+  format: SocialFormatKey,
+  title: string,
+  subtitle: string,
+  rows: IndicatorArtRow[],
+): Promise<string> {
+  const { compareIndicator } = await import("./indicator-compare");
+  const f = SOCIAL_IMAGE_FORMATS[format];
+  const img = await loadImage(baseImage);
+  const canvas = document.createElement("canvas");
+  canvas.width = f.width;
+  canvas.height = f.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas indisponível neste navegador.");
+
+  const scale = Math.max(f.width / img.width, f.height / img.height);
+  const dw = img.width * scale;
+  const dh = img.height * scale;
+  ctx.drawImage(img, (f.width - dw) / 2, (f.height - dh) / 2, dw, dh);
+
+  const light = areaLuminance(ctx, 0, 0, f.width, f.height) > 0.55;
+  const fg = light ? "#0b0b0b" : "#ffffff";
+  const muted = light ? "rgba(0,0,0,0.6)" : "rgba(255,255,255,0.72)";
+  const base = light ? "255,255,255" : "0,0,0";
+  const veil = ctx.createLinearGradient(0, 0, 0, f.height);
+  veil.addColorStop(0, `rgba(${base},0.78)`);
+  veil.addColorStop(0.5, `rgba(${base},0.6)`);
+  veil.addColorStop(1, `rgba(${base},0.8)`);
+  ctx.fillStyle = veil;
+  ctx.fillRect(0, 0, f.width, f.height);
+
+  const pad = Math.round(f.width * 0.07);
+  const maxWidth = f.width - pad * 2;
+  ctx.textBaseline = "top";
+
+  const titleSize = Math.round(f.width * (format === "linkedin" ? 0.055 : 0.065));
+  ctx.fillStyle = fg;
+  ctx.font = `700 ${titleSize}px "Space Grotesk", "Helvetica Neue", Arial, sans-serif`;
+  let y = pad;
+  for (const line of wrap(ctx, title.trim(), Math.round(maxWidth * 0.78))) {
+    ctx.fillText(line, pad, y);
+    y += titleSize * 1.14;
+  }
+
+  const subSize = Math.round(f.width * 0.028);
+  ctx.font = `500 ${subSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+  ctx.fillStyle = muted;
+  ctx.fillText(subtitle.trim(), pad, y);
+  y += subSize * 1.8;
+
+  ctx.fillStyle = "#d1622a";
+  ctx.fillRect(pad, y, Math.round(f.width * 0.18), Math.max(4, Math.round(f.width * 0.007)));
+  y += Math.round(f.width * 0.035);
+
+  const list = rows.slice(0, format === "linkedin" ? 4 : 6);
+  const labelSize = Math.round(f.width * (format === "linkedin" ? 0.028 : 0.032));
+  const valueSize = Math.round(labelSize * 1.25);
+  const smallSize = Math.round(labelSize * 0.78);
+  const rowGap = Math.round(labelSize * 2.5);
+
+  for (const r of list) {
+    if (y > f.height - pad - rowGap) break;
+    const delta = compareIndicator(r.value, r.previous_value, r.unit);
+
+    ctx.font = `600 ${labelSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+    ctx.fillStyle = fg;
+    ctx.textAlign = "left";
+    const label = wrap(ctx, r.label, Math.round(maxWidth * 0.55))[0] ?? r.label;
+    ctx.fillText(label, pad, y);
+
+    ctx.font = `500 ${smallSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+    ctx.fillStyle = muted;
+    const prev = r.previous_value
+      ? `anterior: ${r.previous_value}${r.unit}${
+          r.previous_period ? ` (${r.previous_period})` : ""
+        }`
+      : r.reference_period;
+    ctx.fillText(prev, pad, y + labelSize * 1.2);
+
+    ctx.textAlign = "right";
+    ctx.font = `700 ${valueSize}px "Space Grotesk", "Helvetica Neue", Arial, sans-serif`;
+    ctx.fillStyle = fg;
+    ctx.fillText(`${r.value}${r.unit}`, f.width - pad, y);
+
+    if (delta.direction !== "none") {
+      ctx.font = `700 ${smallSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+      ctx.fillStyle = delta.direction === "up" ? "#22c55e" : delta.direction === "down" ? "#ef4444" : muted;
+      ctx.fillText(`${delta.arrow} ${delta.label}`, f.width - pad, y + labelSize * 1.2);
+    }
+    ctx.textAlign = "left";
+
+    y += rowGap;
+    ctx.fillStyle = light ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.16)";
+    ctx.fillRect(pad, y - Math.round(labelSize * 0.7), maxWidth, 1);
+  }
+
+  await drawLogo(ctx, f.width, f.height);
+  return canvas.toDataURL(f.mime, 0.92);
+}
