@@ -48,6 +48,30 @@ export async function askJson<T>(system: string, prompt: string): Promise<T> {
   return JSON.parse(stripFences(content)) as T;
 }
 
+/** Pede um JSON ao modelo a partir de um arquivo (PDF) enviado como anexo. */
+export async function askJsonWithFile<T>(
+  system: string,
+  prompt: string,
+  file: { name: string; dataUrl: string },
+): Promise<T> {
+  const json = await chat({
+    model: TEXT_MODEL,
+    messages: [
+      { role: "system", content: `${system}\nResponda APENAS com JSON válido, sem markdown.` },
+      {
+        role: "user",
+        content: [
+          { type: "text", text: prompt },
+          { type: "file", file: { filename: file.name, file_data: file.dataUrl } },
+        ],
+      },
+    ],
+  });
+  const content = json.choices?.[0]?.message?.content ?? "";
+  return JSON.parse(stripFences(content)) as T;
+}
+
+
 /** Texto livre gerado pelo modelo. */
 export async function askText(system: string, prompt: string): Promise<string> {
   const json = await chat({
