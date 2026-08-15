@@ -237,6 +237,49 @@ export function ConsultantsTeam() {
                     </p>
                   </div>
                 )}
+                {(selected.orcid_url || selected.lattes_url || selected.website_url) && (
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+                      {tt.links}
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-4 text-sm">
+                      {selected.orcid_url && (
+                        <a
+                          href={selected.orcid_url}
+                          target="_blank"
+                          rel="noopener noreferrer nofollow"
+                          className="inline-flex items-center gap-1.5 text-accent underline underline-offset-4"
+                        >
+                          <ExternalLink className="size-4" />
+                          {tt.orcid}
+                        </a>
+                      )}
+                      {selected.lattes_url && (
+                        <a
+                          href={selected.lattes_url}
+                          target="_blank"
+                          rel="noopener noreferrer nofollow"
+                          className="inline-flex items-center gap-1.5 text-accent underline underline-offset-4"
+                        >
+                          <ExternalLink className="size-4" />
+                          {tt.lattes}
+                        </a>
+                      )}
+                      {selected.website_url && (
+                        <a
+                          href={selected.website_url}
+                          target="_blank"
+                          rel="noopener noreferrer nofollow"
+                          className="inline-flex items-center gap-1.5 text-accent underline underline-offset-4"
+                        >
+                          <ExternalLink className="size-4" />
+                          {tt.website}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <Button
                   onClick={() => {
                     setContactId(selected.id);
