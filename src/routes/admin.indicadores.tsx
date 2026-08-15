@@ -94,30 +94,56 @@ function IndicatorsPage() {
         <h2 className="font-display text-lg font-bold">Atualização automática por IA</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           A IA revisa todos os indicadores cadastrados e atualiza valor, período, tendência e
-          fonte. Confira sempre os números antes de publicar.
+          fonte, e sempre busca também a leitura anterior de cada série nas fontes oficiais — a
+          coluna do período anterior nunca fica em branco. Confira sempre os números antes de
+          publicar.
         </p>
-        <button
-          disabled={refreshing}
-          onClick={async () => {
-            setRefreshing(true);
-            try {
-              const r = await refreshIndicatorsAI();
-              if (!r.ok) toast.error(r.error);
-              else {
-                toast.success(`${r.updated} indicadores atualizados.`);
-                await q.refetch();
+        <div className="mt-4 flex flex-wrap gap-3">
+          <button
+            disabled={refreshing || filling}
+            onClick={async () => {
+              setRefreshing(true);
+              try {
+                const r = await refreshIndicatorsAI();
+                if (!r.ok) toast.error(r.error);
+                else {
+                  toast.success(`${r.updated} indicadores atualizados.`);
+                  await q.refetch();
+                }
+              } catch {
+                toast.error("Não foi possível atualizar os indicadores.");
+              } finally {
+                setRefreshing(false);
               }
-            } catch {
-              toast.error("Não foi possível atualizar os indicadores.");
-            } finally {
-              setRefreshing(false);
-            }
-          }}
-          className="mt-4 rounded-md bg-ink px-5 py-2.5 text-sm font-semibold text-ink-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
-        >
-          {refreshing ? "Consultando fontes…" : "Atualizar todos com IA"}
-        </button>
+            }}
+            className="rounded-md bg-ink px-5 py-2.5 text-sm font-semibold text-ink-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
+          >
+            {refreshing ? "Consultando fontes…" : "Atualizar todos com IA"}
+          </button>
+          <button
+            disabled={refreshing || filling}
+            onClick={async () => {
+              setFilling(true);
+              try {
+                const r = await fillPreviousIndicatorsAI();
+                if (!r.ok) toast.error(r.error);
+                else {
+                  toast.success(`${r.updated} períodos anteriores preenchidos.`);
+                  await q.refetch();
+                }
+              } catch {
+                toast.error("Não foi possível buscar os dados anteriores.");
+              } finally {
+                setFilling(false);
+              }
+            }}
+            className="rounded-md border border-border px-5 py-2.5 text-sm font-semibold hover:border-accent hover:text-accent disabled:opacity-60"
+          >
+            {filling ? "Buscando dados anteriores…" : "Preencher dados anteriores com IA"}
+          </button>
+        </div>
       </div>
+
 
       <form
         className="mt-8 rounded-lg border border-border bg-background p-6"
