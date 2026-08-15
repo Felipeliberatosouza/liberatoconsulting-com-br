@@ -12,6 +12,10 @@ export type Indicator = {
   reference_period: string;
   previous_value: string;
   previous_period: string;
+  forecast_value: string;
+  forecast_period: string;
+  forecast_source_name: string;
+  forecast_source_url: string;
   trend: string;
   note: string;
   source_name: string;
@@ -26,7 +30,7 @@ export type Indicator = {
 };
 
 const SELECT =
-  "id, slug, label, value, unit, reference_period, previous_value, previous_period, trend, note, source_name, source_url, position, published, segment, region, uf, last_checked_at, updated_at";
+  "id, slug, label, value, unit, reference_period, previous_value, previous_period, forecast_value, forecast_period, forecast_source_name, forecast_source_url, trend, note, source_name, source_url, position, published, segment, region, uf, last_checked_at, updated_at";
 
 /** Indicadores econômicos publicados (leitura pública do site). */
 export const listPublicIndicators = createServerFn({ method: "GET" }).handler(
