@@ -53,6 +53,7 @@ import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as ApiPublicBulletinWeeklyRouteImport } from './routes/api/public/bulletin-weekly'
 import { Route as ApiPublicNewsletterWeeklyRouteImport } from './routes/api/public/newsletter-weekly'
+import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
 import { Route as ApiPublicNewsletterImageSlugRouteImport } from './routes/api/public/newsletter-image.$slug'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
@@ -277,6 +278,11 @@ const ApiPublicNewsletterWeeklyRoute =
     path: '/api/public/newsletter-weekly',
     getParentRoute: () => rootRouteImport,
   } as any)
+const LovableEmailEventsRoute = LovableEmailEventsRouteImport.update({
+  id: '/lovable/email/events',
+  path: '/lovable/email/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicNewsletterImageSlugRoute =
   ApiPublicNewsletterImageSlugRouteImport.update({
     id: '/api/public/newsletter-image/$slug',
@@ -335,6 +341,7 @@ export interface FileRoutesByFullPath {
   '/services/': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
+  '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -383,6 +390,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
+  '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -432,6 +440,7 @@ export interface FileRoutesById {
   '/services/': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
+  '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -482,6 +491,7 @@ export interface FileRouteTypes {
     | '/services/'
     | '/api/public/bulletin-weekly'
     | '/api/public/newsletter-weekly'
+    | '/lovable/email/events'
     | '/api/public/newsletter-image/$slug'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
@@ -530,6 +540,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/api/public/bulletin-weekly'
     | '/api/public/newsletter-weekly'
+    | '/lovable/email/events'
     | '/api/public/newsletter-image/$slug'
     | '/lovable/email/transactional/preview'
   id:
@@ -578,6 +589,7 @@ export interface FileRouteTypes {
     | '/services/'
     | '/api/public/bulletin-weekly'
     | '/api/public/newsletter-weekly'
+    | '/lovable/email/events'
     | '/api/public/newsletter-image/$slug'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
@@ -626,6 +638,7 @@ export interface RootRouteChildren {
   ServicesIndexRoute: typeof ServicesIndexRoute
   ApiPublicBulletinWeeklyRoute: typeof ApiPublicBulletinWeeklyRoute
   ApiPublicNewsletterWeeklyRoute: typeof ApiPublicNewsletterWeeklyRoute
+  LovableEmailEventsRoute: typeof LovableEmailEventsRoute
   ApiPublicNewsletterImageSlugRoute: typeof ApiPublicNewsletterImageSlugRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
@@ -940,6 +953,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicNewsletterWeeklyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/events': {
+      id: '/lovable/email/events'
+      path: '/lovable/email/events'
+      fullPath: '/lovable/email/events'
+      preLoaderRoute: typeof LovableEmailEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/newsletter-image/$slug': {
       id: '/api/public/newsletter-image/$slug'
       path: '/api/public/newsletter-image/$slug'
@@ -1012,6 +1032,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesIndexRoute: ServicesIndexRoute,
   ApiPublicBulletinWeeklyRoute: ApiPublicBulletinWeeklyRoute,
   ApiPublicNewsletterWeeklyRoute: ApiPublicNewsletterWeeklyRoute,
+  LovableEmailEventsRoute: LovableEmailEventsRoute,
   ApiPublicNewsletterImageSlugRoute: ApiPublicNewsletterImageSlugRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
