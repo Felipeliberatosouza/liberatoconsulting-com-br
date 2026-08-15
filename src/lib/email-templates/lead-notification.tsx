@@ -50,7 +50,9 @@ const Email = ({
       <Container style={container}>
         <Heading style={heading}>Novo contato pelo site</Heading>
         <Text style={intro}>
-          Um formulário foi preenchido em liberatoconsulting.com.br.
+          A equipe Liberato recebeu uma solicitação de {name ?? 'um visitante'} pelo
+          site oficial liberatoconsulting.com.br. Responda diretamente a este e-mail
+          para continuar a conversa com o contato informado.
         </Text>
         <Hr style={hr} />
         <Section>
@@ -71,7 +73,9 @@ const Email = ({
         ) : null}
         <Hr style={hr} />
         <Text style={footer}>
-          Liberato Consulting — este aviso é gerado automaticamente pelo site.
+          Liberato Consulting · liberatoconsulting.com.br ·
+          contato@liberatoconsulting.com.br. Este aviso individual foi gerado após o
+          envio do formulário no site oficial.
         </Text>
       </Container>
     </Body>
