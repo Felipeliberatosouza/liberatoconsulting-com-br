@@ -180,6 +180,25 @@ function IndicatorsPage() {
             />
           </label>
           <label className="text-xs font-medium text-muted-foreground">
+            Valor anterior
+            <input
+              value={form.previous_value}
+              onChange={(e) => set("previous_value", e.target.value)}
+              placeholder="2,9"
+              className={`mt-1 ${input}`}
+            />
+          </label>
+          <label className="text-xs font-medium text-muted-foreground">
+            Período do valor anterior
+            <input
+              value={form.previous_period}
+              onChange={(e) => set("previous_period", e.target.value)}
+              placeholder="2º trimestre de 2025"
+              className={`mt-1 ${input}`}
+            />
+          </label>
+
+          <label className="text-xs font-medium text-muted-foreground">
             Tendência
             <input value={form.trend} onChange={(e) => set("trend", e.target.value)} placeholder="alta" className={`mt-1 ${input}`} />
           </label>
