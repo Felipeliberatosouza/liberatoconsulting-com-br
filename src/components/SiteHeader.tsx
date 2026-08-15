@@ -401,6 +401,14 @@ export function SiteHeader() {
           </MobileAccordion>
 
           <MobileAccordion title={t.brazilMenu.label} to="/brasil" onNavigate={closeAll}>
+            <Link
+              to="/brasil"
+              hash="indicadores"
+              onClick={closeAll}
+              className="block py-1.5 text-sm font-semibold text-foreground"
+            >
+              {t.brazilMenu.indicatorsItem}
+            </Link>
             <div className="grid grid-cols-2 gap-x-4">
               {brazilItems.map((item) => (
                 <Link
