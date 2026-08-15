@@ -133,7 +133,29 @@ export const listBulletinSubscribers = createServerFn({ method: "GET" })
       )
       .order("created_at", { ascending: false })
       .limit(2000);
-    return (data ?? []) as BulletinSubscriberRow[];
+    const rows = (data ?? []) as BulletinSubscriberRow[];
+    const { getRecipientEmailConsent } = await import("./email-consent.server");
+    await Promise.all(
+      rows.map(async (row) => {
+        if (!row.via_email) return;
+        try {
+          const consent = await getRecipientEmailConsent(row.email);
+          const status = consent.subscribed ? "active" : "unsubscribed";
+          if (row.status !== status) {
+            const unsubscribedAt = consent.subscribed ? null : new Date().toISOString();
+            await supabaseAdmin
+              .from("bulletin_subscribers")
+              .update({ status, unsubscribed_at: unsubscribedAt })
+              .eq("id", row.id);
+            row.status = status;
+            row.unsubscribed_at = unsubscribedAt;
+          }
+        } catch {
+          // Mantém o estado local quando a consulta ao serviço de e-mail estiver indisponível.
+        }
+      }),
+    );
+    return rows;
   });
 
 /** Pré-visualização do boletim para um segmento. */

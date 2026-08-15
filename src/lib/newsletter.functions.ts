@@ -86,7 +86,23 @@ export const listSubscribers = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false })
       .limit(1000);
     if (error) throw new Error(error.message);
-    return data ?? [];
+    const rows = data ?? [];
+    const { getRecipientEmailConsent } = await import("./email-consent.server");
+    await Promise.all(
+      rows.map(async (row) => {
+        try {
+          const consent = await getRecipientEmailConsent(row.email);
+          const status = consent.subscribed ? "active" : "unsubscribed";
+          if (row.status !== status) {
+            await supabaseAdmin.from("newsletter_subscribers").update({ status }).eq("id", row.id);
+            row.status = status;
+          }
+        } catch {
+          // Mantém o estado local quando a consulta ao serviço de e-mail estiver indisponível.
+        }
+      }),
+    );
+    return rows;
   });
 
 export const addSubscriber = createServerFn({ method: "POST" })
