@@ -1,3 +1,4 @@
+import { SENDER_DOMAIN } from "@/lib/email-templates/send-email";
 import { sendLovableEmail } from "@lovable.dev/email-js";
 
 import {
@@ -96,16 +97,18 @@ export async function sendNewsletterEmail(params: {
   html: string;
   text: string;
   from: string;
+  replyTo?: string;
   idempotencyKey: string;
 }) {
   const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) throw new Error("Serviço de e-mail indisponível (chave ausente).");
-  const senderDomain = params.from.split("@")[1] ?? "";
+  const senderDomain = SENDER_DOMAIN;
   return sendLovableEmail(
     {
       to: params.to,
       from: params.from,
       sender_domain: senderDomain,
+      ...(params.replyTo ? { reply_to: params.replyTo } : {}),
       subject: params.subject,
       html: params.html,
       text: params.text,
@@ -146,7 +149,8 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
         "Configure o e-mail remetente da newsletter (é preciso ter um domínio de e-mail próprio conectado).",
     };
   }
-  const from = `${settings.fromName} <${settings.fromEmail}>`;
+  // Sempre enviar pelo subdomínio verificado; o e-mail configurado vira reply-to.
+  const from = `${settings.fromName} <noreply@${SENDER_DOMAIN}>`;
   const origin = process.env["PUBLIC_SITE_URL"] || "https://liberato.com";
   const company = await loadCompanyFooter(origin);
 
@@ -202,6 +206,7 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
       await sendNewsletterEmail({
         to: r.email,
         from,
+        replyTo: settings.fromEmail,
         subject: v.subject,
         html: renderCampaignHtml({
           subject: v.subject,
