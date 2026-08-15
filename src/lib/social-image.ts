@@ -220,7 +220,13 @@ export type IndicatorArtRow = {
   reference_period: string;
   previous_value: string;
   previous_period: string;
+  forecast_value?: string;
+  forecast_period?: string;
 };
+
+/** Chamada exibida na arte no lugar das fontes de informação. */
+export const SOCIAL_SOURCES_CTA =
+  "Acesse liberatoconsulting.com.br para mais detalhes e para ter as fontes de informação.";
 
 /**
  * Arte com os indicadores do Boletim Semanal sobre uma imagem de fundo com o
@@ -289,7 +295,7 @@ export async function composeIndicatorsImage(
   const rowGap = Math.round(labelSize * 2.5);
 
   for (const r of list) {
-    if (y > f.height - pad - rowGap) break;
+    if (y > f.height - pad * 2.4 - rowGap) break;
     const delta = compareIndicator(r.value, r.previous_value, r.unit);
 
     ctx.font = `600 ${labelSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
@@ -305,7 +311,12 @@ export async function composeIndicatorsImage(
           r.previous_period ? ` (${r.previous_period})` : ""
         }`
       : r.reference_period;
-    ctx.fillText(prev, pad, y + labelSize * 1.2);
+    const forecast = r.forecast_value
+      ? ` · tendência: ${r.forecast_value}${r.unit}${
+          r.forecast_period ? ` (${r.forecast_period})` : ""
+        }`
+      : "";
+    ctx.fillText(`${prev}${forecast}`, pad, y + labelSize * 1.2);
 
     ctx.textAlign = "right";
     ctx.font = `700 ${valueSize}px "Space Grotesk", "Helvetica Neue", Arial, sans-serif`;
@@ -322,6 +333,17 @@ export async function composeIndicatorsImage(
     y += rowGap;
     ctx.fillStyle = light ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.16)";
     ctx.fillRect(pad, y - Math.round(labelSize * 0.7), maxWidth, 1);
+  }
+
+  // Sem fontes na arte: apenas a chamada para o site.
+  const ctaSize = Math.round(f.width * (format === "linkedin" ? 0.022 : 0.026));
+  ctx.font = `600 ${ctaSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+  ctx.fillStyle = fg;
+  const ctaLines = wrap(ctx, SOCIAL_SOURCES_CTA, maxWidth);
+  let ctaY = f.height - pad - ctaLines.length * ctaSize * 1.25;
+  for (const line of ctaLines) {
+    ctx.fillText(line, pad, ctaY);
+    ctaY += ctaSize * 1.25;
   }
 
   await drawLogo(ctx, f.width, f.height);

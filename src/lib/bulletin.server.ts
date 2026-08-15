@@ -33,9 +33,14 @@ type Indicator = {
   trend: string;
   note: string;
   source_name: string;
+  source_url: string;
   segment: string;
   previous_value: string;
   previous_period: string;
+  forecast_value: string;
+  forecast_period: string;
+  forecast_source_name: string;
+  forecast_source_url: string;
 };
 
 type Article = { slug: string; title: string; summary: string; kind: string };
@@ -59,14 +64,33 @@ const LOCALE: Record<EmailLang, string> = {
 /** Trecho textual com a comparação (usado no texto puro e no WhatsApp). */
 function indicatorDeltaText(i: Indicator, lang: EmailLang) {
   const delta = compareIndicator(i.value, i.previous_value, i.unit, LOCALE[lang]);
-  if (delta.direction === "none") return "";
   const L = labelsFor(lang);
   const prev = i.previous_value
     ? ` | ${L.previousLabel}: ${i.previous_value}${i.unit}${
         i.previous_period ? ` (${i.previous_period})` : ""
       }`
     : "";
-  return `${prev} | ${delta.arrow} ${delta.label}`;
+  const change = delta.direction === "none" ? "" : ` | ${delta.arrow} ${delta.label}`;
+  const forecast = i.forecast_value
+    ? ` | ${L.forecastLabel}: ${i.forecast_value}${i.unit}${
+        i.forecast_period ? ` (${i.forecast_period})` : ""
+      }`
+    : "";
+  return `${prev}${change}${forecast}`;
+}
+
+/** Linha com a fonte do dado atual e da tendência (somente e-mail/texto). */
+function indicatorSourceText(i: Indicator, lang: EmailLang) {
+  const L = labelsFor(lang);
+  const parts: string[] = [];
+  if (i.source_name) parts.push(`${i.source_name}${i.source_url ? ` — ${i.source_url}` : ""}`);
+  if (i.forecast_source_name)
+    parts.push(
+      `${L.forecastLabel}: ${i.forecast_source_name}${
+        i.forecast_source_url ? ` — ${i.forecast_source_url}` : ""
+      }`,
+    );
+  return parts.length ? `  ${L.sourceLabel}: ${parts.join(" | ")}` : "";
 }
 
 export function siteOrigin() {
@@ -99,7 +123,7 @@ export async function buildBulletinContent(segment: string): Promise<BulletinCon
       supabaseAdmin
         .from("economic_indicators")
         .select(
-          "label, value, unit, reference_period, trend, note, source_name, segment, previous_value, previous_period, position, published",
+          "label, value, unit, reference_period, trend, note, source_name, source_url, segment, previous_value, previous_period, forecast_value, forecast_period, forecast_source_name, forecast_source_url, position, published",
         )
         .eq("published", true)
         .order("position", { ascending: true }),
@@ -147,17 +171,38 @@ export function renderBulletinHtml(
   const origin = siteOrigin();
   const L = labelsFor(lang);
 
+  const sourceLink = (name: string, url: string) =>
+    url
+      ? `<a href="${escapeHtml(url)}" style="color:#e2751f;text-decoration:none">${escapeHtml(name)}</a>`
+      : escapeHtml(name);
+
   const indicators =
     content.indicators.length > 0
       ? content.indicators
           .map((i) => {
             const delta = compareIndicator(i.value, i.previous_value, i.unit, LOCALE[lang]);
+            const sources = [
+              i.source_name ? sourceLink(i.source_name, i.source_url) : "",
+              i.forecast_source_name
+                ? `${escapeHtml(L.forecastLabel)}: ${sourceLink(
+                    i.forecast_source_name,
+                    i.forecast_source_url,
+                  )}`
+                : "",
+            ].filter(Boolean);
             return `<tr>
 <td style="padding:10px 8px 10px 0;border-bottom:1px solid #eeece9">
   <div style="font-size:14px;color:#1f2328;font-weight:600">${escapeHtml(i.label)}</div>
   <div style="font-size:12px;color:#78716c">${escapeHtml(i.reference_period || "")}${
     i.note ? ` — ${escapeHtml(i.note)}` : ""
   }</div>
+  ${
+    sources.length
+      ? `<div style="font-size:11px;color:#a8a29e">${escapeHtml(L.sourceLabel)}: ${sources.join(
+          " · ",
+        )}</div>`
+      : ""
+  }
 </td>
 <td align="right" style="padding:10px 8px;border-bottom:1px solid #eeece9;white-space:nowrap">
   <span style="font-size:16px;font-weight:700;color:#14192a">${escapeHtml(i.value)}${escapeHtml(
@@ -170,14 +215,20 @@ export function renderBulletinHtml(
   }</span>
   <div style="font-size:11px;color:#a8a29e">${escapeHtml(i.previous_period || "")}</div>
 </td>
-<td align="right" style="padding:10px 0 10px 8px;border-bottom:1px solid #eeece9;white-space:nowrap">
+<td align="right" style="padding:10px 8px;border-bottom:1px solid #eeece9;white-space:nowrap">
   <span style="font-size:14px;font-weight:700;color:${delta.color}">${delta.arrow} ${escapeHtml(
     delta.label,
   )}</span>
+</td>
+<td align="right" style="padding:10px 0 10px 8px;border-bottom:1px solid #eeece9;white-space:nowrap">
+  <span style="font-size:14px;color:#1f2328">${
+    i.forecast_value ? `${escapeHtml(i.forecast_value)}${escapeHtml(i.unit || "")}` : "—"
+  }</span>
+  <div style="font-size:11px;color:#a8a29e">${escapeHtml(i.forecast_period || "")}</div>
 </td></tr>`;
           })
           .join("")
-      : `<tr><td colspan="4" style="padding:10px 0;font-size:14px;color:#78716c">${escapeHtml(L.noIndicators)}</td></tr>`;
+      : `<tr><td colspan="5" style="padding:10px 0;font-size:14px;color:#78716c">${escapeHtml(L.noIndicators)}</td></tr>`;
 
   const articleLink = (slug: string) =>
     `${origin}/content/${encodeURIComponent(slug)}${lang === "pt" ? "" : `?lang=${lang}`}`;
@@ -217,7 +268,8 @@ export function renderBulletinHtml(
       <th align="left" style="padding:0 8px 6px 0;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.indicators)}</th>
       <th align="right" style="padding:0 8px 6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.currentLabel)}</th>
       <th align="right" style="padding:0 8px 6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.previousLabel)}</th>
-      <th align="right" style="padding:0 0 6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.changeLabel)}</th>
+      <th align="right" style="padding:0 8px 6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.changeLabel)}</th>
+      <th align="right" style="padding:0 0 6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.forecastLabel)}</th>
     </tr>
     ${indicators}
   </table>
@@ -253,7 +305,10 @@ export function renderBulletinText(
   const L = labelsFor(lang);
   const suffix = lang === "pt" ? "" : `?lang=${lang}`;
   const indicators = content.indicators
-    .map((i) => `• ${i.label}: ${i.value}${i.unit} (${i.reference_period})${indicatorDeltaText(i, lang)}`)
+    .map(
+      (i) =>
+        `• ${i.label}: ${i.value}${i.unit} (${i.reference_period})${indicatorDeltaText(i, lang)}\n${indicatorSourceText(i, lang)}`.trimEnd(),
+    )
     .join("\n");
   const articles = content.articles
     .map((a) => `• ${a.title} — ${origin}/content/${a.slug}${suffix}`)
@@ -299,6 +354,8 @@ ${indicators || L.noIndicators}
 
 *${L.latestArticles}*
 ${articles || L.soonArticles}
+
+${L.socialCta}
 
 ${companyFooterText(content.company)}
 

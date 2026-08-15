@@ -164,8 +164,8 @@ export const previewBulletin = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ segment: z.string().trim().max(80) }).parse(d))
   .handler(async ({ data, context }) => {
     await assertPanel(context);
-    const { fillMissingPreviousIndicators } = await import("./indicators.server");
-    await fillMissingPreviousIndicators();
+    const { fillMissingIndicatorSeries } = await import("./indicators.server");
+    await fillMissingIndicatorSeries();
     const {
       buildBulletinContent,
       renderBulletinHtml,
@@ -200,6 +200,8 @@ export const previewBulletin = createServerFn({ method: "POST" })
         reference_period: i.reference_period,
         previous_value: i.previous_value,
         previous_period: i.previous_period,
+        forecast_value: i.forecast_value,
+        forecast_period: i.forecast_period,
       })),
       articles: content.articles.length,
     };
