@@ -8,6 +8,7 @@ import {
   type CompanyFooter,
 } from "./company-footer.server";
 import { emailLang, formatDateFor, labelsFor, type EmailLang } from "./email-i18n.server";
+import { compareIndicator } from "./indicator-compare";
 import { DEFAULT_NEWSLETTER_SETTINGS, type NewsletterSettings } from "./newsletter.server";
 
 export type BulletinSubscriber = {
@@ -33,6 +34,8 @@ type Indicator = {
   note: string;
   source_name: string;
   segment: string;
+  previous_value: string;
+  previous_period: string;
 };
 
 type Article = { slug: string; title: string; summary: string; kind: string };
@@ -45,6 +48,26 @@ export type BulletinContent = {
   company: CompanyFooter;
   logoUrl: string;
 };
+
+const LOCALE: Record<EmailLang, string> = {
+  pt: "pt-BR",
+  en: "en-US",
+  es: "es-ES",
+  zh: "zh-CN",
+};
+
+/** Trecho textual com a comparação (usado no texto puro e no WhatsApp). */
+function indicatorDeltaText(i: Indicator, lang: EmailLang) {
+  const delta = compareIndicator(i.value, i.previous_value, i.unit, LOCALE[lang]);
+  if (delta.direction === "none") return "";
+  const L = labelsFor(lang);
+  const prev = i.previous_value
+    ? ` | ${L.previousLabel}: ${i.previous_value}${i.unit}${
+        i.previous_period ? ` (${i.previous_period})` : ""
+      }`
+    : "";
+  return `${prev} | ${delta.arrow} ${delta.label}`;
+}
 
 export function siteOrigin() {
   return process.env["PUBLIC_SITE_URL"] || "https://liberatoconsulting.com.br";
@@ -76,7 +99,7 @@ export async function buildBulletinContent(segment: string): Promise<BulletinCon
       supabaseAdmin
         .from("economic_indicators")
         .select(
-          "label, value, unit, reference_period, trend, note, source_name, segment, position, published",
+          "label, value, unit, reference_period, trend, note, source_name, segment, previous_value, previous_period, position, published",
         )
         .eq("published", true)
         .order("position", { ascending: true }),
@@ -127,22 +150,34 @@ export function renderBulletinHtml(
   const indicators =
     content.indicators.length > 0
       ? content.indicators
-          .map(
-            (i) => `<tr>
-<td style="padding:10px 0;border-bottom:1px solid #eeece9">
+          .map((i) => {
+            const delta = compareIndicator(i.value, i.previous_value, i.unit, LOCALE[lang]);
+            return `<tr>
+<td style="padding:10px 8px 10px 0;border-bottom:1px solid #eeece9">
   <div style="font-size:14px;color:#1f2328;font-weight:600">${escapeHtml(i.label)}</div>
   <div style="font-size:12px;color:#78716c">${escapeHtml(i.reference_period || "")}${
     i.note ? ` — ${escapeHtml(i.note)}` : ""
   }</div>
 </td>
-<td align="right" style="padding:10px 0;border-bottom:1px solid #eeece9;white-space:nowrap">
+<td align="right" style="padding:10px 8px;border-bottom:1px solid #eeece9;white-space:nowrap">
   <span style="font-size:16px;font-weight:700;color:#14192a">${escapeHtml(i.value)}${escapeHtml(
     i.unit || "",
   )}</span>
-</td></tr>`,
-          )
+</td>
+<td align="right" style="padding:10px 8px;border-bottom:1px solid #eeece9;white-space:nowrap">
+  <span style="font-size:14px;color:#57534e">${
+    i.previous_value ? `${escapeHtml(i.previous_value)}${escapeHtml(i.unit || "")}` : "—"
+  }</span>
+  <div style="font-size:11px;color:#a8a29e">${escapeHtml(i.previous_period || "")}</div>
+</td>
+<td align="right" style="padding:10px 0 10px 8px;border-bottom:1px solid #eeece9;white-space:nowrap">
+  <span style="font-size:14px;font-weight:700;color:${delta.color}">${delta.arrow} ${escapeHtml(
+    delta.label,
+  )}</span>
+</td></tr>`;
+          })
           .join("")
-      : `<tr><td style="padding:10px 0;font-size:14px;color:#78716c">${escapeHtml(L.noIndicators)}</td></tr>`;
+      : `<tr><td colspan="4" style="padding:10px 0;font-size:14px;color:#78716c">${escapeHtml(L.noIndicators)}</td></tr>`;
 
   const articleLink = (slug: string) =>
     `${origin}/content/${encodeURIComponent(slug)}${lang === "pt" ? "" : `?lang=${lang}`}`;
@@ -177,7 +212,15 @@ export function renderBulletinHtml(
 
 <tr><td style="padding:24px 32px 8px">
   <h2 style="margin:0 0 8px;font-size:16px;color:#14192a">${escapeHtml(L.indicators)}</h2>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${indicators}</table>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <th align="left" style="padding:0 8px 6px 0;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.indicators)}</th>
+      <th align="right" style="padding:0 8px 6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.currentLabel)}</th>
+      <th align="right" style="padding:0 8px 6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.previousLabel)}</th>
+      <th align="right" style="padding:0 0 6px 8px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#a8a29e">${escapeHtml(L.changeLabel)}</th>
+    </tr>
+    ${indicators}
+  </table>
 </td></tr>
 
 <tr><td style="padding:24px 32px 8px">
@@ -210,7 +253,7 @@ export function renderBulletinText(
   const L = labelsFor(lang);
   const suffix = lang === "pt" ? "" : `?lang=${lang}`;
   const indicators = content.indicators
-    .map((i) => `• ${i.label}: ${i.value}${i.unit} (${i.reference_period})`)
+    .map((i) => `• ${i.label}: ${i.value}${i.unit} (${i.reference_period})${indicatorDeltaText(i, lang)}`)
     .join("\n");
   const articles = content.articles
     .map((a) => `• ${a.title} — ${origin}/content/${a.slug}${suffix}`)
@@ -241,7 +284,7 @@ export function renderBulletinWhatsApp(
   const suffix = lang === "pt" ? "" : `?lang=${lang}`;
   const indicators = content.indicators
     .slice(0, 5)
-    .map((i) => `• ${i.label}: ${i.value}${i.unit}`)
+    .map((i) => `• ${i.label}: ${i.value}${i.unit}${indicatorDeltaText(i, lang)}`)
     .join("\n");
   const articles = content.articles
     .slice(0, 3)

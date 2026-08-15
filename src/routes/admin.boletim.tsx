@@ -2,7 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import bulletinBg from "@/assets/bulletin-indicators-bg.jpg";
 import { AdminShell } from "@/components/AdminShell";
+import {
+  SOCIAL_IMAGE_FORMATS,
+  composeIndicatorsImage,
+  downloadDataUrl,
+  type IndicatorArtRow,
+  type SocialFormatKey,
+} from "@/lib/social-image";
 import {
   listBulletinSubscribers,
   previewBulletin,
@@ -34,7 +42,14 @@ function AdminBulletin() {
   const { segments } = useLanguage();
   const [rows, setRows] = useState<BulletinSubscriberRow[]>([]);
   const [segment, setSegment] = useState("Todos");
-  const [preview, setPreview] = useState<{ html: string; whatsapp: string } | null>(null);
+  const [preview, setPreview] = useState<{
+    html: string;
+    whatsapp: string;
+    dateLabel: string;
+    rows: IndicatorArtRow[];
+  } | null>(null);
+  const [art, setArt] = useState<"" | SocialFormatKey>("");
+  const [arts, setArts] = useState<Array<{ key: SocialFormatKey; dataUrl: string }>>([]);
   const [testEmail, setTestEmail] = useState("");
   const [testWhatsApp, setTestWhatsApp] = useState("");
   const [busy, setBusy] = useState(false);
@@ -55,7 +70,15 @@ function AdminBulletin() {
     setBusy(true);
     try {
       const r = await previewBulletin({ data: { segment: seg } });
-      if (r.ok) setPreview({ html: r.html, whatsapp: r.whatsapp });
+      if (r.ok) {
+        setPreview({
+          html: r.html,
+          whatsapp: r.whatsapp,
+          dateLabel: r.dateLabel,
+          rows: r.indicatorRows,
+        });
+        setArts([]);
+      }
     } catch {
       toast.error("Não foi possível gerar a pré-visualização.");
     } finally {
@@ -67,6 +90,30 @@ function AdminBulletin() {
     void loadPreview(segment);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [segment]);
+
+  /** Monta a arte dos indicadores no formato escolhido. */
+  async function makeArt(key: SocialFormatKey) {
+    if (!preview) return;
+    if (preview.rows.length === 0) {
+      toast.error("Não há indicadores publicados para este segmento.");
+      return;
+    }
+    setArt(key);
+    try {
+      const dataUrl = await composeIndicatorsImage(
+        bulletinBg,
+        key,
+        "Indicadores econômicos do Brasil",
+        `${segment === "Todos" ? "Todos os segmentos" : segment} · ${preview.dateLabel}`,
+        preview.rows,
+      );
+      setArts((prev) => [...prev.filter((a) => a.key !== key), { key, dataUrl }]);
+    } catch {
+      toast.error("Não foi possível gerar a imagem.");
+    } finally {
+      setArt("");
+    }
+  }
 
   const active = rows.filter((r) => r.status === "active");
   const field =
@@ -181,7 +228,23 @@ function AdminBulletin() {
 
           {preview && (
             <div className="rounded-lg border border-border bg-background p-6">
-              <h2 className="font-display text-lg font-bold">Mensagem de WhatsApp</h2>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h2 className="font-display text-lg font-bold">Mensagem para Redes Sociais</h2>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(preview.whatsapp);
+                      toast.success("Texto copiado. É só colar no WhatsApp.");
+                    } catch {
+                      toast.error("Não foi possível copiar o texto.");
+                    }
+                  }}
+                  className="rounded-md border border-accent px-3 py-1.5 text-xs font-semibold text-accent hover:bg-accent hover:text-accent-foreground"
+                >
+                  Copiar texto
+                </button>
+              </div>
               <pre className="mt-3 whitespace-pre-wrap rounded-md bg-secondary/60 p-4 text-xs text-foreground">
                 {preview.whatsapp}
               </pre>
@@ -189,8 +252,56 @@ function AdminBulletin() {
                 No WhatsApp o envio é uma imagem (logomarca do boletim) seguida desta mensagem, com
                 o link para parar de receber.
               </p>
+
+              <div className="mt-6 border-t border-border pt-5">
+                <h3 className="font-display text-base font-bold">Imagem com os indicadores</h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Gera a arte com os indicadores do segmento sobre um fundo com o tema de dados
+                  econômicos do Brasil. A cor do texto se ajusta ao brilho da imagem.
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {(["whatsapp", "instagram", "linkedin"] as SocialFormatKey[]).map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      disabled={art !== ""}
+                      onClick={() => void makeArt(key)}
+                      className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold hover:border-accent hover:text-accent disabled:opacity-50"
+                    >
+                      {art === key ? "Gerando…" : SOCIAL_IMAGE_FORMATS[key].label}
+                    </button>
+                  ))}
+                </div>
+                {arts.length > 0 && (
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                    {arts.map((a) => (
+                      <div key={a.key} className="rounded-md border border-border p-3">
+                        <img
+                          src={a.dataUrl}
+                          alt={`Indicadores do Boletim Semanal — ${SOCIAL_IMAGE_FORMATS[a.key].label}`}
+                          loading="lazy"
+                          className="w-full rounded"
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            downloadDataUrl(
+                              a.dataUrl,
+                              `boletim-indicadores-${a.key}.${SOCIAL_IMAGE_FORMATS[a.key].ext}`,
+                            )
+                          }
+                          className="mt-2 w-full rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-ink-foreground hover:bg-accent hover:text-accent-foreground"
+                        >
+                          Baixar {SOCIAL_IMAGE_FORMATS[a.key].label}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
+
         </div>
 
         <div className="rounded-lg border border-border bg-background p-4">

@@ -555,6 +555,8 @@ export type Database = {
           last_checked_at: string | null
           note: string
           position: number
+          previous_period: string
+          previous_value: string
           published: boolean
           reference_period: string
           region: string
@@ -577,6 +579,8 @@ export type Database = {
           last_checked_at?: string | null
           note?: string
           position?: number
+          previous_period?: string
+          previous_value?: string
           published?: boolean
           reference_period?: string
           region?: string
@@ -599,6 +603,8 @@ export type Database = {
           last_checked_at?: string | null
           note?: string
           position?: number
+          previous_period?: string
+          previous_value?: string
           published?: boolean
           reference_period?: string
           region?: string

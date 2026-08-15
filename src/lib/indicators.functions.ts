@@ -10,6 +10,8 @@ export type Indicator = {
   value: string;
   unit: string;
   reference_period: string;
+  previous_value: string;
+  previous_period: string;
   trend: string;
   note: string;
   source_name: string;
@@ -24,7 +26,7 @@ export type Indicator = {
 };
 
 const SELECT =
-  "id, slug, label, value, unit, reference_period, trend, note, source_name, source_url, position, published, segment, region, uf, last_checked_at, updated_at";
+  "id, slug, label, value, unit, reference_period, previous_value, previous_period, trend, note, source_name, source_url, position, published, segment, region, uf, last_checked_at, updated_at";
 
 /** Indicadores econômicos publicados (leitura pública do site). */
 export const listPublicIndicators = createServerFn({ method: "GET" }).handler(
@@ -64,6 +66,8 @@ const indicatorSchema = z.object({
   value: z.string().trim().max(60).default(""),
   unit: z.string().trim().max(40).default(""),
   reference_period: z.string().trim().max(60).default(""),
+  previous_value: z.string().trim().max(60).default(""),
+  previous_period: z.string().trim().max(60).default(""),
   trend: z.string().trim().max(40).default(""),
   note: z.string().trim().max(600).default(""),
   source_name: z.string().trim().max(160).default(""),
@@ -126,8 +130,15 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
 
     const { data: rows } = await context.supabase
       .from("economic_indicators")
-      .select("id, slug, label, unit");
-    const list = (rows ?? []) as Array<{ id: string; slug: string; label: string; unit: string }>;
+      .select("id, slug, label, unit, value, reference_period");
+    const list = (rows ?? []) as Array<{
+      id: string;
+      slug: string;
+      label: string;
+      unit: string;
+      value: string;
+      reference_period: string;
+    }>;
     if (list.length === 0) return { ok: false as const, error: "Nenhum indicador cadastrado." };
 
     type Out = {
@@ -176,6 +187,10 @@ export const refreshIndicatorsAI = createServerFn({ method: "POST" })
         const { error } = await context.supabase
           .from("economic_indicators")
           .update({
+            // guarda o dado anterior para a comparação do Boletim Semanal
+            ...(item.value && item.value !== target.value && target.value
+              ? { previous_value: target.value, previous_period: target.reference_period ?? "" }
+              : {}),
             value: item.value ?? "",
             unit: item.unit ?? target.unit,
             reference_period: item.reference_period ?? "",

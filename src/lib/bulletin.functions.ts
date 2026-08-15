@@ -191,6 +191,14 @@ export const previewBulletin = createServerFn({ method: "POST" })
       whatsapp: renderBulletinWhatsApp(content, url),
       dateLabel: content.dateLabel,
       indicators: content.indicators.length,
+      indicatorRows: content.indicators.map((i) => ({
+        label: i.label,
+        value: i.value,
+        unit: i.unit,
+        reference_period: i.reference_period,
+        previous_value: i.previous_value,
+        previous_period: i.previous_period,
+      })),
       articles: content.articles.length,
     };
   });
