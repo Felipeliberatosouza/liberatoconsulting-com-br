@@ -64,14 +64,33 @@ const LOCALE: Record<EmailLang, string> = {
 /** Trecho textual com a comparação (usado no texto puro e no WhatsApp). */
 function indicatorDeltaText(i: Indicator, lang: EmailLang) {
   const delta = compareIndicator(i.value, i.previous_value, i.unit, LOCALE[lang]);
-  if (delta.direction === "none") return "";
   const L = labelsFor(lang);
   const prev = i.previous_value
     ? ` | ${L.previousLabel}: ${i.previous_value}${i.unit}${
         i.previous_period ? ` (${i.previous_period})` : ""
       }`
     : "";
-  return `${prev} | ${delta.arrow} ${delta.label}`;
+  const change = delta.direction === "none" ? "" : ` | ${delta.arrow} ${delta.label}`;
+  const forecast = i.forecast_value
+    ? ` | ${L.forecastLabel}: ${i.forecast_value}${i.unit}${
+        i.forecast_period ? ` (${i.forecast_period})` : ""
+      }`
+    : "";
+  return `${prev}${change}${forecast}`;
+}
+
+/** Linha com a fonte do dado atual e da tendência (somente e-mail/texto). */
+function indicatorSourceText(i: Indicator, lang: EmailLang) {
+  const L = labelsFor(lang);
+  const parts: string[] = [];
+  if (i.source_name) parts.push(`${i.source_name}${i.source_url ? ` — ${i.source_url}` : ""}`);
+  if (i.forecast_source_name)
+    parts.push(
+      `${L.forecastLabel}: ${i.forecast_source_name}${
+        i.forecast_source_url ? ` — ${i.forecast_source_url}` : ""
+      }`,
+    );
+  return parts.length ? `  ${L.sourceLabel}: ${parts.join(" | ")}` : "";
 }
 
 export function siteOrigin() {
