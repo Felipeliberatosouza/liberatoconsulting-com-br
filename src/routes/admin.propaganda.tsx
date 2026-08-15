@@ -69,7 +69,10 @@ function AdPage() {
     setBusy("copy");
     const res = await generateAdCopy({ data: { service, topic, goal } });
     setBusy(null);
-    if (!res.ok) return toast.error(res.error);
+    if (!res.ok) {
+      toast.error(res.error);
+      return;
+    }
     setLines({ pt: res.pt, en: res.en, zh: res.zh, es: res.es });
     toast.success("Frases geradas nos quatro idiomas.");
   }
@@ -78,16 +81,25 @@ function AdPage() {
     setBusy("image");
     const res = await generateAdBackground({ data: { service, topic, goal } });
     setBusy(null);
-    if (!res.ok) return toast.error(res.error);
+    if (!res.ok) {
+      toast.error(res.error);
+      return;
+    }
     setBaseImage(res.imageUrl);
     setArts({});
     toast.success("Imagem de fundo gerada.");
   }
 
   async function compose() {
-    if (!baseImage) return toast.error("Gere primeiro a imagem de fundo.");
+    if (!baseImage) {
+      toast.error("Gere primeiro a imagem de fundo.");
+      return;
+    }
     const list = [lines.pt, lines.en, lines.zh, lines.es];
-    if (!list.some((l) => l.trim())) return toast.error("Gere ou escreva as frases.");
+    if (!list.some((l) => l.trim())) {
+      toast.error("Gere ou escreva as frases.");
+      return;
+    }
     setBusy("compose");
     try {
       const out: Partial<Record<SocialFormatKey, string>> = {};
