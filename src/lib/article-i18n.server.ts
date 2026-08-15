@@ -124,9 +124,14 @@ async function translateFileWithAi(
   if (!article.file_path) return null;
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin.storage.from("content").download(article.file_path);
-  if (error || !data) return null;
+  if (error || !data) {
+    console.error("[content i18n] download do PDF falhou", error?.message);
+    return null;
+  }
   const buf = Buffer.from(await data.arrayBuffer());
   if (buf.byteLength > 20_000_000) return null;
+  console.log("[content i18n] traduzindo PDF via IA", lang, buf.byteLength);
+
 
   const { askJsonWithFile } = await import("./ai.server");
   const out = await askJsonWithFile<{ body?: string }>(
