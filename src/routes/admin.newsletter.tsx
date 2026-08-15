@@ -31,6 +31,7 @@ import {
   generateNewsletterAI,
   generateNewsletterImage,
 } from "@/lib/newsletter-ai.functions";
+import { listArticles } from "@/lib/admin.functions";
 import { listAuthorOptions } from "@/lib/users.functions";
 import { useAuthReady } from "@/hooks/useAuthReady";
 
@@ -139,6 +140,14 @@ function AdminNewsletter() {
       setSocialBusy("");
     }
   };
+
+  // Conteúdos publicados disponíveis para gerar a newsletter automaticamente.
+  const publishedArticles = useQuery({
+    queryKey: ["nl-articles"],
+    queryFn: () => listArticles(),
+    retry: false,
+    enabled: authReady,
+  });
 
   const authorOptions = useQuery({
     queryKey: ["nl-authors"],
@@ -293,6 +302,44 @@ function AdminNewsletter() {
             }
           }}
         >
+          <div className="rounded-md border border-accent/40 bg-accent/5 p-4">
+            <label className={label} htmlFor="nl-from-article">
+              Usar conteúdo publicado
+            </label>
+            <select
+              id="nl-from-article"
+              className={input}
+              value=""
+              onChange={(e) => {
+                const a = (publishedArticles.data ?? []).find((x) => x.id === e.target.value);
+                if (!a) return;
+                setSubject(a.title);
+                setPreheader(a.summary.slice(0, 140));
+                setBody(a.body || a.summary);
+                setFullText(a.body || a.summary);
+                setAuthors(a.authors ?? "");
+                setAuthorContact(a.author_contact ?? "");
+                if (a.cover_url) setImageUrl(a.cover_url);
+                setLink(a.link_url || `https://liberatoconsulting.com.br/content/${a.slug}`);
+                setLinkTouched(true);
+                if (a.article_date) setReferenceDate(a.article_date);
+                toast.success("Campos preenchidos a partir do conteúdo publicado.");
+              }}
+            >
+              <option value="">Selecione um artigo publicado…</option>
+              {(publishedArticles.data ?? [])
+                .filter((a) => a.published)
+                .map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.title}
+                  </option>
+                ))}
+            </select>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Preenche assunto, texto, autores, e-mails, imagem e link a partir do artigo escolhido.
+            </p>
+          </div>
+
           <div>
             <label className={label} htmlFor="nl-title">Título da newsletter</label>
             <input id="nl-title" className={input} required value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Ex.: Como a IA está mudando a gestão no Brasil" />
