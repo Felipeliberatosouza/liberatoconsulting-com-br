@@ -150,7 +150,7 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
     };
   }
   // Sempre enviar pelo subdomínio verificado; o e-mail configurado vira reply-to.
-  const from = `${settings.fromName} <noreply@${SENDER_DOMAIN}>`;
+  const from = `${settings.fromName} <contato@${SENDER_DOMAIN}>`;
   const origin = process.env["PUBLIC_SITE_URL"] || "https://liberato.com";
   const company = await loadCompanyFooter(origin);
 

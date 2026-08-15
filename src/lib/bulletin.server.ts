@@ -289,7 +289,7 @@ export async function sendBulletinEmail(params: {
   if (!settings.fromEmail) {
     throw new Error("Configure o e-mail remetente em Newsletter → Configurações.");
   }
-  const from = `${settings.fromName} <noreply@${SENDER_DOMAIN}>`;
+  const from = `${settings.fromName} <contato@${SENDER_DOMAIN}>`;
   return sendLovableEmail(
     {
       to: params.to,
