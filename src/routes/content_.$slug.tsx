@@ -18,7 +18,7 @@ import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { articleSchema, breadcrumb, jsonLd } from "@/lib/schema";
 import { getPublishedNewsletter } from "@/lib/newsletter-public.functions";
 
-export const Route = createFileRoute("/content/$slug")({
+export const Route = createFileRoute("/content_/$slug")({
   /** Endereços antigos de newsletter (/content/...) seguem para a página da newsletter. */
   loader: async ({ params }) => {
     const article = await getPublicArticle({ data: { slug: params.slug } }).catch(() => null);
