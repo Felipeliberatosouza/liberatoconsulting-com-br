@@ -45,6 +45,63 @@ export const listPublicIndicators = createServerFn({ method: "GET" }).handler(
   },
 );
 
+/** Indicadores publicados já traduzidos para o idioma do visitante. */
+export const listPublicIndicatorsI18n = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z.object({ lang: z.enum(["pt", "en", "es", "zh"]).default("pt") }).parse(d),
+  )
+  .handler(async ({ data }): Promise<Indicator[]> => {
+    const { publicClient } = await import("./admin.server");
+    const { data: rows } = await publicClient()
+      .from("economic_indicators")
+      .select(SELECT)
+      .eq("published", true)
+      .order("position", { ascending: true });
+    const list = (rows ?? []) as Indicator[];
+    if (data.lang === "pt" || list.length === 0) return list;
+
+    type Translatable = {
+      id: string;
+      label: string;
+      unit: string;
+      reference_period: string;
+      previous_period: string;
+      forecast_period: string;
+      trend: string;
+      note: string;
+      source_name: string;
+      forecast_source_name: string;
+    };
+    const source: Translatable[] = list.map((i) => ({
+      id: i.id,
+      label: i.label ?? "",
+      unit: i.unit ?? "",
+      reference_period: i.reference_period ?? "",
+      previous_period: i.previous_period ?? "",
+      forecast_period: i.forecast_period ?? "",
+      trend: i.trend ?? "",
+      note: i.note ?? "",
+      source_name: i.source_name ?? "",
+      forecast_source_name: i.forecast_source_name ?? "",
+    }));
+
+    try {
+      const { translateContent } = await import("./ai-translate.server");
+      const cacheKey = `public-indicators:${list
+        .map((i) => `${i.id}@${i.updated_at}`)
+        .join("|")}`;
+      const translated = await translateContent(cacheKey, data.lang, source);
+      const map = new Map(translated.map((t) => [t.id, t]));
+      return list.map((i) => {
+        const t = map.get(i.id);
+        return t ? { ...i, ...t, id: i.id } : i;
+      });
+    } catch {
+      return list;
+    }
+  });
+
+
 export const listIndicators = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<Indicator[]> => {
