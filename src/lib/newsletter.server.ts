@@ -120,6 +120,8 @@ export async function sendNewsletterEmail(params: {
 /** Envia uma campanha para todos os inscritos ativos (ou para um e-mail de teste). */
 export async function dispatchCampaign(campaignId: string, testEmail?: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  // Chave única por tentativa de disparo: reenvios após falha não colidem (HTTP 409).
+  const runId = crypto.randomUUID().slice(0, 8);
 
   const { data: campaign } = await supabaseAdmin
     .from("newsletter_campaigns")
