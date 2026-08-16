@@ -341,6 +341,9 @@ export const dict: Dict = {
         "url": "https://apexbrasil.com.br"
       }
     ],
+    "topic": {
+      "loading": "Gathering updated data from official Brazilian sources…"
+    },
     "sections": [
       {
         "id": "panorama-economico",
