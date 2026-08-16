@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
+import { AuthorPicker } from "@/components/AuthorPicker";
+
 import { getSiteConfig, saveBrazilSection } from "@/lib/admin.functions";
 import { generateBrazilSectionAI } from "@/lib/indicators.functions";
 import type { BrazilOverrides } from "@/lib/site-config";
