@@ -67,7 +67,7 @@ function SubmitArticlePage() {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const successRef = useRef<HTMLDivElement>(null);
-  const { validate, fieldProps, errorClass } = useFieldErrors();
+  const { validate, fieldProps } = useFieldErrors();
 
   const services = groups.flatMap((g) => g.items.map((i) => ({ id: i.id, label: i.label })));
 
