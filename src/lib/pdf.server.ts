@@ -469,12 +469,13 @@ export async function buildBrandedPdf(input: PdfDocInput): Promise<Uint8Array> {
 
   /* --------------------------------- capa --------------------------------- */
 
+  const L = PDF_LABELS[input.lang ?? "pt"];
   write(input.title, 20, true, 6);
-  if (input.authors) write(`Por ${input.authors}`, 11, true, 4, 0, rgb(0.35, 0.37, 0.42));
+  if (input.authors) write(`${L.by} ${input.authors}`, 11, true, 4, 0, rgb(0.35, 0.37, 0.42));
   if (input.subtitle) write(input.subtitle, 11, false, 4);
   const meta: string[] = [];
-  if (input.authorContact) meta.push(`Contato: ${input.authorContact}`);
-  meta.push(`Atualizado em: ${input.referenceDate ?? new Date().toLocaleDateString("pt-BR")}`);
+  if (input.authorContact) meta.push(`${L.contact}: ${input.authorContact}`);
+  meta.push(`${L.updated}: ${input.referenceDate ?? new Date().toLocaleDateString(L.locale)}`);
   write(meta.join("  |  "), 9, false, 10);
 
   if (cover) {
