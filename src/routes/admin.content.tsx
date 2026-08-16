@@ -168,11 +168,18 @@ function AdminContent() {
     void refresh();
   }, [authReady]);
 
-  // O link externo acompanha o título (ou o slug informado) até ser editado manualmente.
+  // O link acompanha o título (ou o slug) enquanto não for editado manualmente.
+  // Também é regerado sempre que o campo estiver vazio, mesmo após uma edição anterior.
   useEffect(() => {
-    if (!linkTouched)
-      setDraft((d) => ({ ...d, link_url: contentLink(d.slug || slugify(d.title)) }));
+    const auto = contentLink(draft.slug || slugify(draft.title));
+    if (!auto) return;
+    setDraft((d) => {
+      const keepManual = linkTouched && d.link_url.trim() !== "";
+      if (keepManual || d.link_url === auto) return d;
+      return { ...d, link_url: auto };
+    });
   }, [draft.slug, draft.title, linkTouched]);
+
 
   const words = countWords(draft.body);
   const overLimit = words > 500;
