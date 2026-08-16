@@ -5,6 +5,7 @@ import { useRouterState } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n";
 import { trackEvent } from "@/lib/gtag";
 import { subscribeNewsletter } from "@/lib/newsletter.functions";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 
 export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | "page" }) {
@@ -16,6 +17,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
   const [website, setWebsite] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
+  const { validate, errorClass } = useFieldErrors();
 
   const dark = variant === "footer";
 
@@ -36,6 +38,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
         className={`${done ? "mt-3" : ""} flex w-full flex-col gap-2 sm:flex-row`}
         onSubmit={async (e) => {
           e.preventDefault();
+          if (!validate({ email })) return;
           setBusy(true);
           try {
             const r = await subscribeNewsletter({
@@ -78,7 +81,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
             setDone(false);
           }}
           placeholder={tn.emailPlaceholder}
-          className={`${inputBase} ${inputVariant}`}
+          className={`${inputBase} ${inputVariant}${errorClass("email", email)}`}
         />
         <button
           type="submit"
