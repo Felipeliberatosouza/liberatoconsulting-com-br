@@ -169,6 +169,9 @@ export const pt = {
       { label: "Receita Federal", url: "https://www.gov.br/receitafederal" },
       { label: "ApexBrasil — atração de investimentos", url: "https://apexbrasil.com.br" },
     ],
+    topic: {
+      loading: "Reunindo dados atualizados em fontes oficiais brasileiras…",
+    },
     sections: [
       {
         id: "panorama-economico",

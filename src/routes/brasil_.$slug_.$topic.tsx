@@ -114,7 +114,7 @@ function BrazilTopicPage() {
         <div className="mx-auto max-w-4xl px-6">
           {content.isPending && (
             <p className="text-sm text-muted-foreground">
-              Reunindo dados atualizados em fontes oficiais brasileiras…
+              {b.topic.loading}
             </p>
           )}
 
