@@ -38,6 +38,7 @@ import {
   listBulletinSubscribers,
   unsubscribeBulletinByAdmin,
 } from "@/lib/bulletin.functions";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 export const Route = createFileRoute("/admin/users")({
   head: () => ({
@@ -115,6 +116,7 @@ function Field({
   hint,
   onBlur,
   disabled,
+  missing,
 }: {
   label: string;
   value: string;
@@ -126,6 +128,7 @@ function Field({
   hint?: string | undefined;
   onBlur?: (() => void) | undefined;
   disabled?: boolean | undefined;
+  missing?: boolean | undefined;
 }) {
   return (
     <label className="block text-xs font-medium text-muted-foreground">
@@ -139,11 +142,13 @@ function Field({
         onBlur={onBlur}
         onChange={(e) => onChange(e.target.value)}
         className={`mt-1 ${input} ${
-          error ? "border-destructive" : valid ? "border-emerald-500" : ""
+          error || missing ? "border-destructive" : valid ? "border-emerald-500" : ""
         } ${disabled ? "opacity-70" : ""}`}
       />
-      {error ? (
-        <span className="mt-1 block text-[11px] font-normal text-destructive">{error}</span>
+      {error || missing ? (
+        <span className="mt-1 block text-[11px] font-normal text-destructive">
+          {error ?? "Campo obrigatório."}
+        </span>
       ) : hint ? (
         <span className="mt-1 block text-[11px] font-normal text-muted-foreground">{hint}</span>
       ) : null}
@@ -336,6 +341,8 @@ function TeamTab() {
     }
   };
 
+  const { validate, hasError } = useFieldErrors();
+
   const startEdit = (row: TeamRow) => {
     setEditing(true);
     setForm({
@@ -356,6 +363,20 @@ function TeamTab() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const requiredFields: Record<string, unknown> = {
+      full_name: form.full_name,
+      email: form.email,
+      cpf: form.cpf,
+      birth_date: form.birth_date,
+      phone: form.phone,
+      address_zip: form.address_zip,
+      address_number: form.address_number,
+      bank_name: form.bank_name,
+      bank_branch: form.bank_branch,
+      bank_account: form.bank_account,
+    };
+    if (!editing) requiredFields["password"] = form.password;
+    if (!validate(requiredFields)) return;
     if (!emailOk) {
       toast.error("Informe um e-mail válido.");
       return;
@@ -409,7 +430,7 @@ function TeamTab() {
 
   return (
     <div className="space-y-8">
-      <form onSubmit={submit} className="rounded-lg border border-border bg-background p-6">
+      <form onSubmit={submit} noValidate className="rounded-lg border border-border bg-background p-6">
         <h2 className="font-display text-lg font-bold">
           {editing ? "Editar membro da equipe" : "Novo cadastro com acesso"}
         </h2>
@@ -438,6 +459,7 @@ function TeamTab() {
             value={form.full_name}
             onChange={(v) => set("full_name", v)}
             required
+            missing={hasError("full_name", form.full_name)}
           />
           <Field
             label="E-mail"
@@ -447,6 +469,7 @@ function TeamTab() {
             required
             valid={emailOk}
             error={form.email && !emailOk ? "E-mail inválido." : undefined}
+            missing={hasError("email", form.email)}
           />
           <Field
             label="CPF"
@@ -456,6 +479,7 @@ function TeamTab() {
             valid={cpfOk}
             error={form.cpf && !cpfOk ? "CPF inválido." : undefined}
             hint="000.000.000-00"
+            missing={hasError("cpf", form.cpf)}
           />
           <Field
             label="Data de nascimento"
@@ -463,6 +487,7 @@ function TeamTab() {
             value={form.birth_date}
             onChange={(v) => set("birth_date", v)}
             required
+            missing={hasError("birth_date", form.birth_date)}
           />
           <Field
             label="Celular"
@@ -471,6 +496,7 @@ function TeamTab() {
             valid={Boolean(form.phone) && phoneOk}
             error={form.phone && !phoneOk ? "Celular inválido." : undefined}
             hint="(11) 91234-5678"
+            missing={hasError("phone", form.phone)}
           />
         </div>
 
@@ -485,7 +511,13 @@ function TeamTab() {
                   value={form.password}
                   onChange={(e) => set("password", e.target.value)}
                   className={`${input} pr-16 ${
-                    form.password ? (passwordOk ? "border-emerald-500" : "border-destructive") : ""
+                    form.password
+                      ? passwordOk
+                        ? "border-emerald-500"
+                        : "border-destructive"
+                      : hasError("password", form.password)
+                        ? "border-destructive"
+                        : ""
                   }`}
                 />
                 <button
@@ -535,6 +567,7 @@ function TeamTab() {
             valid={cepOk}
             error={form.address_zip && !cepOk ? "CEP inválido." : undefined}
             hint={cepBusy ? "buscando endereço…" : "00000-000 — preenche o endereço automaticamente"}
+            missing={hasError("address_zip", form.address_zip)}
           />
           <Field label="Rua" value={form.address_street} onChange={(v) => set("address_street", v)} />
           <Field
@@ -542,6 +575,7 @@ function TeamTab() {
             value={form.address_number}
             onChange={(v) => set("address_number", v)}
             required
+            missing={hasError("address_number", form.address_number)}
           />
           <Field
             label="Complemento"
@@ -564,18 +598,22 @@ function TeamTab() {
 
         <h3 className="mt-6 text-sm font-semibold">Dados bancários</h3>
         <div className="mt-2 grid gap-4 md:grid-cols-3">
-          <Field label="Banco" value={form.bank_name} onChange={(v) => set("bank_name", v)} required />
+          <Field label="Banco" value={form.bank_name} onChange={(v) => set("bank_name", v)} required
+            missing={hasError("bank_name", form.bank_name)}
+          />
           <Field
             label="Agência"
             value={form.bank_branch}
             onChange={(v) => set("bank_branch", v)}
             required
+            missing={hasError("bank_branch", form.bank_branch)}
           />
           <Field
             label="Conta"
             value={form.bank_account}
             onChange={(v) => set("bank_account", v)}
             required
+            missing={hasError("bank_account", form.bank_account)}
           />
           <Field label="Chave PIX" value={form.pix_key} onChange={(v) => set("pix_key", v)} />
         </div>

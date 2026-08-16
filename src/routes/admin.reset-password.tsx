@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 export const Route = createFileRoute("/admin/reset-password")({
   head: () => ({
@@ -25,6 +26,7 @@ function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
+  const { validate, errorClass } = useFieldErrors();
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
@@ -38,6 +40,7 @@ function ResetPassword() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!validate({ password, confirm })) return;
     if (password !== confirm) {
       toast.error("As senhas não coincidem.");
       return;
@@ -60,6 +63,7 @@ function ResetPassword() {
     <div className="flex min-h-screen items-center justify-center bg-secondary/40 px-6 py-20">
       <form
         onSubmit={onSubmit}
+        noValidate
         className="w-full max-w-sm rounded-lg border border-border bg-background p-8"
       >
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Liberato</p>
@@ -78,7 +82,7 @@ function ResetPassword() {
             minLength={8}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+            className={`mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent${errorClass("password", password)}`}
           />
         </label>
         <label className="mt-4 block text-sm font-medium">
@@ -89,7 +93,7 @@ function ResetPassword() {
             minLength={8}
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+            className={`mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent${errorClass("confirm", confirm)}`}
           />
         </label>
 

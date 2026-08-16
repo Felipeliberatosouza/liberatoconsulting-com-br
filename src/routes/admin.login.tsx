@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { adminExists, bootstrapAdmin } from "@/lib/admin.functions";
 import { getPanelSession } from "@/lib/users.functions";
 import { useLanguage } from "@/i18n";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 export const Route = createFileRoute("/admin/login")({
   head: () => ({
@@ -32,6 +33,7 @@ function AdminLogin() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
+  const { validate, errorClass } = useFieldErrors();
 
   useEffect(() => {
     adminExists()
@@ -41,6 +43,9 @@ function AdminLogin() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const required: Record<string, unknown> = { email };
+    if (mode !== "forgot") required["password"] = password;
+    if (!validate(required)) return;
     setBusy(true);
     try {
       if (mode === "forgot") {
@@ -102,6 +107,7 @@ function AdminLogin() {
     <div className="flex min-h-screen items-center justify-center bg-secondary/40 px-6 py-20">
       <form
         onSubmit={onSubmit}
+        noValidate
         className="w-full max-w-sm rounded-lg border border-border bg-background p-8"
       >
         <img src={logoUrl} alt="Liberato Consulting" className="h-11 w-auto" />
@@ -127,7 +133,7 @@ function AdminLogin() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+            className={`mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent${errorClass("email", email)}`}
           />
         </label>
         {mode !== "forgot" && (
@@ -139,7 +145,7 @@ function AdminLogin() {
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+              className={`mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent${errorClass("password", password)}`}
             />
           </label>
         )}

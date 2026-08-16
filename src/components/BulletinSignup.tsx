@@ -6,6 +6,7 @@ import { Mail, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/i18n";
 import { trackEvent } from "@/lib/gtag";
 import { subscribeBulletin } from "@/lib/bulletin.functions";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 
 /** Chamada para o Boletim Semanal (Dados do Brasil e Conteúdo). */
@@ -24,6 +25,7 @@ export function BulletinSignup() {
   const [website, setWebsite] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
+  const { validate, errorClass } = useFieldErrors();
 
   const field =
     "mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
@@ -49,9 +51,11 @@ export function BulletinSignup() {
         </p>
       ) : (
         <form
+          noValidate
           className="mt-6 grid gap-4 md:grid-cols-2"
           onSubmit={async (e) => {
             e.preventDefault();
+            if (!validate({ fullName, company, email })) return;
             if (!viaEmail && !viaWhatsApp) {
               toast.error(tb.chooseChannel);
               return;
@@ -101,7 +105,7 @@ export function BulletinSignup() {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className={field}
+              className={`${field}${errorClass("fullName", fullName)}`}
             />
           </label>
 
@@ -111,7 +115,7 @@ export function BulletinSignup() {
               required
               value={company}
               onChange={(e) => setCompany(e.target.value)}
-              className={field}
+              className={`${field}${errorClass("company", company)}`}
             />
           </label>
 
@@ -123,7 +127,7 @@ export function BulletinSignup() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={tb.emailPlaceholder}
-              className={field}
+              className={`${field}${errorClass("email", email)}`}
             />
           </label>
 

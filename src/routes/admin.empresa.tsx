@@ -15,6 +15,7 @@ import {
 } from "@/lib/company.functions";
 import { getSegments, saveSegments } from "@/lib/admin.functions";
 import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 export const Route = createFileRoute("/admin/empresa")({
   head: () => ({
@@ -41,6 +42,7 @@ function CompanyPage() {
   const q = useQuery({ queryKey: ["company"], queryFn: () => getCompany(), retry: false });
   const [form, setForm] = useState<CompanyProfile | null>(null);
   const [busy, setBusy] = useState(false);
+  const { validate, errorClass } = useFieldErrors();
 
   useEffect(() => {
     if (q.data) setForm(q.data);
@@ -70,9 +72,26 @@ function CompanyPage() {
       description="Informações cadastrais usadas em contratos, PDFs da newsletter e documentos institucionais."
     >
       <form
+        noValidate
         className="rounded-lg border border-border bg-background p-6"
         onSubmit={async (e) => {
           e.preventDefault();
+          if (
+            !validate({
+              legal_name: form.legal_name,
+              cnpj: form.cnpj,
+              address_street: form.address_street,
+              address_number: form.address_number,
+              address_district: form.address_district,
+              address_city: form.address_city,
+              address_state: form.address_state,
+              address_zip: form.address_zip,
+              address_country: form.address_country,
+              email: form.email,
+              phone: form.phone,
+            })
+          )
+            return;
           setBusy(true);
           try {
             const r = await saveCompany({ data: form });
@@ -89,22 +108,22 @@ function CompanyPage() {
         }}
       >
         <div className="grid gap-4 md:grid-cols-3">
-          <L label="Razão social"><input required value={form.legal_name} onChange={(e) => set("legal_name", e.target.value)} className={input} /></L>
+          <L label="Razão social"><input required value={form.legal_name} onChange={(e) => set("legal_name", e.target.value)} className={`${input}${errorClass("legal_name", form.legal_name)}`} /></L>
           <L label="Nome fantasia"><input value={form.trade_name} onChange={(e) => set("trade_name", e.target.value)} className={input} /></L>
-          <L label="CNPJ"><input value={form.cnpj} onChange={(e) => set("cnpj", e.target.value)} className={input} /></L>
+          <L label="CNPJ"><input value={form.cnpj} onChange={(e) => set("cnpj", e.target.value)} className={`${input}${errorClass("cnpj", form.cnpj)}`} /></L>
           <L label="Inscrição estadual"><input value={form.state_registration} onChange={(e) => set("state_registration", e.target.value)} className={input} /></L>
           <L label="Inscrição municipal"><input value={form.municipal_registration} onChange={(e) => set("municipal_registration", e.target.value)} className={input} /></L>
           <L label="Data de fundação"><input type="date" value={form.founded_on ?? ""} onChange={(e) => set("founded_on", e.target.value)} className={input} /></L>
-          <L label="Rua"><input value={form.address_street} onChange={(e) => set("address_street", e.target.value)} className={input} /></L>
-          <L label="Número"><input value={form.address_number} onChange={(e) => set("address_number", e.target.value)} className={input} /></L>
+          <L label="Rua"><input value={form.address_street} onChange={(e) => set("address_street", e.target.value)} className={`${input}${errorClass("address_street", form.address_street)}`} /></L>
+          <L label="Número"><input value={form.address_number} onChange={(e) => set("address_number", e.target.value)} className={`${input}${errorClass("address_number", form.address_number)}`} /></L>
           <L label="Complemento"><input value={form.address_complement} onChange={(e) => set("address_complement", e.target.value)} className={input} /></L>
-          <L label="Bairro"><input value={form.address_district} onChange={(e) => set("address_district", e.target.value)} className={input} /></L>
-          <L label="Cidade"><input value={form.address_city} onChange={(e) => set("address_city", e.target.value)} className={input} /></L>
-          <L label="Estado"><input value={form.address_state} onChange={(e) => set("address_state", e.target.value)} className={input} /></L>
-          <L label="CEP"><input value={form.address_zip} onChange={(e) => set("address_zip", e.target.value)} className={input} /></L>
-          <L label="País"><input value={form.address_country} onChange={(e) => set("address_country", e.target.value)} className={input} /></L>
-          <L label="E-mail institucional"><input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} className={input} /></L>
-          <L label="Telefone"><input value={form.phone} onChange={(e) => set("phone", e.target.value)} className={input} /></L>
+          <L label="Bairro"><input value={form.address_district} onChange={(e) => set("address_district", e.target.value)} className={`${input}${errorClass("address_district", form.address_district)}`} /></L>
+          <L label="Cidade"><input value={form.address_city} onChange={(e) => set("address_city", e.target.value)} className={`${input}${errorClass("address_city", form.address_city)}`} /></L>
+          <L label="Estado"><input value={form.address_state} onChange={(e) => set("address_state", e.target.value)} className={`${input}${errorClass("address_state", form.address_state)}`} /></L>
+          <L label="CEP"><input value={form.address_zip} onChange={(e) => set("address_zip", e.target.value)} className={`${input}${errorClass("address_zip", form.address_zip)}`} /></L>
+          <L label="País"><input value={form.address_country} onChange={(e) => set("address_country", e.target.value)} className={`${input}${errorClass("address_country", form.address_country)}`} /></L>
+          <L label="E-mail institucional"><input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} className={`${input}${errorClass("email", form.email)}`} /></L>
+          <L label="Telefone"><input value={form.phone} onChange={(e) => set("phone", e.target.value)} className={`${input}${errorClass("phone", form.phone)}`} /></L>
           <L label="Site"><input value={form.website} onChange={(e) => set("website", e.target.value)} className={input} /></L>
         </div>
 

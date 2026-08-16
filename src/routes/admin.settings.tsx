@@ -15,6 +15,7 @@ import {
   saveLogo,
   saveWhatsApp,
 } from "@/lib/admin.functions";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 export const Route = createFileRoute("/admin/settings")({
   head: () => ({
@@ -151,6 +152,7 @@ function ContactsBlock() {
   const [email, setEmail] = useState("");
   const [number, setNumber] = useState("");
   const [busy, setBusy] = useState(false);
+  const { validate, errorClass } = useFieldErrors();
 
   useEffect(() => {
     if (alert.data?.email) setEmail(alert.data.email);
@@ -162,9 +164,11 @@ function ContactsBlock() {
   return (
     <div className="mt-10 grid gap-6 md:grid-cols-2">
       <form
+        noValidate
         className="rounded-lg border border-border bg-background p-6"
         onSubmit={async (e) => {
           e.preventDefault();
+          if (!validate({ email })) return;
           setBusy(true);
           const r = await saveAlertEmail({ data: { email } });
           setBusy(false);
@@ -181,7 +185,7 @@ function ContactsBlock() {
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className={`mt-4 ${input}`}
+          className={`mt-4 ${input}${errorClass("email", email)}`}
         />
         <button
           disabled={busy}
