@@ -442,6 +442,7 @@ function AdminContent() {
           >
             1. Artigo completo para download (PDF ou DOC, até 10 MB) *
             <input
+              key={fileKey}
               type="file"
               accept=".pdf,.doc,.docx,.rtf,.odt"
               onChange={(e) => {
