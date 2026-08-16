@@ -255,8 +255,8 @@ export async function ensureTranslatedPdf(
       }
     : ((withTr.translations?.[fileLang] ?? {}) as Record<string, string>);
   // Só reaproveitamos o PDF salvo se ele já foi gerado a partir da íntegra do documento.
-  // A versão (v2) invalida PDFs antigos com rótulos fixos em português.
-  const fileKey = `${fileLang}-v2`;
+  // A versão (v3) invalida PDFs antigos sem aviso de propriedade intelectual.
+  const fileKey = `${fileLang}-v3`;
   const hasFullDoc = Boolean(tr["doc_body"]?.trim()) || !article.file_path;
   if (stored[fileKey]?.path && hasFullDoc) return stored[fileKey]!;
   if (!tr["title"]) return original;
@@ -312,7 +312,7 @@ export async function ensureTranslatedPdf(
     });
 
     const name = `${camel(tr["title"]!, 60) || "Article"}_${fileLang.toUpperCase()}_${camel(companyName, 40)}.pdf`;
-    const path = `articles/${article.slug}-${fileLang}-v2.pdf`;
+    const path = `articles/${article.slug}-${fileLang}-v3.pdf`;
     const { error } = await supabaseAdmin.storage
       .from("content")
       .upload(path, bytes, { contentType: "application/pdf", upsert: true });
