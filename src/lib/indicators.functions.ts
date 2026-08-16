@@ -350,16 +350,25 @@ export const generateBrazilSectionAI = createServerFn({ method: "POST" })
     try {
       const out = await askJson<Out>(
         "Você é pesquisador sênior em economia brasileira e escreve para investidores " +
-          "internacionais. Padrão acadêmico: afirmações apoiadas em dados, com fonte e ano. " +
+          "internacionais. Padrão acadêmico: toda afirmação relevante vem com a fonte e o ano " +
+          "citados dentro do próprio texto, no formato (Instituição, ano). " +
+          "Use preferencialmente fontes oficiais brasileiras (IBGE, Banco Central do Brasil, " +
+          "IPEA, Ministério da Fazenda, MDIC/Comex Stat, Receita Federal, ANP, ANEEL, EPE, " +
+          "CONAB, EMBRAPA e demais sites .gov.br) e instituições acadêmicas brasileiras " +
+          "(USP, FGV, Unicamp, UFRJ). Não invente dados nem links. " +
           "Português do Brasil, tom institucional, sem exageros de marketing.",
         JSON.stringify({
           tema: data.topic,
           instrucoes: data.hint,
           formato: {
             title: "título curto",
-            body: "3 a 5 parágrafos, até 2500 caracteres",
-            bullets: ["4 a 6 dados-chave curtos, cada um com fonte e ano"],
-            sources: ["referências no padrão: Instituição (ano). Título. URL"],
+            body: "3 a 5 parágrafos, até 2500 caracteres, com fontes citadas no texto",
+            bullets: [
+              "4 a 6 dados-chave curtos, cada um com fonte e ano; cada item vira uma página própria de detalhamento",
+            ],
+            sources: [
+              "referências no padrão: Instituição (ano). Título. URL (prefira domínios .gov.br ou acadêmicos)",
+            ],
           },
         }),
       );
