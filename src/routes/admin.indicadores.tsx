@@ -22,6 +22,7 @@ import {
   REGIONS,
   statesForRegion,
 } from "@/lib/audience-filters";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 export const Route = createFileRoute("/admin/indicadores")({
   head: () => ({
@@ -188,9 +189,11 @@ function IndicatorsPage() {
 
 
       <form
+        noValidate
         className="mt-8 rounded-lg border border-border bg-background p-6"
         onSubmit={async (e) => {
           e.preventDefault();
+          if (!validate({ slug: form.slug, label: form.label, value: form.value })) return;
           setBusy(true);
           try {
             const r = await saveIndicator({ data: form });
@@ -222,7 +225,7 @@ function IndicatorsPage() {
               value={form.slug}
               onChange={(e) => set("slug", e.target.value)}
               placeholder="pib-variacao"
-              className={`mt-1 ${input}`}
+              className={`mt-1 ${input}${errorClass("slug", form.slug)}`}
             />
           </label>
           <label className="text-xs font-medium text-muted-foreground md:col-span-2">
@@ -232,12 +235,12 @@ function IndicatorsPage() {
               value={form.label}
               onChange={(e) => set("label", e.target.value)}
               placeholder="Crescimento do PIB"
-              className={`mt-1 ${input}`}
+              className={`mt-1 ${input}${errorClass("label", form.label)}`}
             />
           </label>
           <label className="text-xs font-medium text-muted-foreground">
             Valor
-            <input value={form.value} onChange={(e) => set("value", e.target.value)} className={`mt-1 ${input}`} />
+            <input value={form.value} onChange={(e) => set("value", e.target.value)} className={`mt-1 ${input}${errorClass("value", form.value)}`} />
           </label>
           <label className="text-xs font-medium text-muted-foreground">
             Unidade
