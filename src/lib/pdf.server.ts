@@ -509,7 +509,7 @@ export async function buildBrandedPdf(input: PdfDocInput): Promise<Uint8Array> {
 
   if (input.sources?.trim()) {
     y -= 6;
-    write("Fontes", 13, true, 4);
+    write(L.sources, 13, true, 4);
     write(input.sources, 9, false, 4);
   }
 
