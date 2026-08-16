@@ -122,6 +122,48 @@ export type Database = {
         }
         Relationships: []
       }
+      brazil_topic_content: {
+        Row: {
+          body: string
+          bullets: Json
+          created_at: string
+          id: string
+          lang: string
+          section_id: string
+          sources: Json
+          title: string
+          topic_index: number
+          topic_label: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          bullets?: Json
+          created_at?: string
+          id?: string
+          lang?: string
+          section_id: string
+          sources?: Json
+          title?: string
+          topic_index: number
+          topic_label?: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          bullets?: Json
+          created_at?: string
+          id?: string
+          lang?: string
+          section_id?: string
+          sources?: Json
+          title?: string
+          topic_index?: number
+          topic_label?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bulletin_dispatches: {
         Row: {
           body_html: string

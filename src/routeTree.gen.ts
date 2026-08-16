@@ -55,6 +55,7 @@ import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as ApiPublicBulletinWeeklyRouteImport } from './routes/api/public/bulletin-weekly'
 import { Route as ApiPublicNewsletterWeeklyRouteImport } from './routes/api/public/newsletter-weekly'
+import { Route as BrasilSlugTopicRouteImport } from './routes/brasil_.$slug_.$topic'
 import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
 import { Route as ApiPublicNewsletterImageSlugRouteImport } from './routes/api/public/newsletter-image.$slug'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -290,6 +291,11 @@ const ApiPublicNewsletterWeeklyRoute =
     path: '/api/public/newsletter-weekly',
     getParentRoute: () => rootRouteImport,
   } as any)
+const BrasilSlugTopicRoute = BrasilSlugTopicRouteImport.update({
+  id: '/brasil_/$slug_/$topic',
+  path: '/brasil/$slug/$topic',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailEventsRoute = LovableEmailEventsRouteImport.update({
   id: '/lovable/email/events',
   path: '/lovable/email/events',
@@ -355,6 +361,7 @@ export interface FileRoutesByFullPath {
   '/services/': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
+  '/brasil/$slug/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -406,6 +413,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
+  '/brasil/$slug/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -458,6 +466,7 @@ export interface FileRoutesById {
   '/services/': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
+  '/brasil_/$slug_/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -511,6 +520,7 @@ export interface FileRouteTypes {
     | '/services/'
     | '/api/public/bulletin-weekly'
     | '/api/public/newsletter-weekly'
+    | '/brasil/$slug/$topic'
     | '/lovable/email/events'
     | '/api/public/newsletter-image/$slug'
     | '/lovable/email/transactional/preview'
@@ -562,6 +572,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/api/public/bulletin-weekly'
     | '/api/public/newsletter-weekly'
+    | '/brasil/$slug/$topic'
     | '/lovable/email/events'
     | '/api/public/newsletter-image/$slug'
     | '/lovable/email/transactional/preview'
@@ -613,6 +624,7 @@ export interface FileRouteTypes {
     | '/services/'
     | '/api/public/bulletin-weekly'
     | '/api/public/newsletter-weekly'
+    | '/brasil_/$slug_/$topic'
     | '/lovable/email/events'
     | '/api/public/newsletter-image/$slug'
     | '/lovable/email/transactional/preview'
@@ -665,6 +677,7 @@ export interface RootRouteChildren {
   ServicesIndexRoute: typeof ServicesIndexRoute
   ApiPublicBulletinWeeklyRoute: typeof ApiPublicBulletinWeeklyRoute
   ApiPublicNewsletterWeeklyRoute: typeof ApiPublicNewsletterWeeklyRoute
+  BrasilSlugTopicRoute: typeof BrasilSlugTopicRoute
   LovableEmailEventsRoute: typeof LovableEmailEventsRoute
   ApiPublicNewsletterImageSlugRoute: typeof ApiPublicNewsletterImageSlugRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -994,6 +1007,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicNewsletterWeeklyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/brasil_/$slug_/$topic': {
+      id: '/brasil_/$slug_/$topic'
+      path: '/brasil/$slug/$topic'
+      fullPath: '/brasil/$slug/$topic'
+      preLoaderRoute: typeof BrasilSlugTopicRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/events': {
       id: '/lovable/email/events'
       path: '/lovable/email/events'
@@ -1065,6 +1085,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesIndexRoute: ServicesIndexRoute,
   ApiPublicBulletinWeeklyRoute: ApiPublicBulletinWeeklyRoute,
   ApiPublicNewsletterWeeklyRoute: ApiPublicNewsletterWeeklyRoute,
+  BrasilSlugTopicRoute: BrasilSlugTopicRoute,
   LovableEmailEventsRoute: LovableEmailEventsRoute,
   ApiPublicNewsletterImageSlugRoute: ApiPublicNewsletterImageSlugRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,

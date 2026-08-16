@@ -18,6 +18,7 @@ import { pt } from "@/i18n/pt";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { getScopedBrazilSections } from "@/lib/brazil-scope.functions";
+import { topicSlug } from "@/lib/brazil-topic";
 
 export const Route = createFileRoute("/brasil")({
   head: (ctx) => ({
@@ -177,10 +178,16 @@ function BrazilPage() {
                   </p>
                 ))}
                 <ul className="mt-6 grid gap-3 sm:grid-cols-2">
-                  {bullets.map((item) => (
+                  {bullets.map((item, bi) => (
                     <li key={item} className="flex gap-3 text-sm">
                       <span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
-                      {item}
+                      <Link
+                        to="/brasil/$slug/$topic"
+                        params={{ slug: s.id, topic: topicSlug(bi, item) }}
+                        className="text-left underline-offset-4 transition-colors hover:text-accent hover:underline"
+                      >
+                        {item}
+                      </Link>
                     </li>
                   ))}
                 </ul>
