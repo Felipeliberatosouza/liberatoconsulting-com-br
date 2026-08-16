@@ -13,8 +13,17 @@ export type PdfDocInput = {
   coverImageUrl?: string | null;
   /** Usa fonte com ideogramas (mandarim). */
   cjk?: boolean;
+  /** Idioma dos rótulos fixos do documento (Por / Contato / Atualizado em / Fontes). */
+  lang?: "pt" | "en" | "es" | "zh";
   contact: { name: string; line1: string; line2: string; website?: string };
 };
+
+const PDF_LABELS = {
+  pt: { by: "Por", contact: "Contato", updated: "Atualizado em", sources: "Fontes", locale: "pt-BR" },
+  en: { by: "By", contact: "Contact", updated: "Updated on", sources: "Sources", locale: "en-US" },
+  es: { by: "Por", contact: "Contacto", updated: "Actualizado el", sources: "Fuentes", locale: "es-ES" },
+  zh: { by: "作者", contact: "联系方式", updated: "更新日期", sources: "参考来源", locale: "zh-CN" },
+} as const;
 
 const CJK_FONT_URL =
   "https://cdn.jsdelivr.net/gh/notofonts/noto-cjk@main/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf";
@@ -460,12 +469,13 @@ export async function buildBrandedPdf(input: PdfDocInput): Promise<Uint8Array> {
 
   /* --------------------------------- capa --------------------------------- */
 
+  const L = PDF_LABELS[input.lang ?? "pt"];
   write(input.title, 20, true, 6);
-  if (input.authors) write(`Por ${input.authors}`, 11, true, 4, 0, rgb(0.35, 0.37, 0.42));
+  if (input.authors) write(`${L.by} ${input.authors}`, 11, true, 4, 0, rgb(0.35, 0.37, 0.42));
   if (input.subtitle) write(input.subtitle, 11, false, 4);
   const meta: string[] = [];
-  if (input.authorContact) meta.push(`Contato: ${input.authorContact}`);
-  meta.push(`Atualizado em: ${input.referenceDate ?? new Date().toLocaleDateString("pt-BR")}`);
+  if (input.authorContact) meta.push(`${L.contact}: ${input.authorContact}`);
+  meta.push(`${L.updated}: ${input.referenceDate ?? new Date().toLocaleDateString(L.locale)}`);
   write(meta.join("  |  "), 9, false, 10);
 
   if (cover) {
@@ -499,7 +509,7 @@ export async function buildBrandedPdf(input: PdfDocInput): Promise<Uint8Array> {
 
   if (input.sources?.trim()) {
     y -= 6;
-    write("Fontes", 13, true, 4);
+    write(L.sources, 13, true, 4);
     write(input.sources, 9, false, 4);
   }
 
