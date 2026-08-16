@@ -18,6 +18,7 @@ import { pt } from "@/i18n/pt";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { getScopedBrazilSections } from "@/lib/brazil-scope.functions";
+import { topicSlug } from "@/lib/brazil-topic";
 
 export const Route = createFileRoute("/brasil")({
   head: (ctx) => ({

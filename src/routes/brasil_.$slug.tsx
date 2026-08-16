@@ -7,6 +7,7 @@ import { useLanguage } from "@/i18n";
 import { OG_IMAGE, headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { getSiteConfig } from "@/lib/admin.functions";
+import { topicSlug } from "@/lib/brazil-topic";
 
 const SLUGS = pt.brazil.sections.map((s) => s.id);
 
