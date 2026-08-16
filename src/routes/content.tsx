@@ -93,7 +93,7 @@ function ContentPage() {
             link: a.link_url ?? null,
             cover: a.cover_url ?? null,
             authors: a.authors ?? "",
-            reads: a.read_count ?? 0,
+            reads: a.read_count ?? READ_COUNT_BASE,
             slug: a.slug as string | null,
           };
         })

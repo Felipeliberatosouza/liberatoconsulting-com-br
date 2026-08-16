@@ -865,7 +865,7 @@ function AdminContent() {
               <p className="text-xs text-muted-foreground">
                 {a.kind} · {a.group_id}
                 {a.service ? ` · ${a.service}` : ""} · ordem {a.position} ·{" "}
-                {a.published ? "publicado" : "rascunho"} · {a.read_count ?? 0} leituras ·{" "}
+                {a.published ? "publicado" : "rascunho"} · {a.read_count ?? READ_COUNT_BASE} leituras ·{" "}
                 {a.rating_count ? (a.rating_sum / a.rating_count).toFixed(1) : "—"} ★
               </p>
             </div>

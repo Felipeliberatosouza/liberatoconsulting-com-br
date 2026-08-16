@@ -110,7 +110,7 @@ function ArticlePage() {
         if (cancelled) return;
         setArticle(r);
         if (r) {
-          setReads(r.read_count ?? 0);
+          setReads(r.read_count ?? READ_COUNT_BASE);
           setRating({
             average: r.rating_count ? r.rating_sum / r.rating_count : 0,
             count: r.rating_count ?? 0,
