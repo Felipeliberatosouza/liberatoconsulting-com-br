@@ -546,6 +546,20 @@ export async function buildBrandedPdf(input: PdfDocInput): Promise<Uint8Array> {
     write(input.sources, 9, false, 4);
   }
 
+  // Aviso de propriedade intelectual, no idioma do documento.
+  y -= 10;
+  ensure(48);
+  page.drawLine({
+    start: { x: M, y: y + 6 },
+    end: { x: W - M, y: y + 6 },
+    thickness: 0.6,
+    color: rgb(0.82, 0.82, 0.84),
+  });
+  y -= 6;
+  write(L.rights(input.contact.name), 7.5, false, 4, 0, rgb(0.4, 0.42, 0.46));
+
+
+
   /* ------------------------------- paginação ------------------------------ */
 
   const pages = pdf.getPages();
