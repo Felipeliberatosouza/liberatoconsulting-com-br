@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getPanelSession } from "@/lib/users.functions";
 import { signContract } from "@/lib/company.functions";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 export const Route = createFileRoute("/admin/contrato")({
   head: () => ({
@@ -28,6 +29,7 @@ function ContractPage() {
   const [cpf, setCpf] = useState("");
   const [accept, setAccept] = useState(false);
   const [busy, setBusy] = useState(false);
+  const { validate, errorClass } = useFieldErrors();
 
   const session = useQuery({
     queryKey: ["panel-session"],
@@ -78,9 +80,11 @@ function ContractPage() {
         </div>
 
         <form
+          noValidate
           className="mt-6 space-y-3 rounded-lg border border-border bg-background p-6"
           onSubmit={async (e) => {
             e.preventDefault();
+            if (!validate({ name, cpf, accept })) return;
             if (!accept) {
               toast.error("Confirme o aceite do contrato.");
               return;
@@ -113,7 +117,7 @@ function ContractPage() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Nome completo"
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+            className={`w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent${errorClass("name", name)}`}
           />
           <input
             required
@@ -121,14 +125,14 @@ function ContractPage() {
             value={cpf}
             onChange={(e) => setCpf(e.target.value)}
             placeholder="CPF"
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
+            className={`w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent${errorClass("cpf", cpf)}`}
           />
           <label className="flex items-start gap-2 text-sm text-muted-foreground">
             <input
               type="checkbox"
               checked={accept}
               onChange={(e) => setAccept(e.target.checked)}
-              className="mt-1"
+              className={`mt-1${errorClass("accept", accept)}`}
             />
             Li e aceito integralmente os termos deste contrato. Reconheço esta assinatura
             eletrônica como válida.

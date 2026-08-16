@@ -26,6 +26,7 @@ function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
+  const { validate, errorClass } = useFieldErrors();
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
