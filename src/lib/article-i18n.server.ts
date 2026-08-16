@@ -295,6 +295,7 @@ export async function ensureTranslatedPdf(
       logoDataUrl: logoUrl,
       coverImageUrl: article.cover_url || null,
       cjk: fileLang === "zh",
+      lang: fileLang,
       contact: {
         name: companyName,
         line1:
