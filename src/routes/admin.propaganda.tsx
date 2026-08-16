@@ -61,9 +61,16 @@ function AdPage() {
   const [goalId, setGoalId] = useState<string>(AD_GOALS[0].id);
   const goal = AD_GOALS.find((g) => g.id === goalId)?.label ?? AD_GOALS[0].label;
   const [lines, setLines] = useState({ pt: "", en: "", zh: "", es: "" });
+  const [langs, setLangs] = useState<Record<AdLang, boolean>>({
+    pt: true,
+    en: true,
+    zh: true,
+    es: true,
+  });
   const [baseImage, setBaseImage] = useState("");
   const [arts, setArts] = useState<Partial<Record<SocialFormatKey, string>>>({});
   const [busy, setBusy] = useState<string | null>(null);
+  const [zoom, setZoom] = useState<SocialFormatKey | null>(null);
 
   const site = (company.data?.website || "liberatoconsulting.com.br").replace(/^https?:\/\//, "");
   const phone = company.data?.phone || "";
@@ -95,9 +102,9 @@ function AdPage() {
   }
 
   async function compose() {
-    const list = [lines.pt, lines.en, lines.zh, lines.es];
+    const list = AD_LANGS.filter((l) => langs[l]).map((l) => lines[l]);
     if (!list.some((l) => l.trim())) {
-      toast.error("Gere ou escreva as frases.");
+      toast.error("Selecione ao menos um idioma e preencha a frase correspondente.");
       return;
     }
     setBusy("compose");
@@ -120,6 +127,7 @@ function AdPage() {
       setBusy(null);
     }
   }
+
 
   const field = "w-full rounded-md border border-border bg-background px-3 py-2 text-sm";
 
