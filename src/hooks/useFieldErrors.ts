@@ -37,13 +37,12 @@ export function useFieldErrors() {
   /** true quando o campo foi marcado como ausente e continua vazio. */
   function hasError(key: string, value?: unknown) {
     if (!errors[key]) return false;
-    if (arguments.length < 2) return true;
-    return isEmpty(value);
+    return value === undefined ? true : isEmpty(value);
   }
 
   /** Classe de borda vermelha para aplicar no input. */
   function errorClass(key: string, value?: unknown) {
-    return hasError(key, ...(arguments.length < 2 ? [] : [value])) ? " border-destructive" : "";
+    return hasError(key, value) ? " border-destructive" : "";
   }
 
   function clearErrors() {
