@@ -47,6 +47,16 @@ const SERVICES = [
 
 const FORMATS: SocialFormatKey[] = ["linkedin", "instagram", "whatsapp"];
 
+const AD_LANGS = ["pt", "en", "zh", "es"] as const;
+type AdLang = (typeof AD_LANGS)[number];
+const AD_LANG_LABELS: Record<AdLang, string> = {
+  pt: "Português",
+  en: "Inglês",
+  zh: "Chinês",
+  es: "Espanhol",
+};
+
+
 function AdPage() {
   const ready = useAuthReady();
   const { logoUrl } = useLanguage();
