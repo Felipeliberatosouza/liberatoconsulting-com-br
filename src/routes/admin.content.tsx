@@ -167,10 +167,11 @@ function AdminContent() {
     void refresh();
   }, [authReady]);
 
-  // O link externo acompanha o título até ser editado manualmente.
+  // O link externo acompanha o título (ou o slug informado) até ser editado manualmente.
   useEffect(() => {
-    if (!linkTouched) setDraft((d) => ({ ...d, link_url: contentLink(d.slug) }));
-  }, [draft.slug, linkTouched]);
+    if (!linkTouched)
+      setDraft((d) => ({ ...d, link_url: contentLink(d.slug || slugify(d.title)) }));
+  }, [draft.slug, draft.title, linkTouched]);
 
   const words = countWords(draft.body);
   const overLimit = words > 500;
