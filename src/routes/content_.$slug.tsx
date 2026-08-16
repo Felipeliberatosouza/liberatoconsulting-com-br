@@ -14,6 +14,7 @@ import {
   registerArticleRead,
 } from "@/lib/content.functions";
 import type { ArticleRecord } from "@/lib/site-config";
+import { READ_COUNT_BASE } from "@/lib/site-config";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { articleSchema, breadcrumb, jsonLd } from "@/lib/schema";
 import { getPublishedNewsletter } from "@/lib/newsletter-public.functions";
@@ -110,7 +111,7 @@ function ArticlePage() {
         if (cancelled) return;
         setArticle(r);
         if (r) {
-          setReads(r.read_count ?? 0);
+          setReads(r.read_count ?? READ_COUNT_BASE);
           setRating({
             average: r.rating_count ? r.rating_sum / r.rating_count : 0,
             count: r.rating_count ?? 0,

@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import type { ArticleRecord } from "./site-config";
+import { READ_COUNT_BASE } from "./site-config";
 
 /** Artigo publicado, visível para qualquer visitante (já traduzido para o idioma pedido). */
 export const getPublicArticle = createServerFn({ method: "GET" })
@@ -40,7 +41,7 @@ export const registerArticleRead = createServerFn({ method: "POST" })
       .eq("published", true)
       .maybeSingle();
     if (!row) return { ok: false as const, reads: 0 };
-    const reads = (row.read_count ?? 0) + 1;
+    const reads = Math.max(row.read_count ?? READ_COUNT_BASE, READ_COUNT_BASE) + 1;
     await supabaseAdmin.from("content_articles").update({ read_count: reads }).eq("id", row.id);
     return { ok: true as const, reads };
   });

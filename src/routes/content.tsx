@@ -5,6 +5,7 @@ import { BulletinSignup } from "@/components/BulletinSignup";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
+import { READ_COUNT_BASE } from "@/lib/site-config";
 
 type ContentSearch = {
   category?: string | undefined;
@@ -93,7 +94,7 @@ function ContentPage() {
             link: a.link_url ?? null,
             cover: a.cover_url ?? null,
             authors: a.authors ?? "",
-            reads: a.read_count ?? 0,
+            reads: a.read_count ?? READ_COUNT_BASE,
             slug: a.slug as string | null,
           };
         })
