@@ -11,7 +11,7 @@ import { getCompany } from "@/lib/company.functions";
 import { AD_GOALS, generateAdBackground, generateAdCopy } from "@/lib/ad-social.functions";
 import {
   SOCIAL_IMAGE_FORMATS,
-  composeAdImage,
+  composeAdArt,
   downloadDataUrl,
   type SocialFormatKey,
 } from "@/lib/social-image";
@@ -58,7 +58,8 @@ function AdPage() {
 
   const [service, setService] = useState(SERVICES[0]?.label ?? "");
   const [topic, setTopic] = useState("");
-  const [goal, setGoal] = useState<string>(AD_GOALS[0].label);
+  const [goalId, setGoalId] = useState<string>(AD_GOALS[0].id);
+  const goal = AD_GOALS.find((g) => g.id === goalId)?.label ?? AD_GOALS[0].label;
   const [lines, setLines] = useState({ pt: "", en: "", zh: "", es: "" });
   const [baseImage, setBaseImage] = useState("");
   const [arts, setArts] = useState<Partial<Record<SocialFormatKey, string>>>({});
@@ -94,10 +95,6 @@ function AdPage() {
   }
 
   async function compose() {
-    if (!baseImage) {
-      toast.error("Gere primeiro a imagem de fundo.");
-      return;
-    }
     const list = [lines.pt, lines.en, lines.zh, lines.es];
     if (!list.some((l) => l.trim())) {
       toast.error("Gere ou escreva as frases.");
@@ -107,11 +104,12 @@ function AdPage() {
     try {
       const out: Partial<Record<SocialFormatKey, string>> = {};
       for (const format of FORMATS) {
-        out[format] = await composeAdImage({
-          baseImage,
+        out[format] = await composeAdArt({
+          variant: goalId === "seguidor" ? "seguidor" : "card",
           format,
           lines: list,
-          logoUrl,
+          ...(baseImage ? { baseImage } : {}),
+          ...(logoUrl ? { logoUrl } : {}),
           footer,
         });
       }
@@ -156,9 +154,9 @@ function AdPage() {
 
           <div className="space-y-1">
             <label className="text-sm font-medium">Objetivo do post</label>
-            <select className={field} value={goal} onChange={(e) => setGoal(e.target.value)}>
+            <select className={field} value={goalId} onChange={(e) => setGoalId(e.target.value)}>
               {AD_GOALS.map((g) => (
-                <option key={g.id} value={g.label}>
+                <option key={g.id} value={g.id}>
                   {g.label}
                 </option>
               ))}

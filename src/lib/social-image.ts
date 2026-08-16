@@ -455,3 +455,361 @@ export async function composeIndicatorsImage(
   await drawLogo(ctx, f.width, f.height);
   return canvas.toDataURL(f.mime, 0.92);
 }
+
+/* ------------------------------------------------------------------ */
+/*  Layouts de propaganda inspirados nas referências de mercado         */
+/* ------------------------------------------------------------------ */
+
+const AD_BG = "#efedE8";
+const AD_INK = "#14181c";
+const AD_ACCENT = "#d1622a";
+const AD_MUTED = "rgba(20,24,28,0.62)";
+
+function roundRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  const rad = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + rad, y);
+  ctx.arcTo(x + w, y, x + w, y + h, rad);
+  ctx.arcTo(x + w, y + h, x, y + h, rad);
+  ctx.arcTo(x, y + h, x, y, rad);
+  ctx.arcTo(x, y, x + w, y, rad);
+  ctx.closePath();
+}
+
+/** Desenha a imagem cobrindo (cover) um retângulo arredondado. */
+function drawCover(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r = 0,
+) {
+  ctx.save();
+  roundRect(ctx, x, y, w, h, r);
+  ctx.clip();
+  const scale = Math.max(w / img.width, h / img.height);
+  const dw = img.width * scale;
+  const dh = img.height * scale;
+  ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+  ctx.restore();
+}
+
+/** Traço decorativo curvo, discreto, no alto da arte. */
+function drawArc(ctx: CanvasRenderingContext2D, w: number, h: number) {
+  ctx.save();
+  ctx.strokeStyle = "rgba(209,98,42,0.45)";
+  ctx.lineWidth = Math.max(2, Math.round(w * 0.004));
+  ctx.beginPath();
+  ctx.moveTo(w * 0.12, -h * 0.02);
+  ctx.bezierCurveTo(w * 0.35, h * 0.22, w * 0.72, h * 0.2, w * 1.02, h * 0.02);
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** Duplo chevron da marca (▶▶). */
+function drawChevrons(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
+  ctx.save();
+  ctx.fillStyle = AD_ACCENT;
+  for (let i = 0; i < 2; i++) {
+    const ox = x + i * size * 0.72;
+    ctx.beginPath();
+    ctx.moveTo(ox, y);
+    ctx.lineTo(ox + size * 0.62, y + size * 0.5);
+    ctx.lineTo(ox, y + size);
+    ctx.closePath();
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+/** Título em duas cores: primeira linha em tinta escura, demais em destaque. */
+function drawTwoToneTitle(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  maxWidth: number,
+  size: number,
+) {
+  ctx.font = `600 ${size}px "Space Grotesk", "Helvetica Neue", Arial, sans-serif`;
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+  const lines = wrap(ctx, text.trim(), maxWidth);
+  let cy = y;
+  lines.forEach((line, i) => {
+    ctx.fillStyle = i === 0 ? AD_INK : AD_ACCENT;
+    ctx.fillText(line, x, cy);
+    cy += size * 1.08;
+  });
+  return cy;
+}
+
+/** Mockup do celular com a página da Liberato Consulting no LinkedIn. */
+function drawLinkedInPhone(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  shot: HTMLImageElement | null,
+) {
+  const r = w * 0.13;
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.28)";
+  ctx.shadowBlur = w * 0.18;
+  ctx.shadowOffsetY = w * 0.06;
+  ctx.fillStyle = "#0d1117";
+  roundRect(ctx, x, y, w, h, r);
+  ctx.fill();
+  ctx.restore();
+
+  const b = w * 0.032;
+  const sx = x + b;
+  const sy = y + b;
+  const sw = w - b * 2;
+  const sh = h - b * 2;
+  ctx.save();
+  roundRect(ctx, sx, sy, sw, sh, r - b);
+  ctx.clip();
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(sx, sy, sw, sh);
+
+  if (shot) {
+    const scale = sw / shot.width;
+    ctx.drawImage(shot, sx, sy, sw, shot.height * scale);
+  } else {
+    // Reconstituição sóbria da página da empresa no LinkedIn.
+    const cover = sh * 0.16;
+    ctx.fillStyle = "#0a66c2";
+    ctx.fillRect(sx, sy, sw, cover);
+    const av = sw * 0.24;
+    const ax = sx + sw * 0.08;
+    const ay = sy + cover - av * 0.45;
+    ctx.fillStyle = "#ffffff";
+    roundRect(ctx, ax - sw * 0.012, ay - sw * 0.012, av + sw * 0.024, av + sw * 0.024, sw * 0.03);
+    ctx.fill();
+    ctx.fillStyle = "#0a66c2";
+    roundRect(ctx, ax, ay, av, av, sw * 0.025);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `700 ${Math.round(av * 0.55)}px "DM Sans", Arial, sans-serif`;
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.fillText("in", ax + av / 2, ay + av * 0.55);
+
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    let ty = ay + av + sh * 0.035;
+    ctx.fillStyle = AD_INK;
+    ctx.font = `700 ${Math.round(sw * 0.085)}px "Space Grotesk", Arial, sans-serif`;
+    ctx.fillText("Liberato Consulting", ax, ty);
+    ty += sw * 0.11;
+    ctx.fillStyle = AD_MUTED;
+    ctx.font = `500 ${Math.round(sw * 0.05)}px "DM Sans", Arial, sans-serif`;
+    ctx.fillText("Consultoria em gestão empresarial", ax, ty);
+    ty += sw * 0.075;
+    ctx.fillText("linkedin.com/company/liberatoglobal", ax, ty);
+    ty += sw * 0.11;
+
+    const bw = sw * 0.36;
+    const bh = sw * 0.13;
+    ctx.fillStyle = "#0a66c2";
+    roundRect(ctx, ax, ty, bw, bh, bh / 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `700 ${Math.round(sw * 0.055)}px "DM Sans", Arial, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("+ Seguir", ax + bw / 2, ty + bh / 2);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ty += bh + sh * 0.045;
+
+    ctx.fillStyle = "rgba(20,24,28,0.10)";
+    for (let i = 0; i < 6 && ty < sy + sh - sh * 0.05; i++) {
+      const lw = sw * (i % 3 === 2 ? 0.5 : 0.84);
+      roundRect(ctx, ax, ty, lw, sw * 0.035, sw * 0.02);
+      ctx.fill();
+      ctx.fillStyle = "rgba(20,24,28,0.10)";
+      ty += sw * 0.075;
+    }
+  }
+  ctx.restore();
+
+  // entalhe superior
+  ctx.fillStyle = "#0d1117";
+  const nw = w * 0.34;
+  roundRect(ctx, x + (w - nw) / 2, y + b * 0.6, nw, w * 0.075, w * 0.04);
+  ctx.fill();
+}
+
+function adFooter(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  pad: number,
+  footer: string,
+) {
+  const size = Math.round(w * (w > h ? 0.021 : 0.025));
+  ctx.font = `600 ${size}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+  ctx.fillStyle = AD_MUTED;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  const lines = wrap(ctx, footer, w - pad * 2);
+  let y = h - pad - lines.length * size * 1.3;
+  for (const line of lines) {
+    ctx.fillText(line, pad, y);
+    y += size * 1.3;
+  }
+  return y;
+}
+
+/**
+ * Arte de propaganda com dois layouts editoriais:
+ * - "seguidor": convite para seguir a página no LinkedIn, com mockup de celular;
+ * - "card": cartão de conteúdo com número, título em duas cores, texto e foto.
+ */
+export async function composeAdArt(opts: {
+  variant: "seguidor" | "card";
+  format: SocialFormatKey;
+  lines: string[];
+  baseImage?: string;
+  logoUrl?: string;
+  footer: string;
+  index?: number;
+}): Promise<string> {
+  const f = SOCIAL_IMAGE_FORMATS[opts.format];
+  const canvas = document.createElement("canvas");
+  canvas.width = f.width;
+  canvas.height = f.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Canvas indisponível neste navegador.");
+  const W = f.width;
+  const H = f.height;
+  const wide = W > H;
+  const pad = Math.round(W * 0.06);
+
+  ctx.fillStyle = AD_BG;
+  ctx.fillRect(0, 0, W, H);
+  drawArc(ctx, W, H);
+
+  const texts = opts.lines.map((l) => l.trim()).filter(Boolean);
+  const headline = texts[0] ?? "";
+  const others = texts.slice(1);
+
+  let photo: HTMLImageElement | null = null;
+  if (opts.baseImage) {
+    try {
+      photo = await loadImage(opts.baseImage);
+    } catch {
+      photo = null;
+    }
+  }
+
+  if (opts.variant === "seguidor") {
+    const chev = Math.round(W * (wide ? 0.045 : 0.055));
+    drawChevrons(ctx, pad, Math.round(H * (wide ? 0.1 : 0.11)), chev);
+
+    const titleTop = Math.round(H * (wide ? 0.1 : 0.11)) + chev * 1.5;
+    const titleW = wide ? W * 0.44 : W * 0.66;
+    const titleSize = Math.round(W * (wide ? 0.055 : 0.075));
+    const afterTitle = drawTwoToneTitle(ctx, headline, pad, titleTop, titleW, titleSize);
+
+    // celular à esquerda
+    const phoneH = wide ? H * 0.62 : H * 0.46;
+    const phoneW = phoneH * 0.49;
+    const phoneX = pad;
+    const phoneY = wide ? H - pad * 1.6 - phoneH : Math.min(afterTitle + H * 0.05, H * 0.42);
+    drawLinkedInPhone(ctx, phoneX, phoneY, phoneW, phoneH, null);
+
+    // bloco de citação com as demais versões do texto
+    const qx = phoneX + phoneW + pad * 0.9;
+    const qw = W - qx - pad;
+    let qy = wide ? Math.max(afterTitle + H * 0.06, phoneY) : phoneY + phoneH * 0.06;
+
+    if (photo) {
+      const ih = wide ? H * 0.34 : H * 0.2;
+      const iw = Math.min(qw, ih * 0.82);
+      drawCover(ctx, photo, qx, qy, iw, ih, Math.round(W * 0.02));
+      qy += ih + H * 0.03;
+    }
+
+    ctx.fillStyle = AD_ACCENT;
+    ctx.font = `700 ${Math.round(W * 0.05)}px Georgia, serif`;
+    ctx.textBaseline = "top";
+    ctx.textAlign = "left";
+    ctx.fillText("“", qx, qy);
+    qy += W * 0.045;
+
+    const qSize = Math.round(W * (wide ? 0.024 : 0.03));
+    ctx.font = `500 ${qSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+    for (const t of others) {
+      ctx.fillStyle = AD_INK;
+      for (const line of wrap(ctx, t, qw)) {
+        if (qy > H - pad * 3) break;
+        ctx.fillText(line, qx, qy);
+        qy += qSize * 1.32;
+      }
+      qy += qSize * 0.55;
+    }
+
+    ctx.fillStyle = AD_ACCENT;
+    ctx.fillRect(qx, qy + qSize * 0.2, Math.round(W * 0.1), Math.max(3, Math.round(W * 0.005)));
+    ctx.fillStyle = AD_MUTED;
+    ctx.font = `600 ${Math.round(qSize * 0.85)}px "DM Sans", Arial, sans-serif`;
+    ctx.fillText("linkedin.com/company/liberatoglobal", qx, qy + qSize * 1.1);
+  } else {
+    // Cartão editorial: número fantasma, título em duas cores, texto e foto.
+    const n = String(opts.index ?? 1).padStart(2, "0");
+    ctx.save();
+    ctx.fillStyle = "rgba(20,24,28,0.07)";
+    ctx.font = `700 ${Math.round(W * (wide ? 0.16 : 0.2))}px "Space Grotesk", Arial, sans-serif`;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "top";
+    ctx.fillText(n, W - pad, Math.round(H * 0.06));
+    ctx.restore();
+
+    const colW = wide ? W * 0.5 : W - pad * 2;
+    const titleSize = Math.round(W * (wide ? 0.055 : 0.072));
+    let y = Math.round(H * (wide ? 0.13 : 0.11));
+    y = drawTwoToneTitle(ctx, headline, pad, y, colW * 0.9, titleSize) + titleSize * 0.45;
+
+    const bodySize = Math.round(W * (wide ? 0.023 : 0.029));
+    ctx.font = `500 ${bodySize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+    ctx.fillStyle = AD_INK;
+    const bodyLimit = wide ? H * 0.72 : H * 0.5;
+    for (const t of others) {
+      for (const line of wrap(ctx, t, colW * 0.86)) {
+        if (y > bodyLimit) break;
+        ctx.fillText(line, pad, y);
+        y += bodySize * 1.4;
+      }
+      y += bodySize * 0.5;
+    }
+
+    if (photo) {
+      if (wide) {
+        const iw = W * 0.36;
+        const ih = H * 0.62;
+        drawCover(ctx, photo, W - pad - iw, (H - ih) / 2, iw, ih, Math.round(W * 0.02));
+      } else {
+        const iw = W - pad * 2;
+        const ih = H * 0.3;
+        drawCover(ctx, photo, pad, H - pad * 2.6 - ih, iw, ih, Math.round(W * 0.03));
+      }
+    }
+  }
+
+  adFooter(ctx, W, H, pad, opts.footer);
+  await drawLogo(ctx, W, H, opts.logoUrl);
+  return canvas.toDataURL(f.mime, 0.92);
+}
