@@ -139,6 +139,8 @@ function AdminContent() {
   const [linkTouched, setLinkTouched] = useState(false);
   const [groupFilter, setGroupFilter] = useState("all");
   const [serviceFilter, setServiceFilter] = useState("all");
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
+
 
   const authorOptions = useQuery({
     queryKey: ["content-authors"],
@@ -326,10 +328,33 @@ function AdminContent() {
     else toast.error(r.error);
   }
 
+  function validateDraft(d: Draft) {
+    const next: Record<string, boolean> = {};
+    if (!d.title.trim() || d.title.trim().length < 3) next["title"] = true;
+    if (!d.summary.trim()) next["summary"] = true;
+    if (!d.body.trim()) next["body"] = true;
+    if (!d.group_id) next["group_id"] = true;
+    if (!d.kind) next["kind"] = true;
+    if (!d.service) next["service"] = true;
+    if (!d.article_date) next["article_date"] = true;
+    if (!d.cover_url.trim()) next["cover_url"] = true;
+    if (!d.authors.trim()) next["authors"] = true;
+    if (!d.author_contact.trim()) next["author_contact"] = true;
+    if (!d.file_path.trim()) next["file_path"] = true;
+    return next;
+  }
+
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (overLimit) {
       toast.error("O texto do artigo deve ter no máximo 500 palavras.");
+      return;
+    }
+    const validation = validateDraft(draft);
+    setErrors(validation);
+    if (Object.keys(validation).length > 0) {
+      toast.error("Informações ausentes. Preencha todos os campos obrigatórios destacados.");
       return;
     }
     setBusy(true);
@@ -360,9 +385,10 @@ function AdminContent() {
         toast.error(r.error);
         return;
       }
-      toast.success("Conteúdo salvo e traduzido para EN, ES e ZH.");
+      toast.success("Processo de publicação concluído. Conteúdo salvo e traduzido para EN, ES e ZH.");
       setDraft(EMPTY);
       setLinkTouched(false);
+      setErrors({});
       await refresh();
     } catch {
       toast.error("Não foi possível salvar o conteúdo.");
@@ -371,8 +397,23 @@ function AdminContent() {
     }
   }
 
-  const input =
-    "mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
+
+  function inputClass(error?: boolean) {
+    return [
+      "mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:border-accent",
+      error ? "border-destructive" : "border-input",
+    ].join(" ");
+  }
+
+  const clearError = (key: string) => {
+    setErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  };
+
 
   const authorList = draft.authors
     .split(",")
@@ -384,28 +425,40 @@ function AdminContent() {
       title="Conteúdos"
       description="Comece pelo upload do artigo completo: os demais campos são preenchidos automaticamente e podem ser editados. Ao salvar, as traduções para inglês, espanhol e mandarim são geradas."
     >
-      <form onSubmit={onSubmit} className="rounded-lg border border-border bg-background p-6">
+      <form noValidate onSubmit={onSubmit} className="rounded-lg border border-border bg-background p-6">
         <h2 className="font-display text-lg font-bold">
           {draft.id ? "Editar conteúdo" : "Novo conteúdo"}
         </h2>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           {/* 1) Arquivo completo — primeira informação da tela */}
-          <div className="rounded-md border border-accent/40 bg-accent/5 p-4 text-sm font-medium md:col-span-2">
-            1. Artigo completo para download (PDF ou DOC, até 10 MB)
+          <div
+            className={`rounded-md border p-4 text-sm font-medium md:col-span-2 ${
+              errors["file_path"]
+                ? "border-destructive bg-destructive/5"
+                : "border-accent/40 bg-accent/5"
+            }`}
+          >
+            1. Artigo completo para download (PDF ou DOC, até 10 MB) *
             <input
               type="file"
               accept=".pdf,.doc,.docx,.rtf,.odt"
               onChange={(e) => {
+                clearError("file_path");
                 const f = e.target.files?.[0];
                 if (f) void onFile(f);
               }}
-              className={input}
+              onFocus={() => clearError("file_path")}
+              className={inputClass(errors["file_path"])}
             />
+            {errors["file_path"] && !draft.file_path && (
+              <p className="mt-1 text-xs text-destructive">Anexe o artigo completo (PDF ou DOC).</p>
+            )}
             <p className="mt-1 text-xs font-normal text-muted-foreground">
               Ao enviar um PDF, a leitura automática preenche título, resumo, texto, categoria,
               serviço, tabela, gráfico e a data do artigo.
             </p>
+
             {uploading && (
               <span className="text-xs text-muted-foreground">Enviando e lendo o arquivo…</span>
             )}
@@ -430,26 +483,33 @@ function AdminContent() {
             )}
           </div>
 
+
           <label className="text-sm font-medium md:col-span-2">
-            Título
+            Título *
             <input
               required
               value={draft.title}
-              onChange={(e) =>
+              onChange={(e) => {
+                clearError("title");
                 setDraft((d) => ({
                   ...d,
                   title: e.target.value,
                   slug: d.id ? d.slug : slugify(e.target.value),
-                }))
-              }
-              className={input}
+                }));
+              }}
+              className={inputClass(errors["title"])}
             />
           </label>
 
+
           {/* 2) Autores (seleção) + e-mails automáticos */}
           <div className="text-sm font-medium">
-            Autores
-            <div className="mt-1 max-h-40 space-y-1 overflow-auto rounded-md border border-input bg-background p-2 text-sm font-normal">
+            Autores *
+            <div
+              className={`mt-1 max-h-40 space-y-1 overflow-auto rounded-md border p-2 text-sm font-normal ${
+                errors["authors"] ? "border-destructive bg-destructive/5" : "border-input bg-background"
+              }`}
+            >
               {(authorOptions.data ?? []).length === 0 && (
                 <p className="text-xs text-muted-foreground">
                   {authorOptions.isLoading
@@ -463,6 +523,7 @@ function AdminContent() {
                     type="checkbox"
                     checked={authorList.includes(a.name)}
                     onChange={(e) => {
+                      clearError("authors");
                       const next = e.target.checked
                         ? [...authorList, a.name]
                         : authorList.filter((n) => n !== a.name);
@@ -482,25 +543,33 @@ function AdminContent() {
             </div>
           </div>
 
+
           <label className="text-sm font-medium">
-            E-mail dos autores
+            E-mail dos autores *
             <input
               value={draft.author_contact}
-              onChange={(e) => setDraft((d) => ({ ...d, author_contact: e.target.value }))}
+              onChange={(e) => {
+                clearError("author_contact");
+                setDraft((d) => ({ ...d, author_contact: e.target.value }));
+              }}
               placeholder="contato@liberatoconsulting.com.br"
-              className={input}
+              className={inputClass(errors["author_contact"])}
             />
             <span className="mt-1 block text-xs font-normal text-muted-foreground">
               Preenchido a partir dos autores selecionados e editável.
             </span>
           </label>
 
+
           <label className="text-sm font-medium">
-            Categoria (subitem do menu Conteúdo)
+            Categoria (subitem do menu Conteúdo) *
             <select
               value={draft.group_id}
-              onChange={(e) => setDraft((d) => ({ ...d, group_id: e.target.value }))}
-              className={input}
+              onChange={(e) => {
+                clearError("group_id");
+                setDraft((d) => ({ ...d, group_id: e.target.value }));
+              }}
+              className={inputClass(errors["group_id"])}
             >
               {groups.map((g) => (
                 <option key={g.id} value={g.id}>
@@ -510,12 +579,16 @@ function AdminContent() {
             </select>
           </label>
 
+
           <label className="text-sm font-medium">
-            Tipo
+            Tipo *
             <select
               value={draft.kind}
-              onChange={(e) => setDraft((d) => ({ ...d, kind: e.target.value }))}
-              className={input}
+              onChange={(e) => {
+                clearError("kind");
+                setDraft((d) => ({ ...d, kind: e.target.value }));
+              }}
+              className={inputClass(errors["kind"])}
             >
               {["Artigo", "Guia", "Estudo", "Case", "Vídeo"].map((k) => (
                 <option key={k}>{k}</option>
@@ -529,12 +602,16 @@ function AdminContent() {
             )}
           </label>
 
+
           <label className="text-sm font-medium">
-            Serviço relacionado
+            Serviço relacionado *
             <select
               value={draft.service}
-              onChange={(e) => setDraft((d) => ({ ...d, service: e.target.value }))}
-              className={input}
+              onChange={(e) => {
+                clearError("service");
+                setDraft((d) => ({ ...d, service: e.target.value }));
+              }}
+              className={inputClass(errors["service"])}
             >
               <option value="">Nenhum</option>
               {services.map((s) => (
@@ -544,6 +621,7 @@ function AdminContent() {
               ))}
             </select>
           </label>
+
 
           <label className="text-sm font-medium">
             {draft.kind === "Vídeo" ? "Link do vídeo" : "Link do conteúdo"} (gerado a partir do
@@ -555,23 +633,28 @@ function AdminContent() {
                 setDraft((d) => ({ ...d, link_url: e.target.value }));
               }}
               placeholder="https://…"
-              className={input}
+              className={inputClass()}
             />
           </label>
 
+
           <label className="text-sm font-medium">
-            Data do artigo
+            Data do artigo *
             <input
               type="date"
               value={draft.article_date}
-              onChange={(e) => setDraft((d) => ({ ...d, article_date: e.target.value }))}
-              className={input}
+              onChange={(e) => {
+                clearError("article_date");
+                setDraft((d) => ({ ...d, article_date: e.target.value }));
+              }}
+              className={inputClass(errors["article_date"])}
             />
           </label>
 
+
           {/* Capa: geração por IA ou upload */}
           <div className="text-sm font-medium md:col-span-2">
-            Imagem de capa (o título aparece sobreposto a ela)
+            Imagem de capa (o título aparece sobreposto a ela) *
             <div className="mt-2 flex flex-wrap items-center gap-3">
               <button
                 type="button"
@@ -585,12 +668,19 @@ function AdminContent() {
                 type="file"
                 accept="image/png,image/jpeg,image/webp"
                 onChange={(e) => {
+                  clearError("cover_url");
                   const f = e.target.files?.[0];
                   if (f) void onCover(f);
                 }}
-                className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+                onFocus={() => clearError("cover_url")}
+                className={`rounded-md border bg-background px-3 py-2 text-sm ${
+                  errors["cover_url"] ? "border-destructive" : "border-input"
+                }`}
               />
             </div>
+            {errors["cover_url"] && !draft.cover_url && (
+              <p className="mt-1 text-xs text-destructive">Adicione uma imagem de capa.</p>
+            )}
             {draft.cover_url && (
               <div className="mt-3 flex items-center gap-3">
                 <img src={draft.cover_url} alt="Capa" className="h-20 w-36 rounded object-cover" />
@@ -605,24 +695,33 @@ function AdminContent() {
             )}
           </div>
 
+
           <label className="text-sm font-medium md:col-span-2">
-            Resumo (aparece abaixo da imagem)
+            Resumo (aparece abaixo da imagem) *
             <textarea
               rows={3}
               value={draft.summary}
-              onChange={(e) => setDraft((d) => ({ ...d, summary: e.target.value }))}
-              className={input}
+              onChange={(e) => {
+                clearError("summary");
+                setDraft((d) => ({ ...d, summary: e.target.value }));
+              }}
+              className={inputClass(errors["summary"])}
             />
           </label>
 
+
           <label className="text-sm font-medium md:col-span-2">
-            Texto do artigo (máximo 500 palavras)
+            Texto do artigo (máximo 500 palavras) *
             <textarea
               rows={10}
               value={draft.body}
-              onChange={(e) => setDraft((d) => ({ ...d, body: e.target.value }))}
-              className={input}
+              onChange={(e) => {
+                clearError("body");
+                setDraft((d) => ({ ...d, body: e.target.value }));
+              }}
+              className={inputClass(errors["body"] || overLimit)}
             />
+
             <span
               className={`mt-1 block text-xs ${overLimit ? "text-destructive" : "text-muted-foreground"}`}
             >
@@ -637,7 +736,7 @@ function AdminContent() {
               value={draft.table_data}
               onChange={(e) => setDraft((d) => ({ ...d, table_data: e.target.value }))}
               placeholder={"| Camada | Pergunta |\n|---|---|\n| Objetivo anual | O que muda? |"}
-              className={input}
+              className={inputClass()}
             />
           </label>
 
@@ -648,7 +747,7 @@ function AdminContent() {
               value={draft.chart_data}
               onChange={(e) => setDraft((d) => ({ ...d, chart_data: e.target.value }))}
               placeholder={"titulo: Evolução das metas\nPlanejamento | 30\nExecução | 45"}
-              className={input}
+              className={inputClass()}
             />
             <span className="mt-1 block text-xs font-normal text-muted-foreground">
               Primeira linha “titulo: …” e uma linha por barra no formato “Rótulo | número”.
@@ -662,7 +761,7 @@ function AdminContent() {
               min={0}
               value={draft.position}
               onChange={(e) => setDraft((d) => ({ ...d, position: Number(e.target.value) }))}
-              className={input}
+              className={inputClass()}
             />
           </label>
 
