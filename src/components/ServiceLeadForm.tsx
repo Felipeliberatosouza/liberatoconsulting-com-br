@@ -5,6 +5,7 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/i18n";
 import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 
 type Props = { serviceSlug: string; serviceTitle: string };
@@ -23,6 +24,10 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [error, setError] = useState<string | null>(null);
   const successRef = useRef<HTMLParagraphElement>(null);
+  const { validate, errorClass } = useFieldErrors();
+  const [values, setValues] = useState({ name: "", company: "", country: "", email: "", message: "", captcha: "" });
+  const onField = (key: keyof typeof values) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setValues((v) => ({ ...v, [key]: e.target.value }));
 
   useEffect(() => {
     if (status === "done") {
@@ -34,6 +39,7 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
     event.preventDefault();
     const form = event.currentTarget;
     const fd = new FormData(form);
+    if (!validate({ name: values.name, company: values.company, country: values.country, email: values.email, message: values.message, captcha: values.captcha })) return;
     setStatus("sending");
     setError(null);
     try {
@@ -60,6 +66,7 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
         setStatus("done");
         trackEvent("form_submit", { form_name: "service_lead", service: serviceTitle });
         form.reset();
+        setValues({ name: "", company: "", country: "", email: "", message: "", captcha: "" });
         return;
       }
       setStatus("idle");
@@ -97,19 +104,19 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
         <form onSubmit={onSubmit} className="mt-6 grid gap-4 sm:grid-cols-2">
           <label className="text-sm font-medium">
             {F.name}
-            <input name="name" required minLength={2} maxLength={100} className={field} />
+            <input name="name" required minLength={2} maxLength={100} value={values.name} onChange={onField("name")} className={`${field}${errorClass("name", values.name)}`} />
           </label>
           <label className="text-sm font-medium">
             {F.company}
-            <input name="company" required minLength={2} maxLength={120} className={field} />
+            <input name="company" required minLength={2} maxLength={120} value={values.company} onChange={onField("company")} className={`${field}${errorClass("company", values.company)}`} />
           </label>
           <label className="text-sm font-medium">
             {F.country}
-            <input name="country" required minLength={2} maxLength={80} className={field} />
+            <input name="country" required minLength={2} maxLength={80} value={values.country} onChange={onField("country")} className={`${field}${errorClass("country", values.country)}`} />
           </label>
           <label className="text-sm font-medium">
             {F.email}
-            <input name="email" type="email" maxLength={255} className={field} />
+            <input name="email" type="email" maxLength={255} value={values.email} onChange={onField("email")} className={`${field}${errorClass("email", values.email)}`} />
           </label>
           <label className="text-sm font-medium sm:col-span-2">
             {F.service}
@@ -117,7 +124,7 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
           </label>
           <label className="text-sm font-medium sm:col-span-2">
             {F.message}
-            <textarea name="message" rows={3} maxLength={1500} className={field} />
+            <textarea name="message" rows={3} maxLength={1500} value={values.message} onChange={onField("message")} className={`${field}${errorClass("message", values.message)}`} />
           </label>
 
           {/* Honeypot: invisível para pessoas, preenchido por bots */}
@@ -138,7 +145,9 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
               required
               inputMode="numeric"
               autoComplete="off"
-              className={`${field} sm:max-w-40`}
+              value={values.captcha}
+              onChange={onField("captcha")}
+              className={`${field} sm:max-w-40${errorClass("captcha", values.captcha)}`}
             />
           </label>
 
