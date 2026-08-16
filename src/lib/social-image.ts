@@ -658,13 +658,14 @@ function adFooter(
   h: number,
   pad: number,
   footer: string,
+  maxWidth?: number,
 ) {
   const size = Math.round(w * (w > h ? 0.021 : 0.025));
   ctx.font = `600 ${size}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
   ctx.fillStyle = AD_MUTED;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  const lines = wrap(ctx, footer, w - pad * 2);
+  const lines = wrap(ctx, footer, maxWidth ?? w - pad * 2);
   let y = h - pad - lines.length * size * 1.3;
   for (const line of lines) {
     ctx.fillText(line, pad, y);
@@ -672,6 +673,33 @@ function adFooter(
   }
   return y;
 }
+
+/**
+ * Logomarca do painel administrativo posicionada no canto inferior direito,
+ * em uma faixa exclusiva: o rodapé e os blocos de texto respeitam esse espaço,
+ * de modo que a marca nunca fique sobreposta a textos ou imagens.
+ */
+async function drawAdLogo(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  pad: number,
+  box: { w: number; h: number },
+  logoSrc?: string,
+) {
+  try {
+    const logo = await loadImage(logoSrc || "/logo.png");
+    const lw = box.w;
+    const lh = Math.round((logo.height / logo.width) * lw);
+    ctx.save();
+    ctx.globalAlpha = 0.98;
+    ctx.drawImage(logo, w - pad - lw, h - pad - lh, lw, lh);
+    ctx.restore();
+  } catch {
+    /* sem logomarca disponível */
+  }
+}
+
 
 /**
  * Arte de propaganda com dois layouts editoriais:
@@ -759,7 +787,17 @@ export async function composeAdArt(opts: {
     return { y: cy, size };
   }
 
-  const footerTop = H - pad * (wide ? 2.1 : 2.4);
+  // Faixa exclusiva da logomarca (canto inferior direito).
+  const logoW = Math.round(W * (wide ? 0.14 : 0.2));
+  let logoH = Math.round(logoW * 0.28);
+  try {
+    const probe = await loadImage(opts.logoUrl || "/logo.png");
+    logoH = Math.round((probe.height / probe.width) * logoW);
+  } catch {
+    /* usa a proporção padrão */
+  }
+  const footerTop = H - Math.max(pad * (wide ? 2.1 : 2.4), pad + logoH + pad * 0.6);
+
 
   if (opts.variant === "seguidor") {
     const chev = Math.round(W * (wide ? 0.042 : 0.05));
@@ -870,7 +908,8 @@ export async function composeAdArt(opts: {
   }
 
 
-  adFooter(ctx, W, H, pad, opts.footer);
-  await drawLogo(ctx, W, H, opts.logoUrl);
+  adFooter(ctx, W, H, pad, opts.footer, W - pad * 2 - logoW - pad * 0.6);
+  await drawAdLogo(ctx, W, H, pad, { w: logoW, h: logoH }, opts.logoUrl);
+
   return canvas.toDataURL(f.mime, 0.92);
 }
