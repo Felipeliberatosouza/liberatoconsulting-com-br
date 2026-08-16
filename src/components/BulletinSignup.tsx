@@ -51,6 +51,7 @@ export function BulletinSignup() {
         </p>
       ) : (
         <form
+          noValidate
           className="mt-6 grid gap-4 md:grid-cols-2"
           onSubmit={async (e) => {
             e.preventDefault();

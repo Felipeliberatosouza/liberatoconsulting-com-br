@@ -101,7 +101,7 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
           {F.success}
         </p>
       ) : (
-        <form onSubmit={onSubmit} className="mt-6 grid gap-4 sm:grid-cols-2">
+        <form onSubmit={onSubmit} noValidate className="mt-6 grid gap-4 sm:grid-cols-2">
           <label className="text-sm font-medium">
             {F.name}
             <input name="name" required minLength={2} maxLength={100} value={values.name} onChange={onField("name")} className={`${field}${errorClass("name", values.name)}`} />

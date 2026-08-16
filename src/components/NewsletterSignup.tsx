@@ -35,6 +35,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
         </p>
       )}
       <form
+        noValidate
         className={`${done ? "mt-3" : ""} flex w-full flex-col gap-2 sm:flex-row`}
         onSubmit={async (e) => {
           e.preventDefault();
