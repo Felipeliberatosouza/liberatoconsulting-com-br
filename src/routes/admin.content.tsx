@@ -140,6 +140,7 @@ function AdminContent() {
   const [groupFilter, setGroupFilter] = useState("all");
   const [serviceFilter, setServiceFilter] = useState("all");
   const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [fileKey, setFileKey] = useState(0);
 
 
   const authorOptions = useQuery({
@@ -388,6 +389,7 @@ function AdminContent() {
       }
       toast.success("Processo de publicação concluído. Conteúdo salvo e traduzido para EN, ES e ZH.");
       setDraft(EMPTY);
+      setFileKey((k) => k + 1);
       setLinkTouched(false);
       setErrors({});
       await refresh();
@@ -442,6 +444,7 @@ function AdminContent() {
           >
             1. Artigo completo para download (PDF ou DOC, até 10 MB) *
             <input
+              key={fileKey}
               type="file"
               accept=".pdf,.doc,.docx,.rtf,.odt"
               onChange={(e) => {
@@ -475,7 +478,10 @@ function AdminContent() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setDraft((d) => ({ ...d, file_path: "", file_name: "" }))}
+                  onClick={() => {
+                    setDraft((d) => ({ ...d, file_path: "", file_name: "" }));
+                    setFileKey((k) => k + 1);
+                  }}
                   className="text-destructive hover:underline"
                 >
                   Remover
@@ -789,6 +795,7 @@ function AdminContent() {
               type="button"
               onClick={() => {
                 setDraft(EMPTY);
+                setFileKey((k) => k + 1);
                 setLinkTouched(false);
               }}
               className="rounded-md border border-input px-4 py-2 text-sm font-medium hover:border-accent hover:text-accent"
