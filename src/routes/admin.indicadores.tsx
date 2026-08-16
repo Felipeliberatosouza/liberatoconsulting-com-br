@@ -84,6 +84,7 @@ function IndicatorsPage() {
   });
   const [form, setForm] = useState<Form>(empty);
   const [busy, setBusy] = useState(false);
+  const { validate, errorClass } = useFieldErrors();
   const [refreshing, setRefreshing] = useState(false);
   const [filling, setFilling] = useState(false);
   const autoFilled = useRef(false);
