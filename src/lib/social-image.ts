@@ -787,7 +787,17 @@ export async function composeAdArt(opts: {
     return { y: cy, size };
   }
 
-  const footerTop = H - pad * (wide ? 2.1 : 2.4);
+  // Faixa exclusiva da logomarca (canto inferior direito).
+  const logoW = Math.round(W * (wide ? 0.14 : 0.2));
+  let logoH = Math.round(logoW * 0.28);
+  try {
+    const probe = await loadImage(opts.logoUrl || "/logo.png");
+    logoH = Math.round((probe.height / probe.width) * logoW);
+  } catch {
+    /* usa a proporção padrão */
+  }
+  const footerTop = H - Math.max(pad * (wide ? 2.1 : 2.4), pad + logoH + pad * 0.6);
+
 
   if (opts.variant === "seguidor") {
     const chev = Math.round(W * (wide ? 0.042 : 0.05));
