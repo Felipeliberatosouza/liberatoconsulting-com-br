@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
+import { AuthorPicker } from "@/components/AuthorPicker";
+
 import { getSiteConfig, saveBrazilSection } from "@/lib/admin.functions";
 import { generateBrazilSectionAI } from "@/lib/indicators.functions";
 import type { BrazilOverrides } from "@/lib/site-config";
@@ -214,16 +216,17 @@ function AdminBrazil() {
                       <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                         Autores
                       </label>
-                      <input
-                        value={d.authors}
-                        onChange={(e) =>
-                          setDrafts((prev) => ({
-                            ...prev,
-                            [s.id]: { ...d, authors: e.target.value },
-                          }))
-                        }
-                        className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
-                      />
+                      <div className="mt-1">
+                        <AuthorPicker
+                          authors={d.authors}
+                          onChange={(authors, contact) =>
+                            setDrafts((prev) => ({
+                              ...prev,
+                              [s.id]: { ...d, authors, authorContact: contact },
+                            }))
+                          }
+                        />
+                      </div>
                     </div>
                     <div>
                       <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -239,8 +242,12 @@ function AdminBrazil() {
                         }
                         className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent"
                       />
+                      <p className="mt-1 text-[11px] text-muted-foreground">
+                        Preenchido a partir dos autores selecionados e editável.
+                      </p>
                     </div>
                   </div>
+
 
                   <div className="rounded-md bg-secondary/60 p-4">
                     <p className="text-xs text-muted-foreground">
