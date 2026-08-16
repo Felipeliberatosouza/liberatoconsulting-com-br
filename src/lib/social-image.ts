@@ -49,8 +49,29 @@ function areaLuminance(ctx: CanvasRenderingContext2D, x: number, y: number, w: n
 }
 
 
+/**
+ * Nomes que nunca podem ser quebrados entre duas linhas: o nome da consultoria
+ * fica sempre junto, na mesma linha, em qualquer idioma.
+ */
+const KEEP_TOGETHER = [
+  "Liberato Consulting",
+  "Liberato Global",
+  "利伯拉托咨询",
+  "Consultoría Liberato",
+];
+
+/** Une o nome da consultoria com espaço inquebrável antes da quebra de linhas. */
+function protectNames(text: string) {
+  let out = text;
+  for (const name of KEEP_TOGETHER) {
+    const re = new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+"), "gi");
+    out = out.replace(re, (m) => m.replace(/\s+/g, "\u00a0"));
+  }
+  return out;
+}
+
 function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
-  const words = text.split(/\s+/);
+  const words = protectNames(text).split(/\s+/);
   const lines: string[] = [];
   let line = "";
   for (const w of words) {
@@ -61,8 +82,10 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
     } else line = next;
   }
   if (line) lines.push(line);
-  return lines;
+  // devolve espaços normais para o desenho no canvas
+  return lines.map((l) => l.replace(/\u00a0/g, " "));
 }
+
 
 /**
  * Desenha a logomarca (PNG sem fundo) no canto superior direito, em tamanho
