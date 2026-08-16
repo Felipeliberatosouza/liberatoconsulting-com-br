@@ -97,10 +97,16 @@ function BrazilDetailPage() {
         <div className="mx-auto max-w-4xl px-6">
           <h2 className="text-2xl font-bold">{b.sectionsLabel}</h2>
           <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-            {section.bullets.map((item) => (
+            {section.bullets.map((item, bi) => (
               <li key={item} className="flex gap-3 text-sm text-muted-foreground">
                 <span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
-                {item}
+                <Link
+                  to="/brasil/$slug/$topic"
+                  params={{ slug, topic: topicSlug(bi, item) }}
+                  className="text-left underline-offset-4 transition-colors hover:text-accent hover:underline"
+                >
+                  {item}
+                </Link>
               </li>
             ))}
           </ul>
