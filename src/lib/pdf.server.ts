@@ -19,11 +19,44 @@ export type PdfDocInput = {
 };
 
 const PDF_LABELS = {
-  pt: { by: "Por", contact: "Contato", updated: "Atualizado em", sources: "Fontes", locale: "pt-BR" },
-  en: { by: "By", contact: "Contact", updated: "Updated on", sources: "Sources", locale: "en-US" },
-  es: { by: "Por", contact: "Contacto", updated: "Actualizado el", sources: "Fuentes", locale: "es-ES" },
-  zh: { by: "作者", contact: "联系方式", updated: "更新日期", sources: "参考来源", locale: "zh-CN" },
+  pt: {
+    by: "Por",
+    contact: "Contato",
+    updated: "Atualizado em",
+    sources: "Fontes",
+    locale: "pt-BR",
+    rights: (name: string) =>
+      `© ${new Date().getFullYear()} ${name}. Todos os direitos reservados. Este documento e seu conteúdo são propriedade intelectual da ${name}, protegidos pela legislação de direitos autorais. É proibida a reprodução, distribuição, tradução ou uso comercial, total ou parcial, sem autorização prévia por escrito.`,
+  },
+  en: {
+    by: "By",
+    contact: "Contact",
+    updated: "Updated on",
+    sources: "Sources",
+    locale: "en-US",
+    rights: (name: string) =>
+      `© ${new Date().getFullYear()} ${name}. All rights reserved. This document and its content are the intellectual property of ${name} and are protected by copyright law. Reproduction, distribution, translation or commercial use, in whole or in part, without prior written authorization is prohibited.`,
+  },
+  es: {
+    by: "Por",
+    contact: "Contacto",
+    updated: "Actualizado el",
+    sources: "Fuentes",
+    locale: "es-ES",
+    rights: (name: string) =>
+      `© ${new Date().getFullYear()} ${name}. Todos los derechos reservados. Este documento y su contenido son propiedad intelectual de ${name} y están protegidos por la legislación de derechos de autor. Queda prohibida la reproducción, distribución, traducción o uso comercial, total o parcial, sin autorización previa por escrito.`,
+  },
+  zh: {
+    by: "作者",
+    contact: "联系方式",
+    updated: "更新日期",
+    sources: "参考来源",
+    locale: "zh-CN",
+    rights: (name: string) =>
+      `© ${new Date().getFullYear()} ${name}。版权所有。本文件及其内容为 ${name} 的知识产权，受著作权法保护。未经事先书面许可，禁止全部或部分复制、传播、翻译或用于商业用途。`,
+  },
 } as const;
+
 
 const CJK_FONT_URL =
   "https://cdn.jsdelivr.net/gh/notofonts/noto-cjk@main/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf";
