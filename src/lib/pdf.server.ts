@@ -13,8 +13,17 @@ export type PdfDocInput = {
   coverImageUrl?: string | null;
   /** Usa fonte com ideogramas (mandarim). */
   cjk?: boolean;
+  /** Idioma dos rótulos fixos do documento (Por / Contato / Atualizado em / Fontes). */
+  lang?: "pt" | "en" | "es" | "zh";
   contact: { name: string; line1: string; line2: string; website?: string };
 };
+
+const PDF_LABELS = {
+  pt: { by: "Por", contact: "Contato", updated: "Atualizado em", sources: "Fontes", locale: "pt-BR" },
+  en: { by: "By", contact: "Contact", updated: "Updated on", sources: "Sources", locale: "en-US" },
+  es: { by: "Por", contact: "Contacto", updated: "Actualizado el", sources: "Fuentes", locale: "es-ES" },
+  zh: { by: "作者", contact: "联系方式", updated: "更新日期", sources: "参考来源", locale: "zh-CN" },
+} as const;
 
 const CJK_FONT_URL =
   "https://cdn.jsdelivr.net/gh/notofonts/noto-cjk@main/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf";
