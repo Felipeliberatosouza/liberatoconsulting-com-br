@@ -658,13 +658,14 @@ function adFooter(
   h: number,
   pad: number,
   footer: string,
+  maxWidth?: number,
 ) {
   const size = Math.round(w * (w > h ? 0.021 : 0.025));
   ctx.font = `600 ${size}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
   ctx.fillStyle = AD_MUTED;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  const lines = wrap(ctx, footer, w - pad * 2);
+  const lines = wrap(ctx, footer, maxWidth ?? w - pad * 2);
   let y = h - pad - lines.length * size * 1.3;
   for (const line of lines) {
     ctx.fillText(line, pad, y);
@@ -672,6 +673,33 @@ function adFooter(
   }
   return y;
 }
+
+/**
+ * Logomarca do painel administrativo posicionada no canto inferior direito,
+ * em uma faixa exclusiva: o rodapé e os blocos de texto respeitam esse espaço,
+ * de modo que a marca nunca fique sobreposta a textos ou imagens.
+ */
+async function drawAdLogo(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  pad: number,
+  box: { w: number; h: number },
+  logoSrc?: string,
+) {
+  try {
+    const logo = await loadImage(logoSrc || "/logo.png");
+    const lw = box.w;
+    const lh = Math.round((logo.height / logo.width) * lw);
+    ctx.save();
+    ctx.globalAlpha = 0.98;
+    ctx.drawImage(logo, w - pad - lw, h - pad - lh, lw, lh);
+    ctx.restore();
+  } catch {
+    /* sem logomarca disponível */
+  }
+}
+
 
 /**
  * Arte de propaganda com dois layouts editoriais:
