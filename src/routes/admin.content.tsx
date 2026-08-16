@@ -161,8 +161,9 @@ function AdminContent() {
   }
 
   useEffect(() => {
+    if (!authReady) return;
     void refresh();
-  }, []);
+  }, [authReady]);
 
   // O link externo acompanha o título até ser editado manualmente.
   useEffect(() => {
