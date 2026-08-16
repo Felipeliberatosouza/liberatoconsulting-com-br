@@ -729,12 +729,20 @@ export async function composeAdArt(opts: {
     const phoneW = phoneH * 0.49;
     const phoneX = pad;
     const phoneY = wide ? H - pad * 1.6 - phoneH : Math.min(afterTitle + H * 0.05, H * 0.42);
-    drawLinkedInPhone(ctx, phoneX, phoneY, phoneW, phoneH, photo && wide ? null : null);
+    drawLinkedInPhone(ctx, phoneX, phoneY, phoneW, phoneH, null);
 
     // bloco de citação com as demais versões do texto
     const qx = phoneX + phoneW + pad * 0.9;
     const qw = W - qx - pad;
     let qy = wide ? Math.max(afterTitle + H * 0.06, phoneY) : phoneY + phoneH * 0.06;
+
+    if (photo) {
+      const ih = wide ? H * 0.34 : H * 0.2;
+      const iw = Math.min(qw, ih * 0.82);
+      drawCover(ctx, photo, qx, qy, iw, ih, Math.round(W * 0.02));
+      qy += ih + H * 0.03;
+    }
+
     ctx.fillStyle = AD_ACCENT;
     ctx.font = `700 ${Math.round(W * 0.05)}px Georgia, serif`;
     ctx.textBaseline = "top";
