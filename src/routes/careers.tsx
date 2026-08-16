@@ -10,6 +10,7 @@ import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { trackEvent } from "@/lib/gtag";
 import { breadcrumb, jobBoardSchema, jsonLd } from "@/lib/schema";
 import { submitApplication } from "@/lib/careers.functions";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 
 export const Route = createFileRoute("/careers")({
@@ -83,15 +84,25 @@ function CareersPage() {
   }, [status]);
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
+  const { validate, fieldProps, errorClass, hasError } = useFieldErrors();
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
-    if (!form.reportValidity()) return;
     const fd = new FormData(form);
     const file = fd.get("resume");
+    const hasFile = file instanceof File && file.size > 0;
+    const ok = validate({
+      fullName: String(fd.get("fullName") ?? ""),
+      phone: String(fd.get("phone") ?? ""),
+      email: String(fd.get("email") ?? ""),
+      area: String(fd.get("area") ?? ""),
+      resume: hasFile,
+      captcha: String(fd.get("captcha") ?? ""),
+    });
+    if (!ok) return;
 
-    if (!(file instanceof File) || file.size === 0) {
+    if (!hasFile) {
       setError(C.errorFileType);
       return;
     }
@@ -182,11 +193,12 @@ function CareersPage() {
           ) : (
             <form
               onSubmit={onSubmit}
+              noValidate
               className="grid gap-4 rounded-2xl border border-border bg-secondary p-8 sm:grid-cols-2"
             >
               <label className="text-sm font-medium sm:col-span-2">
                 {C.fullName}
-                <input name="fullName" required minLength={3} maxLength={120} className={field} />
+                <input name="fullName" required minLength={3} maxLength={120} {...fieldProps("fullName", field)} />
               </label>
               <label className="text-sm font-medium">
                 {C.phone}
@@ -196,16 +208,16 @@ function CareersPage() {
                   required
                   minLength={8}
                   maxLength={30}
-                  className={field}
+                  {...fieldProps("phone", field)}
                 />
               </label>
               <label className="text-sm font-medium">
                 {C.email}
-                <input name="email" type="email" required maxLength={255} className={field} />
+                <input name="email" type="email" required maxLength={255} {...fieldProps("email", field)} />
               </label>
               <label className="text-sm font-medium sm:col-span-2">
                 {C.area}
-                <select name="area" required defaultValue="" className={field}>
+                <select name="area" required defaultValue="" {...fieldProps("area", field)}>
                   <option value="" disabled>
                     {C.areaPlaceholder}
                   </option>
@@ -218,7 +230,7 @@ function CareersPage() {
               </label>
               <label className="text-sm font-medium sm:col-span-2">
                 {C.resume}
-                <div className="mt-1.5 flex items-center gap-3 rounded-lg border border-dashed border-border bg-background px-4 py-3">
+                <div className={`mt-1.5 flex items-center gap-3 rounded-lg border border-dashed bg-background px-4 py-3 ${hasError("resume") && !fileName ? "border-destructive" : "border-border"}`}>
                   <Upload className="size-4 shrink-0 text-accent" />
                   <input
                     name="resume"
@@ -266,7 +278,7 @@ function CareersPage() {
                   required
                   inputMode="numeric"
                   autoComplete="off"
-                  className={`${field} sm:max-w-40`}
+                  {...fieldProps("captcha", `${field} sm:max-w-40`)}
                 />
               </label>
 

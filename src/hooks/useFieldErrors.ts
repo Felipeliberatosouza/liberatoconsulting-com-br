@@ -45,9 +45,27 @@ export function useFieldErrors() {
     return hasError(key, value) ? " border-destructive" : "";
   }
 
+  function clearError(key: string) {
+    setErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  }
+
+  /** Props para inputs não controlados: limpa o erro ao digitar. */
+  function fieldProps(key: string, baseClass: string) {
+    return {
+      onInput: () => clearError(key),
+      onChange: () => clearError(key),
+      className: `${baseClass}${errorClass(key)}`,
+    };
+  }
+
   function clearErrors() {
     setErrors({});
   }
 
-  return { errors, setErrors, validate, hasError, errorClass, clearErrors };
+  return { errors, setErrors, validate, hasError, errorClass, clearError, fieldProps, clearErrors };
 }

@@ -9,6 +9,7 @@ import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
 import { getPublicCompanyAddress } from "@/lib/company-public.functions";
 import { postalAddressSchema } from "@/lib/company-address";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 
 export const Route = createFileRoute("/contact")({
@@ -111,6 +112,7 @@ function ContactPage() {
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [error, setError] = useState<string | null>(null);
   const successRef = useRef<HTMLParagraphElement>(null);
+  const { validate, fieldProps } = useFieldErrors();
 
   useEffect(() => {
     if (status === "done") {
@@ -128,6 +130,15 @@ function ContactPage() {
     e.preventDefault();
     const form = e.currentTarget;
     const fd = new FormData(form);
+    const ok = validate({
+      name: String(fd.get("name") ?? ""),
+      email: String(fd.get("email") ?? ""),
+      company: String(fd.get("company") ?? ""),
+      country: String(fd.get("country") ?? ""),
+      message: String(fd.get("message") ?? ""),
+      captcha: String(fd.get("captcha") ?? ""),
+    });
+    if (!ok) return;
     setStatus("sending");
     setError(null);
     try {
@@ -199,28 +210,28 @@ function ContactPage() {
             {F.success}
           </p>
         ) : (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
             <div className="grid gap-6 sm:grid-cols-2">
               <label className="block text-sm font-medium">
                 {t.contact.name}
-                <input required minLength={2} maxLength={100} name="name" className={field} />
+                <input required minLength={2} maxLength={100} name="name" {...fieldProps("name", field)} />
               </label>
               <label className="block text-sm font-medium">
                 {t.contact.email}
-                <input required type="email" maxLength={255} name="email" className={field} />
+                <input required type="email" maxLength={255} name="email" {...fieldProps("email", field)} />
               </label>
               <label className="block text-sm font-medium">
                 {t.contact.company}
-                <input required minLength={2} maxLength={120} name="company" className={field} />
+                <input required minLength={2} maxLength={120} name="company" {...fieldProps("company", field)} />
               </label>
               <label className="block text-sm font-medium">
                 {F.country}
-                <input required minLength={2} maxLength={80} name="country" className={field} />
+                <input required minLength={2} maxLength={80} name="country" {...fieldProps("country", field)} />
               </label>
             </div>
             <label className="mt-6 block text-sm font-medium">
               {t.contact.message}
-              <textarea required maxLength={1500} name="message" rows={6} className={field} />
+              <textarea required maxLength={1500} name="message" rows={6} {...fieldProps("message", field)} />
             </label>
 
             {/* Honeypot: invisível para pessoas, preenchido por bots */}
@@ -241,7 +252,7 @@ function ContactPage() {
                 required
                 inputMode="numeric"
                 autoComplete="off"
-                className={`${field} sm:max-w-40`}
+                {...fieldProps("captcha", `${field} sm:max-w-40`)}
               />
             </label>
 
