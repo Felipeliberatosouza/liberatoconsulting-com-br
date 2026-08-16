@@ -312,7 +312,7 @@ export async function ensureTranslatedPdf(
     });
 
     const name = `${camel(tr["title"]!, 60) || "Article"}_${fileLang.toUpperCase()}_${camel(companyName, 40)}.pdf`;
-    const path = `articles/${article.slug}-${fileLang}.pdf`;
+    const path = `articles/${article.slug}-${fileLang}-v2.pdf`;
     const { error } = await supabaseAdmin.storage
       .from("content")
       .upload(path, bytes, { contentType: "application/pdf", upsert: true });
@@ -320,7 +320,7 @@ export async function ensureTranslatedPdf(
 
     await supabaseAdmin
       .from("content_articles")
-      .update({ translated_files: { ...stored, [fileLang]: { path, name } } })
+      .update({ translated_files: { ...stored, [fileKey]: { path, name } } })
       .eq("id", article.id);
     return { path, name };
   } catch (err) {
