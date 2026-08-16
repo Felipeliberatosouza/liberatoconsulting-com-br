@@ -113,7 +113,7 @@ function BrazilTopicPage() {
       <section className="py-16">
         <div className="mx-auto max-w-4xl px-6">
           {content.isPending && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-destructive">
               {b.topic.loading}
             </p>
           )}
