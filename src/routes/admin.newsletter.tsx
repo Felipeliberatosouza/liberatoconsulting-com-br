@@ -34,6 +34,7 @@ import {
 import { listArticles } from "@/lib/admin.functions";
 import { listAuthorOptions } from "@/lib/users.functions";
 import { useAuthReady } from "@/hooks/useAuthReady";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 
 export const Route = createFileRoute("/admin/newsletter")({
@@ -203,6 +204,10 @@ function AdminNewsletter() {
     setSocialArt({});
   };
 
+  const settingsErrors = useFieldErrors();
+  const campaignErrors = useFieldErrors();
+  const subscriberErrors = useFieldErrors();
+
 
 
   return (
@@ -234,9 +239,11 @@ function AdminNewsletter() {
           Defina o remetente. O e-mail precisa usar o domínio de e-mail conectado ao site.
         </p>
         <form
+          noValidate
           className="mt-4 grid gap-3 sm:grid-cols-2"
           onSubmit={async (e) => {
             e.preventDefault();
+            if (!settingsErrors.validate({ fromName, fromEmail })) return;
             const r = await saveNewsletterSettings({
               data: { fromName, fromEmail, autoSendOnPublish: autoSend },
             });
@@ -244,8 +251,8 @@ function AdminNewsletter() {
             else toast.success("Configurações salvas.");
           }}
         >
-          <input className={input} value={fromName} onChange={(e) => setFromName(e.target.value)} placeholder="Nome do remetente" />
-          <input className={input} type="email" value={fromEmail} onChange={(e) => setFromEmail(e.target.value)} placeholder="contato@liberatoconsulting.com.br" />
+          <input className={`${input}${settingsErrors.errorClass("fromName", fromName)}`} value={fromName} onChange={(e) => setFromName(e.target.value)} placeholder="Nome do remetente" />
+          <input className={`${input}${settingsErrors.errorClass("fromEmail", fromEmail)}`} type="email" value={fromEmail} onChange={(e) => setFromEmail(e.target.value)} placeholder="contato@liberatoconsulting.com.br" />
           <label className="flex items-center gap-2 text-sm sm:col-span-2">
             <input type="checkbox" checked={autoSend} onChange={(e) => setAutoSend(e.target.checked)} />
             Enviar automaticamente para todos os inscritos quando um novo conteúdo for publicado
@@ -266,9 +273,21 @@ function AdminNewsletter() {
           WhatsApp, LinkedIn e Instagram são gerados automaticamente.
         </p>
         <form
+          noValidate
           className="mt-5 space-y-5"
           onSubmit={async (e) => {
             e.preventDefault();
+            if (
+              !campaignErrors.validate({
+                subject,
+                preheader,
+                body,
+                authors,
+                authorContact,
+                referenceDate,
+              })
+            )
+              return;
             setBusy(true);
             try {
               const r = await saveCampaign({
@@ -342,7 +361,7 @@ function AdminNewsletter() {
 
           <div>
             <label className={label} htmlFor="nl-title">Título da newsletter</label>
-            <input id="nl-title" className={input} required value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Ex.: Como a IA está mudando a gestão no Brasil" />
+            <input id="nl-title" className={`${input}${campaignErrors.errorClass("subject", subject)}`} value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Ex.: Como a IA está mudando a gestão no Brasil" />
           </div>
 
           <div className="rounded-md border border-accent/40 bg-accent/5 p-4">
@@ -449,24 +468,30 @@ function AdminNewsletter() {
                   );
                 })}
               </div>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p
+                className={`mt-1 text-xs ${
+                  campaignErrors.hasError("authors", authors)
+                    ? "text-destructive"
+                    : "text-muted-foreground"
+                }`}
+              >
                 Selecione um ou mais autores para o texto.
               </p>
             </div>
 
             <div>
               <label className={label} htmlFor="nl-contact">Contato dos autores</label>
-              <input id="nl-contact" className={input} value={authorContact} onChange={(e) => setAuthorContact(e.target.value)} placeholder="contato@liberatoconsulting.com.br" />
+              <input id="nl-contact" className={`${input}${campaignErrors.errorClass("authorContact", authorContact)}`} value={authorContact} onChange={(e) => setAuthorContact(e.target.value)} placeholder="contato@liberatoconsulting.com.br" />
             </div>
             <div>
               <label className={label} htmlFor="nl-date">Data de atualização</label>
-              <input id="nl-date" type="date" className={input} value={referenceDate} onChange={(e) => setReferenceDate(e.target.value)} />
+              <input id="nl-date" type="date" className={`${input}${campaignErrors.errorClass("referenceDate", referenceDate)}`} value={referenceDate} onChange={(e) => setReferenceDate(e.target.value)} />
             </div>
           </div>
 
           <div>
             <label className={label} htmlFor="nl-pre">Chamada curta (aparece na caixa de entrada)</label>
-            <input id="nl-pre" className={input} value={preheader} onChange={(e) => setPreheader(e.target.value)} placeholder="Uma frase que convida à leitura" />
+            <input id="nl-pre" className={`${input}${campaignErrors.errorClass("preheader", preheader)}`} value={preheader} onChange={(e) => setPreheader(e.target.value)} placeholder="Uma frase que convida à leitura" />
           </div>
 
           <div>
@@ -478,8 +503,7 @@ function AdminNewsletter() {
             </div>
             <textarea
               id="nl-body"
-              className={`${input} min-h-56 leading-relaxed`}
-              required
+              className={`${input} min-h-56 leading-relaxed${campaignErrors.errorClass("body", body)}`}
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder="Escreva o conteúdo. Separe os parágrafos com uma linha em branco."
@@ -994,9 +1018,11 @@ function AdminNewsletter() {
       <div className={`mt-8 ${card}`}>
         <h2 className="font-display text-lg font-bold">Inscritos</h2>
         <form
+          noValidate
           className="mt-4 flex flex-wrap gap-2"
           onSubmit={async (e) => {
             e.preventDefault();
+            if (!subscriberErrors.validate({ email: newEmail })) return;
             const r = await addSubscriber({ data: { email: newEmail } });
             if (!r.ok) toast.error(r.error);
             else {
@@ -1006,7 +1032,7 @@ function AdminNewsletter() {
             }
           }}
         >
-          <input className={`${input} max-w-xs`} type="email" required value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="Adicionar e-mail manualmente" />
+          <input className={`${input} max-w-xs${subscriberErrors.errorClass("email", newEmail)}`} type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} placeholder="Adicionar e-mail manualmente" />
           <button className={btn} type="submit">Adicionar</button>
           <a
             className="rounded-md border border-border px-4 py-2 text-sm hover:border-accent"
