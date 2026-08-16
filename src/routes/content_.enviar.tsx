@@ -8,6 +8,7 @@ import { submitArticle } from "@/lib/content.functions";
 import { formatCpf, formatPhone, isValidCpf, isValidEmail, isValidPhone } from "@/lib/validation";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 export const Route = createFileRoute("/content_/enviar")({
   head: (ctx) => ({
@@ -66,6 +67,7 @@ function SubmitArticlePage() {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const successRef = useRef<HTMLDivElement>(null);
+  const { validate, fieldProps, errorClass } = useFieldErrors();
 
   const services = groups.flatMap((g) => g.items.map((i) => ({ id: i.id, label: i.label })));
 
@@ -76,6 +78,15 @@ function SubmitArticlePage() {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const email = String(form.get("email") ?? "");
+    const ok = validate({
+      full_name: String(form.get("full_name") ?? ""),
+      role_label: String(form.get("role_label") ?? ""),
+      email,
+      title: String(form.get("title") ?? ""),
+      summary: String(form.get("summary") ?? ""),
+      message: String(form.get("message") ?? ""),
+    });
+    if (!ok) return;
     if (!isValidEmail(email)) {
       toast.error("Informe um e-mail válido.");
       return;
@@ -164,7 +175,7 @@ function SubmitArticlePage() {
             </button>
           </div>
         ) : (
-          <form onSubmit={onSubmit} className="rounded-lg border border-border p-6">
+          <form onSubmit={onSubmit} noValidate className="rounded-lg border border-border p-6">
             <input
               name="website"
               tabIndex={-1}
@@ -175,7 +186,7 @@ function SubmitArticlePage() {
             <div className="grid gap-4 md:grid-cols-2">
               <label className="text-sm font-medium">
                 {a.formName} *
-                <input name="full_name" required maxLength={160} className={input} />
+                <input name="full_name" required maxLength={160} {...fieldProps("full_name", input)} />
               </label>
               <label className="text-sm font-medium">
                 {a.formRole} *
@@ -184,12 +195,12 @@ function SubmitArticlePage() {
                   required
                   maxLength={120}
                   placeholder="Autor"
-                  className={input}
+                  {...fieldProps("role_label", input)}
                 />
               </label>
               <label className="text-sm font-medium">
                 {a.formEmail} *
-                <input name="email" type="email" required maxLength={255} className={input} />
+                <input name="email" type="email" required maxLength={255} {...fieldProps("email", input)} />
               </label>
               <label className="text-sm font-medium">
                 {a.formPhone}
@@ -242,15 +253,15 @@ function SubmitArticlePage() {
               </label>
               <label className="text-sm font-medium md:col-span-2">
                 {a.formTitle} *
-                <input name="title" required maxLength={300} className={input} />
+                <input name="title" required maxLength={300} {...fieldProps("title", input)} />
               </label>
               <label className="text-sm font-medium md:col-span-2">
                 {a.formSummary}
-                <textarea name="summary" rows={3} maxLength={2000} className={input} />
+                <textarea name="summary" rows={3} maxLength={2000} {...fieldProps("summary", input)} />
               </label>
               <label className="text-sm font-medium md:col-span-2">
                 {a.formMessage}
-                <textarea name="message" rows={3} maxLength={4000} className={input} />
+                <textarea name="message" rows={3} maxLength={4000} {...fieldProps("message", input)} />
               </label>
               <label className="text-sm font-medium md:col-span-2">
                 {a.formFile}

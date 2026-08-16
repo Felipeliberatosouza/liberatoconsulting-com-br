@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { contactConsultant, listPublicConsultants, type PublicConsultant } from "@/lib/consultants.functions";
 import { useLanguage } from "@/i18n";
+import { useFieldErrors } from "@/hooks/useFieldErrors";
 
 function Initials({ name }: { name: string }) {
   const initials = name
@@ -59,9 +60,11 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
   const startedAt = useRef(Date.now());
   const [sending, setSending] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "", website: "" });
+  const { validate, errorClass } = useFieldErrors();
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (!validate({ name: form.name, email: form.email, message: form.message })) return;
     setSending(true);
     try {
       const res = await contactConsultant({
@@ -89,7 +92,7 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
   }
 
   return (
-    <form onSubmit={submit} className="mt-4 space-y-3">
+    <form onSubmit={submit} noValidate className="mt-4 space-y-3">
       <input
         tabIndex={-1}
         autoComplete="off"
@@ -100,6 +103,7 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
       <Input
         required
         placeholder={tt.namePlaceholder}
+        className={errorClass("name", form.name)}
         value={form.name}
         onChange={(e) => setForm({ ...form, name: e.target.value })}
       />
@@ -107,6 +111,7 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
         required
         type="email"
         placeholder={tt.emailPlaceholder}
+        className={errorClass("email", form.email)}
         value={form.email}
         onChange={(e) => setForm({ ...form, email: e.target.value })}
       />
@@ -119,6 +124,7 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
         required
         rows={4}
         placeholder={tt.messagePlaceholder}
+        className={errorClass("message", form.message)}
         value={form.message}
         onChange={(e) => setForm({ ...form, message: e.target.value })}
       />
