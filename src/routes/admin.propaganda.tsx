@@ -200,15 +200,34 @@ function AdPage() {
             </button>
           </div>
 
-          {(["pt", "en", "zh", "es"] as const).map((k, i) => (
-            <div key={k} className="space-y-1">
+          <div className="space-y-2 rounded-lg border border-border p-3">
+            <p className="text-sm font-medium">Idiomas do post</p>
+            <div className="flex flex-wrap gap-3">
+              {AD_LANGS.map((k) => (
+                <label key={k} className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={langs[k]}
+                    onChange={(e) => setLangs({ ...langs, [k]: e.target.checked })}
+                  />
+                  {AD_LANG_LABELS[k]}
+                </label>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              O espaço da arte é redistribuído conforme o número de idiomas selecionados.
+            </p>
+          </div>
+
+          {AD_LANGS.map((k, i) => (
+            <div key={k} className={`space-y-1 ${langs[k] ? "" : "opacity-50"}`}>
               <label className="text-sm font-medium">
-                {i + 1}ª linha —{" "}
-                {{ pt: "Português", en: "Inglês", zh: "Chinês", es: "Espanhol" }[k]}
+                {i + 1}ª linha — {AD_LANG_LABELS[k]}
               </label>
               <input
                 className={field}
                 value={lines[k]}
+                disabled={!langs[k]}
                 onChange={(e) => setLines({ ...lines, [k]: e.target.value })}
               />
             </div>
@@ -236,11 +255,21 @@ function AdPage() {
           ) : null}
           {FORMATS.filter((f) => arts[f]).map((f) => (
             <figure key={f} className="space-y-2">
-              <img
-                src={arts[f]}
-                alt={`Arte para ${SOCIAL_IMAGE_FORMATS[f].label}`}
-                className="w-full rounded-xl border border-border"
-              />
+              <button
+                type="button"
+                onClick={() => setZoom(f)}
+                className="group relative block w-full cursor-zoom-in overflow-hidden rounded-xl border border-border"
+                aria-label={`Ampliar arte para ${SOCIAL_IMAGE_FORMATS[f].label}`}
+              >
+                <img
+                  src={arts[f]}
+                  alt={`Arte para ${SOCIAL_IMAGE_FORMATS[f].label}`}
+                  className="w-full"
+                />
+                <span className="absolute bottom-2 right-2 rounded-full bg-background/85 px-2 py-1 text-xs font-medium opacity-90 group-hover:opacity-100">
+                  🔍 Ampliar
+                </span>
+              </button>
               <figcaption className="flex items-center justify-between text-sm">
                 <span>
                   {SOCIAL_IMAGE_FORMATS[f].label} · {SOCIAL_IMAGE_FORMATS[f].width}×
@@ -260,6 +289,50 @@ function AdPage() {
           ))}
         </section>
       </div>
+
+      {zoom && arts[zoom] ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-3 bg-foreground/80 p-4"
+          onClick={() => setZoom(null)}
+        >
+          <div
+            className="flex max-h-full w-full max-w-5xl flex-col items-center gap-3 overflow-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={arts[zoom]}
+              alt={`Arte ampliada para ${SOCIAL_IMAGE_FORMATS[zoom].label}`}
+              className="max-h-[75vh] w-auto rounded-lg bg-background"
+            />
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {FORMATS.filter((f) => arts[f]).map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setZoom(f)}
+                  className={`rounded-md px-3 py-1 text-sm ${
+                    f === zoom
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-background text-foreground"
+                  }`}
+                >
+                  {SOCIAL_IMAGE_FORMATS[f].label}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setZoom(null)}
+                className="rounded-md bg-background px-3 py-1 text-sm text-foreground"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
     </AdminShell>
   );
 }
