@@ -129,7 +129,7 @@ export const getBrazilTopic = createServerFn({ method: "POST" })
           body: result.body,
           bullets: result.bullets,
           sources: result.sources,
-          updated_at: result.updated_at,
+          updated_at: result.updated_at ?? new Date().toISOString(),
         },
         { onConflict: "section_id,topic_index,lang" },
       );
