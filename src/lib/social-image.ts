@@ -715,58 +715,120 @@ export async function composeAdArt(opts: {
     }
   }
 
-  if (opts.variant === "seguidor") {
-    const chev = Math.round(W * (wide ? 0.045 : 0.055));
-    drawChevrons(ctx, pad, Math.round(H * (wide ? 0.1 : 0.11)), chev);
+  // Quanto menos idiomas, mais generoso o espaço de cada bloco.
+  const count = Math.max(1, others.length);
+  const density = count >= 3 ? 1 : count === 2 ? 1.12 : 1.28;
 
-    const titleTop = Math.round(H * (wide ? 0.1 : 0.11)) + chev * 1.5;
-    const titleW = wide ? W * 0.44 : W * 0.66;
-    const titleSize = Math.round(W * (wide ? 0.055 : 0.075));
-    const afterTitle = drawTwoToneTitle(ctx, headline, pad, titleTop, titleW, titleSize);
-
-    // celular à esquerda
-    const phoneH = wide ? H * 0.62 : H * 0.46;
-    const phoneW = phoneH * 0.49;
-    const phoneX = pad;
-    const phoneY = wide ? H - pad * 1.6 - phoneH : Math.min(afterTitle + H * 0.05, H * 0.42);
-    drawLinkedInPhone(ctx, phoneX, phoneY, phoneW, phoneH, null);
-
-    // bloco de citação com as demais versões do texto
-    const qx = phoneX + phoneW + pad * 0.9;
-    const qw = W - qx - pad;
-    let qy = wide ? Math.max(afterTitle + H * 0.06, phoneY) : phoneY + phoneH * 0.06;
-
-    if (photo) {
-      const ih = wide ? H * 0.34 : H * 0.2;
-      const iw = Math.min(qw, ih * 0.82);
-      drawCover(ctx, photo, qx, qy, iw, ih, Math.round(W * 0.02));
-      qy += ih + H * 0.03;
+  /** Reduz o corpo do título até caber na caixa reservada (evita invadir a foto). */
+  function fitTitle(text: string, maxW: number, maxH: number, start: number) {
+    let size = start;
+    for (let i = 0; i < 18; i++) {
+      ctx!.font = `600 ${size}px "Space Grotesk", "Helvetica Neue", Arial, sans-serif`;
+      const ls = wrap(ctx!, text.trim(), maxW);
+      if (ls.length * size * 1.08 <= maxH || size <= start * 0.5) return size;
+      size = Math.round(size * 0.93);
     }
+    return size;
+  }
 
-    ctx.fillStyle = AD_ACCENT;
-    ctx.font = `700 ${Math.round(W * 0.05)}px Georgia, serif`;
-    ctx.textBaseline = "top";
-    ctx.textAlign = "left";
-    ctx.fillText("“", qx, qy);
-    qy += W * 0.045;
-
-    const qSize = Math.round(W * (wide ? 0.024 : 0.03));
-    ctx.font = `500 ${qSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
-    for (const t of others) {
-      ctx.fillStyle = AD_INK;
-      for (const line of wrap(ctx, t, qw)) {
-        if (qy > H - pad * 3) break;
-        ctx.fillText(line, qx, qy);
-        qy += qSize * 1.32;
+  /** Escreve os textos dentro de uma coluna, reduzindo o corpo até caber. */
+  function drawBlocks(items: string[], x: number, y: number, w: number, maxY: number, start: number) {
+    let size = start;
+    for (let i = 0; i < 20; i++) {
+      ctx!.font = `500 ${size}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+      const h = items.reduce(
+        (acc, t) => acc + wrap(ctx!, t, w).length * size * 1.34 + size * 0.55,
+        0,
+      );
+      if (y + h <= maxY || size <= start * 0.55) break;
+      size = Math.round(size * 0.94);
+    }
+    ctx!.font = `500 ${size}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+    ctx!.textBaseline = "top";
+    ctx!.textAlign = "left";
+    let cy = y;
+    for (const t of items) {
+      ctx!.fillStyle = AD_INK;
+      for (const line of wrap(ctx!, t, w)) {
+        if (cy > maxY) break;
+        ctx!.fillText(line, x, cy);
+        cy += size * 1.34;
       }
-      qy += qSize * 0.55;
+      cy += size * 0.55;
     }
+    return { y: cy, size };
+  }
 
-    ctx.fillStyle = AD_ACCENT;
-    ctx.fillRect(qx, qy + qSize * 0.2, Math.round(W * 0.1), Math.max(3, Math.round(W * 0.005)));
-    ctx.fillStyle = AD_MUTED;
-    ctx.font = `600 ${Math.round(qSize * 0.85)}px "DM Sans", Arial, sans-serif`;
-    ctx.fillText("linkedin.com/company/liberatoglobal", qx, qy + qSize * 1.1);
+  const footerTop = H - pad * (wide ? 2.1 : 2.4);
+
+  if (opts.variant === "seguidor") {
+    const chev = Math.round(W * (wide ? 0.042 : 0.05));
+
+    if (wide) {
+      // Celular à esquerda, coluna de texto à direita — colunas independentes.
+      const phoneH = Math.min(H * 0.78, footerTop - pad * 0.8);
+      const phoneW = phoneH * 0.49;
+      const phoneX = pad;
+      const phoneY = Math.max(pad * 0.8, (footerTop - phoneH) / 2);
+      drawLinkedInPhone(ctx, phoneX, phoneY, phoneW, phoneH, null);
+
+      const colX = phoneX + phoneW + pad;
+      const colW = W - colX - pad;
+      let y = Math.round(H * 0.09);
+      drawChevrons(ctx, colX, y, chev);
+      y += chev * 1.6;
+
+      const titleSize = fitTitle(headline, colW, H * 0.3 * density, Math.round(W * 0.05));
+      y = drawTwoToneTitle(ctx, headline, colX, y, colW, titleSize) + titleSize * 0.5;
+
+      ctx.fillStyle = AD_ACCENT;
+      ctx.font = `700 ${Math.round(W * 0.038)}px Georgia, serif`;
+      ctx.textBaseline = "top";
+      ctx.fillText("“", colX, y);
+      y += W * 0.032;
+
+      const res = drawBlocks(others, colX, y, colW, footerTop - H * 0.06, Math.round(W * 0.022));
+      ctx.fillStyle = AD_ACCENT;
+      ctx.fillRect(colX, res.y, Math.round(W * 0.08), Math.max(3, Math.round(W * 0.004)));
+      ctx.fillStyle = AD_MUTED;
+      ctx.font = `600 ${Math.round(res.size * 0.86)}px "DM Sans", Arial, sans-serif`;
+      ctx.fillText("linkedin.com/company/liberatoglobal", colX, res.y + res.size * 0.9);
+    } else {
+      // Título no topo, ocupando toda a largura; abaixo, celular e textos lado a lado.
+      let y = Math.round(H * 0.09);
+      drawChevrons(ctx, pad, y, chev);
+      y += chev * 1.7;
+
+      const titleSize = fitTitle(
+        headline,
+        W - pad * 2,
+        H * 0.2 * density,
+        Math.round(W * 0.068),
+      );
+      y = drawTwoToneTitle(ctx, headline, pad, y, W - pad * 2, titleSize) + titleSize * 0.6;
+
+      const blockTop = y;
+      const blockBottom = footerTop - H * 0.02;
+      const phoneH = Math.min((blockBottom - blockTop) * 0.94, H * 0.44);
+      const phoneW = phoneH * 0.49;
+      drawLinkedInPhone(ctx, pad, blockTop, phoneW, phoneH, null);
+
+      const qx = pad + phoneW + pad * 0.9;
+      const qw = W - qx - pad;
+      let qy = blockTop;
+      ctx.fillStyle = AD_ACCENT;
+      ctx.font = `700 ${Math.round(W * 0.045)}px Georgia, serif`;
+      ctx.textBaseline = "top";
+      ctx.fillText("“", qx, qy);
+      qy += W * 0.038;
+
+      const res = drawBlocks(others, qx, qy, qw, blockBottom - H * 0.045, Math.round(W * 0.027));
+      ctx.fillStyle = AD_ACCENT;
+      ctx.fillRect(qx, res.y, Math.round(W * 0.1), Math.max(3, Math.round(W * 0.005)));
+      ctx.fillStyle = AD_MUTED;
+      ctx.font = `600 ${Math.round(res.size * 0.82)}px "DM Sans", Arial, sans-serif`;
+      ctx.fillText("linkedin.com/company/liberatoglobal", qx, res.y + res.size * 0.85);
+    }
   } else {
     // Cartão editorial: número fantasma, título em duas cores, texto e foto.
     const n = String(opts.index ?? 1).padStart(2, "0");
@@ -778,36 +840,35 @@ export async function composeAdArt(opts: {
     ctx.fillText(n, W - pad, Math.round(H * 0.06));
     ctx.restore();
 
-    const colW = wide ? W * 0.5 : W - pad * 2;
-    const titleSize = Math.round(W * (wide ? 0.055 : 0.072));
-    let y = Math.round(H * (wide ? 0.13 : 0.11));
-    y = drawTwoToneTitle(ctx, headline, pad, y, colW * 0.9, titleSize) + titleSize * 0.45;
-
-    const bodySize = Math.round(W * (wide ? 0.023 : 0.029));
-    ctx.font = `500 ${bodySize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
-    ctx.fillStyle = AD_INK;
-    const bodyLimit = wide ? H * 0.72 : H * 0.5;
-    for (const t of others) {
-      for (const line of wrap(ctx, t, colW * 0.86)) {
-        if (y > bodyLimit) break;
-        ctx.fillText(line, pad, y);
-        y += bodySize * 1.4;
-      }
-      y += bodySize * 0.5;
-    }
-
+    // Reserva primeiro a área da foto; o texto nunca ultrapassa esse limite.
+    let photoBox: { x: number; y: number; w: number; h: number } | null = null;
     if (photo) {
       if (wide) {
         const iw = W * 0.36;
-        const ih = H * 0.62;
-        drawCover(ctx, photo, W - pad - iw, (H - ih) / 2, iw, ih, Math.round(W * 0.02));
+        const ih = Math.min(H * 0.66, footerTop - pad * 0.6);
+        photoBox = { x: W - pad - iw, y: Math.max(pad * 0.7, (footerTop - ih) / 2), w: iw, h: ih };
       } else {
         const iw = W - pad * 2;
-        const ih = H * 0.3;
-        drawCover(ctx, photo, pad, H - pad * 2.6 - ih, iw, ih, Math.round(W * 0.03));
+        const ih = H * (count >= 3 ? 0.24 : 0.3);
+        photoBox = { x: pad, y: footerTop - H * 0.03 - ih, w: iw, h: ih };
       }
+      drawCover(ctx, photo, photoBox.x, photoBox.y, photoBox.w, photoBox.h, Math.round(W * 0.025));
     }
+
+    const colW = wide ? (photoBox ? photoBox.x - pad * 1.8 : W * 0.56) : W - pad * 2;
+    const titleSize = fitTitle(
+      headline,
+      colW,
+      H * (wide ? 0.24 : 0.2) * density,
+      Math.round(W * (wide ? 0.05 : 0.066)),
+    );
+    let y = Math.round(H * (wide ? 0.12 : 0.1));
+    y = drawTwoToneTitle(ctx, headline, pad, y, colW, titleSize) + titleSize * 0.5;
+
+    const bodyLimit = photoBox && !wide ? photoBox.y - H * 0.03 : footerTop - H * 0.02;
+    drawBlocks(others, pad, y, colW, bodyLimit, Math.round(W * (wide ? 0.022 : 0.028)));
   }
+
 
   adFooter(ctx, W, H, pad, opts.footer);
   await drawLogo(ctx, W, H, opts.logoUrl);
