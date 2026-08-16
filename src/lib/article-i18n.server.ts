@@ -255,8 +255,10 @@ export async function ensureTranslatedPdf(
       }
     : ((withTr.translations?.[fileLang] ?? {}) as Record<string, string>);
   // Só reaproveitamos o PDF salvo se ele já foi gerado a partir da íntegra do documento.
+  // A versão (v2) invalida PDFs antigos com rótulos fixos em português.
+  const fileKey = `${fileLang}-v2`;
   const hasFullDoc = Boolean(tr["doc_body"]?.trim()) || !article.file_path;
-  if (stored[fileLang]?.path && hasFullDoc) return stored[fileLang]!;
+  if (stored[fileKey]?.path && hasFullDoc) return stored[fileKey]!;
   if (!tr["title"]) return original;
 
 
