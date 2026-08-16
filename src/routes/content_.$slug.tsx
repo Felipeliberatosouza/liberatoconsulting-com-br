@@ -14,6 +14,7 @@ import {
   registerArticleRead,
 } from "@/lib/content.functions";
 import type { ArticleRecord } from "@/lib/site-config";
+import { READ_COUNT_BASE } from "@/lib/site-config";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { articleSchema, breadcrumb, jsonLd } from "@/lib/schema";
 import { getPublishedNewsletter } from "@/lib/newsletter-public.functions";

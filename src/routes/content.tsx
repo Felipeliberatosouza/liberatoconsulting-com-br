@@ -5,6 +5,7 @@ import { BulletinSignup } from "@/components/BulletinSignup";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
+import { READ_COUNT_BASE } from "@/lib/site-config";
 
 type ContentSearch = {
   category?: string | undefined;

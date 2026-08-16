@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import type { ArticleRecord } from "./site-config";
+import { READ_COUNT_BASE } from "./site-config";
 
 /** Artigo publicado, visível para qualquer visitante (já traduzido para o idioma pedido). */
 export const getPublicArticle = createServerFn({ method: "GET" })

@@ -1,6 +1,9 @@
 import type { Dict } from "@/i18n/pt";
 import type { Lang } from "@/i18n/config";
 
+/** Contagem inicial padronizada de leituras de todo conteúdo. */
+export const READ_COUNT_BASE = 20;
+
 /** Campos de cor editáveis no painel (paleta principal). */
 export const THEME_FIELDS = [
   { key: "primary", label: "Primária (botões e destaques escuros)", fallback: "#1b2436" },
