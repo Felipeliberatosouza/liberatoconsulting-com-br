@@ -49,3 +49,34 @@ export const AREAS_POST_HEADLINES: Record<ArticlePostLang, string> = {
   zh: "利伯拉托咨询 的四大咨询领域",
   es: "Cuatro frentes de consultoría en Liberato Consulting",
 };
+
+/** Títulos fixos das demais peças temáticas, nos quatro idiomas. */
+export const THEME_POST_HEADLINES: Record<
+  "indicadores" | "brasil" | "gestao" | "insights",
+  Record<ArticlePostLang, string>
+> = {
+  indicadores: {
+    pt: "Indicadores econômicos do Brasil",
+    en: "Brazil economic indicators",
+    zh: "巴西经济指标",
+    es: "Indicadores económicos de Brasil",
+  },
+  brasil: {
+    pt: "Dados do Brasil pela Liberato Consulting",
+    en: "Brazil data by Liberato Consulting",
+    zh: "利伯拉托咨询 的巴西数据",
+    es: "Datos de Brasil por Liberato Consulting",
+  },
+  gestao: {
+    pt: "Conteúdos sobre gestão na Liberato Consulting",
+    en: "Management content at Liberato Consulting",
+    zh: "利伯拉托咨询 的管理内容",
+    es: "Contenidos sobre gestión en Liberato Consulting",
+  },
+  insights: {
+    pt: "Insights da Liberato Consulting",
+    en: "Insights from Liberato Consulting",
+    zh: "利伯拉托咨询 洞察",
+    es: "Insights de Liberato Consulting",
+  },
+};
