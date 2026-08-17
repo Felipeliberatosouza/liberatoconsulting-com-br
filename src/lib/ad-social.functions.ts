@@ -86,3 +86,50 @@ export const generateAdBackground = createServerFn({ method: "POST" })
       return { ok: false as const, error: (err as Error).message };
     }
   });
+
+const articleInput = z.object({
+  title: z.string().trim().min(2).max(300),
+  summary: z.string().trim().max(1000).default(""),
+});
+
+/** Traduz o nome do artigo para os quatro idiomas da peça "conteúdo novo". */
+export const generateArticlePostCopy = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => articleInput.parse(d))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./access.server");
+    await assertAdmin(context);
+    const { askJson } = await import("./ai.server");
+
+    type Out = { pt: string; en: string; zh: string; es: string };
+    try {
+      const out = await askJson<Out>(
+        "Você traduz títulos de artigos de uma consultoria brasileira de gestão. " +
+          "Mantenha o sentido, tom executivo, sem emojis e sem aspas.",
+        JSON.stringify({
+          titulo: data.title,
+          resumo: data.summary,
+          instrucao:
+            "Devolva o título do artigo (máximo 90 caracteres) nos quatro idiomas. " +
+            "Em português, apenas ajuste a pontuação se necessário.",
+          formato: {
+            pt: "título em português do Brasil",
+            en: "título em inglês",
+            zh: "título em chinês simplificado",
+            es: "título em espanhol",
+          },
+        }),
+      );
+      const cut = (v: unknown) => String(v ?? "").trim().slice(0, 120);
+      return {
+        ok: true as const,
+        pt: cut(out.pt) || data.title,
+        en: cut(out.en),
+        zh: cut(out.zh),
+        es: cut(out.es),
+      };
+    } catch (err) {
+      return { ok: false as const, error: (err as Error).message };
+    }
+  });
+
