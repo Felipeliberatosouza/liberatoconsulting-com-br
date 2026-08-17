@@ -959,7 +959,7 @@ export async function composeAdArt(opts: {
   }
 
 
-  adFooter(ctx, W, H, pad, opts.footer, W - pad * 2 - logoW - pad * 0.6);
+  adFooter(ctx, W, H, pad, opts.footer, footerMaxW);
   await drawAdLogo(ctx, W, H, pad, { w: logoW, h: logoH }, opts.logoUrl);
 
   return canvas.toDataURL(f.mime, 0.92);
