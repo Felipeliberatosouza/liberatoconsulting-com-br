@@ -16,6 +16,8 @@ import { analyzeArticleFile, generateArticleCover } from "@/lib/content-ai.funct
 import { listAuthorOptions } from "@/lib/users.functions";
 import { useAuthReady } from "@/hooks/useAuthReady";
 import { stampLogo } from "@/lib/social-image";
+import { shortSlug } from "@/lib/short-slug";
+
 import type { ArticleRecord } from "@/lib/site-config";
 import { READ_COUNT_BASE } from "@/lib/site-config";
 import { pt } from "@/i18n/pt";
