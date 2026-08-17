@@ -12,9 +12,14 @@ import {
   AD_GOALS,
   generateAdBackground,
   generateAdCopy,
+  generateAreasCopy,
   generateArticlePostCopy,
 } from "@/lib/ad-social.functions";
-import { ARTICLE_POST_HEADLINES } from "@/lib/ad-content";
+import {
+  AREAS_POST_HEADLINES,
+  ARTICLE_POST_HEADLINES,
+  SERVICE_AREAS,
+} from "@/lib/ad-content";
 import { listArticles } from "@/lib/admin.functions";
 import {
   SOCIAL_IMAGE_FORMATS,
@@ -54,6 +59,15 @@ const SERVICES = [
 
 const FORMATS: SocialFormatKey[] = ["linkedin", "instagram", "whatsapp"];
 
+type Mode = "servico" | "area" | "areas" | "artigo";
+
+const MODE_LABELS: Record<Mode, string> = {
+  servico: "Propaganda de serviço",
+  area: "Propaganda de uma área de serviço",
+  areas: "As quatro áreas de serviço juntas",
+  artigo: "Novo artigo publicado",
+};
+
 const AD_LANGS = ["pt", "en", "zh", "es"] as const;
 type AdLang = (typeof AD_LANGS)[number];
 const AD_LANG_LABELS: Record<AdLang, string> = {
@@ -80,13 +94,29 @@ function AdPage() {
   });
   const published = (articles.data ?? []).filter((a) => a.published);
 
-  const [mode, setMode] = useState<"servico" | "artigo">("servico");
+  const [mode, setMode] = useState<Mode>("servico");
   const [articleId, setArticleId] = useState("");
   const article = published.find((a) => a.id === articleId);
   const [service, setService] = useState(SERVICES[0]?.label ?? "");
+  const [areaId, setAreaId] = useState<string>(SERVICE_AREAS[0].id);
+  const areaLabel =
+    SERVICE_AREAS.find((a) => a.id === areaId)?.labels.pt ?? SERVICE_AREAS[0].labels.pt;
+  const [areaTexts, setAreaTexts] = useState<Record<AdLang, Record<string, string>>>({
+    pt: {},
+    en: {},
+    zh: {},
+    es: {},
+  });
   const [topic, setTopic] = useState("");
   const [goalId, setGoalId] = useState<string>(AD_GOALS[0].id);
   const goal = AD_GOALS.find((g) => g.id === goalId)?.label ?? AD_GOALS[0].label;
+  const serviceForAi =
+    mode === "area"
+      ? areaLabel
+      : mode === "areas"
+        ? "Estratégia, Empreendedorismo, Operações e Pesquisa de Mercado"
+        : service;
+
   const [lines, setLines] = useState({ pt: "", en: "", zh: "", es: "" });
   const [langs, setLangs] = useState<Record<AdLang, boolean>>({
     pt: true,
@@ -111,7 +141,7 @@ function AdPage() {
 
   async function makeCopy() {
     setBusy("copy");
-    const res = await generateAdCopy({ data: { service, topic, goal } });
+    const res = await generateAdCopy({ data: { service: serviceForAi, topic, goal } });
     setBusy(null);
     if (!res.ok) {
       toast.error(res.error);
@@ -131,7 +161,7 @@ function AdPage() {
               topic: article.title,
               goal: "Divulgar novo artigo publicado",
             }
-          : { service, topic, goal },
+          : { service: serviceForAi, topic, goal },
     });
     setBusy(null);
     if (!res.ok) {
@@ -161,6 +191,25 @@ function AdPage() {
     toast.success("Nome do artigo traduzido nos quatro idiomas.");
   }
 
+  async function makeAreasCopy() {
+    setBusy("copy");
+    const res = await generateAreasCopy({ data: { focus: topic } });
+    setBusy(null);
+    if (!res.ok) {
+      toast.error(res.error);
+      return;
+    }
+    setAreaTexts({ pt: res.pt, en: res.en, zh: res.zh, es: res.es });
+    toast.success("Frases geradas para as quatro áreas nos quatro idiomas.");
+  }
+
+  function areaLine(lang: AdLang, id: string) {
+    const area = SERVICE_AREAS.find((a) => a.id === id);
+    const label = area?.labels[lang] ?? area?.labels.pt ?? id;
+    const text = areaTexts[lang]?.[id]?.trim();
+    return text ? `${label} — ${text}` : label;
+  }
+
   async function compose() {
     const selected = AD_LANGS.filter((l) => langs[l]);
     const list =
@@ -169,7 +218,12 @@ function AdPage() {
             ARTICLE_POST_HEADLINES[selected[0] ?? "pt"],
             ...selected.map((l) => lines[l]).filter((t) => t.trim()),
           ]
-        : selected.map((l) => lines[l]);
+        : mode === "areas"
+          ? [
+              AREAS_POST_HEADLINES[selected[0] ?? "pt"],
+              ...selected.flatMap((l) => SERVICE_AREAS.map((a) => areaLine(l, a.id))),
+            ]
+          : selected.map((l) => lines[l]);
     if (!list.some((l) => l.trim())) {
       toast.error("Selecione ao menos um idioma e preencha a frase correspondente.");
       return;
@@ -179,7 +233,10 @@ function AdPage() {
       const out: Partial<Record<SocialFormatKey, string>> = {};
       for (const format of FORMATS) {
         out[format] = await composeAdArt({
-          variant: mode === "servico" && goalId === "seguidor" ? "seguidor" : "card",
+          variant:
+            (mode === "servico" || mode === "area") && goalId === "seguidor"
+              ? "seguidor"
+              : "card",
           format,
           lines: list,
           ...(baseImage ? { baseImage } : {}),
@@ -212,13 +269,17 @@ function AdPage() {
               className={field}
               value={mode}
               onChange={(e) => {
-                setMode(e.target.value as "servico" | "artigo");
+                setMode(e.target.value as Mode);
                 setLines({ pt: "", en: "", zh: "", es: "" });
+                setAreaTexts({ pt: {}, en: {}, zh: {}, es: {} });
                 setArts({});
               }}
             >
-              <option value="servico">Propaganda de serviço</option>
-              <option value="artigo">Novo artigo publicado</option>
+              {(Object.keys(MODE_LABELS) as Mode[]).map((m) => (
+                <option key={m} value={m}>
+                  {MODE_LABELS[m]}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -264,7 +325,7 @@ function AdPage() {
             </>
           ) : null}
 
-          <div className={`space-y-1 ${mode === "artigo" ? "hidden" : ""}`}>
+          <div className={`space-y-1 ${mode === "servico" ? "" : "hidden"}`}>
             <label className="text-sm font-medium">Serviço da consultoria</label>
             <select className={field} value={service} onChange={(e) => setService(e.target.value)}>
               {SERVICES.map((s) => (
@@ -275,8 +336,21 @@ function AdPage() {
             </select>
           </div>
 
+          <div className={`space-y-1 ${mode === "area" ? "" : "hidden"}`}>
+            <label className="text-sm font-medium">Área de serviço</label>
+            <select className={field} value={areaId} onChange={(e) => setAreaId(e.target.value)}>
+              {SERVICE_AREAS.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.labels.pt}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className={`space-y-1 ${mode === "artigo" ? "hidden" : ""}`}>
-            <label className="text-sm font-medium">Assunto do serviço</label>
+            <label className="text-sm font-medium">
+              {mode === "areas" ? "Foco da peça (opcional)" : "Assunto do serviço"}
+            </label>
             <input
               className={field}
               value={topic}
@@ -285,7 +359,7 @@ function AdPage() {
             />
           </div>
 
-          <div className={`space-y-1 ${mode === "artigo" ? "hidden" : ""}`}>
+          <div className={`space-y-1 ${mode === "servico" || mode === "area" ? "" : "hidden"}`}>
             <label className="text-sm font-medium">Objetivo do post</label>
             <select className={field} value={goalId} onChange={(e) => setGoalId(e.target.value)}>
               {AD_GOALS.map((g) => (
@@ -296,7 +370,9 @@ function AdPage() {
             </select>
           </div>
 
-          <div className={`flex flex-wrap gap-2 ${mode === "artigo" ? "hidden" : ""}`}>
+          <div
+            className={`flex flex-wrap gap-2 ${mode === "servico" || mode === "area" ? "" : "hidden"}`}
+          >
             <button
               type="button"
               onClick={makeCopy}
@@ -314,6 +390,33 @@ function AdPage() {
               {busy === "image" ? "Gerando…" : "Gerar imagem de fundo"}
             </button>
           </div>
+
+          {mode === "areas" ? (
+            <>
+              <p className="text-xs text-muted-foreground">
+                Título fixo da peça: “{AREAS_POST_HEADLINES.pt}” — abaixo entram as quatro áreas em
+                cada idioma selecionado.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={makeAreasCopy}
+                  disabled={busy !== null}
+                  className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+                >
+                  {busy === "copy" ? "Gerando…" : "Gerar frases das 4 áreas (4 idiomas)"}
+                </button>
+                <button
+                  type="button"
+                  onClick={makeImage}
+                  disabled={busy !== null}
+                  className="rounded-md border border-border px-4 py-2 text-sm font-medium disabled:opacity-60"
+                >
+                  {busy === "image" ? "Gerando…" : "Gerar imagem de fundo"}
+                </button>
+              </div>
+            </>
+          ) : null}
 
           <div className="space-y-2 rounded-lg border border-border p-3">
             <p className="text-sm font-medium">Idiomas do post</p>
@@ -334,8 +437,34 @@ function AdPage() {
             </p>
           </div>
 
+          {mode === "areas"
+            ? AD_LANGS.map((k) => (
+                <div key={k} className={`space-y-2 ${langs[k] ? "" : "opacity-50"}`}>
+                  <p className="text-sm font-medium">Áreas — {AD_LANG_LABELS[k]}</p>
+                  {SERVICE_AREAS.map((a) => (
+                    <input
+                      key={a.id}
+                      className={field}
+                      disabled={!langs[k]}
+                      placeholder={a.labels[k]}
+                      value={areaTexts[k]?.[a.id] ?? ""}
+                      onChange={(e) =>
+                        setAreaTexts({
+                          ...areaTexts,
+                          [k]: { ...areaTexts[k], [a.id]: e.target.value },
+                        })
+                      }
+                    />
+                  ))}
+                </div>
+              ))
+            : null}
+
           {AD_LANGS.map((k, i) => (
-            <div key={k} className={`space-y-1 ${langs[k] ? "" : "opacity-50"}`}>
+            <div
+              key={k}
+              className={`space-y-1 ${langs[k] ? "" : "opacity-50"} ${mode === "areas" ? "hidden" : ""}`}
+            >
               <label className="text-sm font-medium">
                 {mode === "artigo"
                   ? `Nome do artigo — ${AD_LANG_LABELS[k]}`
