@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Linkedin, Instagram, MessageCircle, Star } from "lucide-react";
@@ -12,6 +12,7 @@ import {
   getPublicArticle,
   rateArticle,
   registerArticleRead,
+  resolveContentSlug,
 } from "@/lib/content.functions";
 import type { ArticleRecord } from "@/lib/site-config";
 import { READ_COUNT_BASE } from "@/lib/site-config";
@@ -39,7 +40,16 @@ export const Route = createFileRoute("/content_/$slug")({
     }
     const news = await getPublishedNewsletter({ data: { slug: params.slug } }).catch(() => null);
     if (news) throw redirect({ to: "/newsletter/$slug", params: { slug: params.slug } });
-    return null;
+
+    // Endereço antigo (título completo): redireciona permanentemente para o link curto.
+    const alias = await resolveContentSlug({ data: { slug: params.slug } }).catch(() => null);
+    if (alias?.kind === "content") {
+      throw redirect({ to: "/content/$slug", params: { slug: alias.slug }, statusCode: 301 });
+    }
+    if (alias?.kind === "newsletter") {
+      throw redirect({ to: "/newsletter/$slug", params: { slug: alias.slug }, statusCode: 301 });
+    }
+    throw notFound();
   },
   head: ({ params, loaderData, ...ctx }) => {
     const fallbackTitle = params.slug.replace(/-/g, " ");

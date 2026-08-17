@@ -174,3 +174,35 @@ export const submitArticle = createServerFn({ method: "POST" })
     if (error) return { ok: false as const, error: "Não foi possível registrar o envio." };
     return { ok: true as const };
   });
+
+/**
+ * Resolve endereços antigos de conteúdo (título completo) para o endereço
+ * curto atual. Usado para redirecionar em vez de responder 404.
+ */
+export const resolveContentSlug = createServerFn({ method: "GET" })
+  .inputValidator((d: unknown) => z.object({ slug: z.string().trim().min(1).max(200) }).parse(d))
+  .handler(async ({ data }): Promise<{ kind: "content" | "newsletter"; slug: string } | null> => {
+    const { slugMatches } = await import("./slug-alias");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: articles } = await supabaseAdmin
+      .from("content_articles")
+      .select("slug, title")
+      .eq("published", true);
+    for (const a of (articles ?? []) as Array<{ slug: string; title: string }>) {
+      if (a.slug && a.title && slugMatches(data.slug, a.title, a.slug)) {
+        return { kind: "content", slug: a.slug };
+      }
+    }
+
+    const { data: campaigns } = await supabaseAdmin
+      .from("newsletter_campaigns")
+      .select("slug, subject")
+      .not("published_at", "is", null);
+    for (const c of (campaigns ?? []) as Array<{ slug: string; subject: string }>) {
+      if (c.slug && c.subject && slugMatches(data.slug, c.subject, c.slug)) {
+        return { kind: "newsletter", slug: c.slug };
+      }
+    }
+    return null;
+  });

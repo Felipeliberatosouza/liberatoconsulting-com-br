@@ -1,14 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-import { buildSitemapIndex } from "@/lib/sitemap.server";
+import { buildLanguageSitemap } from "@/lib/sitemap.server";
 import { requestOrigin } from "@/lib/seo";
 
-/** Índice de sitemaps: aponta para um sitemap por idioma. */
+/** Sitemap único: URLs padrão (pt) com alternates hreflang de todos os idiomas. */
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
-      GET: async ({ request }) => buildSitemapIndex(requestOrigin(request)),
+      GET: async ({ request }) => buildLanguageSitemap("pt", requestOrigin(request)),
     },
   },
 });
