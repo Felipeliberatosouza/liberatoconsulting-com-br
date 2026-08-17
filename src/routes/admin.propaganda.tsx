@@ -8,7 +8,14 @@ import { useAuthReady } from "@/hooks/useAuthReady";
 import { useLanguage } from "@/i18n";
 import { pt } from "@/i18n/pt";
 import { getCompany } from "@/lib/company.functions";
-import { AD_GOALS, generateAdBackground, generateAdCopy } from "@/lib/ad-social.functions";
+import {
+  AD_GOALS,
+  generateAdBackground,
+  generateAdCopy,
+  generateArticlePostCopy,
+} from "@/lib/ad-social.functions";
+import { ARTICLE_POST_HEADLINES } from "@/lib/ad-content";
+import { listArticles } from "@/lib/admin.functions";
 import {
   SOCIAL_IMAGE_FORMATS,
   composeAdArt,
@@ -66,6 +73,16 @@ function AdPage() {
     enabled: ready,
   });
 
+  const articles = useQuery({
+    queryKey: ["admin-articles"],
+    queryFn: () => listArticles(),
+    enabled: ready,
+  });
+  const published = (articles.data ?? []).filter((a) => a.published);
+
+  const [mode, setMode] = useState<"servico" | "artigo">("servico");
+  const [articleId, setArticleId] = useState("");
+  const article = published.find((a) => a.id === articleId);
   const [service, setService] = useState(SERVICES[0]?.label ?? "");
   const [topic, setTopic] = useState("");
   const [goalId, setGoalId] = useState<string>(AD_GOALS[0].id);
@@ -111,8 +128,33 @@ function AdPage() {
     toast.success("Imagem de fundo gerada.");
   }
 
+  async function makeArticleCopy() {
+    if (!article) {
+      toast.error("Selecione um conteúdo publicado.");
+      return;
+    }
+    setBusy("copy");
+    const res = await generateArticlePostCopy({
+      data: { title: article.title, summary: article.summary ?? "" },
+    });
+    setBusy(null);
+    if (!res.ok) {
+      toast.error(res.error);
+      return;
+    }
+    setLines({ pt: res.pt, en: res.en, zh: res.zh, es: res.es });
+    toast.success("Nome do artigo traduzido nos quatro idiomas.");
+  }
+
   async function compose() {
-    const list = AD_LANGS.filter((l) => langs[l]).map((l) => lines[l]);
+    const selected = AD_LANGS.filter((l) => langs[l]);
+    const list =
+      mode === "artigo"
+        ? [
+            ARTICLE_POST_HEADLINES[selected[0] ?? "pt"],
+            ...selected.map((l) => lines[l]).filter((t) => t.trim()),
+          ]
+        : selected.map((l) => lines[l]);
     if (!list.some((l) => l.trim())) {
       toast.error("Selecione ao menos um idioma e preencha a frase correspondente.");
       return;
@@ -122,7 +164,7 @@ function AdPage() {
       const out: Partial<Record<SocialFormatKey, string>> = {};
       for (const format of FORMATS) {
         out[format] = await composeAdArt({
-          variant: goalId === "seguidor" ? "seguidor" : "card",
+          variant: mode === "servico" && goalId === "seguidor" ? "seguidor" : "card",
           format,
           lines: list,
           ...(baseImage ? { baseImage } : {}),
