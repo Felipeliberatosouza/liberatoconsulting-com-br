@@ -16,6 +16,8 @@ import { analyzeArticleFile, generateArticleCover } from "@/lib/content-ai.funct
 import { listAuthorOptions } from "@/lib/users.functions";
 import { useAuthReady } from "@/hooks/useAuthReady";
 import { stampLogo } from "@/lib/social-image";
+import { shortSlug } from "@/lib/short-slug";
+
 import type { ArticleRecord } from "@/lib/site-config";
 import { READ_COUNT_BASE } from "@/lib/site-config";
 import { pt } from "@/i18n/pt";
@@ -81,14 +83,9 @@ const EMPTY: Draft = {
 };
 
 function slugify(v: string) {
-  return v
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80);
+  return shortSlug(v);
 }
+
 
 /** Endereço público do conteúdo, gerado a partir do título (igual à Newsletter). */
 function contentLink(slug: string) {

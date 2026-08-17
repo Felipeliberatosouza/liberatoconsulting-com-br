@@ -675,6 +675,20 @@ function drawLinkedInPhone(
   ctx.fill();
 }
 
+/** Medidas do rodapé: permite reservar o espaço antes de desenhar qualquer outro elemento. */
+function footerLayout(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  footer: string,
+  maxWidth: number,
+) {
+  const size = Math.round(w * (w > h ? 0.021 : 0.025));
+  ctx.font = `600 ${size}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+  const lines = wrap(ctx, footer, maxWidth);
+  return { size, lines, height: Math.ceil(lines.length * size * 1.3) };
+}
+
 function adFooter(
   ctx: CanvasRenderingContext2D,
   w: number,
@@ -683,19 +697,29 @@ function adFooter(
   footer: string,
   maxWidth?: number,
 ) {
-  const size = Math.round(w * (w > h ? 0.021 : 0.025));
+  const mw = maxWidth ?? w - pad * 2;
+  const { size, lines, height } = footerLayout(ctx, w, h, footer, mw);
+  let y = h - pad - height;
+
+  // Placa de legibilidade: o texto pode ficar sobre uma imagem, mas nunca ilegível.
+  const plateW = Math.min(mw, Math.max(...lines.map((l) => ctx.measureText(l).width))) + size * 0.8;
+  ctx.save();
+  ctx.fillStyle = "rgba(247,245,242,0.86)";
+  roundRect(ctx, pad - size * 0.4, y - size * 0.35, plateW, height + size * 0.6, size * 0.35);
+  ctx.fill();
+  ctx.restore();
+
   ctx.font = `600 ${size}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
   ctx.fillStyle = AD_MUTED;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  const lines = wrap(ctx, footer, maxWidth ?? w - pad * 2);
-  let y = h - pad - lines.length * size * 1.3;
   for (const line of lines) {
     ctx.fillText(line, pad, y);
     y += size * 1.3;
   }
   return y;
 }
+
 
 /**
  * Logomarca do painel administrativo posicionada no canto inferior direito,
@@ -819,7 +843,11 @@ export async function composeAdArt(opts: {
   } catch {
     /* usa a proporção padrão */
   }
-  const footerTop = H - Math.max(pad * (wide ? 2.1 : 2.4), pad + logoH + pad * 0.6);
+  // O rodapé é medido antes do layout: nenhum bloco de texto ou foto invade sua faixa.
+  const footerMaxW = W - pad * 2 - logoW - pad * 0.6;
+  const footerH = footerLayout(ctx, W, H, opts.footer, footerMaxW).height;
+  const footerTop =
+    H - Math.max(pad * (wide ? 2.1 : 2.4), pad + logoH + pad * 0.6, pad + footerH + pad * 0.7);
 
 
   if (opts.variant === "seguidor") {
@@ -931,7 +959,7 @@ export async function composeAdArt(opts: {
   }
 
 
-  adFooter(ctx, W, H, pad, opts.footer, W - pad * 2 - logoW - pad * 0.6);
+  adFooter(ctx, W, H, pad, opts.footer, footerMaxW);
   await drawAdLogo(ctx, W, H, pad, { w: logoW, h: logoH }, opts.logoUrl);
 
   return canvas.toDataURL(f.mime, 0.92);

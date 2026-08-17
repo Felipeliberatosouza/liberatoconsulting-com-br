@@ -1,13 +1,10 @@
-/** Endereço amigável (slug) das newsletters publicadas. */
+import { shortSlug } from "./short-slug";
+
+/** Endereço amigável (slug) das newsletters publicadas: no máximo duas palavras. */
 export function newsletterSlug(title: string) {
-  return title
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 70);
+  return shortSlug(title);
 }
+
 
 /** Garante que o endereço amigável não colida com outra newsletter. */
 export async function uniqueNewsletterSlug(client: any, base: string, currentId: string | null) {
