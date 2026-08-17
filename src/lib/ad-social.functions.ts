@@ -133,3 +133,55 @@ export const generateArticlePostCopy = createServerFn({ method: "POST" })
     }
   });
 
+
+const areasInput = z.object({
+  focus: z.string().trim().max(200).default(""),
+});
+
+/** Frase curta para cada uma das quatro áreas, nos quatro idiomas. */
+export const generateAreasCopy = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => areasInput.parse(d))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./access.server");
+    await assertAdmin(context);
+    const { askJson } = await import("./ai.server");
+
+    type Area = { estrategia: string; empreendedorismo: string; operacoes: string; pesquisas: string };
+    type Out = Record<"pt" | "en" | "zh" | "es", Area>;
+    try {
+      const out = await askJson<Out>(
+        "Você é redator publicitário da Liberato Consulting, consultoria brasileira de gestão. " +
+          "Tom executivo, direto, sem emojis e sem aspas.",
+        JSON.stringify({
+          foco: data.focus,
+          instrucao:
+            "Para cada uma das quatro áreas (Estratégia, Empreendedorismo, Operações e Pesquisa de Mercado), " +
+            "crie UMA frase curta de até 55 caracteres explicando o valor entregue. " +
+            "Devolva as mesmas frases nos quatro idiomas.",
+          formato: {
+            pt: { estrategia: "", empreendedorismo: "", operacoes: "", pesquisas: "" },
+            en: { estrategia: "", empreendedorismo: "", operacoes: "", pesquisas: "" },
+            zh: { estrategia: "", empreendedorismo: "", operacoes: "", pesquisas: "" },
+            es: { estrategia: "", empreendedorismo: "", operacoes: "", pesquisas: "" },
+          },
+        }),
+      );
+      const cut = (v: unknown) => String(v ?? "").trim().slice(0, 90);
+      const pick = (a: Partial<Area> | undefined): Area => ({
+        estrategia: cut(a?.estrategia),
+        empreendedorismo: cut(a?.empreendedorismo),
+        operacoes: cut(a?.operacoes),
+        pesquisas: cut(a?.pesquisas),
+      });
+      return {
+        ok: true as const,
+        pt: pick(out?.pt),
+        en: pick(out?.en),
+        zh: pick(out?.zh),
+        es: pick(out?.es),
+      };
+    } catch (err) {
+      return { ok: false as const, error: (err as Error).message };
+    }
+  });
