@@ -110,7 +110,12 @@ function AdPage() {
   const [topic, setTopic] = useState("");
   const [goalId, setGoalId] = useState<string>(AD_GOALS[0].id);
   const goal = AD_GOALS.find((g) => g.id === goalId)?.label ?? AD_GOALS[0].label;
-  const serviceForAi = mode === "area" ? areaLabel : service;
+  const serviceForAi =
+    mode === "area"
+      ? areaLabel
+      : mode === "areas"
+        ? "Estratégia, Empreendedorismo, Operações e Pesquisa de Mercado"
+        : service;
 
   const [lines, setLines] = useState({ pt: "", en: "", zh: "", es: "" });
   const [langs, setLangs] = useState<Record<AdLang, boolean>>({
@@ -386,6 +391,33 @@ function AdPage() {
             </button>
           </div>
 
+          {mode === "areas" ? (
+            <>
+              <p className="text-xs text-muted-foreground">
+                Título fixo da peça: “{AREAS_POST_HEADLINES.pt}” — abaixo entram as quatro áreas em
+                cada idioma selecionado.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={makeAreasCopy}
+                  disabled={busy !== null}
+                  className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+                >
+                  {busy === "copy" ? "Gerando…" : "Gerar frases das 4 áreas (4 idiomas)"}
+                </button>
+                <button
+                  type="button"
+                  onClick={makeImage}
+                  disabled={busy !== null}
+                  className="rounded-md border border-border px-4 py-2 text-sm font-medium disabled:opacity-60"
+                >
+                  {busy === "image" ? "Gerando…" : "Gerar imagem de fundo"}
+                </button>
+              </div>
+            </>
+          ) : null}
+
           <div className="space-y-2 rounded-lg border border-border p-3">
             <p className="text-sm font-medium">Idiomas do post</p>
             <div className="flex flex-wrap gap-3">
@@ -405,8 +437,34 @@ function AdPage() {
             </p>
           </div>
 
+          {mode === "areas"
+            ? AD_LANGS.map((k) => (
+                <div key={k} className={`space-y-2 ${langs[k] ? "" : "opacity-50"}`}>
+                  <p className="text-sm font-medium">Áreas — {AD_LANG_LABELS[k]}</p>
+                  {SERVICE_AREAS.map((a) => (
+                    <input
+                      key={a.id}
+                      className={field}
+                      disabled={!langs[k]}
+                      placeholder={a.labels[k]}
+                      value={areaTexts[k]?.[a.id] ?? ""}
+                      onChange={(e) =>
+                        setAreaTexts({
+                          ...areaTexts,
+                          [k]: { ...areaTexts[k], [a.id]: e.target.value },
+                        })
+                      }
+                    />
+                  ))}
+                </div>
+              ))
+            : null}
+
           {AD_LANGS.map((k, i) => (
-            <div key={k} className={`space-y-1 ${langs[k] ? "" : "opacity-50"}`}>
+            <div
+              key={k}
+              className={`space-y-1 ${langs[k] ? "" : "opacity-50"} ${mode === "areas" ? "hidden" : ""}`}
+            >
               <label className="text-sm font-medium">
                 {mode === "artigo"
                   ? `Nome do artigo — ${AD_LANG_LABELS[k]}`
