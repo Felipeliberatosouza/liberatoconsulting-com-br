@@ -843,7 +843,11 @@ export async function composeAdArt(opts: {
   } catch {
     /* usa a proporção padrão */
   }
-  const footerTop = H - Math.max(pad * (wide ? 2.1 : 2.4), pad + logoH + pad * 0.6);
+  // O rodapé é medido antes do layout: nenhum bloco de texto ou foto invade sua faixa.
+  const footerMaxW = W - pad * 2 - logoW - pad * 0.6;
+  const footerH = footerLayout(ctx, W, H, opts.footer, footerMaxW).height;
+  const footerTop =
+    H - Math.max(pad * (wide ? 2.1 : 2.4), pad + logoH + pad * 0.6, pad + footerH + pad * 0.7);
 
 
   if (opts.variant === "seguidor") {
