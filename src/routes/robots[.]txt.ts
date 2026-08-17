@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
 import { requestOrigin } from "@/lib/seo";
-import { SITEMAP_LANGS } from "@/lib/sitemap.server";
 
 /**
  * robots.txt dinâmico: as diretivas `Sitemap:` apontam para o mesmo host
@@ -34,7 +33,6 @@ export const Route = createFileRoute("/robots.txt")({
           "Disallow: /newsletter/unsubscribe",
           "",
           `Sitemap: ${origin}/sitemap.xml`,
-          ...SITEMAP_LANGS.map((lang) => `Sitemap: ${origin}/sitemap-${lang}.xml`),
           "",
         ].join("\n");
 
