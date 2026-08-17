@@ -415,9 +415,56 @@ function AdPage() {
             </select>
           </div>
 
+          <div className={`space-y-1 ${mode === "brasil" ? "" : "hidden"}`}>
+            <label className="text-sm font-medium">Tema de Dados do Brasil</label>
+            <select className={field} value={brazilId} onChange={(e) => setBrazilId(e.target.value)}>
+              {BRAZIL_SECTIONS.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {mode === "indicadores" ? (
+            <div className="space-y-2 rounded-lg border border-border p-3">
+              <p className="text-sm font-medium">Indicadores no post (até 5)</p>
+              {indicatorList.length === 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  Nenhum indicador publicado disponível.
+                </p>
+              ) : (
+                <div className="max-h-56 space-y-1 overflow-auto">
+                  {indicatorList.map((i) => (
+                    <label key={i.id} className="flex items-start gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={picked.includes(i.id)}
+                        onChange={(e) =>
+                          setPicked(
+                            e.target.checked
+                              ? [...picked, i.id].slice(0, 5)
+                              : picked.filter((id) => id !== i.id),
+                          )
+                        }
+                      />
+                      <span>
+                        {i.label}: {[i.value, i.unit].filter(Boolean).join(" ")}
+                        {i.reference_period ? ` (${i.reference_period})` : ""}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                O resumo entra em destaque na arte; as frases abaixo complementam o post.
+              </p>
+            </div>
+          ) : null}
+
           <div className={`space-y-1 ${mode === "artigo" ? "hidden" : ""}`}>
             <label className="text-sm font-medium">
-              {mode === "areas" ? "Foco da peça (opcional)" : "Assunto do serviço"}
+              {mode === "areas" || isTheme(mode) ? "Foco da peça (opcional)" : "Assunto do serviço"}
             </label>
             <input
               className={field}
@@ -439,7 +486,9 @@ function AdPage() {
           </div>
 
           <div
-            className={`flex flex-wrap gap-2 ${mode === "servico" || mode === "area" ? "" : "hidden"}`}
+            className={`flex flex-wrap gap-2 ${
+              mode === "servico" || mode === "area" || isTheme(mode) ? "" : "hidden"
+            }`}
           >
             <button
               type="button"
@@ -484,6 +533,14 @@ function AdPage() {
                 </button>
               </div>
             </>
+          ) : null}
+
+          {isTheme(mode) ? (
+            <p className="text-xs text-muted-foreground">
+              Título fixo da peça: “{THEME_POST_HEADLINES[mode].pt}” — abaixo entram
+              {mode === "indicadores" ? " o resumo dos indicadores e" : ""} as frases de cada idioma
+              selecionado.
+            </p>
           ) : null}
 
           <div className="space-y-2 rounded-lg border border-border p-3">
