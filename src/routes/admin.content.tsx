@@ -81,14 +81,9 @@ const EMPTY: Draft = {
 };
 
 function slugify(v: string) {
-  return v
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80);
+  return shortSlug(v);
 }
+
 
 /** Endereço público do conteúdo, gerado a partir do título (igual à Newsletter). */
 function contentLink(slug: string) {
