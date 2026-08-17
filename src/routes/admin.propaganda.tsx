@@ -19,7 +19,9 @@ import {
   AREAS_POST_HEADLINES,
   ARTICLE_POST_HEADLINES,
   SERVICE_AREAS,
+  THEME_POST_HEADLINES,
 } from "@/lib/ad-content";
+import { listPublicIndicators } from "@/lib/indicators.functions";
 import { listArticles } from "@/lib/admin.functions";
 import {
   SOCIAL_IMAGE_FORMATS,
@@ -59,14 +61,33 @@ const SERVICES = [
 
 const FORMATS: SocialFormatKey[] = ["linkedin", "instagram", "whatsapp"];
 
-type Mode = "servico" | "area" | "areas" | "artigo";
+type Mode =
+  | "servico"
+  | "area"
+  | "areas"
+  | "artigo"
+  | "indicadores"
+  | "brasil"
+  | "gestao"
+  | "insights";
 
 const MODE_LABELS: Record<Mode, string> = {
   servico: "Propaganda de serviço",
   area: "Propaganda de uma área de serviço",
   areas: "As quatro áreas de serviço juntas",
   artigo: "Novo artigo publicado",
+  indicadores: "Indicadores econômicos",
+  brasil: "Dados do Brasil",
+  gestao: "Conteúdos gerais sobre gestão",
+  insights: "Insights",
 };
+
+/** Modos com título fixo e frase publicitária opcional em cada idioma. */
+const THEME_MODES = ["indicadores", "brasil", "gestao", "insights"] as const;
+type ThemeMode = (typeof THEME_MODES)[number];
+const isTheme = (m: Mode): m is ThemeMode => (THEME_MODES as readonly string[]).includes(m);
+
+const BRAZIL_SECTIONS = pt.brazil.sections.map((s) => ({ id: s.id, title: s.title }));
 
 const AD_LANGS = ["pt", "en", "zh", "es"] as const;
 type AdLang = (typeof AD_LANGS)[number];
@@ -94,6 +115,12 @@ function AdPage() {
   });
   const published = (articles.data ?? []).filter((a) => a.published);
 
+  const indicators = useQuery({
+    queryKey: ["public-indicators"],
+    queryFn: () => listPublicIndicators(),
+  });
+  const indicatorList = indicators.data ?? [];
+
   const [mode, setMode] = useState<Mode>("servico");
   const [articleId, setArticleId] = useState("");
   const article = published.find((a) => a.id === articleId);
@@ -107,6 +134,9 @@ function AdPage() {
     zh: {},
     es: {},
   });
+  const [brazilId, setBrazilId] = useState<string>(BRAZIL_SECTIONS[0]?.id ?? "");
+  const brazilTitle = BRAZIL_SECTIONS.find((b) => b.id === brazilId)?.title ?? "";
+  const [picked, setPicked] = useState<string[]>([]);
   const [topic, setTopic] = useState("");
   const [goalId, setGoalId] = useState<string>(AD_GOALS[0].id);
   const goal = AD_GOALS.find((g) => g.id === goalId)?.label ?? AD_GOALS[0].label;
@@ -115,7 +145,24 @@ function AdPage() {
       ? areaLabel
       : mode === "areas"
         ? "Estratégia, Empreendedorismo, Operações e Pesquisa de Mercado"
-        : service;
+        : mode === "indicadores"
+          ? "Indicadores econômicos do Brasil"
+          : mode === "brasil"
+            ? `Dados do Brasil — ${brazilTitle}`
+            : mode === "gestao"
+              ? "Conteúdos gerais sobre gestão empresarial"
+              : mode === "insights"
+                ? "Insights da Liberato Consulting"
+                : service;
+  const goalForAi = isTheme(mode)
+    ? (AD_GOALS.find(
+        (g) =>
+          (mode === "indicadores" && g.id === "brasil") ||
+          (mode === "brasil" && g.id === "brasil") ||
+          (mode === "gestao" && g.id === "conteudos") ||
+          (mode === "insights" && g.id === "insights"),
+      )?.label ?? goal)
+    : goal;
 
   const [lines, setLines] = useState({ pt: "", en: "", zh: "", es: "" });
   const [langs, setLangs] = useState<Record<AdLang, boolean>>({
@@ -141,7 +188,7 @@ function AdPage() {
 
   async function makeCopy() {
     setBusy("copy");
-    const res = await generateAdCopy({ data: { service: serviceForAi, topic, goal } });
+    const res = await generateAdCopy({ data: { service: serviceForAi, topic, goal: goalForAi } });
     setBusy(null);
     if (!res.ok) {
       toast.error(res.error);
@@ -161,7 +208,7 @@ function AdPage() {
               topic: article.title,
               goal: "Divulgar novo artigo publicado",
             }
-          : { service: serviceForAi, topic, goal },
+          : { service: serviceForAi, topic, goal: goalForAi },
     });
     setBusy(null);
     if (!res.ok) {
@@ -210,6 +257,21 @@ function AdPage() {
     return text ? `${label} — ${text}` : label;
   }
 
+  /** Resumo curto de cada indicador escolhido, no formato "Rótulo: valor (período)". */
+  function indicatorLines() {
+    return indicatorList
+      .filter((i) => picked.includes(i.id))
+      .slice(0, 5)
+      .map((i) => {
+        const value = [i.value, i.unit].filter(Boolean).join(" ").trim();
+        const prev = i.previous_value
+          ? ` · anterior ${i.previous_value}${i.unit ? ` ${i.unit}` : ""}`
+          : "";
+        const ref = i.reference_period ? ` (${i.reference_period})` : "";
+        return `${i.label}: ${value}${ref}${prev}`;
+      });
+  }
+
   async function compose() {
     const selected = AD_LANGS.filter((l) => langs[l]);
     const list =
@@ -223,7 +285,13 @@ function AdPage() {
               AREAS_POST_HEADLINES[selected[0] ?? "pt"],
               ...selected.flatMap((l) => SERVICE_AREAS.map((a) => areaLine(l, a.id))),
             ]
-          : selected.map((l) => lines[l]);
+          : isTheme(mode)
+            ? [
+                THEME_POST_HEADLINES[mode][selected[0] ?? "pt"],
+                ...(mode === "indicadores" ? indicatorLines() : []),
+                ...selected.map((l) => lines[l]).filter((t) => t.trim()),
+              ]
+            : selected.map((l) => lines[l]);
     if (!list.some((l) => l.trim())) {
       toast.error("Selecione ao menos um idioma e preencha a frase correspondente.");
       return;
@@ -347,9 +415,56 @@ function AdPage() {
             </select>
           </div>
 
+          <div className={`space-y-1 ${mode === "brasil" ? "" : "hidden"}`}>
+            <label className="text-sm font-medium">Tema de Dados do Brasil</label>
+            <select className={field} value={brazilId} onChange={(e) => setBrazilId(e.target.value)}>
+              {BRAZIL_SECTIONS.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {mode === "indicadores" ? (
+            <div className="space-y-2 rounded-lg border border-border p-3">
+              <p className="text-sm font-medium">Indicadores no post (até 5)</p>
+              {indicatorList.length === 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  Nenhum indicador publicado disponível.
+                </p>
+              ) : (
+                <div className="max-h-56 space-y-1 overflow-auto">
+                  {indicatorList.map((i) => (
+                    <label key={i.id} className="flex items-start gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        checked={picked.includes(i.id)}
+                        onChange={(e) =>
+                          setPicked(
+                            e.target.checked
+                              ? [...picked, i.id].slice(0, 5)
+                              : picked.filter((id) => id !== i.id),
+                          )
+                        }
+                      />
+                      <span>
+                        {i.label}: {[i.value, i.unit].filter(Boolean).join(" ")}
+                        {i.reference_period ? ` (${i.reference_period})` : ""}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">
+                O resumo entra em destaque na arte; as frases abaixo complementam o post.
+              </p>
+            </div>
+          ) : null}
+
           <div className={`space-y-1 ${mode === "artigo" ? "hidden" : ""}`}>
             <label className="text-sm font-medium">
-              {mode === "areas" ? "Foco da peça (opcional)" : "Assunto do serviço"}
+              {mode === "areas" || isTheme(mode) ? "Foco da peça (opcional)" : "Assunto do serviço"}
             </label>
             <input
               className={field}
@@ -371,7 +486,9 @@ function AdPage() {
           </div>
 
           <div
-            className={`flex flex-wrap gap-2 ${mode === "servico" || mode === "area" ? "" : "hidden"}`}
+            className={`flex flex-wrap gap-2 ${
+              mode === "servico" || mode === "area" || isTheme(mode) ? "" : "hidden"
+            }`}
           >
             <button
               type="button"
@@ -416,6 +533,14 @@ function AdPage() {
                 </button>
               </div>
             </>
+          ) : null}
+
+          {isTheme(mode) ? (
+            <p className="text-xs text-muted-foreground">
+              Título fixo da peça: “{THEME_POST_HEADLINES[mode].pt}” — abaixo entram
+              {mode === "indicadores" ? " o resumo dos indicadores e" : ""} as frases de cada idioma
+              selecionado.
+            </p>
           ) : null}
 
           <div className="space-y-2 rounded-lg border border-border p-3">
