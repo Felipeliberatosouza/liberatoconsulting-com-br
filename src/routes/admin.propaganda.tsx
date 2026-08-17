@@ -80,13 +80,24 @@ function AdPage() {
   });
   const published = (articles.data ?? []).filter((a) => a.published);
 
-  const [mode, setMode] = useState<"servico" | "artigo">("servico");
+  const [mode, setMode] = useState<Mode>("servico");
   const [articleId, setArticleId] = useState("");
   const article = published.find((a) => a.id === articleId);
   const [service, setService] = useState(SERVICES[0]?.label ?? "");
+  const [areaId, setAreaId] = useState<string>(SERVICE_AREAS[0].id);
+  const areaLabel =
+    SERVICE_AREAS.find((a) => a.id === areaId)?.labels.pt ?? SERVICE_AREAS[0].labels.pt;
+  const [areaTexts, setAreaTexts] = useState<Record<AdLang, Record<string, string>>>({
+    pt: {},
+    en: {},
+    zh: {},
+    es: {},
+  });
   const [topic, setTopic] = useState("");
   const [goalId, setGoalId] = useState<string>(AD_GOALS[0].id);
   const goal = AD_GOALS.find((g) => g.id === goalId)?.label ?? AD_GOALS[0].label;
+  const serviceForAi = mode === "area" ? areaLabel : service;
+
   const [lines, setLines] = useState({ pt: "", en: "", zh: "", es: "" });
   const [langs, setLangs] = useState<Record<AdLang, boolean>>({
     pt: true,
