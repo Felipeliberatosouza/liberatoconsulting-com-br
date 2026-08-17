@@ -101,7 +101,13 @@ function AdPage() {
 
   const site = (company.data?.website || "liberatoconsulting.com.br").replace(/^https?:\/\//, "");
   const phone = company.data?.phone || "";
-  const footer = ["Liberato Consulting", site, phone].filter(Boolean).join(" · ");
+  const articleLink =
+    mode === "artigo" && article
+      ? (article.link_url || `${site}/content/${article.slug}`).replace(/^https?:\/\//, "")
+      : "";
+  const footer = ["Liberato Consulting", articleLink || site, phone]
+    .filter(Boolean)
+    .join(" · ");
 
   async function makeCopy() {
     setBusy("copy");
@@ -117,7 +123,16 @@ function AdPage() {
 
   async function makeImage() {
     setBusy("image");
-    const res = await generateAdBackground({ data: { service, topic, goal } });
+    const res = await generateAdBackground({
+      data:
+        mode === "artigo" && article
+          ? {
+              service: article.service || "conteúdo editorial",
+              topic: article.title,
+              goal: "Divulgar novo artigo publicado",
+            }
+          : { service, topic, goal },
+    });
     setBusy(null);
     if (!res.ok) {
       toast.error(res.error);
@@ -192,6 +207,64 @@ function AdPage() {
       <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
         <section className="space-y-4 rounded-xl border border-border bg-card p-5">
           <div className="space-y-1">
+            <label className="text-sm font-medium">Tipo de peça</label>
+            <select
+              className={field}
+              value={mode}
+              onChange={(e) => {
+                setMode(e.target.value as "servico" | "artigo");
+                setLines({ pt: "", en: "", zh: "", es: "" });
+                setArts({});
+              }}
+            >
+              <option value="servico">Propaganda de serviço</option>
+              <option value="artigo">Novo artigo publicado</option>
+            </select>
+          </div>
+
+          {mode === "artigo" ? (
+            <>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">Conteúdo publicado</label>
+                <select
+                  className={field}
+                  value={articleId}
+                  onChange={(e) => setArticleId(e.target.value)}
+                >
+                  <option value="">Selecione um conteúdo…</option>
+                  {published.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Título fixo da peça: “{ARTICLE_POST_HEADLINES.pt}” — abaixo entra o nome do artigo
+                em cada idioma selecionado.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={makeArticleCopy}
+                  disabled={busy !== null}
+                  className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+                >
+                  {busy === "copy" ? "Traduzindo…" : "Traduzir nome do artigo (4 idiomas)"}
+                </button>
+                <button
+                  type="button"
+                  onClick={makeImage}
+                  disabled={busy !== null}
+                  className="rounded-md border border-border px-4 py-2 text-sm font-medium disabled:opacity-60"
+                >
+                  {busy === "image" ? "Gerando…" : "Gerar imagem de fundo"}
+                </button>
+              </div>
+            </>
+          ) : null}
+
+          <div className={`space-y-1 ${mode === "artigo" ? "hidden" : ""}`}>
             <label className="text-sm font-medium">Serviço da consultoria</label>
             <select className={field} value={service} onChange={(e) => setService(e.target.value)}>
               {SERVICES.map((s) => (
@@ -202,7 +275,7 @@ function AdPage() {
             </select>
           </div>
 
-          <div className="space-y-1">
+          <div className={`space-y-1 ${mode === "artigo" ? "hidden" : ""}`}>
             <label className="text-sm font-medium">Assunto do serviço</label>
             <input
               className={field}
@@ -212,7 +285,7 @@ function AdPage() {
             />
           </div>
 
-          <div className="space-y-1">
+          <div className={`space-y-1 ${mode === "artigo" ? "hidden" : ""}`}>
             <label className="text-sm font-medium">Objetivo do post</label>
             <select className={field} value={goalId} onChange={(e) => setGoalId(e.target.value)}>
               {AD_GOALS.map((g) => (
@@ -223,7 +296,7 @@ function AdPage() {
             </select>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className={`flex flex-wrap gap-2 ${mode === "artigo" ? "hidden" : ""}`}>
             <button
               type="button"
               onClick={makeCopy}
@@ -264,7 +337,9 @@ function AdPage() {
           {AD_LANGS.map((k, i) => (
             <div key={k} className={`space-y-1 ${langs[k] ? "" : "opacity-50"}`}>
               <label className="text-sm font-medium">
-                {i + 1}ª linha — {AD_LANG_LABELS[k]}
+                {mode === "artigo"
+                  ? `Nome do artigo — ${AD_LANG_LABELS[k]}`
+                  : `${i + 1}ª linha — ${AD_LANG_LABELS[k]}`}
               </label>
               <input
                 className={field}
