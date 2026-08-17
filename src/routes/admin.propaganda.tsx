@@ -12,9 +12,14 @@ import {
   AD_GOALS,
   generateAdBackground,
   generateAdCopy,
+  generateAreasCopy,
   generateArticlePostCopy,
 } from "@/lib/ad-social.functions";
-import { ARTICLE_POST_HEADLINES } from "@/lib/ad-content";
+import {
+  AREAS_POST_HEADLINES,
+  ARTICLE_POST_HEADLINES,
+  SERVICE_AREAS,
+} from "@/lib/ad-content";
 import { listArticles } from "@/lib/admin.functions";
 import {
   SOCIAL_IMAGE_FORMATS,
@@ -53,6 +58,15 @@ const SERVICES = [
 ];
 
 const FORMATS: SocialFormatKey[] = ["linkedin", "instagram", "whatsapp"];
+
+type Mode = "servico" | "area" | "areas" | "artigo";
+
+const MODE_LABELS: Record<Mode, string> = {
+  servico: "Propaganda de serviço",
+  area: "Propaganda de uma área de serviço",
+  areas: "As quatro áreas de serviço juntas",
+  artigo: "Novo artigo publicado",
+};
 
 const AD_LANGS = ["pt", "en", "zh", "es"] as const;
 type AdLang = (typeof AD_LANGS)[number];
@@ -122,7 +136,7 @@ function AdPage() {
 
   async function makeCopy() {
     setBusy("copy");
-    const res = await generateAdCopy({ data: { service, topic, goal } });
+    const res = await generateAdCopy({ data: { service: serviceForAi, topic, goal } });
     setBusy(null);
     if (!res.ok) {
       toast.error(res.error);
@@ -142,7 +156,7 @@ function AdPage() {
               topic: article.title,
               goal: "Divulgar novo artigo publicado",
             }
-          : { service, topic, goal },
+          : { service: serviceForAi, topic, goal },
     });
     setBusy(null);
     if (!res.ok) {
@@ -172,6 +186,25 @@ function AdPage() {
     toast.success("Nome do artigo traduzido nos quatro idiomas.");
   }
 
+  async function makeAreasCopy() {
+    setBusy("copy");
+    const res = await generateAreasCopy({ data: { focus: topic } });
+    setBusy(null);
+    if (!res.ok) {
+      toast.error(res.error);
+      return;
+    }
+    setAreaTexts({ pt: res.pt, en: res.en, zh: res.zh, es: res.es });
+    toast.success("Frases geradas para as quatro áreas nos quatro idiomas.");
+  }
+
+  function areaLine(lang: AdLang, id: string) {
+    const area = SERVICE_AREAS.find((a) => a.id === id);
+    const label = area?.labels[lang] ?? area?.labels.pt ?? id;
+    const text = areaTexts[lang]?.[id]?.trim();
+    return text ? `${label} — ${text}` : label;
+  }
+
   async function compose() {
     const selected = AD_LANGS.filter((l) => langs[l]);
     const list =
@@ -180,7 +213,12 @@ function AdPage() {
             ARTICLE_POST_HEADLINES[selected[0] ?? "pt"],
             ...selected.map((l) => lines[l]).filter((t) => t.trim()),
           ]
-        : selected.map((l) => lines[l]);
+        : mode === "areas"
+          ? [
+              AREAS_POST_HEADLINES[selected[0] ?? "pt"],
+              ...selected.flatMap((l) => SERVICE_AREAS.map((a) => areaLine(l, a.id))),
+            ]
+          : selected.map((l) => lines[l]);
     if (!list.some((l) => l.trim())) {
       toast.error("Selecione ao menos um idioma e preencha a frase correspondente.");
       return;
@@ -190,7 +228,10 @@ function AdPage() {
       const out: Partial<Record<SocialFormatKey, string>> = {};
       for (const format of FORMATS) {
         out[format] = await composeAdArt({
-          variant: mode === "servico" && goalId === "seguidor" ? "seguidor" : "card",
+          variant:
+            (mode === "servico" || mode === "area") && goalId === "seguidor"
+              ? "seguidor"
+              : "card",
           format,
           lines: list,
           ...(baseImage ? { baseImage } : {}),
@@ -223,13 +264,17 @@ function AdPage() {
               className={field}
               value={mode}
               onChange={(e) => {
-                setMode(e.target.value as "servico" | "artigo");
+                setMode(e.target.value as Mode);
                 setLines({ pt: "", en: "", zh: "", es: "" });
+                setAreaTexts({ pt: {}, en: {}, zh: {}, es: {} });
                 setArts({});
               }}
             >
-              <option value="servico">Propaganda de serviço</option>
-              <option value="artigo">Novo artigo publicado</option>
+              {(Object.keys(MODE_LABELS) as Mode[]).map((m) => (
+                <option key={m} value={m}>
+                  {MODE_LABELS[m]}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -275,7 +320,7 @@ function AdPage() {
             </>
           ) : null}
 
-          <div className={`space-y-1 ${mode === "artigo" ? "hidden" : ""}`}>
+          <div className={`space-y-1 ${mode === "servico" ? "" : "hidden"}`}>
             <label className="text-sm font-medium">Serviço da consultoria</label>
             <select className={field} value={service} onChange={(e) => setService(e.target.value)}>
               {SERVICES.map((s) => (
@@ -286,8 +331,21 @@ function AdPage() {
             </select>
           </div>
 
+          <div className={`space-y-1 ${mode === "area" ? "" : "hidden"}`}>
+            <label className="text-sm font-medium">Área de serviço</label>
+            <select className={field} value={areaId} onChange={(e) => setAreaId(e.target.value)}>
+              {SERVICE_AREAS.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.labels.pt}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className={`space-y-1 ${mode === "artigo" ? "hidden" : ""}`}>
-            <label className="text-sm font-medium">Assunto do serviço</label>
+            <label className="text-sm font-medium">
+              {mode === "areas" ? "Foco da peça (opcional)" : "Assunto do serviço"}
+            </label>
             <input
               className={field}
               value={topic}
@@ -296,7 +354,7 @@ function AdPage() {
             />
           </div>
 
-          <div className={`space-y-1 ${mode === "artigo" ? "hidden" : ""}`}>
+          <div className={`space-y-1 ${mode === "servico" || mode === "area" ? "" : "hidden"}`}>
             <label className="text-sm font-medium">Objetivo do post</label>
             <select className={field} value={goalId} onChange={(e) => setGoalId(e.target.value)}>
               {AD_GOALS.map((g) => (
@@ -307,7 +365,9 @@ function AdPage() {
             </select>
           </div>
 
-          <div className={`flex flex-wrap gap-2 ${mode === "artigo" ? "hidden" : ""}`}>
+          <div
+            className={`flex flex-wrap gap-2 ${mode === "servico" || mode === "area" ? "" : "hidden"}`}
+          >
             <button
               type="button"
               onClick={makeCopy}
