@@ -19,7 +19,9 @@ import {
   AREAS_POST_HEADLINES,
   ARTICLE_POST_HEADLINES,
   SERVICE_AREAS,
+  THEME_POST_HEADLINES,
 } from "@/lib/ad-content";
+import { listPublicIndicators } from "@/lib/indicators.functions";
 import { listArticles } from "@/lib/admin.functions";
 import {
   SOCIAL_IMAGE_FORMATS,
@@ -59,14 +61,33 @@ const SERVICES = [
 
 const FORMATS: SocialFormatKey[] = ["linkedin", "instagram", "whatsapp"];
 
-type Mode = "servico" | "area" | "areas" | "artigo";
+type Mode =
+  | "servico"
+  | "area"
+  | "areas"
+  | "artigo"
+  | "indicadores"
+  | "brasil"
+  | "gestao"
+  | "insights";
 
 const MODE_LABELS: Record<Mode, string> = {
   servico: "Propaganda de serviço",
   area: "Propaganda de uma área de serviço",
   areas: "As quatro áreas de serviço juntas",
   artigo: "Novo artigo publicado",
+  indicadores: "Indicadores econômicos",
+  brasil: "Dados do Brasil",
+  gestao: "Conteúdos gerais sobre gestão",
+  insights: "Insights",
 };
+
+/** Modos com título fixo e frase publicitária opcional em cada idioma. */
+const THEME_MODES = ["indicadores", "brasil", "gestao", "insights"] as const;
+type ThemeMode = (typeof THEME_MODES)[number];
+const isTheme = (m: Mode): m is ThemeMode => (THEME_MODES as readonly string[]).includes(m);
+
+const BRAZIL_SECTIONS = pt.brazil.sections.map((s) => ({ id: s.id, title: s.title }));
 
 const AD_LANGS = ["pt", "en", "zh", "es"] as const;
 type AdLang = (typeof AD_LANGS)[number];
@@ -94,6 +115,12 @@ function AdPage() {
   });
   const published = (articles.data ?? []).filter((a) => a.published);
 
+  const indicators = useQuery({
+    queryKey: ["public-indicators"],
+    queryFn: () => listPublicIndicators(),
+  });
+  const indicatorList = indicators.data ?? [];
+
   const [mode, setMode] = useState<Mode>("servico");
   const [articleId, setArticleId] = useState("");
   const article = published.find((a) => a.id === articleId);
@@ -107,6 +134,9 @@ function AdPage() {
     zh: {},
     es: {},
   });
+  const [brazilId, setBrazilId] = useState<string>(BRAZIL_SECTIONS[0]?.id ?? "");
+  const brazilTitle = BRAZIL_SECTIONS.find((b) => b.id === brazilId)?.title ?? "";
+  const [picked, setPicked] = useState<string[]>([]);
   const [topic, setTopic] = useState("");
   const [goalId, setGoalId] = useState<string>(AD_GOALS[0].id);
   const goal = AD_GOALS.find((g) => g.id === goalId)?.label ?? AD_GOALS[0].label;
@@ -115,7 +145,24 @@ function AdPage() {
       ? areaLabel
       : mode === "areas"
         ? "Estratégia, Empreendedorismo, Operações e Pesquisa de Mercado"
-        : service;
+        : mode === "indicadores"
+          ? "Indicadores econômicos do Brasil"
+          : mode === "brasil"
+            ? `Dados do Brasil — ${brazilTitle}`
+            : mode === "gestao"
+              ? "Conteúdos gerais sobre gestão empresarial"
+              : mode === "insights"
+                ? "Insights da Liberato Consulting"
+                : service;
+  const goalForAi = isTheme(mode)
+    ? (AD_GOALS.find(
+        (g) =>
+          (mode === "indicadores" && g.id === "brasil") ||
+          (mode === "brasil" && g.id === "brasil") ||
+          (mode === "gestao" && g.id === "conteudos") ||
+          (mode === "insights" && g.id === "insights"),
+      )?.label ?? goal)
+    : goal;
 
   const [lines, setLines] = useState({ pt: "", en: "", zh: "", es: "" });
   const [langs, setLangs] = useState<Record<AdLang, boolean>>({
@@ -141,7 +188,7 @@ function AdPage() {
 
   async function makeCopy() {
     setBusy("copy");
-    const res = await generateAdCopy({ data: { service: serviceForAi, topic, goal } });
+    const res = await generateAdCopy({ data: { service: serviceForAi, topic, goal: goalForAi } });
     setBusy(null);
     if (!res.ok) {
       toast.error(res.error);
@@ -161,7 +208,7 @@ function AdPage() {
               topic: article.title,
               goal: "Divulgar novo artigo publicado",
             }
-          : { service: serviceForAi, topic, goal },
+          : { service: serviceForAi, topic, goal: goalForAi },
     });
     setBusy(null);
     if (!res.ok) {
@@ -210,6 +257,21 @@ function AdPage() {
     return text ? `${label} — ${text}` : label;
   }
 
+  /** Resumo curto de cada indicador escolhido, no formato "Rótulo: valor (período)". */
+  function indicatorLines() {
+    return indicatorList
+      .filter((i) => picked.includes(i.id))
+      .slice(0, 5)
+      .map((i) => {
+        const value = [i.value, i.unit].filter(Boolean).join(" ").trim();
+        const prev = i.previous_value
+          ? ` · anterior ${i.previous_value}${i.unit ? ` ${i.unit}` : ""}`
+          : "";
+        const ref = i.reference_period ? ` (${i.reference_period})` : "";
+        return `${i.label}: ${value}${ref}${prev}`;
+      });
+  }
+
   async function compose() {
     const selected = AD_LANGS.filter((l) => langs[l]);
     const list =
@@ -223,7 +285,13 @@ function AdPage() {
               AREAS_POST_HEADLINES[selected[0] ?? "pt"],
               ...selected.flatMap((l) => SERVICE_AREAS.map((a) => areaLine(l, a.id))),
             ]
-          : selected.map((l) => lines[l]);
+          : isTheme(mode)
+            ? [
+                THEME_POST_HEADLINES[mode][selected[0] ?? "pt"],
+                ...(mode === "indicadores" ? indicatorLines() : []),
+                ...selected.map((l) => lines[l]).filter((t) => t.trim()),
+              ]
+            : selected.map((l) => lines[l]);
     if (!list.some((l) => l.trim())) {
       toast.error("Selecione ao menos um idioma e preencha a frase correspondente.");
       return;
