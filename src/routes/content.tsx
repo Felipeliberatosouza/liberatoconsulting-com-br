@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { CtaBand } from "@/components/CtaBand";
 import { BulletinSignup } from "@/components/BulletinSignup";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
@@ -152,32 +152,63 @@ function ContentPage() {
         </div>
 
         <div className="mt-10 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {items.map((item) => (
+          {items.map((item) => {
+            // Regra: imagem, título e resumo sempre levam à leitura do conteúdo.
+            const ReadLink = ({
+              children,
+              className,
+            }: {
+              children: ReactNode;
+              className?: string;
+            }) =>
+              item.slug ? (
+                <Link to="/content/$slug" params={{ slug: item.slug }} className={className}>
+                  {children}
+                </Link>
+              ) : item.link ? (
+                <a
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={className}
+                >
+                  {children}
+                </a>
+              ) : (
+                <span className={className}>{children}</span>
+              );
+
+            return (
             <article
               key={item.id}
               className="flex flex-col overflow-hidden border-t-2 border-ink pt-6 transition-colors hover:border-accent"
             >
               {item.cover && (
-                <div className="relative mb-5 aspect-[16/9] overflow-hidden rounded-md">
+                <ReadLink className="relative mb-5 block aspect-[16/9] overflow-hidden rounded-md">
                   <img
                     src={item.cover}
                     alt={item.title}
                     loading="lazy"
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition-transform duration-300 hover:scale-[1.03]"
                   />
                   <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/85 to-transparent p-3 text-sm font-semibold text-ink-foreground">
                     {item.title}
                   </span>
-                </div>
+                </ReadLink>
               )}
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
                 {item.kind}
               </p>
-              <h2 className="mt-3 font-display text-xl font-bold leading-snug">{item.title}</h2>
+              <h2 className="mt-3 font-display text-xl font-bold leading-snug">
+                <ReadLink className="hover:text-accent">{item.title}</ReadLink>
+              </h2>
               {item.authors && (
                 <p className="mt-1 text-xs text-muted-foreground">{item.authors}</p>
               )}
-              <p className="mt-3 flex-1 text-sm text-muted-foreground">{item.summary}</p>
+              <p className="mt-3 flex-1 text-sm text-muted-foreground">
+                <ReadLink className="hover:text-accent">{item.summary}</ReadLink>
+              </p>
+
               <div className="mt-4 flex flex-wrap items-center gap-4">
                 {item.slug ? (
                   <Link
@@ -218,7 +249,9 @@ function ContentPage() {
                 </p>
               )}
             </article>
-          ))}
+            );
+          })}
+
 
         </div>
 
