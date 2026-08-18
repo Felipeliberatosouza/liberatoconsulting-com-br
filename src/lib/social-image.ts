@@ -74,17 +74,36 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
   const words = protectNames(text).split(/\s+/);
   const lines: string[] = [];
   let line = "";
+  const push = () => {
+    if (line) lines.push(line);
+    line = "";
+  };
   for (const w of words) {
+    // palavras muito longas (ex.: endereços) são quebradas por caractere
+    // para nunca invadirem a área da logomarca.
+    if (ctx.measureText(w).width > maxWidth) {
+      push();
+      let chunk = "";
+      for (const ch of w) {
+        if (ctx.measureText(chunk + ch).width > maxWidth && chunk) {
+          lines.push(chunk);
+          chunk = ch;
+        } else chunk += ch;
+      }
+      line = chunk;
+      continue;
+    }
     const next = line ? `${line} ${w}` : w;
     if (ctx.measureText(next).width > maxWidth && line) {
       lines.push(line);
       line = w;
     } else line = next;
   }
-  if (line) lines.push(line);
+  push();
   // devolve espaços normais para o desenho no canvas
   return lines.map((l) => l.replace(/\u00a0/g, " "));
 }
+
 
 
 /**
