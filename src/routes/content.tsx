@@ -158,7 +158,7 @@ function ContentPage() {
               children,
               className,
             }: {
-              children: React.ReactNode;
+              children: ReactNode;
               className?: string;
             }) =>
               item.slug ? (
