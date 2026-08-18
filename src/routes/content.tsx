@@ -249,7 +249,9 @@ function ContentPage() {
                 </p>
               )}
             </article>
-          ))}
+            );
+          })}
+
 
         </div>
 
