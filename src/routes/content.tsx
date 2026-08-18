@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { CtaBand } from "@/components/CtaBand";
 import { BulletinSignup } from "@/components/BulletinSignup";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
