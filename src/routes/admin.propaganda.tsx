@@ -180,8 +180,9 @@ function AdPage() {
   const phone = company.data?.phone || "";
   const articleLink =
     mode === "artigo" && article
-      ? (article.link_url || `${site}/content/${article.slug}`).replace(/^https?:\/\//, "")
+      ? `${site}/content/${article.slug}`.replace(/^https?:\/\//, "")
       : "";
+
   const footer = ["Liberato Consulting", articleLink || site, phone]
     .filter(Boolean)
     .join(" · ");
