@@ -254,6 +254,7 @@ function AdPage() {
       .slice(0, 5)
       .map((i) => ({
         slug: i.slug ?? "",
+        polarity: i.polarity ?? "auto",
         label: i.label ?? "",
         value: i.value ?? "",
         unit: i.unit ?? "",
