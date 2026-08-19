@@ -80,6 +80,15 @@ const THEME_MODES = ["indicadores", "brasil", "gestao", "insights"] as const;
 type ThemeMode = (typeof THEME_MODES)[number];
 const isTheme = (m: Mode): m is ThemeMode => (THEME_MODES as readonly string[]).includes(m);
 
+/** Frase fixa da peça de indicadores, exibida antes da frase gerada em cada idioma. */
+const INDICATOR_FIXED_LINE: Record<"pt" | "en" | "zh" | "es", string> = {
+  pt: "Acompanhe e economia brasileira!",
+  en: "Follow the Brazilian economy!",
+  zh: "关注巴西经济！",
+  es: "¡Acompañe la economía brasileña!",
+};
+
+
 const BRAZIL_SECTIONS = pt.brazil.sections.map((s) => ({ id: s.id, title: s.title }));
 
 const AD_LANGS = ["pt", "en", "zh", "es"] as const;
@@ -295,8 +304,12 @@ function AdPage() {
           : isTheme(mode)
             ? [
                 THEME_POST_HEADLINES[mode][selected[0] ?? "pt"],
-                ...(focus ? [focus] : []),
-                ...selected.map((l) => lines[l]).filter((t) => t.trim()),
+                ...(mode !== "indicadores" && focus ? [focus] : []),
+                ...selected.flatMap((l) =>
+                  mode === "indicadores"
+                    ? [INDICATOR_FIXED_LINE[l], lines[l]].filter((t) => t.trim())
+                    : [lines[l]].filter((t) => t.trim()),
+                ),
               ]
             : selected.map((l) => lines[l]);
     if (!list.some((l) => l.trim())) {
@@ -320,9 +333,9 @@ function AdPage() {
             ? {
                 indicators: indicatorRows(),
                 currentDate: sendDate,
-                ...(focus ? { date: focus } : {}),
               }
             : {}),
+
           ...(baseImage ? { baseImage } : {}),
           ...(logoUrl ? { logoUrl } : {}),
           footer,
@@ -482,7 +495,9 @@ function AdPage() {
             </div>
           ) : null}
 
-          <div className={`space-y-1 ${mode === "artigo" ? "hidden" : ""}`}>
+          <div
+            className={`space-y-1 ${mode === "artigo" || mode === "indicadores" ? "hidden" : ""}`}
+          >
             <label className="text-sm font-medium">
               {mode === "areas" || isTheme(mode) ? "Foco da peça (opcional)" : "Assunto do serviço"}
             </label>
