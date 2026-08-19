@@ -1050,8 +1050,8 @@ export async function composeAdArt(opts: {
       ctx.fillRect(pad, y - rowH * 0.32, colW, 1);
     }
 
-    if (others.length) {
-      drawBlocks(others, pad, y + bodySize * 0.4, colW, bottom, notesSize);
+    if (notesList.length) {
+      drawBlocks(notesList, pad, Math.min(y + bodySize * 0.4, bottom), colW, bottom, notesSize);
     }
 
   } else {
