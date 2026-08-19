@@ -295,8 +295,12 @@ function AdPage() {
           : isTheme(mode)
             ? [
                 THEME_POST_HEADLINES[mode][selected[0] ?? "pt"],
-                ...(focus ? [focus] : []),
-                ...selected.map((l) => lines[l]).filter((t) => t.trim()),
+                ...(mode !== "indicadores" && focus ? [focus] : []),
+                ...selected.flatMap((l) =>
+                  mode === "indicadores"
+                    ? [INDICATOR_FIXED_LINE[l], lines[l]].filter((t) => t.trim())
+                    : [lines[l]].filter((t) => t.trim()),
+                ),
               ]
             : selected.map((l) => lines[l]);
     if (!list.some((l) => l.trim())) {
@@ -320,9 +324,9 @@ function AdPage() {
             ? {
                 indicators: indicatorRows(),
                 currentDate: sendDate,
-                ...(focus ? { date: focus } : {}),
               }
             : {}),
+
           ...(baseImage ? { baseImage } : {}),
           ...(logoUrl ? { logoUrl } : {}),
           footer,
