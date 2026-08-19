@@ -23,6 +23,7 @@ import {
   statesForRegion,
 } from "@/lib/audience-filters";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
+import { POLARITY_OPTIONS } from "@/lib/indicator-compare";
 
 export const Route = createFileRoute("/admin/indicadores")({
   head: () => ({
@@ -65,6 +66,7 @@ const empty = {
   source_url: "",
   position: 0,
   published: true,
+  polarity: "auto" as string,
   segment: ALL_SEGMENTS as string,
   region: ALL_REGIONS as string,
   uf: ALL_STATES as string,
@@ -312,6 +314,20 @@ function IndicatorsPage() {
 
 
           <label className="text-xs font-medium text-muted-foreground">
+            Leitura da variação (verde / vermelho)
+            <select
+              value={form.polarity}
+              onChange={(e) => set("polarity", e.target.value)}
+              className={`mt-1 ${input}`}
+            >
+              {POLARITY_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="text-xs font-medium text-muted-foreground">
             Direção (alta / baixa / estável)
             <input value={form.trend} onChange={(e) => set("trend", e.target.value)} placeholder="alta" className={`mt-1 ${input}`} />
           </label>
@@ -448,6 +464,7 @@ function IndicatorsPage() {
               <th className="px-4 py-3">Valor</th>
               <th className="px-4 py-3">Referência</th>
               <th className="px-4 py-3">Tendência</th>
+              <th className="px-4 py-3">Leitura</th>
               <th className="px-4 py-3">Fonte</th>
               <th className="px-4 py-3">Recorte</th>
               <th className="px-4 py-3">Atualizado</th>
@@ -466,6 +483,32 @@ function IndicatorsPage() {
                   {i.forecast_value
                     ? `${i.forecast_value} ${i.unit}${i.forecast_period ? ` (${i.forecast_period})` : ""}`
                     : "—"}
+                </td>
+                <td className="px-4 py-3">
+                  <select
+                    value={i.polarity || "auto"}
+                    onChange={async (e) => {
+                      const r = await saveIndicator({
+                        data: { ...i, id: i.id, polarity: e.target.value as never },
+                      });
+                      if (!r.ok) toast.error(r.error);
+                      else {
+                        toast.success(
+                          "pending" in r && r.pending
+                            ? "Alteração enviada para aprovação."
+                            : "Leitura da variação atualizada.",
+                        );
+                        await q.refetch();
+                      }
+                    }}
+                    className="rounded-md border border-input bg-background px-2 py-1 text-xs"
+                  >
+                    {POLARITY_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">{i.source_name || "—"}</td>
                 <td className="px-4 py-3 text-muted-foreground">
@@ -507,7 +550,7 @@ function IndicatorsPage() {
             ))}
             {(q.data ?? []).length === 0 && (
               <tr>
-                <td className="px-4 py-6 text-muted-foreground" colSpan={8}>
+                <td className="px-4 py-6 text-muted-foreground" colSpan={9}>
                   Nenhum indicador cadastrado.
                 </td>
               </tr>

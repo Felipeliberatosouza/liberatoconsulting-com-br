@@ -194,6 +194,8 @@ export const previewBulletin = createServerFn({ method: "POST" })
       dateLabel: content.dateLabel,
       indicators: content.indicators.length,
       indicatorRows: content.indicators.map((i) => ({
+        slug: i.slug ?? "",
+        polarity: i.polarity ?? "auto",
         label: i.label,
         value: i.value,
         unit: i.unit,
