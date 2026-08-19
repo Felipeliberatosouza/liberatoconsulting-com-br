@@ -1047,7 +1047,7 @@ export async function composeAdArt(opts: {
     const sourceNote =
       "Para as fontes de dados acesse a liberatoconsulting.com.br (Dados do Brasil — Indicadores macroeconômicos).";
     // Todas as frases de idioma selecionadas devem aparecer, inclusive no LinkedIn.
-    const notesList = [...others.slice(0, 4), sourceNote];
+    const notesList = [...others.slice(0, 8), sourceNote];
 
     const space = Math.max(1, bottom - y);
     let notesH = 0;
