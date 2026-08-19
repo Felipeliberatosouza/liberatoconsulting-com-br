@@ -955,18 +955,23 @@ export async function composeAdArt(opts: {
     const rows = opts.indicators ?? [];
     const colW = W - pad * 2;
 
-    let y = Math.round(H * (wide ? 0.09 : 0.08));
-    const titleSize = fitTitle(headline, colW, H * 0.18, Math.round(W * (wide ? 0.05 : 0.062)));
-    y = drawTwoToneTitle(ctx, headline, pad, y, colW, titleSize) + titleSize * 0.35;
+    let y = Math.round(H * (wide ? 0.07 : 0.08));
+    const titleSize = fitTitle(
+      headline,
+      colW,
+      H * (wide ? 0.13 : 0.18),
+      Math.round(W * (wide ? 0.042 : 0.062)),
+    );
+    y = drawTwoToneTitle(ctx, headline, pad, y, colW, titleSize) + titleSize * 0.3;
 
     if (opts.date) {
-      const dSize = Math.round(W * (wide ? 0.02 : 0.026));
+      const dSize = Math.round(W * (wide ? 0.017 : 0.026));
       ctx.font = `600 ${dSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
       ctx.fillStyle = AD_MUTED;
       ctx.textAlign = "left";
       ctx.textBaseline = "top";
       ctx.fillText(opts.date, pad, y);
-      y += dSize * 2;
+      y += dSize * (wide ? 1.5 : 2);
     }
 
     // Colunas: rótulo | atual | anterior | variação
