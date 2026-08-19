@@ -1013,7 +1013,10 @@ export async function composeAdArt(opts: {
     // No formato deitado (LinkedIn) o espaço é curto: a tabela tem prioridade
     // e os textos complementares ficam limitados a poucas linhas.
     const notesSize = Math.round(W * (wide ? 0.016 : 0.023));
-    const notesList = others.slice(0, wide ? 1 : 4);
+    const sourceNote =
+      "Para as fontes de dados acesse a liberatoconsulting.com.br (Dados do Brasil — Indicadores macroeconômicos).";
+    const notesList = [...others.slice(0, wide ? 1 : 3), sourceNote];
+
     const space = Math.max(1, bottom - y);
     let notesH = 0;
     if (notesList.length) {
