@@ -337,6 +337,7 @@ export function downloadDataUrl(dataUrl: string, filename: string) {
 
 export type IndicatorArtRow = {
   slug?: string;
+  polarity?: string | null;
   label: string;
   value: string;
   unit: string;

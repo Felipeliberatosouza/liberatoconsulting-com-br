@@ -22,6 +22,7 @@ export type Indicator = {
   source_url: string;
   position: number;
   published: boolean;
+  polarity: string;
   segment: string;
   region: string;
   uf: string;
@@ -30,7 +31,7 @@ export type Indicator = {
 };
 
 const SELECT =
-  "id, slug, label, value, unit, reference_period, previous_value, previous_period, forecast_value, forecast_period, forecast_source_name, forecast_source_url, trend, note, source_name, source_url, position, published, segment, region, uf, last_checked_at, updated_at";
+  "id, slug, label, value, unit, reference_period, previous_value, previous_period, forecast_value, forecast_period, forecast_source_name, forecast_source_url, trend, note, source_name, source_url, position, published, polarity, segment, region, uf, last_checked_at, updated_at";
 
 /** Indicadores econômicos publicados (leitura pública do site). */
 export const listPublicIndicators = createServerFn({ method: "GET" }).handler(
@@ -138,6 +139,9 @@ const indicatorSchema = z.object({
   source_name: z.string().trim().max(160).default(""),
   source_url: z.string().trim().max(500).default(""),
   position: z.number().int().min(0).max(999).default(0),
+  polarity: z
+    .enum(["auto", "higher-better", "lower-better", "neutral"])
+    .default("auto"),
   published: z.boolean().default(true),
   segment: z.string().trim().max(80).default("geral"),
   region: z.string().trim().max(40).default("todas"),
