@@ -1041,10 +1041,11 @@ export async function composeAdArt(opts: {
 
     // No formato deitado (LinkedIn) o espaço é curto: a tabela tem prioridade
     // e os textos complementares ficam limitados a poucas linhas.
-    const notesSize = Math.round(W * (wide ? 0.016 : 0.023));
+    const notesSize = Math.round(W * (wide ? 0.015 : 0.023));
     const sourceNote =
       "Para as fontes de dados acesse a liberatoconsulting.com.br (Dados do Brasil — Indicadores macroeconômicos).";
-    const notesList = [...others.slice(0, wide ? 1 : 3), sourceNote];
+    // Todas as frases de idioma selecionadas devem aparecer, inclusive no LinkedIn.
+    const notesList = [...others.slice(0, 4), sourceNote];
 
     const space = Math.max(1, bottom - y);
     let notesH = 0;
@@ -1054,7 +1055,7 @@ export async function composeAdArt(opts: {
         (acc, t) => acc + wrap(ctx, t, colW).length * notesSize * 1.3 + notesSize * 0.5,
         0,
       );
-      notesH = Math.min(notesH + notesSize, space * (wide ? 0.2 : 0.3));
+      notesH = Math.min(notesH + notesSize, space * (wide ? 0.45 : 0.4));
     }
 
     // A tabela se ajusta para que TODOS os indicadores selecionados apareçam.
