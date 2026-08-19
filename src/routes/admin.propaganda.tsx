@@ -80,6 +80,15 @@ const THEME_MODES = ["indicadores", "brasil", "gestao", "insights"] as const;
 type ThemeMode = (typeof THEME_MODES)[number];
 const isTheme = (m: Mode): m is ThemeMode => (THEME_MODES as readonly string[]).includes(m);
 
+/** Frase fixa da peça de indicadores, exibida antes da frase gerada em cada idioma. */
+const INDICATOR_FIXED_LINE: Record<"pt" | "en" | "zh" | "es", string> = {
+  pt: "Acompanhe e economia brasileira!",
+  en: "Follow the Brazilian economy!",
+  zh: "关注巴西经济！",
+  es: "¡Acompañe la economía brasileña!",
+};
+
+
 const BRAZIL_SECTIONS = pt.brazil.sections.map((s) => ({ id: s.id, title: s.title }));
 
 const AD_LANGS = ["pt", "en", "zh", "es"] as const;
