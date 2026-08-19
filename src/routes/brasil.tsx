@@ -5,12 +5,7 @@ import { CtaBand } from "@/components/CtaBand";
 import { BulletinSignup } from "@/components/BulletinSignup";
 import { useLanguage } from "@/i18n";
 import { FilterScopeBadge, SiteFilterBar } from "@/components/SiteFilterBar";
-import {
-  ALL_REGIONS,
-  ALL_SEGMENTS,
-  ALL_STATES,
-  useAudienceFilters,
-} from "@/lib/audience-filters";
+import { ALL_REGIONS, ALL_SEGMENTS, ALL_STATES, useAudienceFilters } from "@/lib/audience-filters";
 import { listPublicIndicatorsI18n } from "@/lib/indicators.functions";
 import { compareIndicator } from "@/lib/indicator-compare";
 
@@ -43,7 +38,11 @@ export const Route = createFileRoute("/brasil")({
       { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Dados do Brasil para investidores internacionais" },
-      { name: "twitter:description", content: "Panorama econômico, setores estratégicos, IED, tributos, Mercosul, mercado consumidor e infraestrutura do Brasil." },
+      {
+        name: "twitter:description",
+        content:
+          "Panorama econômico, setores estratégicos, IED, tributos, Mercosul, mercado consumidor e infraestrutura do Brasil.",
+      },
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/brasil", headLang(ctx)),
@@ -106,9 +105,7 @@ function BrazilPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
             {b.eyebrow}
           </p>
-          <h1 className="mt-6 max-w-4xl text-3xl font-bold leading-tight md:text-5xl">
-            {b.title}
-          </h1>
+          <h1 className="mt-6 max-w-4xl text-3xl font-bold leading-tight md:text-5xl">{b.title}</h1>
           <p className="mt-6 max-w-3xl text-lg text-ink-foreground/75">{b.body}</p>
           <FilterScopeBadge className="mt-6" />
         </div>
@@ -170,10 +167,7 @@ function BrazilPage() {
                   </p>
                 )}
                 {body.split(/\n{2,}/).map((p, i) => (
-                  <p
-                    key={i}
-                    className="mt-4 max-w-3xl leading-relaxed text-muted-foreground"
-                  >
+                  <p key={i} className="mt-4 max-w-3xl leading-relaxed text-muted-foreground">
                     {p}
                   </p>
                 ))}
@@ -300,14 +294,19 @@ function IndicatorsPanel() {
         {scope.applied && (
           <>
             {" "}
-            {labels.scopeNote}{" "}
-            <span className="font-semibold text-foreground">{scope.label}</span>.
+            {labels.scopeNote} <span className="font-semibold text-foreground">{scope.label}</span>.
           </>
         )}
       </p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {rows.map((i) => {
-          const delta = compareIndicator(i.value, i.previous_value, i.unit);
+          const delta = compareIndicator(
+            i.value,
+            i.previous_value,
+            i.unit,
+            "pt-BR",
+            `${i.slug ?? ""} ${i.label ?? ""}`,
+          );
           return (
             <article key={i.id} className="rounded-lg border border-border bg-background p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -402,4 +401,3 @@ function IndicatorsPanel() {
     </section>
   );
 }
-
