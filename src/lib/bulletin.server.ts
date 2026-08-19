@@ -64,7 +64,13 @@ const LOCALE: Record<EmailLang, string> = {
 
 /** Trecho textual com a comparação (usado no texto puro e no WhatsApp). */
 function indicatorDeltaText(i: Indicator, lang: EmailLang) {
-  const delta = compareIndicator(i.value, i.previous_value, i.unit, LOCALE[lang], `${i.slug ?? ""} ${i.label ?? ""}`);
+  const delta = compareIndicator(
+    i.value,
+    i.previous_value,
+    i.unit,
+    LOCALE[lang],
+    `${i.slug ?? ""} ${i.label ?? ""}`,
+  );
   const L = labelsFor(lang);
   const prev = i.previous_value
     ? ` | ${L.previousLabel}: ${i.previous_value}${i.unit}${
@@ -160,7 +166,6 @@ export async function buildBulletinContent(segment: string): Promise<BulletinCon
     company,
     logoUrl: logo,
   };
-
 }
 
 /** HTML do Boletim Semanal (corpo do e-mail), no idioma do destinatário. */
@@ -181,7 +186,13 @@ export function renderBulletinHtml(
     content.indicators.length > 0
       ? content.indicators
           .map((i) => {
-            const delta = compareIndicator(i.value, i.previous_value, i.unit, LOCALE[lang], `${i.slug ?? ""} ${i.label ?? ""}`);
+            const delta = compareIndicator(
+              i.value,
+              i.previous_value,
+              i.unit,
+              LOCALE[lang],
+              `${i.slug ?? ""} ${i.label ?? ""}`,
+            );
             const sources = [
               i.source_name ? sourceLink(i.source_name, i.source_url) : "",
               i.forecast_source_name
@@ -323,9 +334,8 @@ export function renderBulletinText(
   const L = labelsFor(lang);
   const suffix = lang === "pt" ? "" : `?lang=${lang}`;
   const indicators = content.indicators
-    .map(
-      (i) =>
-        `• ${i.label}: ${i.value}${i.unit} (${i.reference_period})${indicatorDeltaText(i, lang)}\n${indicatorSourceText(i, lang)}`.trimEnd(),
+    .map((i) =>
+      `• ${i.label}: ${i.value}${i.unit} (${i.reference_period})${indicatorDeltaText(i, lang)}\n${indicatorSourceText(i, lang)}`.trimEnd(),
     )
     .join("\n");
   const articles = content.articles
@@ -388,7 +398,6 @@ ${companyFooterText(content.company)}
 ${L.stopReceiving}: ${unsubscribeUrl}`;
 }
 
-
 async function newsletterSettings(): Promise<NewsletterSettings> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data } = await supabaseAdmin
@@ -429,8 +438,7 @@ export async function sendBulletinEmail(params: {
         purpose: "transactional",
         label: "boletim-semanal",
         idempotency_key: `${
-          params.idempotencyKey ??
-          `bol-${new Date().toISOString().slice(0, 10)}-${params.to}`
+          params.idempotencyKey ?? `bol-${new Date().toISOString().slice(0, 10)}-${params.to}`
         }-${crypto.randomUUID().slice(0, 8)}`.slice(0, 200),
       },
       { apiKey },
@@ -440,7 +448,6 @@ export async function sendBulletinEmail(params: {
     throw translateSuppressed(error, params.to);
   }
 }
-
 
 /** Normaliza o número para o padrão internacional exigido pela API do WhatsApp. */
 export function normalizeWhatsAppNumber(raw: string) {
@@ -510,19 +517,15 @@ export async function dispatchBulletin(options?: {
       if (lang === "pt") {
         cache.set(key, base);
       } else {
-        const translated = await translateContent(
-          `bulletin:${stamp}:${segment || "Todos"}`,
-          lang,
-          {
-            segment: base.segment,
-            indicators: base.indicators.map((i) => ({
-              label: i.label,
-              reference_period: i.reference_period,
-              note: i.note,
-            })),
-            articles: base.articles.map((a) => ({ title: a.title, summary: a.summary })),
-          },
-        );
+        const translated = await translateContent(`bulletin:${stamp}:${segment || "Todos"}`, lang, {
+          segment: base.segment,
+          indicators: base.indicators.map((i) => ({
+            label: i.label,
+            reference_period: i.reference_period,
+            note: i.note,
+          })),
+          articles: base.articles.map((a) => ({ title: a.title, summary: a.summary })),
+        });
         cache.set(key, {
           ...base,
           dateLabel: formatDateFor(lang),
@@ -624,7 +627,6 @@ export async function dispatchBulletin(options?: {
       }
     }
 
-
     if (r.id !== "test") {
       await supabaseAdmin
         .from("bulletin_subscribers")
@@ -653,7 +655,6 @@ export async function dispatchBulletin(options?: {
   return { ok: true as const, sentEmail, sentWhatsApp, failed, lastError };
 }
 
-
 /** Confirmação enviada quando o inscrito cancela o recebimento. */
 export async function sendUnsubscribeConfirmation(sub: {
   email: string;
@@ -679,7 +680,6 @@ export async function sendUnsubscribeConfirmation(sub: {
 </div></body></html>`,
         text: message,
       });
-
     } catch {
       /* confirmação é best-effort */
     }

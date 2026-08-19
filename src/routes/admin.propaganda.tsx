@@ -36,8 +36,7 @@ export const Route = createFileRoute("/admin/propaganda")({
       { title: "Propaganda em redes sociais — Painel Liberato Consulting" },
       {
         name: "description",
-        content:
-          "Crie peças de propaganda para LinkedIn, Instagram e WhatsApp em quatro idiomas.",
+        content: "Crie peças de propaganda para LinkedIn, Instagram e WhatsApp em quatro idiomas.",
       },
       { name: "robots", content: "noindex, nofollow" },
       { property: "og:title", content: "Propaganda em redes sociais — Painel Liberato Consulting" },
@@ -62,14 +61,7 @@ const SERVICES = [
 const FORMATS: SocialFormatKey[] = ["linkedin", "instagram", "whatsapp"];
 
 type Mode =
-  | "servico"
-  | "area"
-  | "areas"
-  | "artigo"
-  | "indicadores"
-  | "brasil"
-  | "gestao"
-  | "insights";
+  "servico" | "area" | "areas" | "artigo" | "indicadores" | "brasil" | "gestao" | "insights";
 
 const MODE_LABELS: Record<Mode, string> = {
   servico: "Propaganda de serviço",
@@ -97,7 +89,6 @@ const AD_LANG_LABELS: Record<AdLang, string> = {
   zh: "Chinês",
   es: "Espanhol",
 };
-
 
 function AdPage() {
   const ready = useAuthReady();
@@ -183,9 +174,7 @@ function AdPage() {
       ? `${site}/content/${article.slug}`.replace(/^https?:\/\//, "")
       : "";
 
-  const footer = ["Liberato Consulting", articleLink || site, phone]
-    .filter(Boolean)
-    .join(" · ");
+  const footer = ["Liberato Consulting", articleLink || site, phone].filter(Boolean).join(" · ");
 
   async function makeCopy() {
     setBusy("copy");
@@ -335,7 +324,6 @@ function AdPage() {
     }
   }
 
-
   const field = "w-full rounded-md border border-border bg-background px-3 py-2 text-sm";
 
   return (
@@ -432,7 +420,11 @@ function AdPage() {
 
           <div className={`space-y-1 ${mode === "brasil" ? "" : "hidden"}`}>
             <label className="text-sm font-medium">Tema de Dados do Brasil</label>
-            <select className={field} value={brazilId} onChange={(e) => setBrazilId(e.target.value)}>
+            <select
+              className={field}
+              value={brazilId}
+              onChange={(e) => setBrazilId(e.target.value)}
+            >
               {BRAZIL_SECTIONS.map((b) => (
                 <option key={b.id} value={b.id}>
                   {b.title}
@@ -718,7 +710,6 @@ function AdPage() {
           </div>
         </div>
       ) : null}
-
     </AdminShell>
   );
 }

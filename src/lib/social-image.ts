@@ -28,7 +28,6 @@ function loadImage(src: string, anonymous = true) {
   });
 }
 
-
 /** Média de luminância da área onde o texto será escrito (0 = escuro, 1 = claro). */
 function areaLuminance(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number) {
   // Imagens de outra origem podem "contaminar" o canvas; nesse caso o navegador
@@ -48,7 +47,6 @@ function areaLuminance(ctx: CanvasRenderingContext2D, x: number, y: number, w: n
   return n ? sum / n : 0.5;
 }
 
-
 /**
  * Nomes que nunca podem ser quebrados entre duas linhas: o nome da consultoria
  * fica sempre junto, na mesma linha, em qualquer idioma.
@@ -64,7 +62,10 @@ const KEEP_TOGETHER = [
 function protectNames(text: string) {
   let out = text;
   for (const name of KEEP_TOGETHER) {
-    const re = new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+"), "gi");
+    const re = new RegExp(
+      name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+"),
+      "gi",
+    );
     out = out.replace(re, (m) => m.replace(/\s+/g, "\u00a0"));
   }
   return out;
@@ -103,8 +104,6 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number) {
   // devolve espaços normais para o desenho no canvas
   return lines.map((l) => l.replace(/\u00a0/g, " "));
 }
-
-
 
 /**
  * Desenha a logomarca (PNG sem fundo) no canto superior direito, em tamanho
@@ -214,7 +213,6 @@ export async function composeAdImage(opts: {
   await drawLogo(ctx, f.width, f.height, opts.logoUrl);
   return canvas.toDataURL(f.mime, 0.92);
 }
-
 
 /** Aplica somente a logomarca sobre uma imagem existente (ex.: cabeçalho do texto). */
 export async function stampLogo(baseImage: string): Promise<string> {
@@ -337,7 +335,6 @@ export function downloadDataUrl(dataUrl: string, filename: string) {
   if (revoke) setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
-
 export type IndicatorArtRow = {
   slug?: string;
   label: string;
@@ -429,10 +426,15 @@ export async function composeIndicatorsImage(
     return `${t.trim()}…`;
   };
 
-
   for (const r of list) {
     if (y > f.height - pad * 2.4 - rowGap) break;
-    const delta = compareIndicator(r.value, r.previous_value, r.unit, "pt-BR", `${r.slug ?? ""} ${r.label ?? ""}`);
+    const delta = compareIndicator(
+      r.value,
+      r.previous_value,
+      r.unit,
+      "pt-BR",
+      `${r.slug ?? ""} ${r.label ?? ""}`,
+    );
 
     // Primeiro medimos a coluna da direita para reservar o espaço dela.
     const valueText = `${r.value}${r.unit}`;
@@ -482,7 +484,6 @@ export async function composeIndicatorsImage(
     ctx.fillStyle = light ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.16)";
     ctx.fillRect(pad, y - Math.round(labelSize * 0.8), maxWidth, 1);
   }
-
 
   // Sem fontes na arte: apenas a chamada para o site.
   const ctaSize = Math.round(f.width * (format === "linkedin" ? 0.022 : 0.026));
@@ -740,7 +741,6 @@ function adFooter(
   return y;
 }
 
-
 /**
  * Logomarca do painel administrativo posicionada no canto inferior direito,
  * em uma faixa exclusiva: o rodapé e os blocos de texto respeitam esse espaço,
@@ -766,7 +766,6 @@ async function drawAdLogo(
     /* sem logomarca disponível */
   }
 }
-
 
 /** Linha da tabela de indicadores usada na peça de propaganda. */
 export type AdIndicatorRow = {
@@ -794,7 +793,6 @@ export async function composeAdArt(opts: {
   indicators?: AdIndicatorRow[];
   date?: string;
 }): Promise<string> {
-
   const f = SOCIAL_IMAGE_FORMATS[opts.format];
   const canvas = document.createElement("canvas");
   canvas.width = f.width;
@@ -840,7 +838,14 @@ export async function composeAdArt(opts: {
   }
 
   /** Escreve os textos dentro de uma coluna, reduzindo o corpo até caber. */
-  function drawBlocks(items: string[], x: number, y: number, w: number, maxY: number, start: number) {
+  function drawBlocks(
+    items: string[],
+    x: number,
+    y: number,
+    w: number,
+    maxY: number,
+    start: number,
+  ) {
     let size = start;
     for (let i = 0; i < 20; i++) {
       ctx!.font = `500 ${size}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
@@ -882,7 +887,6 @@ export async function composeAdArt(opts: {
   const footerTop =
     H - Math.max(pad * (wide ? 2.1 : 2.4), pad + logoH + pad * 0.6, pad + footerH + pad * 0.7);
 
-
   if (opts.variant === "seguidor") {
     const chev = Math.round(W * (wide ? 0.042 : 0.05));
 
@@ -921,12 +925,7 @@ export async function composeAdArt(opts: {
       drawChevrons(ctx, pad, y, chev);
       y += chev * 1.7;
 
-      const titleSize = fitTitle(
-        headline,
-        W - pad * 2,
-        H * 0.2 * density,
-        Math.round(W * 0.068),
-      );
+      const titleSize = fitTitle(headline, W - pad * 2, H * 0.2 * density, Math.round(W * 0.068));
       y = drawTwoToneTitle(ctx, headline, pad, y, W - pad * 2, titleSize) + titleSize * 0.6;
 
       const blockTop = y;
@@ -1028,7 +1027,13 @@ export async function composeAdArt(opts: {
     };
 
     for (const r of list) {
-      const delta = compareIndicator(r.value, r.previous_value, r.unit, "pt-BR", `${r.slug ?? ""} ${r.label ?? ""}`);
+      const delta = compareIndicator(
+        r.value,
+        r.previous_value,
+        r.unit,
+        "pt-BR",
+        `${r.slug ?? ""} ${r.label ?? ""}`,
+      );
       const unit = r.unit ? ` ${r.unit}` : "";
 
       ctx.font = `600 ${bodySize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
@@ -1060,9 +1065,7 @@ export async function composeAdArt(opts: {
     if (notesList.length) {
       drawBlocks(notesList, pad, Math.min(y + bodySize * 0.4, bottom), colW, bottom, notesSize);
     }
-
   } else {
-
     // Cartão editorial: número fantasma, título em duas cores, texto e foto.
     const n = String(opts.index ?? 1).padStart(2, "0");
     ctx.save();
@@ -1101,7 +1104,6 @@ export async function composeAdArt(opts: {
     const bodyLimit = photoBox && !wide ? photoBox.y - H * 0.03 : footerTop - H * 0.02;
     drawBlocks(others, pad, y, colW, bodyLimit, Math.round(W * (wide ? 0.022 : 0.028)));
   }
-
 
   adFooter(ctx, W, H, pad, opts.footer, footerMaxW);
   await drawAdLogo(ctx, W, H, pad, { w: logoW, h: logoH }, opts.logoUrl);
