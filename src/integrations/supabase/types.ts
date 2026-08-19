@@ -639,6 +639,7 @@ export type Database = {
           label: string
           last_checked_at: string | null
           note: string
+          polarity: string
           position: number
           previous_period: string
           previous_value: string
@@ -667,6 +668,7 @@ export type Database = {
           label: string
           last_checked_at?: string | null
           note?: string
+          polarity?: string
           position?: number
           previous_period?: string
           previous_value?: string
@@ -695,6 +697,7 @@ export type Database = {
           label?: string
           last_checked_at?: string | null
           note?: string
+          polarity?: string
           position?: number
           previous_period?: string
           previous_value?: string
