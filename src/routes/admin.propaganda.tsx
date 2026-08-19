@@ -495,7 +495,9 @@ function AdPage() {
             </div>
           ) : null}
 
-          <div className={`space-y-1 ${mode === "artigo" ? "hidden" : ""}`}>
+          <div
+            className={`space-y-1 ${mode === "artigo" || mode === "indicadores" ? "hidden" : ""}`}
+          >
             <label className="text-sm font-medium">
               {mode === "areas" || isTheme(mode) ? "Foco da peça (opcional)" : "Assunto do serviço"}
             </label>
