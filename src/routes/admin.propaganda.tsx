@@ -168,6 +168,12 @@ function AdPage() {
   const [busy, setBusy] = useState<string | null>(null);
   const [zoom, setZoom] = useState<SocialFormatKey | null>(null);
 
+  async function copyArt(dataUrl: string) {
+    const ok = await copyDataUrlImage(dataUrl);
+    if (ok) toast.success("Imagem copiada — cole direto no LinkedIn, WhatsApp ou Instagram.");
+    else toast.error("Seu navegador não permite copiar imagens. Use o botão Baixar.");
+  }
+
   const site = (company.data?.website || "liberatoconsulting.com.br").replace(/^https?:\/\//, "");
   const phone = company.data?.phone || "";
   const articleLink =
