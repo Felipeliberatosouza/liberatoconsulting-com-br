@@ -19,6 +19,31 @@ export type IndicatorDelta = {
 /** Se uma queda no número é boa, ruim ou indiferente para a economia. */
 export type IndicatorPolarity = "higher-better" | "lower-better" | "neutral";
 
+/** Valor gravado no cadastro do indicador ("auto" = detectar pelo nome). */
+export type IndicatorPolaritySetting = IndicatorPolarity | "auto";
+
+/** Opções exibidas no painel administrativo. */
+export const POLARITY_OPTIONS: Array<{ value: IndicatorPolaritySetting; label: string }> = [
+  { value: "auto", label: "Automático (detectar pelo nome)" },
+  { value: "higher-better", label: "Alta é positiva (verde subindo)" },
+  { value: "lower-better", label: "Queda é positiva (verde caindo)" },
+  { value: "neutral", label: "Neutro (sempre cinza)" },
+];
+
+/**
+ * Usa a marcação feita no painel; quando estiver em "auto" (ou vazia),
+ * infere a polaridade pelo slug/rótulo do indicador.
+ */
+export function resolvePolarity(
+  setting: string | null | undefined,
+  ...keys: Array<string | null | undefined>
+): IndicatorPolarity {
+  if (setting === "higher-better" || setting === "lower-better" || setting === "neutral") {
+    return setting;
+  }
+  return indicatorPolarity(...keys);
+}
+
 const UP = "#15803d";
 const DOWN = "#b91c1c";
 const NEUTRAL = "#78716c";
