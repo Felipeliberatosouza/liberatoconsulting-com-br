@@ -991,24 +991,28 @@ export async function composeAdArt(opts: {
     const bottom = footerTop - H * 0.03;
     const list = rows.slice(0, 8);
 
-    // Espaço necessário pelos textos abaixo da tabela (frase-foco / chamadas).
+    // No formato deitado (LinkedIn) o espaço é curto: a tabela tem prioridade
+    // e os textos complementares ficam limitados a poucas linhas.
+    const notesSize = Math.round(W * (wide ? 0.016 : 0.023));
+    const notesList = others.slice(0, wide ? 1 : 4);
+    const space = Math.max(1, bottom - y);
     let notesH = 0;
-    const notesSize = Math.round(W * (wide ? 0.018 : 0.023));
-    if (others.length) {
+    if (notesList.length) {
       ctx.font = `500 ${notesSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
-      notesH = others.reduce(
+      notesH = notesList.reduce(
         (acc, t) => acc + wrap(ctx, t, colW).length * notesSize * 1.3 + notesSize * 0.5,
         0,
       );
+      notesH = Math.min(notesH + notesSize, space * (wide ? 0.2 : 0.3));
     }
 
     // A tabela se ajusta para que TODOS os indicadores selecionados apareçam.
-    const avail = Math.max(1, bottom - y - notesH - (others.length ? notesSize : 0));
+    const avail = Math.max(1, space - notesH);
     const maxBody = Math.round(W * (wide ? 0.021 : 0.027));
     const n = Math.max(1, list.length);
-    let bodySize = Math.min(maxBody, Math.floor(avail / (n * 2.35)));
-    bodySize = Math.max(Math.round(W * 0.013), bodySize);
-    const rowH = Math.min(bodySize * 2.35, avail / n);
+    const rowH = Math.max(Math.round(W * 0.02), avail / n);
+    let bodySize = Math.min(maxBody, Math.floor(rowH / 1.9));
+    bodySize = Math.max(Math.round(W * 0.012), bodySize);
     const fitText = (text: string, max: number) => {
       if (ctx!.measureText(text).width <= max) return text;
       let t = text;
