@@ -31,6 +31,9 @@ export function fromCron(schedule: string) {
   };
 }
 
+export const FREQUENCIES = ["weekly", "biweekly", "monthly"] as const;
+export type Frequency = (typeof FREQUENCIES)[number];
+
 /** Agendamentos atuais dos envios automáticos (somente administrador). */
 export const getWeeklySchedules = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -43,11 +46,21 @@ export const getWeeklySchedules = createServerFn({ method: "GET" })
     const rows = (data ?? []) as Array<{ job_name: string; schedule: string }>;
     const pick = (job: string) =>
       fromCron(rows.find((r) => r.job_name === job)?.schedule ?? "0 13 * * 1");
+    const { data: settings } = await supabaseAdmin
+      .from("site_settings")
+      .select("value")
+      .eq("key", "newsletter_schedule")
+      .maybeSingle();
+    const stored = (settings?.value ?? {}) as { frequency?: string };
+    const frequency = (FREQUENCIES as readonly string[]).includes(stored.frequency ?? "")
+      ? (stored.frequency as Frequency)
+      : ("weekly" as Frequency);
     return {
       bulletin: pick(BULLETIN_JOB),
-      newsletter: pick(NEWSLETTER_JOB),
+      newsletter: { ...pick(NEWSLETTER_JOB), frequency },
     };
   });
+
 
 /** Atualiza dia e horário (horário de Brasília) de um dos envios automáticos. */
 export const saveWeeklySchedule = createServerFn({ method: "POST" })
@@ -59,6 +72,7 @@ export const saveWeeklySchedule = createServerFn({ method: "POST" })
         dow: z.number().int().min(0).max(6),
         hour: z.number().int().min(0).max(23),
         minute: z.number().int().min(0).max(59),
+        frequency: z.enum(FREQUENCIES).optional(),
       })
       .parse(data),
   )
@@ -71,5 +85,12 @@ export const saveWeeklySchedule = createServerFn({ method: "POST" })
       _schedule: toCron(data.dow, data.hour, data.minute),
     });
     if (error) return { ok: false as const, error: error.message };
+    if (data.job === NEWSLETTER_JOB && data.frequency) {
+      const { error: settingsError } = await supabaseAdmin
+        .from("site_settings")
+        .upsert({ key: "newsletter_schedule", value: { frequency: data.frequency } }, { onConflict: "key" });
+      if (settingsError) return { ok: false as const, error: settingsError.message };
+    }
+
     return { ok: true as const };
   });
