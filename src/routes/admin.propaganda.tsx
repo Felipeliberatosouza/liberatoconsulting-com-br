@@ -26,6 +26,7 @@ import { listArticles } from "@/lib/admin.functions";
 import {
   SOCIAL_IMAGE_FORMATS,
   composeAdArt,
+  copyDataUrlImage,
   downloadDataUrl,
   type SocialFormatKey,
 } from "@/lib/social-image";
@@ -659,15 +660,24 @@ function AdPage() {
                   {SOCIAL_IMAGE_FORMATS[f].label} · {SOCIAL_IMAGE_FORMATS[f].width}×
                   {SOCIAL_IMAGE_FORMATS[f].height}
                 </span>
-                <button
-                  type="button"
-                  className="rounded-md border border-border px-3 py-1"
-                  onClick={() =>
-                    downloadDataUrl(arts[f]!, `propaganda-${f}.${SOCIAL_IMAGE_FORMATS[f].ext}`)
-                  }
-                >
-                  Baixar
-                </button>
+                <span className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="rounded-md border border-border px-3 py-1"
+                    onClick={() => copyArt(arts[f]!)}
+                  >
+                    Copiar imagem
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-md border border-border px-3 py-1"
+                    onClick={() =>
+                      downloadDataUrl(arts[f]!, `propaganda-${f}.${SOCIAL_IMAGE_FORMATS[f].ext}`)
+                    }
+                  >
+                    Baixar
+                  </button>
+                </span>
               </figcaption>
             </figure>
           ))}
@@ -705,6 +715,13 @@ function AdPage() {
                   {SOCIAL_IMAGE_FORMATS[f].label}
                 </button>
               ))}
+              <button
+                type="button"
+                onClick={() => copyArt(arts[zoom]!)}
+                className="rounded-md bg-background px-3 py-1 text-sm text-foreground"
+              >
+                Copiar imagem
+              </button>
               <button
                 type="button"
                 onClick={() => setZoom(null)}
