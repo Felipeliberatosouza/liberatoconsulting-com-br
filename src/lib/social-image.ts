@@ -775,7 +775,10 @@ export type AdIndicatorRow = {
   value: string;
   unit: string;
   previous_value: string;
+  /** Data de referência do valor anterior, ex.: "jul/26". */
+  previous_period?: string;
 };
+
 
 /**
  * Arte de propaganda com três layouts editoriais:
@@ -792,7 +795,11 @@ export async function composeAdArt(opts: {
   footer: string;
   index?: number;
   indicators?: AdIndicatorRow[];
+  /** Frase-foco exibida logo abaixo do título. */
   date?: string;
+  /** Data curta dos indicadores (ex.: 19/08/26), mostrada sob "Atual". */
+  currentDate?: string;
+
 }): Promise<string> {
   const f = SOCIAL_IMAGE_FORMATS[opts.format];
   const canvas = document.createElement("canvas");
@@ -989,8 +996,13 @@ export async function composeAdArt(opts: {
     ctx.fillText("Atual", cValue, y);
     ctx.fillText("Anterior", cPrev, y);
     ctx.fillText("Variação", cDelta, y);
+    if (opts.currentDate) {
+      ctx.font = `400 ${Math.round(headSize * 0.82)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+      ctx.fillText(`(${opts.currentDate})`, cValue, y + headSize * 1.15);
+    }
     ctx.textAlign = "left";
-    y += headSize * 1.5;
+    y += headSize * (opts.currentDate ? 2.6 : 1.5);
+
     ctx.fillStyle = AD_ACCENT;
     ctx.fillRect(pad, y, colW, Math.max(2, Math.round(W * 0.003)));
     y += headSize * 1.1;
@@ -1001,7 +1013,10 @@ export async function composeAdArt(opts: {
     // No formato deitado (LinkedIn) o espaço é curto: a tabela tem prioridade
     // e os textos complementares ficam limitados a poucas linhas.
     const notesSize = Math.round(W * (wide ? 0.016 : 0.023));
-    const notesList = others.slice(0, wide ? 1 : 4);
+    const sourceNote =
+      "Para as fontes de dados acesse a liberatoconsulting.com.br (Dados do Brasil — Indicadores macroeconômicos).";
+    const notesList = [...others.slice(0, wide ? 1 : 3), sourceNote];
+
     const space = Math.max(1, bottom - y);
     let notesH = 0;
     if (notesList.length) {
@@ -1050,6 +1065,11 @@ export async function composeAdArt(opts: {
       ctx.font = `500 ${Math.round(bodySize * 0.9)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
       ctx.fillStyle = AD_MUTED;
       ctx.fillText(r.previous_value ? `${r.previous_value}${unit}` : "—", cPrev, y, colW * 0.18);
+      if (r.previous_period) {
+        ctx.font = `400 ${Math.round(bodySize * 0.7)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+        ctx.fillText(`(${r.previous_period})`, cPrev, y + bodySize * 1.05, colW * 0.18);
+      }
+
 
       ctx.font = `700 ${Math.round(bodySize * 0.9)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
       ctx.fillStyle = delta.color;
