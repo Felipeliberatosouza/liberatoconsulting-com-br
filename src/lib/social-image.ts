@@ -993,7 +993,7 @@ export async function composeAdArt(opts: {
 
     // Espaço necessário pelos textos abaixo da tabela (frase-foco / chamadas).
     let notesH = 0;
-    let notesSize = Math.round(W * (wide ? 0.018 : 0.023));
+    const notesSize = Math.round(W * (wide ? 0.018 : 0.023));
     if (others.length) {
       ctx.font = `500 ${notesSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
       notesH = others.reduce(
