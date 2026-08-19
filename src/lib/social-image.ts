@@ -988,10 +988,27 @@ export async function composeAdArt(opts: {
     ctx.fillRect(pad, y, colW, Math.max(2, Math.round(W * 0.003)));
     y += headSize * 1.1;
 
-    const bodySize = Math.round(W * (wide ? 0.021 : 0.027));
-    const rowH = bodySize * 2.35;
     const bottom = footerTop - H * 0.03;
-    const room = Math.max(1, Math.floor((bottom - y - bodySize * 6) / rowH));
+    const list = rows.slice(0, 8);
+
+    // Espaço necessário pelos textos abaixo da tabela (frase-foco / chamadas).
+    let notesH = 0;
+    const notesSize = Math.round(W * (wide ? 0.018 : 0.023));
+    if (others.length) {
+      ctx.font = `500 ${notesSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+      notesH = others.reduce(
+        (acc, t) => acc + wrap(ctx, t, colW).length * notesSize * 1.3 + notesSize * 0.5,
+        0,
+      );
+    }
+
+    // A tabela se ajusta para que TODOS os indicadores selecionados apareçam.
+    const avail = Math.max(1, bottom - y - notesH - (others.length ? notesSize : 0));
+    const maxBody = Math.round(W * (wide ? 0.021 : 0.027));
+    const n = Math.max(1, list.length);
+    let bodySize = Math.min(maxBody, Math.floor(avail / (n * 2.35)));
+    bodySize = Math.max(Math.round(W * 0.013), bodySize);
+    const rowH = Math.min(bodySize * 2.35, avail / n);
     const fitText = (text: string, max: number) => {
       if (ctx!.measureText(text).width <= max) return text;
       let t = text;
@@ -999,7 +1016,7 @@ export async function composeAdArt(opts: {
       return `${t.trim()}…`;
     };
 
-    for (const r of rows.slice(0, Math.min(room, 6))) {
+    for (const r of list) {
       const delta = compareIndicator(r.value, r.previous_value, r.unit);
       const unit = r.unit ? ` ${r.unit}` : "";
 
@@ -1017,7 +1034,7 @@ export async function composeAdArt(opts: {
       ctx.fillStyle = AD_MUTED;
       ctx.fillText(r.previous_value ? `${r.previous_value}${unit}` : "—", cPrev, y, colW * 0.18);
 
-      ctx.font = `700 ${Math.round(bodySize * 0.92)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+      ctx.font = `700 ${Math.round(bodySize * 0.9)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
       ctx.fillStyle =
         delta.direction === "up" ? "#15803d" : delta.direction === "down" ? "#b91c1c" : AD_MUTED;
       const dText = delta.direction === "none" ? "—" : `${delta.arrow} ${delta.label}`;
@@ -1026,12 +1043,13 @@ export async function composeAdArt(opts: {
 
       y += rowH;
       ctx.fillStyle = "rgba(20,24,28,0.12)";
-      ctx.fillRect(pad, y - bodySize * 0.75, colW, 1);
+      ctx.fillRect(pad, y - rowH * 0.32, colW, 1);
     }
 
     if (others.length) {
-      drawBlocks(others, pad, y + bodySize * 0.4, colW, bottom, Math.round(W * (wide ? 0.02 : 0.026)));
+      drawBlocks(others, pad, y + bodySize * 0.4, colW, bottom, notesSize);
     }
+
   } else {
 
     // Cartão editorial: número fantasma, título em duas cores, texto e foto.
