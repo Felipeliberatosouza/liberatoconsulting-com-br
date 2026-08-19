@@ -104,31 +104,52 @@ function formatNumber(n: number, locale = "pt-BR") {
   }).format(n);
 }
 
-/** Compara valor atual e anterior; devolve seta, rótulo e cor. */
+/**
+ * Compara valor atual e anterior; devolve seta, rótulo e cor.
+ * A cor segue a leitura econômica: por exemplo, inflação em queda fica verde
+ * com seta para baixo, porque a queda é positiva para esse indicador.
+ */
 export function compareIndicator(
   current: string | null | undefined,
   previous: string | null | undefined,
   unit = "",
   locale = "pt-BR",
+  polarity: IndicatorPolarity | string | null | undefined = "higher-better",
 ): IndicatorDelta {
+  const resolved: IndicatorPolarity =
+    polarity === "higher-better" || polarity === "lower-better" || polarity === "neutral"
+      ? polarity
+      : indicatorPolarity(polarity);
   const a = parseIndicatorNumber(current);
   const b = parseIndicatorNumber(previous);
   if (a === null || b === null) {
-    return { direction: "none", arrow: "", label: "—", color: NEUTRAL };
+    return { direction: "none", arrow: "", label: "—", color: NEUTRAL, sentiment: "neutral" };
   }
   const diff = a - b;
   const abs = Math.abs(diff);
   const pct = b !== 0 ? (diff / Math.abs(b)) * 100 : null;
   if (abs < 1e-9) {
-    return { direction: "flat", arrow: "▬", label: `0${unit ? ` ${unit}` : ""}`, color: NEUTRAL };
+    return {
+      direction: "flat",
+      arrow: "▬",
+      label: `0${unit ? ` ${unit}` : ""}`,
+      color: NEUTRAL,
+      sentiment: "neutral",
+    };
   }
   const sign = diff > 0 ? "+" : "−";
   const main = `${sign}${formatNumber(abs, locale)}${unit ? ` ${unit}` : ""}`;
   const relative = pct !== null ? ` (${sign}${formatNumber(Math.abs(pct), locale)}%)` : "";
+  const good =
+    resolved === "neutral" ? null : resolved === "lower-better" ? diff < 0 : diff > 0;
+  const sentiment: IndicatorDelta["sentiment"] =
+    good === null ? "neutral" : good ? "good" : "bad";
   return {
     direction: diff > 0 ? "up" : "down",
     arrow: diff > 0 ? "▲" : "▼",
     label: `${main}${relative}`,
-    color: diff > 0 ? UP : DOWN,
+    color: sentiment === "good" ? UP : sentiment === "bad" ? DOWN : NEUTRAL,
+    sentiment,
   };
 }
+
