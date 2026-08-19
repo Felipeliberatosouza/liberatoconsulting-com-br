@@ -258,23 +258,29 @@ function AdPage() {
     return text ? `${label} — ${text}` : label;
   }
 
-  /** Resumo curto de cada indicador escolhido, no formato "Rótulo: valor (período)". */
-  function indicatorLines() {
+  /** Indicadores escolhidos, no formato da tabela em colunas da arte. */
+  function indicatorRows() {
     return indicatorList
       .filter((i) => picked.includes(i.id))
       .slice(0, 5)
-      .map((i) => {
-        const value = [i.value, i.unit].filter(Boolean).join(" ").trim();
-        const prev = i.previous_value
-          ? ` · anterior ${i.previous_value}${i.unit ? ` ${i.unit}` : ""}`
-          : "";
-        const ref = i.reference_period ? ` (${i.reference_period})` : "";
-        return `${i.label}: ${value}${ref}${prev}`;
-      });
+      .map((i) => ({
+        label: i.label ?? "",
+        value: i.value ?? "",
+        unit: i.unit ?? "",
+        previous_value: i.previous_value ?? "",
+      }));
   }
+
+  /** Data de envio da peça (data atual dos indicadores). */
+  const sendDate = new Date().toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+  });
 
   async function compose() {
     const selected = AD_LANGS.filter((l) => langs[l]);
+    const focus = topic.trim();
     const list =
       mode === "artigo"
         ? [
@@ -284,12 +290,13 @@ function AdPage() {
         : mode === "areas"
           ? [
               AREAS_POST_HEADLINES[selected[0] ?? "pt"],
+              ...(focus ? [focus] : []),
               ...selected.flatMap((l) => SERVICE_AREAS.map((a) => areaLine(l, a.id))),
             ]
           : isTheme(mode)
             ? [
                 THEME_POST_HEADLINES[mode][selected[0] ?? "pt"],
-                ...(mode === "indicadores" ? indicatorLines() : []),
+                ...(focus ? [focus] : []),
                 ...selected.map((l) => lines[l]).filter((t) => t.trim()),
               ]
             : selected.map((l) => lines[l]);
@@ -303,16 +310,22 @@ function AdPage() {
       for (const format of FORMATS) {
         out[format] = await composeAdArt({
           variant:
-            (mode === "servico" || mode === "area") && goalId === "seguidor"
-              ? "seguidor"
-              : "card",
+            mode === "indicadores"
+              ? "indicadores"
+              : (mode === "servico" || mode === "area") && goalId === "seguidor"
+                ? "seguidor"
+                : "card",
           format,
           lines: list,
+          ...(mode === "indicadores"
+            ? { indicators: indicatorRows(), date: `Indicadores em ${sendDate}` }
+            : {}),
           ...(baseImage ? { baseImage } : {}),
           ...(logoUrl ? { logoUrl } : {}),
           footer,
         });
       }
+
       setArts(out);
     } catch (err) {
       toast.error((err as Error).message);
