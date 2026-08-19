@@ -10,13 +10,76 @@ export type IndicatorDelta = {
   arrow: string;
   /** Rótulo curto da variação, ex.: "+0,40 p.p." ou "—". */
   label: string;
-  /** Cor de exibição (verde para alta, vermelho para queda). */
+  /** Cor de exibição (verde quando a variação é boa para a economia). */
   color: string;
+  /** Leitura econômica da variação: boa, ruim ou neutra. */
+  sentiment: "good" | "bad" | "neutral";
 };
+
+/** Se uma queda no número é boa, ruim ou indiferente para a economia. */
+export type IndicatorPolarity = "higher-better" | "lower-better" | "neutral";
 
 const UP = "#15803d";
 const DOWN = "#b91c1c";
 const NEUTRAL = "#78716c";
+
+/** Indicadores em que a QUEDA do número é positiva. */
+const LOWER_IS_BETTER = [
+  "inflac", "inflaç", "inflation", "inflaci", "ipca", "inpc", "igp", "ipp", "ipc",
+  "desemprego", "desocupa", "unemployment", "desempleo",
+  "juros", "selic", "interest rate", "cdi", "spread",
+  "divida", "dívida", "debt", "endivida", "deficit", "déficit",
+  "risco pais", "risco país", "country risk", "embi",
+  "pobreza", "poverty", "desigualdade", "gini",
+  "inadimplen", "inadimplên", "default rate",
+  "informalidade", "custo", "cost", "tributaria", "tributária", "tax burden", "carga",
+  "desmatamento", "deforestation", "emiss", "co2", "mortalidade",
+  "evasao", "evasão", "criminalidade", "homic",
+];
+
+/** Indicadores em que a ALTA do número é positiva. */
+const HIGHER_IS_BETTER = [
+  "pib", "gdp", "produto interno",
+  "producao", "produção", "production", "industrial", "manufatur",
+  "varejo", "retail", "vendas", "sales", "servicos", "serviços", "services",
+  "emprego", "employment", "ocupa", "caged", "vagas", "renda", "rendimento",
+  "salario", "salário", "wage", "income",
+  "exporta", "export", "balanca", "balança", "trade balance", "superavit", "superávit",
+  "investimento", "investment", "fbcf", "capital",
+  "confianca", "confiança", "confidence", "pmi", "expectativa",
+  "reservas", "reserves", "produtividade", "productivity",
+  "safra", "colheita", "harvest", "agro", "crescimento", "growth",
+  "idh", "hdi", "escolaridade", "expectativa de vida", "saneamento",
+  "credito", "crédito", "credit", "turismo", "energia limpa", "renovav", "renováv",
+];
+
+/** Indicadores sem leitura óbvia de bom/ruim (câmbio, população etc.). */
+const NEUTRAL_KEYS = [
+  "cambio", "câmbio", "dolar", "dólar", "dollar", "euro", "exchange rate",
+  "populacao", "população", "population", "importa", "import",
+];
+
+function norm(text: string) {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+/**
+ * Descobre, pelo slug/rótulo do indicador, se a queda do número é positiva.
+ * Ex.: inflação em queda = seta para baixo com cor verde.
+ */
+export function indicatorPolarity(...keys: Array<string | null | undefined>): IndicatorPolarity {
+  const text = norm(keys.filter(Boolean).join(" "));
+  if (!text.trim()) return "neutral";
+  const has = (list: string[]) => list.some((k) => text.includes(norm(k)));
+  if (has(NEUTRAL_KEYS)) return "neutral";
+  if (has(LOWER_IS_BETTER)) return "lower-better";
+  if (has(HIGHER_IS_BETTER)) return "higher-better";
+  return "neutral";
+}
+
 
 /** Converte "1.234,56 %" em número. Retorna null quando não há número. */
 export function parseIndicatorNumber(raw: string | null | undefined): number | null {
