@@ -1096,11 +1096,11 @@ export async function composeAdArt(opts: {
 
       ctx.font = `500 ${Math.round(bodySize * 0.9)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
       ctx.fillStyle = AD_MUTED;
-      ctx.fillText(r.previous_value ? `${r.previous_value}${unit}` : "—", cPrev, y, colW * 0.18);
-      if (r.previous_period) {
-        ctx.font = `400 ${Math.round(bodySize * 0.7)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
-        ctx.fillText(`(${r.previous_period})`, cPrev, y + bodySize * 1.05, colW * 0.18);
-      }
+      const prevText = r.previous_value
+        ? `${r.previous_period ? `(${r.previous_period}) ` : ""}${r.previous_value}${unit}`
+        : "—";
+      ctx.fillText(prevText, cPrev, y, colW * 0.22);
+
 
 
       ctx.font = `700 ${Math.round(bodySize * 0.9)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
