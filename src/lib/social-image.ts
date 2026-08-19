@@ -770,6 +770,7 @@ async function drawAdLogo(
 
 /** Linha da tabela de indicadores usada na peça de propaganda. */
 export type AdIndicatorRow = {
+  slug?: string;
   label: string;
   value: string;
   unit: string;
