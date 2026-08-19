@@ -996,8 +996,13 @@ export async function composeAdArt(opts: {
     ctx.fillText("Atual", cValue, y);
     ctx.fillText("Anterior", cPrev, y);
     ctx.fillText("Variação", cDelta, y);
+    if (opts.currentDate) {
+      ctx.font = `400 ${Math.round(headSize * 0.82)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+      ctx.fillText(`(${opts.currentDate})`, cValue, y + headSize * 1.15);
+    }
     ctx.textAlign = "left";
-    y += headSize * 1.5;
+    y += headSize * (opts.currentDate ? 2.6 : 1.5);
+
     ctx.fillStyle = AD_ACCENT;
     ctx.fillRect(pad, y, colW, Math.max(2, Math.round(W * 0.003)));
     y += headSize * 1.1;
