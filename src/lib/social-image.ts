@@ -775,7 +775,10 @@ export type AdIndicatorRow = {
   value: string;
   unit: string;
   previous_value: string;
+  /** Data de referência do valor anterior, ex.: "jul/26". */
+  previous_period?: string;
 };
+
 
 /**
  * Arte de propaganda com três layouts editoriais:
