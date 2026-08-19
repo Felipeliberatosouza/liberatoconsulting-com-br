@@ -8,7 +8,7 @@ import {
   type CompanyFooter,
 } from "./company-footer.server";
 import { emailLang, formatDateFor, labelsFor, type EmailLang } from "./email-i18n.server";
-import { compareIndicator } from "./indicator-compare";
+import { compareIndicator, resolvePolarity } from "./indicator-compare";
 import { DEFAULT_NEWSLETTER_SETTINGS, type NewsletterSettings } from "./newsletter.server";
 
 export type BulletinSubscriber = {
@@ -27,6 +27,7 @@ export type BulletinSubscriber = {
 
 type Indicator = {
   slug?: string;
+  polarity?: string | null;
   label: string;
   value: string;
   unit: string;
@@ -69,7 +70,7 @@ function indicatorDeltaText(i: Indicator, lang: EmailLang) {
     i.previous_value,
     i.unit,
     LOCALE[lang],
-    `${i.slug ?? ""} ${i.label ?? ""}`,
+    resolvePolarity(i.polarity, i.slug, i.label),
   );
   const L = labelsFor(lang);
   const prev = i.previous_value
@@ -130,7 +131,7 @@ export async function buildBulletinContent(segment: string): Promise<BulletinCon
       supabaseAdmin
         .from("economic_indicators")
         .select(
-          "slug, label, value, unit, reference_period, trend, note, source_name, source_url, segment, previous_value, previous_period, forecast_value, forecast_period, forecast_source_name, forecast_source_url, position, published",
+          "slug, polarity, label, value, unit, reference_period, trend, note, source_name, source_url, segment, previous_value, previous_period, forecast_value, forecast_period, forecast_source_name, forecast_source_url, position, published",
         )
         .eq("published", true)
         .order("position", { ascending: true }),
@@ -191,7 +192,7 @@ export function renderBulletinHtml(
               i.previous_value,
               i.unit,
               LOCALE[lang],
-              `${i.slug ?? ""} ${i.label ?? ""}`,
+              resolvePolarity(i.polarity, i.slug, i.label),
             );
             const sources = [
               i.source_name ? sourceLink(i.source_name, i.source_url) : "",

@@ -363,7 +363,7 @@ export async function composeIndicatorsImage(
   subtitle: string,
   rows: IndicatorArtRow[],
 ): Promise<string> {
-  const { compareIndicator } = await import("./indicator-compare");
+  const { compareIndicator, resolvePolarity } = await import("./indicator-compare");
   const f = SOCIAL_IMAGE_FORMATS[format];
   const img = await loadImage(baseImage);
   const canvas = document.createElement("canvas");
@@ -433,7 +433,7 @@ export async function composeIndicatorsImage(
       r.previous_value,
       r.unit,
       "pt-BR",
-      `${r.slug ?? ""} ${r.label ?? ""}`,
+      resolvePolarity(r.polarity, r.slug, r.label),
     );
 
     // Primeiro medimos a coluna da direita para reservar o espaço dela.
@@ -770,6 +770,7 @@ async function drawAdLogo(
 /** Linha da tabela de indicadores usada na peça de propaganda. */
 export type AdIndicatorRow = {
   slug?: string;
+  polarity?: string | null;
   label: string;
   value: string;
   unit: string;
@@ -952,7 +953,7 @@ export async function composeAdArt(opts: {
     }
   } else if (opts.variant === "indicadores") {
     // Tabela em colunas, no mesmo padrão do Boletim Semanal.
-    const { compareIndicator } = await import("./indicator-compare");
+    const { compareIndicator, resolvePolarity } = await import("./indicator-compare");
     const rows = opts.indicators ?? [];
     const colW = W - pad * 2;
 
@@ -1032,7 +1033,7 @@ export async function composeAdArt(opts: {
         r.previous_value,
         r.unit,
         "pt-BR",
-        `${r.slug ?? ""} ${r.label ?? ""}`,
+        resolvePolarity(r.polarity, r.slug, r.label),
       );
       const unit = r.unit ? ` ${r.unit}` : "";
 

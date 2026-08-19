@@ -7,7 +7,7 @@ import { useLanguage } from "@/i18n";
 import { FilterScopeBadge, SiteFilterBar } from "@/components/SiteFilterBar";
 import { ALL_REGIONS, ALL_SEGMENTS, ALL_STATES, useAudienceFilters } from "@/lib/audience-filters";
 import { listPublicIndicatorsI18n } from "@/lib/indicators.functions";
-import { compareIndicator } from "@/lib/indicator-compare";
+import { compareIndicator, resolvePolarity } from "@/lib/indicator-compare";
 
 import { pt } from "@/i18n/pt";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
@@ -305,7 +305,7 @@ function IndicatorsPanel() {
             i.previous_value,
             i.unit,
             "pt-BR",
-            `${i.slug ?? ""} ${i.label ?? ""}`,
+            resolvePolarity(i.polarity, i.slug, i.label),
           );
           return (
             <article key={i.id} className="rounded-lg border border-border bg-background p-5">
