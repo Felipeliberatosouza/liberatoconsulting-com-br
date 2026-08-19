@@ -1097,7 +1097,7 @@ export async function composeAdArt(opts: {
       ctx.font = `500 ${Math.round(bodySize * 0.9)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
       ctx.fillStyle = AD_MUTED;
       const prevText = r.previous_value
-        ? `${r.previous_period ? `(${r.previous_period}) ` : ""}${r.previous_value}${unit}`
+        ? `${r.previous_value}${unit}${r.previous_period ? ` (${r.previous_period})` : ""}`
         : "—";
       ctx.fillText(prevText, cPrev, y, colW * 0.22);
 

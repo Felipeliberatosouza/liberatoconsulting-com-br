@@ -307,7 +307,7 @@ function AdPage() {
                 ...(mode !== "indicadores" && focus ? [focus] : []),
                 ...selected.flatMap((l) =>
                   mode === "indicadores"
-                    ? [INDICATOR_FIXED_LINE[l], lines[l]].filter((t) => t.trim())
+                    ? [INDICATOR_FIXED_LINE[l] + (lines[l] ? " " + lines[l] : "")].filter((t) => t.trim())
                     : [lines[l]].filter((t) => t.trim()),
                 ),
               ]
