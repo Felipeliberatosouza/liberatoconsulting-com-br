@@ -173,7 +173,9 @@ export async function composeAdImage(opts: {
   ctx.textAlign = "left";
 
   const lines = opts.lines.filter((l) => l.trim()).slice(0, 6);
-  const size = Math.round(f.width * (opts.format === "linkedin" ? 0.042 : 0.05));
+  // Com mais idiomas, reduz a fonte para que nenhuma frase fique de fora.
+  const baseSize = f.width * (opts.format === "linkedin" ? 0.042 : 0.05);
+  const size = Math.round(baseSize * (lines.length > 4 ? 4 / lines.length : 1));
   const blockGap = Math.round(size * 0.85);
 
   // altura total para centralizar verticalmente o bloco de frases
