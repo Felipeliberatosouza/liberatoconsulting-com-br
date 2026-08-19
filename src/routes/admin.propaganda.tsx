@@ -259,14 +259,15 @@ function AdPage() {
         value: i.value ?? "",
         unit: i.unit ?? "",
         previous_value: i.previous_value ?? "",
+        previous_period: i.previous_period ?? "",
       }));
   }
 
-  /** Data de envio da peça (data atual dos indicadores). */
+  /** Data curta dos indicadores, exibida sob a coluna "Atual". */
   const sendDate = new Date().toLocaleDateString("pt-BR", {
     day: "2-digit",
-    month: "long",
-    year: "numeric",
+    month: "2-digit",
+    year: "2-digit",
   });
 
   async function compose() {
@@ -309,7 +310,11 @@ function AdPage() {
           format,
           lines: list,
           ...(mode === "indicadores"
-            ? { indicators: indicatorRows(), date: `Indicadores em ${sendDate}` }
+            ? {
+                indicators: indicatorRows(),
+                currentDate: sendDate,
+                ...(focus ? { date: focus } : {}),
+              }
             : {}),
           ...(baseImage ? { baseImage } : {}),
           ...(logoUrl ? { logoUrl } : {}),
