@@ -890,7 +890,7 @@ export async function composeAdArt(opts: {
         (acc, t) => acc + wrap(ctx!, t, w).length * size * 1.34 + size * 0.55,
         0,
       );
-      if (y + h <= maxY || size <= start * 0.55) break;
+      if (y + h <= maxY || size <= start * 0.38) break;
       size = Math.round(size * 0.94);
     }
     ctx!.font = `500 ${size}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
