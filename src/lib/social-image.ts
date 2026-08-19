@@ -475,8 +475,7 @@ export async function composeIndicatorsImage(
 
     if (deltaText) {
       ctx.font = `700 ${smallSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
-      ctx.fillStyle =
-        delta.direction === "up" ? "#22c55e" : delta.direction === "down" ? "#ef4444" : muted;
+      ctx.fillStyle = delta.color;
       ctx.fillText(deltaText, f.width - pad, y + labelSize * 1.2, rightW);
     }
     ctx.textAlign = "left";
@@ -1053,8 +1052,7 @@ export async function composeAdArt(opts: {
       ctx.fillText(r.previous_value ? `${r.previous_value}${unit}` : "—", cPrev, y, colW * 0.18);
 
       ctx.font = `700 ${Math.round(bodySize * 0.9)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
-      ctx.fillStyle =
-        delta.direction === "up" ? "#15803d" : delta.direction === "down" ? "#b91c1c" : AD_MUTED;
+      ctx.fillStyle = delta.color;
       const dText = delta.direction === "none" ? "—" : `${delta.arrow} ${delta.label}`;
       ctx.fillText(dText, cDelta, y, colW * 0.29);
       ctx.textAlign = "left";
