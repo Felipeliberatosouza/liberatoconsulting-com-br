@@ -495,19 +495,21 @@ function AdPage() {
             </div>
           ) : null}
 
-          <div
-            className={`space-y-1 ${mode === "artigo" || mode === "indicadores" ? "hidden" : ""}`}
-          >
-            <label className="text-sm font-medium">
-              {mode === "areas" || isTheme(mode) ? "Foco da peça (opcional)" : "Assunto do serviço"}
-            </label>
-            <input
-              className={field}
-              value={topic}
-              placeholder="Ex.: redução de custos em operações industriais"
-              onChange={(e) => setTopic(e.target.value)}
-            />
-          </div>
+          {mode === "artigo" || mode === "indicadores" ? null : (
+            <div className="space-y-1">
+              <label className="text-sm font-medium">
+                {mode === "areas" || isTheme(mode)
+                  ? "Foco da peça (opcional)"
+                  : "Assunto do serviço"}
+              </label>
+              <input
+                className={field}
+                value={topic}
+                placeholder="Ex.: redução de custos em operações industriais"
+                onChange={(e) => setTopic(e.target.value)}
+              />
+            </div>
+          )}
 
           <div className={`space-y-1 ${mode === "servico" || mode === "area" ? "" : "hidden"}`}>
             <label className="text-sm font-medium">Objetivo do post</label>
