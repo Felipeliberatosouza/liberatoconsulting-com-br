@@ -172,7 +172,7 @@ export async function composeAdImage(opts: {
   ctx.textBaseline = "top";
   ctx.textAlign = "left";
 
-  const lines = opts.lines.filter((l) => l.trim()).slice(0, 4);
+  const lines = opts.lines.filter((l) => l.trim()).slice(0, 6);
   const size = Math.round(f.width * (opts.format === "linkedin" ? 0.042 : 0.05));
   const blockGap = Math.round(size * 0.85);
 
