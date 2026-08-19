@@ -339,6 +339,7 @@ export function downloadDataUrl(dataUrl: string, filename: string) {
 
 
 export type IndicatorArtRow = {
+  slug?: string;
   label: string;
   value: string;
   unit: string;
@@ -431,7 +432,7 @@ export async function composeIndicatorsImage(
 
   for (const r of list) {
     if (y > f.height - pad * 2.4 - rowGap) break;
-    const delta = compareIndicator(r.value, r.previous_value, r.unit);
+    const delta = compareIndicator(r.value, r.previous_value, r.unit, "pt-BR", `${r.slug ?? ""} ${r.label ?? ""}`);
 
     // Primeiro medimos a coluna da direita para reservar o espaço dela.
     const valueText = `${r.value}${r.unit}`;
@@ -1026,7 +1027,7 @@ export async function composeAdArt(opts: {
     };
 
     for (const r of list) {
-      const delta = compareIndicator(r.value, r.previous_value, r.unit);
+      const delta = compareIndicator(r.value, r.previous_value, r.unit, "pt-BR", `${r.slug ?? ""} ${r.label ?? ""}`);
       const unit = r.unit ? ` ${r.unit}` : "";
 
       ctx.font = `600 ${bodySize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;

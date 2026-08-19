@@ -307,7 +307,7 @@ function IndicatorsPanel() {
       </p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {rows.map((i) => {
-          const delta = compareIndicator(i.value, i.previous_value, i.unit);
+          const delta = compareIndicator(i.value, i.previous_value, i.unit, "pt-BR", `${i.slug ?? ""} ${i.label ?? ""}`);
           return (
             <article key={i.id} className="rounded-lg border border-border bg-background p-5">
               <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

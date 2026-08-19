@@ -264,6 +264,7 @@ function AdPage() {
       .filter((i) => picked.includes(i.id))
       .slice(0, 5)
       .map((i) => ({
+        slug: i.slug ?? "",
         label: i.label ?? "",
         value: i.value ?? "",
         unit: i.unit ?? "",

@@ -63,7 +63,7 @@ const LOCALE: Record<EmailLang, string> = {
 
 /** Trecho textual com a comparação (usado no texto puro e no WhatsApp). */
 function indicatorDeltaText(i: Indicator, lang: EmailLang) {
-  const delta = compareIndicator(i.value, i.previous_value, i.unit, LOCALE[lang]);
+  const delta = compareIndicator(i.value, i.previous_value, i.unit, LOCALE[lang], `${i.slug ?? ""} ${i.label ?? ""}`);
   const L = labelsFor(lang);
   const prev = i.previous_value
     ? ` | ${L.previousLabel}: ${i.previous_value}${i.unit}${
@@ -180,7 +180,7 @@ export function renderBulletinHtml(
     content.indicators.length > 0
       ? content.indicators
           .map((i) => {
-            const delta = compareIndicator(i.value, i.previous_value, i.unit, LOCALE[lang]);
+            const delta = compareIndicator(i.value, i.previous_value, i.unit, LOCALE[lang], `${i.slug ?? ""} ${i.label ?? ""}`);
             const sources = [
               i.source_name ? sourceLink(i.source_name, i.source_url) : "",
               i.forecast_source_name
