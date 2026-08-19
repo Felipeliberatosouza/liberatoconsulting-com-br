@@ -767,20 +767,32 @@ async function drawAdLogo(
 }
 
 
+/** Linha da tabela de indicadores usada na peça de propaganda. */
+export type AdIndicatorRow = {
+  label: string;
+  value: string;
+  unit: string;
+  previous_value: string;
+};
+
 /**
- * Arte de propaganda com dois layouts editoriais:
+ * Arte de propaganda com três layouts editoriais:
  * - "seguidor": convite para seguir a página no LinkedIn, com mockup de celular;
- * - "card": cartão de conteúdo com número, título em duas cores, texto e foto.
+ * - "card": cartão de conteúdo com número, título em duas cores, texto e foto;
+ * - "indicadores": tabela em colunas com valor atual, anterior e variação.
  */
 export async function composeAdArt(opts: {
-  variant: "seguidor" | "card";
+  variant: "seguidor" | "card" | "indicadores";
   format: SocialFormatKey;
   lines: string[];
   baseImage?: string;
   logoUrl?: string;
   footer: string;
   index?: number;
+  indicators?: AdIndicatorRow[];
+  date?: string;
 }): Promise<string> {
+
   const f = SOCIAL_IMAGE_FORMATS[opts.format];
   const canvas = document.createElement("canvas");
   canvas.width = f.width;
