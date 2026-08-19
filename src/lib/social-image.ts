@@ -795,7 +795,11 @@ export async function composeAdArt(opts: {
   footer: string;
   index?: number;
   indicators?: AdIndicatorRow[];
+  /** Frase-foco exibida logo abaixo do título. */
   date?: string;
+  /** Data curta dos indicadores (ex.: 19/08/26), mostrada sob "Atual". */
+  currentDate?: string;
+
 }): Promise<string> {
   const f = SOCIAL_IMAGE_FORMATS[opts.format];
   const canvas = document.createElement("canvas");
