@@ -7,6 +7,7 @@ import {
   NEWSLETTER_JOB,
   getWeeklySchedules,
   saveWeeklySchedule,
+  type Frequency,
 } from "@/lib/schedule.functions";
 
 const DAYS = [
@@ -19,10 +20,16 @@ const DAYS = [
   "Sábado",
 ];
 
+const FREQUENCY_LABELS: Array<{ value: Frequency; label: string }> = [
+  { value: "weekly", label: "Semanal" },
+  { value: "biweekly", label: "Quinzenal" },
+  { value: "monthly", label: "Mensal" },
+];
+
 const field =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
 
-type Slot = { dow: number; hour: number; minute: number };
+type Slot = { dow: number; hour: number; minute: number; frequency?: Frequency };
 
 /**
  * Bloco do painel (somente administrador) para definir o dia da semana e o
@@ -55,6 +62,7 @@ export function ScheduleSettings() {
             title="Newsletter"
             job={NEWSLETTER_JOB}
             initial={q.data!.newsletter}
+            showFrequency
             onSaved={() => q.refetch()}
           />
         </div>
@@ -67,14 +75,17 @@ function ScheduleForm({
   title,
   job,
   initial,
+  showFrequency = false,
   onSaved,
 }: {
   title: string;
   job: typeof BULLETIN_JOB | typeof NEWSLETTER_JOB;
   initial: Slot;
+  showFrequency?: boolean;
   onSaved: () => void;
 }) {
   const [dow, setDow] = useState(initial.dow);
+  const [frequency, setFrequency] = useState<Frequency>(initial.frequency ?? "weekly");
   const [time, setTime] = useState(
     `${String(initial.hour).padStart(2, "0")}:${String(initial.minute).padStart(2, "0")}`,
   );
@@ -82,15 +93,22 @@ function ScheduleForm({
 
   useEffect(() => {
     setDow(initial.dow);
+    setFrequency(initial.frequency ?? "weekly");
     setTime(`${String(initial.hour).padStart(2, "0")}:${String(initial.minute).padStart(2, "0")}`);
-  }, [initial.dow, initial.hour, initial.minute]);
+  }, [initial.dow, initial.hour, initial.minute, initial.frequency]);
 
   async function save() {
     const [h, m] = time.split(":");
     setSaving(true);
     try {
       const res = await saveWeeklySchedule({
-        data: { job, dow, hour: Number(h), minute: Number(m) },
+        data: {
+          job,
+          dow,
+          hour: Number(h),
+          minute: Number(m),
+          ...(showFrequency ? { frequency } : {}),
+        },
       });
       if (res.ok) {
         toast.success(`${title}: agendamento atualizado.`);
@@ -109,6 +127,22 @@ function ScheduleForm({
     <div className="rounded-md border border-border p-4">
       <h3 className="font-display text-base font-bold">{title}</h3>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        {showFrequency && (
+          <label className="text-sm sm:col-span-2">
+            <span className="text-muted-foreground">Frequência</span>
+            <select
+              className={`${field} mt-1`}
+              value={frequency}
+              onChange={(e) => setFrequency(e.target.value as Frequency)}
+            >
+              {FREQUENCY_LABELS.map((f) => (
+                <option key={f.value} value={f.value}>
+                  {f.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <label className="text-sm">
           <span className="text-muted-foreground">Dia da semana</span>
           <select className={`${field} mt-1`} value={dow} onChange={(e) => setDow(Number(e.target.value))}>
@@ -129,6 +163,12 @@ function ScheduleForm({
           />
         </label>
       </div>
+      {showFrequency && (
+        <p className="mt-3 text-xs text-muted-foreground">
+          No modo quinzenal ou mensal, o envio ocorre no dia e horário escolhidos, respeitando o
+          intervalo desde a última newsletter enviada.
+        </p>
+      )}
       <button
         type="button"
         onClick={save}
@@ -140,3 +180,4 @@ function ScheduleForm({
     </div>
   );
 }
+
