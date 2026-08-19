@@ -26,6 +26,7 @@ import { listArticles } from "@/lib/admin.functions";
 import {
   SOCIAL_IMAGE_FORMATS,
   composeAdArt,
+  copyDataUrlImage,
   downloadDataUrl,
   type SocialFormatKey,
 } from "@/lib/social-image";
@@ -166,6 +167,12 @@ function AdPage() {
   const [arts, setArts] = useState<Partial<Record<SocialFormatKey, string>>>({});
   const [busy, setBusy] = useState<string | null>(null);
   const [zoom, setZoom] = useState<SocialFormatKey | null>(null);
+
+  async function copyArt(dataUrl: string) {
+    const ok = await copyDataUrlImage(dataUrl);
+    if (ok) toast.success("Imagem copiada — cole direto no LinkedIn, WhatsApp ou Instagram.");
+    else toast.error("Seu navegador não permite copiar imagens. Use o botão Baixar.");
+  }
 
   const site = (company.data?.website || "liberatoconsulting.com.br").replace(/^https?:\/\//, "");
   const phone = company.data?.phone || "";
@@ -659,15 +666,24 @@ function AdPage() {
                   {SOCIAL_IMAGE_FORMATS[f].label} · {SOCIAL_IMAGE_FORMATS[f].width}×
                   {SOCIAL_IMAGE_FORMATS[f].height}
                 </span>
-                <button
-                  type="button"
-                  className="rounded-md border border-border px-3 py-1"
-                  onClick={() =>
-                    downloadDataUrl(arts[f]!, `propaganda-${f}.${SOCIAL_IMAGE_FORMATS[f].ext}`)
-                  }
-                >
-                  Baixar
-                </button>
+                <span className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    className="rounded-md border border-border px-3 py-1"
+                    onClick={() => copyArt(arts[f]!)}
+                  >
+                    Copiar imagem
+                  </button>
+                  <button
+                    type="button"
+                    className="rounded-md border border-border px-3 py-1"
+                    onClick={() =>
+                      downloadDataUrl(arts[f]!, `propaganda-${f}.${SOCIAL_IMAGE_FORMATS[f].ext}`)
+                    }
+                  >
+                    Baixar
+                  </button>
+                </span>
               </figcaption>
             </figure>
           ))}
@@ -705,6 +721,13 @@ function AdPage() {
                   {SOCIAL_IMAGE_FORMATS[f].label}
                 </button>
               ))}
+              <button
+                type="button"
+                onClick={() => copyArt(arts[zoom]!)}
+                className="rounded-md bg-background px-3 py-1 text-sm text-foreground"
+              >
+                Copiar imagem
+              </button>
               <button
                 type="button"
                 onClick={() => setZoom(null)}

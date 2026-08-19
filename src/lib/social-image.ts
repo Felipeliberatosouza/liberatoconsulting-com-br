@@ -335,6 +335,35 @@ export function downloadDataUrl(dataUrl: string, filename: string) {
   if (revoke) setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
+/** Converte a arte para PNG (formato aceito pela área de transferência). */
+async function dataUrlToPngBlob(dataUrl: string): Promise<Blob> {
+  const blob = dataUrlToBlob(dataUrl);
+  if (blob.type === "image/png") return blob;
+  const img = new Image();
+  img.src = dataUrl;
+  await img.decode();
+  const canvas = document.createElement("canvas");
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  canvas.getContext("2d")!.drawImage(img, 0, 0);
+  return await new Promise<Blob>((resolve, reject) =>
+    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("png"))), "image/png"),
+  );
+}
+
+/** Copia a arte para a área de transferência, pronta para colar nas redes sociais. */
+export async function copyDataUrlImage(dataUrl: string): Promise<boolean> {
+  try {
+    if (!navigator.clipboard || typeof ClipboardItem === "undefined") return false;
+    // Safari exige que o Promise do blob seja passado direto ao ClipboardItem.
+    const item = new ClipboardItem({ "image/png": dataUrlToPngBlob(dataUrl) });
+    await navigator.clipboard.write([item]);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export type IndicatorArtRow = {
   slug?: string;
   polarity?: string | null;
