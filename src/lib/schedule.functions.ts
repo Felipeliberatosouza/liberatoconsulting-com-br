@@ -72,6 +72,7 @@ export const saveWeeklySchedule = createServerFn({ method: "POST" })
         dow: z.number().int().min(0).max(6),
         hour: z.number().int().min(0).max(23),
         minute: z.number().int().min(0).max(59),
+        frequency: z.enum(FREQUENCIES).optional(),
       })
       .parse(data),
   )
@@ -84,5 +85,12 @@ export const saveWeeklySchedule = createServerFn({ method: "POST" })
       _schedule: toCron(data.dow, data.hour, data.minute),
     });
     if (error) return { ok: false as const, error: error.message };
+    if (data.job === NEWSLETTER_JOB && data.frequency) {
+      const { error: settingsError } = await supabaseAdmin
+        .from("site_settings")
+        .upsert({ key: "newsletter_schedule", value: { frequency: data.frequency } }, { onConflict: "key" });
+      if (settingsError) return { ok: false as const, error: settingsError.message };
+    }
+
     return { ok: true as const };
   });
