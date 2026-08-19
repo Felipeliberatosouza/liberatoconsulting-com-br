@@ -949,7 +949,91 @@ export async function composeAdArt(opts: {
       ctx.font = `600 ${Math.round(res.size * 0.82)}px "DM Sans", Arial, sans-serif`;
       ctx.fillText("linkedin.com/company/liberatoglobal", qx, res.y + res.size * 0.85);
     }
+  } else if (opts.variant === "indicadores") {
+    // Tabela em colunas, no mesmo padrão do Boletim Semanal.
+    const { compareIndicator } = await import("./indicator-compare");
+    const rows = opts.indicators ?? [];
+    const colW = W - pad * 2;
+
+    let y = Math.round(H * (wide ? 0.09 : 0.08));
+    const titleSize = fitTitle(headline, colW, H * 0.18, Math.round(W * (wide ? 0.05 : 0.062)));
+    y = drawTwoToneTitle(ctx, headline, pad, y, colW, titleSize) + titleSize * 0.35;
+
+    if (opts.date) {
+      const dSize = Math.round(W * (wide ? 0.02 : 0.026));
+      ctx.font = `600 ${dSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+      ctx.fillStyle = AD_MUTED;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText(opts.date, pad, y);
+      y += dSize * 2;
+    }
+
+    // Colunas: rótulo | atual | anterior | variação
+    const cValue = pad + colW * 0.5;
+    const cPrev = pad + colW * 0.7;
+    const cDelta = pad + colW;
+    const headSize = Math.round(W * (wide ? 0.017 : 0.022));
+    ctx.font = `700 ${headSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+    ctx.fillStyle = AD_MUTED;
+    ctx.textAlign = "left";
+    ctx.fillText("Indicador", pad, y);
+    ctx.textAlign = "right";
+    ctx.fillText("Atual", cValue, y);
+    ctx.fillText("Anterior", cPrev, y);
+    ctx.fillText("Variação", cDelta, y);
+    ctx.textAlign = "left";
+    y += headSize * 1.5;
+    ctx.fillStyle = AD_ACCENT;
+    ctx.fillRect(pad, y, colW, Math.max(2, Math.round(W * 0.003)));
+    y += headSize * 1.1;
+
+    const bodySize = Math.round(W * (wide ? 0.021 : 0.027));
+    const rowH = bodySize * 2.35;
+    const bottom = footerTop - H * 0.03;
+    const room = Math.max(1, Math.floor((bottom - y - bodySize * 6) / rowH));
+    const fitText = (text: string, max: number) => {
+      if (ctx!.measureText(text).width <= max) return text;
+      let t = text;
+      while (t.length > 1 && ctx!.measureText(`${t}…`).width > max) t = t.slice(0, -1);
+      return `${t.trim()}…`;
+    };
+
+    for (const r of rows.slice(0, Math.min(room, 6))) {
+      const delta = compareIndicator(r.value, r.previous_value, r.unit);
+      const unit = r.unit ? ` ${r.unit}` : "";
+
+      ctx.font = `600 ${bodySize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+      ctx.fillStyle = AD_INK;
+      ctx.textAlign = "left";
+      ctx.fillText(fitText(r.label, colW * 0.46), pad, y);
+
+      ctx.textAlign = "right";
+      ctx.font = `700 ${bodySize}px "Space Grotesk", "Helvetica Neue", Arial, sans-serif`;
+      ctx.fillStyle = AD_INK;
+      ctx.fillText(`${r.value}${unit}`, cValue, y, colW * 0.18);
+
+      ctx.font = `500 ${Math.round(bodySize * 0.9)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+      ctx.fillStyle = AD_MUTED;
+      ctx.fillText(r.previous_value ? `${r.previous_value}${unit}` : "—", cPrev, y, colW * 0.18);
+
+      ctx.font = `700 ${Math.round(bodySize * 0.92)}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+      ctx.fillStyle =
+        delta.direction === "up" ? "#15803d" : delta.direction === "down" ? "#b91c1c" : AD_MUTED;
+      const dText = delta.direction === "none" ? "—" : `${delta.arrow} ${delta.label}`;
+      ctx.fillText(dText, cDelta, y, colW * 0.29);
+      ctx.textAlign = "left";
+
+      y += rowH;
+      ctx.fillStyle = "rgba(20,24,28,0.12)";
+      ctx.fillRect(pad, y - bodySize * 0.75, colW, 1);
+    }
+
+    if (others.length) {
+      drawBlocks(others, pad, y + bodySize * 0.4, colW, bottom, Math.round(W * (wide ? 0.02 : 0.026)));
+    }
   } else {
+
     // Cartão editorial: número fantasma, título em duas cores, texto e foto.
     const n = String(opts.index ?? 1).padStart(2, "0");
     ctx.save();
