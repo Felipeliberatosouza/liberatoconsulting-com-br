@@ -266,13 +266,13 @@ export function renderBulletinHtml(
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:94%;background:#ffffff;border-radius:12px;overflow:hidden">
 
 <tr><td style="padding:28px 32px 20px;border-bottom:1px solid #e7e5e4" align="center">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto">
     <tr>
-      <td align="left" valign="middle" style="width:48px">
+      <td align="center" valign="middle">
         <img src="${escapeHtml(content.logoUrl)}" alt="Liberato Consulting" height="26" width="auto" style="display:block;height:26px;width:auto;max-width:120px" />
       </td>
-      <td align="left" valign="middle" style="padding-left:12px">
-        <h1 style="margin:0;font-size:24px;color:#14192a">${escapeHtml(L.bulletinTitle)}</h1>
+      <td align="center" valign="middle" style="padding-left:12px">
+        <h1 style="margin:0;font-size:24px;color:#14192a;text-align:center">${escapeHtml(L.bulletinTitle)}</h1>
       </td>
     </tr>
   </table>
