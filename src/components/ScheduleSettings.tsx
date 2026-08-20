@@ -29,7 +29,15 @@ const FREQUENCY_LABELS: Array<{ value: Frequency; label: string }> = [
 const field =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
 
-type Slot = { dow: number; hour: number; minute: number; frequency?: Frequency };
+type Slot = {
+  dow: number;
+  hour: number;
+  minute: number;
+  frequency?: Frequency;
+  autoGenerate?: boolean;
+  paused?: boolean;
+  lastRun?: { at?: string; result?: string } | null;
+};
 
 /**
  * Bloco do painel (somente administrador) para definir o dia da semana e o
@@ -86,6 +94,7 @@ function ScheduleForm({
 }) {
   const [dow, setDow] = useState(initial.dow);
   const [frequency, setFrequency] = useState<Frequency>(initial.frequency ?? "weekly");
+  const [autoGenerate, setAutoGenerate] = useState(initial.autoGenerate !== false);
   const [time, setTime] = useState(
     `${String(initial.hour).padStart(2, "0")}:${String(initial.minute).padStart(2, "0")}`,
   );
@@ -94,8 +103,9 @@ function ScheduleForm({
   useEffect(() => {
     setDow(initial.dow);
     setFrequency(initial.frequency ?? "weekly");
+    setAutoGenerate(initial.autoGenerate !== false);
     setTime(`${String(initial.hour).padStart(2, "0")}:${String(initial.minute).padStart(2, "0")}`);
-  }, [initial.dow, initial.hour, initial.minute, initial.frequency]);
+  }, [initial.dow, initial.hour, initial.minute, initial.frequency, initial.autoGenerate]);
 
   async function save() {
     const [h, m] = time.split(":");
@@ -107,7 +117,7 @@ function ScheduleForm({
           dow,
           hour: Number(h),
           minute: Number(m),
-          ...(showFrequency ? { frequency } : {}),
+          ...(showFrequency ? { frequency, autoGenerate } : {}),
         },
       });
       if (res.ok) {
@@ -164,10 +174,38 @@ function ScheduleForm({
         </label>
       </div>
       {showFrequency && (
-        <p className="mt-3 text-xs text-muted-foreground">
-          No modo quinzenal ou mensal, o envio ocorre no dia e horário escolhidos, respeitando o
-          intervalo desde a última newsletter enviada.
-        </p>
+        <>
+          <label className="mt-4 flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={autoGenerate}
+              onChange={(e) => setAutoGenerate(e.target.checked)}
+            />
+            <span>
+              Gerar a edição automaticamente com IA quando não houver rascunho
+              <span className="block text-xs text-muted-foreground">
+                Reúne os conteúdos publicados desde o último envio. Sem conteúdo novo, o envio é
+                pulado.
+              </span>
+            </span>
+          </label>
+          <p className="mt-3 text-xs text-muted-foreground">
+            No modo quinzenal ou mensal, o envio ocorre no dia e horário escolhidos, respeitando o
+            intervalo desde a última newsletter enviada.
+          </p>
+          {initial.paused && (
+            <p className="mt-3 text-xs text-destructive">
+              Geração automática pausada após falha de IA. Salve com a opção marcada para reativar.
+            </p>
+          )}
+          {initial.lastRun?.at && (
+            <p className="mt-3 text-xs text-muted-foreground">
+              Último disparo automático: {new Date(initial.lastRun.at).toLocaleString("pt-BR")} —{" "}
+              {initial.lastRun.result}
+            </p>
+          )}
+        </>
       )}
       <button
         type="button"
