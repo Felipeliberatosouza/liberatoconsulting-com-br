@@ -174,10 +174,38 @@ function ScheduleForm({
         </label>
       </div>
       {showFrequency && (
-        <p className="mt-3 text-xs text-muted-foreground">
-          No modo quinzenal ou mensal, o envio ocorre no dia e horário escolhidos, respeitando o
-          intervalo desde a última newsletter enviada.
-        </p>
+        <>
+          <label className="mt-4 flex items-start gap-2 text-sm">
+            <input
+              type="checkbox"
+              className="mt-1"
+              checked={autoGenerate}
+              onChange={(e) => setAutoGenerate(e.target.checked)}
+            />
+            <span>
+              Gerar a edição automaticamente com IA quando não houver rascunho
+              <span className="block text-xs text-muted-foreground">
+                Reúne os conteúdos publicados desde o último envio. Sem conteúdo novo, o envio é
+                pulado.
+              </span>
+            </span>
+          </label>
+          <p className="mt-3 text-xs text-muted-foreground">
+            No modo quinzenal ou mensal, o envio ocorre no dia e horário escolhidos, respeitando o
+            intervalo desde a última newsletter enviada.
+          </p>
+          {initial.paused && (
+            <p className="mt-3 text-xs text-destructive">
+              Geração automática pausada após falha de IA. Salve com a opção marcada para reativar.
+            </p>
+          )}
+          {initial.lastRun?.at && (
+            <p className="mt-3 text-xs text-muted-foreground">
+              Último disparo automático: {new Date(initial.lastRun.at).toLocaleString("pt-BR")} —{" "}
+              {initial.lastRun.result}
+            </p>
+          )}
+        </>
       )}
       <button
         type="button"
