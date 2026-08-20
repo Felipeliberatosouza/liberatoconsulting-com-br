@@ -29,7 +29,15 @@ const FREQUENCY_LABELS: Array<{ value: Frequency; label: string }> = [
 const field =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
 
-type Slot = { dow: number; hour: number; minute: number; frequency?: Frequency };
+type Slot = {
+  dow: number;
+  hour: number;
+  minute: number;
+  frequency?: Frequency;
+  autoGenerate?: boolean;
+  paused?: boolean;
+  lastRun?: { at?: string; result?: string } | null;
+};
 
 /**
  * Bloco do painel (somente administrador) para definir o dia da semana e o

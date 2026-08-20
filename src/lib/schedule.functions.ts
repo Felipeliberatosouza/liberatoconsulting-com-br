@@ -84,6 +84,7 @@ export const saveWeeklySchedule = createServerFn({ method: "POST" })
         hour: z.number().int().min(0).max(23),
         minute: z.number().int().min(0).max(59),
         frequency: z.enum(FREQUENCIES).optional(),
+        autoGenerate: z.boolean().optional(),
       })
       .parse(data),
   )
@@ -96,10 +97,23 @@ export const saveWeeklySchedule = createServerFn({ method: "POST" })
       _schedule: toCron(data.dow, data.hour, data.minute),
     });
     if (error) return { ok: false as const, error: error.message };
-    if (data.job === NEWSLETTER_JOB && data.frequency) {
+    if (data.job === NEWSLETTER_JOB && (data.frequency || data.autoGenerate !== undefined)) {
+      const { data: row } = await supabaseAdmin
+        .from("site_settings")
+        .select("value")
+        .eq("key", "newsletter_schedule")
+        .maybeSingle();
+      const current = (row?.value ?? {}) as Record<string, unknown>;
+      const next: Record<string, unknown> = { ...current };
+      if (data.frequency) next["frequency"] = data.frequency;
+      if (data.autoGenerate !== undefined) {
+        next["autoGenerate"] = data.autoGenerate;
+        // Reativar a geração automática também retira a pausa por erro de IA.
+        if (data.autoGenerate) next["paused"] = false;
+      }
       const { error: settingsError } = await supabaseAdmin
         .from("site_settings")
-        .upsert({ key: "newsletter_schedule", value: { frequency: data.frequency } }, { onConflict: "key" });
+        .upsert({ key: "newsletter_schedule", value: next }, { onConflict: "key" });
       if (settingsError) return { ok: false as const, error: settingsError.message };
     }
 
