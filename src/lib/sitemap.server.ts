@@ -9,6 +9,7 @@
 
 import { pt } from "@/i18n/pt";
 import { HREFLANGS, localizedUrl, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { topicSlug } from "@/lib/brazil-topic";
 
 export interface SitemapEntry {
   path: string;
