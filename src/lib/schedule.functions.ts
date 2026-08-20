@@ -113,7 +113,10 @@ export const saveWeeklySchedule = createServerFn({ method: "POST" })
       }
       const { error: settingsError } = await supabaseAdmin
         .from("site_settings")
-        .upsert({ key: "newsletter_schedule", value: next }, { onConflict: "key" });
+        .upsert(
+          { key: "newsletter_schedule", value: next as never },
+          { onConflict: "key" },
+        );
       if (settingsError) return { ok: false as const, error: settingsError.message };
     }
 
