@@ -51,13 +51,24 @@ export const getWeeklySchedules = createServerFn({ method: "GET" })
       .select("value")
       .eq("key", "newsletter_schedule")
       .maybeSingle();
-    const stored = (settings?.value ?? {}) as { frequency?: string };
+    const stored = (settings?.value ?? {}) as {
+      frequency?: string;
+      autoGenerate?: boolean;
+      paused?: boolean;
+      lastRun?: { at?: string; result?: string };
+    };
     const frequency = (FREQUENCIES as readonly string[]).includes(stored.frequency ?? "")
       ? (stored.frequency as Frequency)
       : ("weekly" as Frequency);
     return {
       bulletin: pick(BULLETIN_JOB),
-      newsletter: { ...pick(NEWSLETTER_JOB), frequency },
+      newsletter: {
+        ...pick(NEWSLETTER_JOB),
+        frequency,
+        autoGenerate: stored.autoGenerate !== false,
+        paused: stored.paused === true,
+        lastRun: stored.lastRun ?? null,
+      },
     };
   });
 
