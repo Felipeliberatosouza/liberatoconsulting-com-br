@@ -94,6 +94,7 @@ function ScheduleForm({
 }) {
   const [dow, setDow] = useState(initial.dow);
   const [frequency, setFrequency] = useState<Frequency>(initial.frequency ?? "weekly");
+  const [autoGenerate, setAutoGenerate] = useState(initial.autoGenerate !== false);
   const [time, setTime] = useState(
     `${String(initial.hour).padStart(2, "0")}:${String(initial.minute).padStart(2, "0")}`,
   );
@@ -102,8 +103,9 @@ function ScheduleForm({
   useEffect(() => {
     setDow(initial.dow);
     setFrequency(initial.frequency ?? "weekly");
+    setAutoGenerate(initial.autoGenerate !== false);
     setTime(`${String(initial.hour).padStart(2, "0")}:${String(initial.minute).padStart(2, "0")}`);
-  }, [initial.dow, initial.hour, initial.minute, initial.frequency]);
+  }, [initial.dow, initial.hour, initial.minute, initial.frequency, initial.autoGenerate]);
 
   async function save() {
     const [h, m] = time.split(":");
@@ -115,7 +117,7 @@ function ScheduleForm({
           dow,
           hour: Number(h),
           minute: Number(m),
-          ...(showFrequency ? { frequency } : {}),
+          ...(showFrequency ? { frequency, autoGenerate } : {}),
         },
       });
       if (res.ok) {
