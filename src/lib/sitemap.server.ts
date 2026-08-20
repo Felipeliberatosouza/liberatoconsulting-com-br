@@ -40,6 +40,13 @@ export async function collectEntries(): Promise<SitemapEntry[]> {
   }
   for (const section of pt.brazil.sections) {
     entries.push({ path: `/brasil/${section.id}`, changefreq: "monthly", priority: "0.7" });
+    section.bullets.forEach((label, index) => {
+      entries.push({
+        path: `/brasil/${section.id}/${topicSlug(index, label)}`,
+        changefreq: "monthly",
+        priority: "0.6",
+      });
+    });
   }
 
   try {
