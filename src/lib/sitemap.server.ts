@@ -9,6 +9,7 @@
 
 import { pt } from "@/i18n/pt";
 import { HREFLANGS, localizedUrl, SITE_URL, absoluteUrl } from "@/lib/seo";
+import { topicSlug } from "@/lib/brazil-topic";
 
 export interface SitemapEntry {
   path: string;
@@ -40,6 +41,13 @@ export async function collectEntries(): Promise<SitemapEntry[]> {
   }
   for (const section of pt.brazil.sections) {
     entries.push({ path: `/brasil/${section.id}`, changefreq: "monthly", priority: "0.7" });
+    section.bullets.forEach((label, index) => {
+      entries.push({
+        path: `/brasil/${section.id}/${topicSlug(index, label)}`,
+        changefreq: "monthly",
+        priority: "0.6",
+      });
+    });
   }
 
   try {
