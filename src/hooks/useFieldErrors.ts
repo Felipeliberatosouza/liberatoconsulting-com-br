@@ -88,5 +88,16 @@ export function useFieldErrors() {
     setErrors({});
   }
 
-  return { errors, setErrors, validate, hasError, errorClass, clearError, fieldProps, clearErrors };
+  return {
+    errors,
+    setErrors,
+    validate,
+    hasError,
+    errorClass,
+    inputClass,
+    a11yProps,
+    clearError,
+    fieldProps,
+    clearErrors,
+  };
 }
