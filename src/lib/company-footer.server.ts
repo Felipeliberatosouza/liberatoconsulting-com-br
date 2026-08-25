@@ -52,6 +52,28 @@ export async function loadCompanyFooter(fallbackWebsite: string): Promise<Compan
   return companyFooterFromRow(data as Record<string, string | null> | null, fallbackWebsite);
 }
 
+/**
+ * Marca usada nos e-mails: logomarca atual do painel (Marca → logomarca,
+ * depois Dados da consultoria → logo) e dados institucionais do rodapé.
+ * Sempre lida no momento do disparo, para refletir alterações do painel.
+ */
+export async function loadEmailBrand(
+  fallbackWebsite: string,
+): Promise<{ company: CompanyFooter; logoUrl: string }> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const [{ data: companyRow }, { data: branding }] = await Promise.all([
+    supabaseAdmin.from("company_profile").select("*").limit(1).maybeSingle(),
+    supabaseAdmin.from("site_settings").select("value").eq("key", "branding").maybeSingle(),
+  ]);
+  const c = (companyRow ?? {}) as Record<string, string | null>;
+  const company = companyFooterFromRow(c, fallbackWebsite);
+  const logoUrl =
+    ((branding?.value ?? {}) as { logoUrl?: string }).logoUrl ||
+    c["logo_url"] ||
+    `${fallbackWebsite.replace(/\/$/, "")}/logo.png`;
+  return { company, logoUrl };
+}
+
 /** Bloco HTML do rodapé (fundo escuro). */
 export function companyFooterHtml(c: CompanyFooter) {
   const line = (text: string) =>
