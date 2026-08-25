@@ -117,6 +117,9 @@ function Field({
   onBlur,
   disabled,
   missing,
+  inputMode,
+  autoComplete,
+  maxLength,
 }: {
   label: string;
   value: string;
@@ -129,6 +132,9 @@ function Field({
   onBlur?: (() => void) | undefined;
   disabled?: boolean | undefined;
   missing?: boolean | undefined;
+  inputMode?: "numeric" | "tel" | undefined;
+  autoComplete?: string | undefined;
+  maxLength?: number | undefined;
 }) {
   return (
     <label className="block text-xs font-medium text-muted-foreground">
@@ -141,6 +147,9 @@ function Field({
         disabled={disabled}
         onBlur={onBlur}
         onChange={(e) => onChange(e.target.value)}
+        inputMode={inputMode}
+        autoComplete={autoComplete}
+        maxLength={maxLength}
         className={`mt-1 ${input} ${
           error || missing ? "border-destructive" : valid ? "border-emerald-500" : ""
         } ${disabled ? "opacity-70" : ""}`}
@@ -492,6 +501,10 @@ function TeamTab() {
           <Field
             label="Celular"
              required
+             type="tel"
+             inputMode="numeric"
+             autoComplete="tel"
+             maxLength={21}
             value={form.phone}
             onChange={(v) => set("phone", formatPhone(v))}
             valid={Boolean(form.phone) && phoneOk}
