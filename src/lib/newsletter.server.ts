@@ -245,6 +245,7 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
           unsubscribeUrl,
           company,
           lang,
+          logoUrl,
         }),
         text: renderCampaignText(v.body, unsubscribeUrl, company, lang),
         idempotencyKey: `nl-${campaignId}-${runId}-${lang}-${r.unsubscribe_token}-${r.email}`.slice(0, 200),
