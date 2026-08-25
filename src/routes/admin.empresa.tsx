@@ -137,23 +137,24 @@ function CompanyPage() {
         }}
       >
         <div className="grid gap-4 md:grid-cols-3">
-          <F label="Razão social" k="legal_name" />
-          <F label="Nome fantasia" k="trade_name" />
-          <F label="CNPJ" k="cnpj" />
-          <F label="Inscrição estadual" k="state_registration" />
-          <F label="Inscrição municipal" k="municipal_registration" />
+          {F("Razão social", "legal_name")}
+          {F("Nome fantasia", "trade_name")}
+          {F("CNPJ", "cnpj")}
+          {F("Inscrição estadual", "state_registration")}
+          {F("Inscrição municipal", "municipal_registration")}
           <L label="Data de fundação"><input type="date" value={form.founded_on ?? ""} onChange={(e) => set("founded_on", e.target.value)} className={input} /></L>
-          <F label="Rua" k="address_street" />
-          <F label="Número" k="address_number" />
-          <F label="Complemento" k="address_complement" />
-          <F label="Bairro" k="address_district" />
-          <F label="Cidade" k="address_city" />
-          <F label="Estado" k="address_state" />
-          <F label="CEP" k="address_zip" />
-          <F label="País" k="address_country" />
-          <F label="E-mail institucional" k="email" type="email" />
-          <F label="Telefone" k="phone" />
-          <F label="Site" k="website" />
+          {F("Rua", "address_street")}
+          {F("Número", "address_number")}
+          {F("Complemento", "address_complement")}
+          {F("Bairro", "address_district")}
+          {F("Cidade", "address_city")}
+          {F("Estado", "address_state")}
+          {F("CEP", "address_zip")}
+          {F("País", "address_country")}
+          {F("E-mail institucional", "email", "email")}
+          {F("Telefone", "phone")}
+          {F("Site", "website")}
+
         </div>
 
         <h2 className="mt-8 font-display text-lg font-bold">Sócios</h2>
