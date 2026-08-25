@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { isValidPhone } from "./validation";
 
 import type { ArticleRecord } from "./site-config";
 import { READ_COUNT_BASE } from "./site-config";
@@ -113,7 +114,7 @@ const submissionSchema = z.object({
   summary: z.string().trim().max(2000),
   message: z.string().trim().max(4000),
   language: z.string().trim().max(8).optional(),
-  phone: z.string().trim().max(40).optional(),
+  phone: z.string().trim().refine(isValidPhone, "Use o formato +55 (11) 9999-9999."),
   cpf: z.string().trim().max(20).optional(),
   role_label: z.string().trim().max(120).optional(),
   institution: z.string().trim().max(160).optional(),

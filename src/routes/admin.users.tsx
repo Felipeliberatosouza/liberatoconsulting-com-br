@@ -312,7 +312,7 @@ function TeamTab() {
   const passwordOk = rules.every((r) => r.ok);
   const emailOk = isValidEmail(form.email);
   const cpfOk = isValidCpf(form.cpf);
-  const phoneOk = !form.phone || isValidPhone(form.phone);
+  const phoneOk = isValidPhone(form.phone);
   const cepOk = isValidCep(form.address_zip);
 
   const lookupCep = async () => {
@@ -386,7 +386,7 @@ function TeamTab() {
       return;
     }
     if (!phoneOk) {
-      toast.error("Informe o celular no formato (11) 91234-5678.");
+       toast.error("Informe o celular no formato +55 (11) 9999-9999.");
       return;
     }
     if (!cepOk) {
@@ -491,11 +491,12 @@ function TeamTab() {
           />
           <Field
             label="Celular"
+             required
             value={form.phone}
             onChange={(v) => set("phone", formatPhone(v))}
             valid={Boolean(form.phone) && phoneOk}
             error={form.phone && !phoneOk ? "Celular inválido." : undefined}
-            hint="(11) 91234-5678"
+             hint="+55 (11) 9999-9999"
             missing={hasError("phone", form.phone)}
           />
         </div>

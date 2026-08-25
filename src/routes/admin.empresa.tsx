@@ -16,6 +16,7 @@ import {
 import { getSegments, saveSegments } from "@/lib/admin.functions";
 import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
+import { formatPhone, isValidPhone } from "@/lib/validation";
 
 export const Route = createFileRoute("/admin/empresa")({
   head: () => ({
@@ -57,7 +58,10 @@ function CompanyPage() {
         <input
           type={type ?? "text"}
           value={value}
-          onChange={(e) => set(k, e.target.value)}
+          onChange={(e) => set(k, k === "phone" ? formatPhone(e.target.value) : e.target.value)}
+          inputMode={k === "phone" ? "numeric" : undefined}
+          autoComplete={k === "phone" ? "tel" : undefined}
+          maxLength={k === "phone" ? 21 : undefined}
           className={inputClass(input, k as string, value)}
           {...a11yProps(k as string, value)}
         />
@@ -121,6 +125,10 @@ function CompanyPage() {
             }, 0);
             return;
           }
+          if (!isValidPhone(form.phone)) {
+            toast.error("Informe o telefone no formato +55 (11) 9999-9999.");
+            return;
+          }
           setBusy(true);
           try {
             const r = await saveCompany({ data: form });
@@ -159,7 +167,7 @@ function CompanyPage() {
           {F("CEP", "address_zip")}
           {F("País", "address_country")}
           {F("E-mail institucional", "email", "email")}
-          {F("Telefone", "phone")}
+           {F("Telefone (+55 (11) 9999-9999)", "phone", "tel")}
           {F("Site", "website")}
 
         </div>

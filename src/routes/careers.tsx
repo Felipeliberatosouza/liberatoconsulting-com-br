@@ -11,6 +11,7 @@ import { trackEvent } from "@/lib/gtag";
 import { breadcrumb, jobBoardSchema, jsonLd } from "@/lib/schema";
 import { submitApplication } from "@/lib/careers.functions";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
+import { formatPhone, isValidPhone } from "@/lib/validation";
 
 
 export const Route = createFileRoute("/careers")({
@@ -84,6 +85,7 @@ function CareersPage() {
   }, [status]);
   const [error, setError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>("");
+  const [phone, setPhone] = useState("");
   const { validate, fieldProps, errorClass, hasError } = useFieldErrors();
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -101,6 +103,10 @@ function CareersPage() {
       captcha: String(fd.get("captcha") ?? ""),
     });
     if (!ok) return;
+    if (!isValidPhone(phone)) {
+      setError("Informe o telefone no formato +55 (11) 9999-9999.");
+      return;
+    }
 
     if (!hasFile) {
       setError(C.errorFileType);
@@ -118,7 +124,7 @@ function CareersPage() {
       const result = await send({
         data: {
           fullName: String(fd.get("fullName") ?? ""),
-          phone: String(fd.get("phone") ?? ""),
+          phone,
           email: String(fd.get("email") ?? ""),
           area: String(fd.get("area") ?? ""),
           linkedin: String(fd.get("linkedin") ?? ""),
@@ -140,6 +146,7 @@ function CareersPage() {
         trackEvent("form_submit", { form_name: "careers", area: String(fd.get("area") ?? "") });
         form.reset();
         setFileName("");
+        setPhone("");
         return;
       }
       setStatus("idle");
@@ -206,10 +213,16 @@ function CareersPage() {
                   name="phone"
                   type="tel"
                   required
-                  minLength={8}
-                  maxLength={30}
-                  {...fieldProps("phone", field)}
+                   inputMode="numeric"
+                   autoComplete="tel"
+                   maxLength={21}
+                   value={phone}
+                   onChange={(e) => setPhone(formatPhone(e.target.value))}
+                   placeholder="+55 (11) 9999-9999"
+                   className={`${field}${errorClass("phone", phone)}`}
+                   aria-invalid={Boolean(phone) && !isValidPhone(phone)}
                 />
+                 {phone && !isValidPhone(phone) && <span className="mt-1 block text-xs text-destructive">Use o formato +55 (11) 9999-9999.</span>}
               </label>
               <label className="text-sm font-medium">
                 {C.email}

@@ -16,6 +16,7 @@ import {
 import { contactConsultant, listPublicConsultants, type PublicConsultant } from "@/lib/consultants.functions";
 import { useLanguage } from "@/i18n";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
+import { formatPhone, isValidPhone } from "@/lib/validation";
 
 function Initials({ name }: { name: string }) {
   const initials = name
@@ -59,12 +60,16 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
   const tt = t.team;
   const startedAt = useRef(Date.now());
   const [sending, setSending] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", company: "", message: "", website: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", company: "", message: "", website: "" });
   const { validate, errorClass } = useFieldErrors();
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!validate({ name: form.name, email: form.email, message: form.message })) return;
+    if (!validate({ name: form.name, email: form.email, phone: form.phone, message: form.message })) return;
+    if (!isValidPhone(form.phone)) {
+      toast.error("Informe o telefone no formato +55 (11) 9999-9999.");
+      return;
+    }
     setSending(true);
     try {
       const res = await contactConsultant({
@@ -72,6 +77,7 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
           consultantId: consultant.id,
           name: form.name,
           email: form.email,
+           phone: form.phone,
           company: form.company,
           message: form.message,
           website: form.website,
@@ -115,6 +121,19 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
         value={form.email}
         onChange={(e) => setForm({ ...form, email: e.target.value })}
       />
+      <Input
+        required
+        type="tel"
+        inputMode="numeric"
+        autoComplete="tel"
+        maxLength={21}
+        placeholder="+55 (11) 9999-9999"
+        className={`${errorClass("phone", form.phone)}${form.phone && !isValidPhone(form.phone) ? " border-destructive ring-1 ring-destructive" : ""}`}
+        value={form.phone}
+        onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })}
+        aria-invalid={Boolean(form.phone) && !isValidPhone(form.phone)}
+      />
+      {form.phone && !isValidPhone(form.phone) && <p className="text-xs text-destructive">Use o formato +55 (11) 9999-9999.</p>}
       <Input
         placeholder={tt.companyPlaceholder}
         value={form.company}

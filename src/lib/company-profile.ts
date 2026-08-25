@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isValidPhone } from "./validation";
 
 export type Partner = { name: string; cpf: string; share: string };
 
@@ -68,7 +69,7 @@ export const companySchema = z.object({
   address_zip: z.string().trim().max(20).default(""),
   address_country: z.string().trim().max(60).default("Brasil"),
   email: z.string().trim().max(255).default(""),
-  phone: z.string().trim().max(40).default(""),
+  phone: z.string().trim().min(1, "Telefone obrigatório.").max(40).refine(isValidPhone, "Use o formato +55 (11) 9999-9999."),
   website: z.string().trim().max(200).default(""),
   logo_url: z.string().max(1_400_000).nullable().optional(),
   partners: z

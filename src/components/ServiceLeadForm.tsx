@@ -6,6 +6,7 @@ import { useLanguage } from "@/i18n";
 import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
+import { formatPhone, isValidPhone } from "@/lib/validation";
 
 
 type Props = { serviceSlug: string; serviceTitle: string };
@@ -25,7 +26,7 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
   const [error, setError] = useState<string | null>(null);
   const successRef = useRef<HTMLParagraphElement>(null);
   const { validate, errorClass } = useFieldErrors();
-  const [values, setValues] = useState({ name: "", company: "", country: "", email: "", message: "", captcha: "" });
+  const [values, setValues] = useState({ name: "", company: "", country: "", email: "", phone: "", message: "", captcha: "" });
   const onField = (key: keyof typeof values) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setValues((v) => ({ ...v, [key]: e.target.value }));
 
@@ -39,7 +40,11 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
     event.preventDefault();
     const form = event.currentTarget;
     const fd = new FormData(form);
-    if (!validate({ name: values.name, company: values.company, country: values.country, email: values.email, message: values.message, captcha: values.captcha })) return;
+    if (!validate({ name: values.name, company: values.company, country: values.country, email: values.email, phone: values.phone, message: values.message, captcha: values.captcha })) return;
+    if (!isValidPhone(values.phone)) {
+      setError("Informe o telefone no formato +55 (11) 9999-9999.");
+      return;
+    }
     setStatus("sending");
     setError(null);
     try {
@@ -49,6 +54,7 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
           company: String(fd.get("company") ?? ""),
           country: String(fd.get("country") ?? ""),
           email: String(fd.get("email") ?? ""),
+           phone: values.phone,
           message: String(fd.get("message") ?? ""),
           serviceSlug,
           serviceTitle,
@@ -66,7 +72,7 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
         setStatus("done");
         trackEvent("form_submit", { form_name: "service_lead", service: serviceTitle });
         form.reset();
-        setValues({ name: "", company: "", country: "", email: "", message: "", captcha: "" });
+        setValues({ name: "", company: "", country: "", email: "", phone: "", message: "", captcha: "" });
         return;
       }
       setStatus("idle");
@@ -117,6 +123,11 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
           <label className="text-sm font-medium">
             {F.email}
             <input name="email" type="email" maxLength={255} value={values.email} onChange={onField("email")} className={`${field}${errorClass("email", values.email)}`} />
+          </label>
+          <label className="text-sm font-medium">
+            Telefone
+            <input name="phone" type="tel" required inputMode="numeric" autoComplete="tel" maxLength={21} value={values.phone} onChange={(e) => setValues((v) => ({ ...v, phone: formatPhone(e.target.value) }))} placeholder="+55 (11) 9999-9999" className={`${field}${errorClass("phone", values.phone)}${values.phone && !isValidPhone(values.phone) ? " border-destructive ring-1 ring-destructive" : ""}`} aria-invalid={Boolean(values.phone) && !isValidPhone(values.phone)} />
+            {values.phone && !isValidPhone(values.phone) && <span className="mt-1 block text-xs text-destructive">Use o formato +55 (11) 9999-9999.</span>}
           </label>
           <label className="text-sm font-medium sm:col-span-2">
             {F.service}

@@ -17,6 +17,7 @@ interface Props {
   company?: string
   country?: string
   email?: string
+  phone?: string
   serviceTitle?: string
   serviceSlug?: string
   message?: string
@@ -37,6 +38,7 @@ const Email = ({
   company,
   country,
   email,
+  phone,
   serviceTitle,
   serviceSlug,
   message,
@@ -60,6 +62,7 @@ const Email = ({
           <Row label="Empresa" value={company} />
           <Row label="País" value={country} />
           <Row label="E-mail" value={email} />
+          <Row label="Telefone" value={phone} />
           <Row label="Serviço" value={serviceTitle || serviceSlug} />
           <Row label="Idioma" value={language} />
           <Row label="Origem" value={sourcePath} />

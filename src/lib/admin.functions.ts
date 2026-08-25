@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { isValidPhone } from "./validation";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type {
@@ -512,9 +513,7 @@ const whatsappSchema = z.object({
   number: z
     .string()
     .trim()
-    .max(40)
-    .regex(/^[\d\s\-+()]*$/, "Use apenas números, espaços, hífen, + e parênteses")
-    .optional(),
+    .refine(isValidPhone, "Use o formato +55 (11) 9999-9999."),
 });
 
 /** Número de WhatsApp exibido no botão flutuante do site. */

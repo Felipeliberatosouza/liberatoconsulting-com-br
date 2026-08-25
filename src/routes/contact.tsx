@@ -10,6 +10,7 @@ import { submitLead } from "@/lib/leads.functions";
 import { getPublicCompanyAddress } from "@/lib/company-public.functions";
 import { postalAddressSchema } from "@/lib/company-address";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
+import { formatPhone, isValidPhone } from "@/lib/validation";
 
 
 export const Route = createFileRoute("/contact")({
@@ -111,6 +112,7 @@ function ContactPage() {
   const send = useServerFn(submitLead);
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [phone, setPhone] = useState("");
   const successRef = useRef<HTMLParagraphElement>(null);
   const { validate, fieldProps } = useFieldErrors();
 
@@ -133,12 +135,17 @@ function ContactPage() {
     const ok = validate({
       name: String(fd.get("name") ?? ""),
       email: String(fd.get("email") ?? ""),
+      phone,
       company: String(fd.get("company") ?? ""),
       country: String(fd.get("country") ?? ""),
       message: String(fd.get("message") ?? ""),
       captcha: String(fd.get("captcha") ?? ""),
     });
     if (!ok) return;
+    if (!isValidPhone(phone)) {
+      setError("Informe o telefone no formato +55 (11) 9999-9999.");
+      return;
+    }
     setStatus("sending");
     setError(null);
     try {
@@ -148,6 +155,7 @@ function ContactPage() {
           company: String(fd.get("company") ?? ""),
           country: String(fd.get("country") ?? ""),
           email: String(fd.get("email") ?? ""),
+           phone,
           message: String(fd.get("message") ?? ""),
           serviceSlug: "contato",
           serviceTitle: "Contato geral",
@@ -166,6 +174,7 @@ function ContactPage() {
         toast.success(t.contact.sent);
         trackEvent("form_submit", { form_name: "contact", service: "Contato geral" });
         form.reset();
+         setPhone("");
         return;
       }
       setStatus("idle");
@@ -219,6 +228,11 @@ function ContactPage() {
               <label className="block text-sm font-medium">
                 {t.contact.email}
                 <input required type="email" maxLength={255} name="email" {...fieldProps("email", field)} />
+              </label>
+              <label className="block text-sm font-medium">
+                Telefone
+                <input name="phone" type="tel" required inputMode="numeric" autoComplete="tel" maxLength={21} value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} placeholder="+55 (11) 9999-9999" className={`${field}${phone && !isValidPhone(phone) ? " border-destructive ring-1 ring-destructive" : ""}`} aria-invalid={Boolean(phone) && !isValidPhone(phone)} />
+                {phone && !isValidPhone(phone) && <span className="mt-1 block text-xs text-destructive">Use o formato +55 (11) 9999-9999.</span>}
               </label>
               <label className="block text-sm font-medium">
                 {t.contact.company}

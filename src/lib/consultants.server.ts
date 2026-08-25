@@ -19,6 +19,7 @@ export async function sendConsultantMessage(input: {
   consultantId: string;
   fromName: string;
   fromEmail: string;
+  phone: string;
   company: string;
   message: string;
 }) {
@@ -63,11 +64,12 @@ export async function sendConsultantMessage(input: {
 <p><strong>Para:</strong> ${escapeHtml(consultant.full_name)}</p>
 <p><strong>Nome:</strong> ${escapeHtml(input.fromName)}</p>
 <p><strong>E-mail:</strong> ${escapeHtml(input.fromEmail)}</p>
+<p><strong>Telefone:</strong> ${escapeHtml(input.phone)}</p>
 <p><strong>Empresa:</strong> ${escapeHtml(input.company || "—")}</p>
 <p style="white-space:pre-wrap;margin-top:16px">${escapeHtml(input.message)}</p>
 <p style="margin-top:20px;font-size:13px;color:#57534e">Responda diretamente a este e-mail para falar com ${escapeHtml(input.fromName)}. Esta mensagem foi enviada porque o visitante escolheu o seu perfil no site liberatoconsulting.com.br.</p>
 </body></html>`;
-  const text = `Olá, ${consultant.full_name}.\n\nVocê recebeu uma nova mensagem pelo site oficial da Liberato Consulting.\n\nNome: ${input.fromName}\nE-mail: ${input.fromEmail}\nEmpresa: ${input.company || "—"}\n\n${input.message}\n\nResponda diretamente a este e-mail para falar com ${input.fromName}. Esta mensagem foi enviada porque o visitante escolheu o seu perfil no site liberatoconsulting.com.br.`;
+  const text = `Olá, ${consultant.full_name}.\n\nVocê recebeu uma nova mensagem pelo site oficial da Liberato Consulting.\n\nNome: ${input.fromName}\nE-mail: ${input.fromEmail}\nTelefone: ${input.phone}\nEmpresa: ${input.company || "—"}\n\n${input.message}\n\nResponda diretamente a este e-mail para falar com ${input.fromName}. Esta mensagem foi enviada porque o visitante escolheu o seu perfil no site liberatoconsulting.com.br.`;
 
   await sendLovableEmail(
     {

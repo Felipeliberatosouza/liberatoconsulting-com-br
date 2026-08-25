@@ -19,6 +19,7 @@ import {
   type BulletinSubscriberRow,
 } from "@/lib/bulletin.functions";
 import { useLanguage } from "@/i18n";
+import { formatPhone, isValidPhone } from "@/lib/validation";
 
 export const Route = createFileRoute("/admin/boletim")({
   head: () => ({
@@ -162,10 +163,14 @@ function AdminBulletin() {
             <label className="mt-3 block text-sm font-medium">
               WhatsApp de teste
               <input
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
+                maxLength={21}
                 value={testWhatsApp}
-                onChange={(e) => setTestWhatsApp(e.target.value)}
-                placeholder="(11) 91234-5678"
-                className={field}
+                onChange={(e) => setTestWhatsApp(formatPhone(e.target.value))}
+                placeholder="+55 (11) 9999-9999"
+                className={`${field}${testWhatsApp && !isValidPhone(testWhatsApp) ? " border-destructive ring-1 ring-destructive" : ""}`}
               />
             </label>
             <div className="mt-4 flex flex-wrap gap-3">
@@ -175,6 +180,10 @@ function AdminBulletin() {
                 onClick={async () => {
                   if (!testEmail && !testWhatsApp) {
                     toast.error("Informe um e-mail ou WhatsApp de teste.");
+                    return;
+                  }
+                  if (testWhatsApp && !isValidPhone(testWhatsApp)) {
+                    toast.error("Informe o WhatsApp no formato +55 (11) 9999-9999.");
                     return;
                   }
                   setBusy(true);
