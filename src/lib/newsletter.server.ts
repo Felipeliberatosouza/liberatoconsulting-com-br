@@ -179,8 +179,10 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
   }
   // Sempre enviar pelo subdomínio verificado; o e-mail configurado vira reply-to.
   const from = `${settings.fromName} <contato@${SENDER_DOMAIN}>`;
-  const origin = process.env["PUBLIC_SITE_URL"] || "https://liberato.com";
-  const company = await loadCompanyFooter(origin);
+  const { siteOrigin } = await import("./bulletin.server");
+  const origin = siteOrigin();
+  // Logomarca e dados institucionais lidos do painel a cada disparo.
+  const { company, logoUrl } = await loadEmailBrand(origin);
 
 
   type Recipient = { email: string; unsubscribe_token: string; language?: string | null };
