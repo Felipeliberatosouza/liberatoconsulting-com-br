@@ -116,8 +116,14 @@ function CompanyPage() {
               email: form.email,
               phone: form.phone,
             })
-          )
+          ) {
+            setTimeout(() => {
+              const first = formEl.querySelector<HTMLInputElement>('[aria-invalid="true"]');
+              first?.scrollIntoView({ behavior: "smooth", block: "center" });
+              first?.focus({ preventScroll: true });
+            }, 0);
             return;
+          }
           setBusy(true);
           try {
             const r = await saveCompany({ data: form });
