@@ -42,7 +42,32 @@ function CompanyPage() {
   const q = useQuery({ queryKey: ["company"], queryFn: () => getCompany(), retry: false });
   const [form, setForm] = useState<CompanyProfile | null>(null);
   const [busy, setBusy] = useState(false);
-  const { validate, errorClass } = useFieldErrors();
+  const { validate, hasError, inputClass, a11yProps } = useFieldErrors();
+
+  /** Campo do formulário com destaque vermelho quando obrigatório e vazio. */
+  const F = ({
+    label,
+    k,
+    type,
+  }: {
+    label: string;
+    k: keyof CompanyProfile;
+    type?: string;
+  }) => {
+    const value = (form?.[k] ?? "") as string;
+    const invalid = hasError(k as string, value);
+    return (
+      <L label={label} invalid={invalid} errorId={`${k}-error`}>
+        <input
+          type={type ?? "text"}
+          value={value}
+          onChange={(e) => set(k, e.target.value)}
+          className={inputClass(input, k as string, value)}
+          {...a11yProps(k as string, value)}
+        />
+      </L>
+    );
+  };
 
   useEffect(() => {
     if (q.data) setForm(q.data);
@@ -76,6 +101,7 @@ function CompanyPage() {
         className="rounded-lg border border-border bg-background p-6"
         onSubmit={async (e) => {
           e.preventDefault();
+          const formEl = e.currentTarget;
           if (
             !validate({
               legal_name: form.legal_name,
@@ -90,8 +116,14 @@ function CompanyPage() {
               email: form.email,
               phone: form.phone,
             })
-          )
+          ) {
+            setTimeout(() => {
+              const first = formEl.querySelector<HTMLInputElement>('[aria-invalid="true"]');
+              first?.scrollIntoView({ behavior: "smooth", block: "center" });
+              first?.focus({ preventScroll: true });
+            }, 0);
             return;
+          }
           setBusy(true);
           try {
             const r = await saveCompany({ data: form });
@@ -108,23 +140,23 @@ function CompanyPage() {
         }}
       >
         <div className="grid gap-4 md:grid-cols-3">
-          <L label="Razão social"><input required value={form.legal_name} onChange={(e) => set("legal_name", e.target.value)} className={`${input}${errorClass("legal_name", form.legal_name)}`} /></L>
-          <L label="Nome fantasia"><input value={form.trade_name} onChange={(e) => set("trade_name", e.target.value)} className={input} /></L>
-          <L label="CNPJ"><input value={form.cnpj} onChange={(e) => set("cnpj", e.target.value)} className={`${input}${errorClass("cnpj", form.cnpj)}`} /></L>
-          <L label="Inscrição estadual"><input value={form.state_registration} onChange={(e) => set("state_registration", e.target.value)} className={input} /></L>
-          <L label="Inscrição municipal"><input value={form.municipal_registration} onChange={(e) => set("municipal_registration", e.target.value)} className={input} /></L>
+          <F label="Razão social" k="legal_name" />
+          <F label="Nome fantasia" k="trade_name" />
+          <F label="CNPJ" k="cnpj" />
+          <F label="Inscrição estadual" k="state_registration" />
+          <F label="Inscrição municipal" k="municipal_registration" />
           <L label="Data de fundação"><input type="date" value={form.founded_on ?? ""} onChange={(e) => set("founded_on", e.target.value)} className={input} /></L>
-          <L label="Rua"><input value={form.address_street} onChange={(e) => set("address_street", e.target.value)} className={`${input}${errorClass("address_street", form.address_street)}`} /></L>
-          <L label="Número"><input value={form.address_number} onChange={(e) => set("address_number", e.target.value)} className={`${input}${errorClass("address_number", form.address_number)}`} /></L>
-          <L label="Complemento"><input value={form.address_complement} onChange={(e) => set("address_complement", e.target.value)} className={input} /></L>
-          <L label="Bairro"><input value={form.address_district} onChange={(e) => set("address_district", e.target.value)} className={`${input}${errorClass("address_district", form.address_district)}`} /></L>
-          <L label="Cidade"><input value={form.address_city} onChange={(e) => set("address_city", e.target.value)} className={`${input}${errorClass("address_city", form.address_city)}`} /></L>
-          <L label="Estado"><input value={form.address_state} onChange={(e) => set("address_state", e.target.value)} className={`${input}${errorClass("address_state", form.address_state)}`} /></L>
-          <L label="CEP"><input value={form.address_zip} onChange={(e) => set("address_zip", e.target.value)} className={`${input}${errorClass("address_zip", form.address_zip)}`} /></L>
-          <L label="País"><input value={form.address_country} onChange={(e) => set("address_country", e.target.value)} className={`${input}${errorClass("address_country", form.address_country)}`} /></L>
-          <L label="E-mail institucional"><input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} className={`${input}${errorClass("email", form.email)}`} /></L>
-          <L label="Telefone"><input value={form.phone} onChange={(e) => set("phone", e.target.value)} className={`${input}${errorClass("phone", form.phone)}`} /></L>
-          <L label="Site"><input value={form.website} onChange={(e) => set("website", e.target.value)} className={input} /></L>
+          <F label="Rua" k="address_street" />
+          <F label="Número" k="address_number" />
+          <F label="Complemento" k="address_complement" />
+          <F label="Bairro" k="address_district" />
+          <F label="Cidade" k="address_city" />
+          <F label="Estado" k="address_state" />
+          <F label="CEP" k="address_zip" />
+          <F label="País" k="address_country" />
+          <F label="E-mail institucional" k="email" type="email" />
+          <F label="Telefone" k="phone" />
+          <F label="Site" k="website" />
         </div>
 
         <h2 className="mt-8 font-display text-lg font-bold">Sócios</h2>
@@ -187,11 +219,28 @@ function CompanyPage() {
   );
 }
 
-function L({ label, children }: { label: string; children: React.ReactNode }) {
+function L({
+  label,
+  children,
+  invalid,
+  errorId,
+}: {
+  label: string;
+  children: React.ReactNode;
+  invalid?: boolean;
+  errorId?: string;
+}) {
   return (
-    <label className="block text-xs font-medium text-muted-foreground">
+    <label
+      className={`block text-xs font-medium ${invalid ? "text-destructive" : "text-muted-foreground"}`}
+    >
       {label}
       <span className="mt-1 block">{children}</span>
+      {invalid ? (
+        <span id={errorId} role="alert" className="mt-1 block text-xs font-medium text-destructive">
+          Campo obrigatório
+        </span>
+      ) : null}
     </label>
   );
 }

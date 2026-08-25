@@ -42,7 +42,28 @@ export function useFieldErrors() {
 
   /** Classe de borda vermelha para aplicar no input. */
   function errorClass(key: string, value?: unknown) {
-    return hasError(key, value) ? " border-destructive" : "";
+    return hasError(key, value) ? " border-destructive ring-1 ring-destructive" : "";
+  }
+
+  /**
+   * Classe completa do input: remove a cor de borda padrão quando há erro,
+   * para que o vermelho realmente apareça (evita conflito com `border-input`).
+   */
+  function inputClass(base: string, key: string, value?: unknown) {
+    if (!hasError(key, value)) return base;
+    const cleaned = base
+      .split(/\s+/)
+      .filter((c) => c !== "border-input" && !c.startsWith("focus:border-"))
+      .join(" ");
+    return `${cleaned} border-destructive ring-1 ring-destructive`;
+  }
+
+  /** Atributos de acessibilidade do campo inválido. */
+  function a11yProps(key: string, value?: unknown) {
+    const invalid = hasError(key, value);
+    return invalid
+      ? ({ "aria-invalid": true, "aria-describedby": `${key}-error` } as const)
+      : ({ "aria-invalid": undefined, "aria-describedby": undefined } as const);
   }
 
   function clearError(key: string) {
@@ -67,5 +88,16 @@ export function useFieldErrors() {
     setErrors({});
   }
 
-  return { errors, setErrors, validate, hasError, errorClass, clearError, fieldProps, clearErrors };
+  return {
+    errors,
+    setErrors,
+    validate,
+    hasError,
+    errorClass,
+    inputClass,
+    a11yProps,
+    clearError,
+    fieldProps,
+    clearErrors,
+  };
 }
