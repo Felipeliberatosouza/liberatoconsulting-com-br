@@ -133,23 +133,23 @@ function CompanyPage() {
         }}
       >
         <div className="grid gap-4 md:grid-cols-3">
-          <L label="Razão social"><input required value={form.legal_name} onChange={(e) => set("legal_name", e.target.value)} className={`${input}${errorClass("legal_name", form.legal_name)}`} /></L>
-          <L label="Nome fantasia"><input value={form.trade_name} onChange={(e) => set("trade_name", e.target.value)} className={input} /></L>
-          <L label="CNPJ"><input value={form.cnpj} onChange={(e) => set("cnpj", e.target.value)} className={`${input}${errorClass("cnpj", form.cnpj)}`} /></L>
-          <L label="Inscrição estadual"><input value={form.state_registration} onChange={(e) => set("state_registration", e.target.value)} className={input} /></L>
-          <L label="Inscrição municipal"><input value={form.municipal_registration} onChange={(e) => set("municipal_registration", e.target.value)} className={input} /></L>
+          <F label="Razão social" k="legal_name" />
+          <F label="Nome fantasia" k="trade_name" />
+          <F label="CNPJ" k="cnpj" />
+          <F label="Inscrição estadual" k="state_registration" />
+          <F label="Inscrição municipal" k="municipal_registration" />
           <L label="Data de fundação"><input type="date" value={form.founded_on ?? ""} onChange={(e) => set("founded_on", e.target.value)} className={input} /></L>
-          <L label="Rua"><input value={form.address_street} onChange={(e) => set("address_street", e.target.value)} className={`${input}${errorClass("address_street", form.address_street)}`} /></L>
-          <L label="Número"><input value={form.address_number} onChange={(e) => set("address_number", e.target.value)} className={`${input}${errorClass("address_number", form.address_number)}`} /></L>
-          <L label="Complemento"><input value={form.address_complement} onChange={(e) => set("address_complement", e.target.value)} className={input} /></L>
-          <L label="Bairro"><input value={form.address_district} onChange={(e) => set("address_district", e.target.value)} className={`${input}${errorClass("address_district", form.address_district)}`} /></L>
-          <L label="Cidade"><input value={form.address_city} onChange={(e) => set("address_city", e.target.value)} className={`${input}${errorClass("address_city", form.address_city)}`} /></L>
-          <L label="Estado"><input value={form.address_state} onChange={(e) => set("address_state", e.target.value)} className={`${input}${errorClass("address_state", form.address_state)}`} /></L>
-          <L label="CEP"><input value={form.address_zip} onChange={(e) => set("address_zip", e.target.value)} className={`${input}${errorClass("address_zip", form.address_zip)}`} /></L>
-          <L label="País"><input value={form.address_country} onChange={(e) => set("address_country", e.target.value)} className={`${input}${errorClass("address_country", form.address_country)}`} /></L>
-          <L label="E-mail institucional"><input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} className={`${input}${errorClass("email", form.email)}`} /></L>
-          <L label="Telefone"><input value={form.phone} onChange={(e) => set("phone", e.target.value)} className={`${input}${errorClass("phone", form.phone)}`} /></L>
-          <L label="Site"><input value={form.website} onChange={(e) => set("website", e.target.value)} className={input} /></L>
+          <F label="Rua" k="address_street" />
+          <F label="Número" k="address_number" />
+          <F label="Complemento" k="address_complement" />
+          <F label="Bairro" k="address_district" />
+          <F label="Cidade" k="address_city" />
+          <F label="Estado" k="address_state" />
+          <F label="CEP" k="address_zip" />
+          <F label="País" k="address_country" />
+          <F label="E-mail institucional" k="email" type="email" />
+          <F label="Telefone" k="phone" />
+          <F label="Site" k="website" />
         </div>
 
         <h2 className="mt-8 font-display text-lg font-bold">Sócios</h2>
