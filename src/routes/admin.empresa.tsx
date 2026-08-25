@@ -42,7 +42,32 @@ function CompanyPage() {
   const q = useQuery({ queryKey: ["company"], queryFn: () => getCompany(), retry: false });
   const [form, setForm] = useState<CompanyProfile | null>(null);
   const [busy, setBusy] = useState(false);
-  const { validate, errorClass } = useFieldErrors();
+  const { validate, hasError, inputClass, a11yProps } = useFieldErrors();
+
+  /** Campo do formulário com destaque vermelho quando obrigatório e vazio. */
+  const F = ({
+    label,
+    k,
+    type,
+  }: {
+    label: string;
+    k: keyof CompanyProfile;
+    type?: string;
+  }) => {
+    const value = (form?.[k] ?? "") as string;
+    const invalid = hasError(k as string, value);
+    return (
+      <L label={label} invalid={invalid} errorId={`${k}-error`}>
+        <input
+          type={type ?? "text"}
+          value={value}
+          onChange={(e) => set(k, e.target.value)}
+          className={inputClass(input, k as string, value)}
+          {...a11yProps(k as string, value)}
+        />
+      </L>
+    );
+  };
 
   useEffect(() => {
     if (q.data) setForm(q.data);
