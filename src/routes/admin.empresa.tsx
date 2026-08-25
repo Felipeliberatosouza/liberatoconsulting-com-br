@@ -212,11 +212,28 @@ function CompanyPage() {
   );
 }
 
-function L({ label, children }: { label: string; children: React.ReactNode }) {
+function L({
+  label,
+  children,
+  invalid,
+  errorId,
+}: {
+  label: string;
+  children: React.ReactNode;
+  invalid?: boolean;
+  errorId?: string;
+}) {
   return (
-    <label className="block text-xs font-medium text-muted-foreground">
+    <label
+      className={`block text-xs font-medium ${invalid ? "text-destructive" : "text-muted-foreground"}`}
+    >
       {label}
       <span className="mt-1 block">{children}</span>
+      {invalid ? (
+        <span id={errorId} role="alert" className="mt-1 block text-xs font-medium text-destructive">
+          Campo obrigatório
+        </span>
+      ) : null}
     </label>
   );
 }
