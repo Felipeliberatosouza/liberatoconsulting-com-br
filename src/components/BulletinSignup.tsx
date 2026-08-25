@@ -7,6 +7,7 @@ import { useLanguage } from "@/i18n";
 import { trackEvent } from "@/lib/gtag";
 import { subscribeBulletin } from "@/lib/bulletin.functions";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
+import { formatPhone, isValidPhone } from "@/lib/validation";
 
 
 /** Chamada para o Boletim Semanal (Dados do Brasil e Conteúdo). */
@@ -55,7 +56,11 @@ export function BulletinSignup() {
           className="mt-6 grid gap-4 md:grid-cols-2"
           onSubmit={async (e) => {
             e.preventDefault();
-            if (!validate({ fullName, company, email })) return;
+            if (!validate({ fullName, company, email, whatsapp })) return;
+            if (!isValidPhone(whatsapp)) {
+              toast.error("Informe o WhatsApp no formato +55 (11) 9999-9999.");
+              return;
+            }
             if (!viaEmail && !viaWhatsApp) {
               toast.error(tb.chooseChannel);
               return;
@@ -134,11 +139,18 @@ export function BulletinSignup() {
           <label className="text-sm font-medium">
             {tb.whatsapp}
             <input
+               type="tel"
+               required
+               inputMode="numeric"
+               autoComplete="tel"
+               maxLength={21}
               value={whatsapp}
-              onChange={(e) => setWhatsapp(e.target.value)}
-              placeholder="(11) 91234-5678"
-              className={field}
+               onChange={(e) => setWhatsapp(formatPhone(e.target.value))}
+               placeholder="+55 (11) 9999-9999"
+               className={`${field}${errorClass("whatsapp", whatsapp)}${whatsapp && !isValidPhone(whatsapp) ? " border-destructive ring-1 ring-destructive" : ""}`}
+               aria-invalid={Boolean(whatsapp) && !isValidPhone(whatsapp)}
             />
+             {whatsapp && !isValidPhone(whatsapp) && <span className="mt-1 block text-xs text-destructive">Use o formato +55 (11) 9999-9999.</span>}
           </label>
 
           <label className="text-sm font-medium">

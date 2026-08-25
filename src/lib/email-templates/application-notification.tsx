@@ -82,7 +82,7 @@ export const template = {
   previewData: {
     fullName: 'João Pereira',
     email: 'joao@exemplo.com',
-    phone: '(11) 91234-5678',
+    phone: '+55 (11) 9999-9999',
     area: 'Consultoria em estratégia',
     linkedin: 'https://linkedin.com/in/joaopereira',
     resumeName: 'joao-pereira-cv.pdf',

@@ -814,6 +814,7 @@ export type Database = {
           language: string | null
           message: string | null
           name: string
+          phone: string
           service_slug: string
           service_title: string | null
           source_path: string | null
@@ -829,6 +830,7 @@ export type Database = {
           language?: string | null
           message?: string | null
           name: string
+          phone?: string
           service_slug: string
           service_title?: string | null
           source_path?: string | null
@@ -844,6 +846,7 @@ export type Database = {
           language?: string | null
           message?: string | null
           name?: string
+          phone?: string
           service_slug?: string
           service_title?: string | null
           source_path?: string | null

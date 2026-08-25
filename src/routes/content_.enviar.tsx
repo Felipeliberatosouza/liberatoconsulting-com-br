@@ -82,6 +82,7 @@ function SubmitArticlePage() {
       full_name: String(form.get("full_name") ?? ""),
       role_label: String(form.get("role_label") ?? ""),
       email,
+      phone,
       title: String(form.get("title") ?? ""),
       summary: String(form.get("summary") ?? ""),
       message: String(form.get("message") ?? ""),
@@ -91,8 +92,8 @@ function SubmitArticlePage() {
       toast.error("Informe um e-mail válido.");
       return;
     }
-    if (phone && !isValidPhone(phone)) {
-      toast.error("Informe um celular válido com DDD.");
+    if (!isValidPhone(phone)) {
+      toast.error("Informe o celular no formato +55 (11) 9999-9999.");
       return;
     }
     if (cpf && !isValidCpf(cpf)) {
@@ -203,14 +204,21 @@ function SubmitArticlePage() {
                 <input name="email" type="email" required maxLength={255} {...fieldProps("email", input)} />
               </label>
               <label className="text-sm font-medium">
-                {a.formPhone}
+                {a.formPhone} *
                 <input
                   name="phone"
+                   type="tel"
+                   required
+                   inputMode="numeric"
+                   autoComplete="tel"
+                   maxLength={21}
                   value={phone}
                   onChange={(e) => setPhone(formatPhone(e.target.value))}
-                  placeholder="(11) 91234-5678"
-                  className={input}
+                   placeholder="+55 (11) 9999-9999"
+                   className={`${input}${phone && !isValidPhone(phone) ? " border-destructive ring-1 ring-destructive" : ""}`}
+                   aria-invalid={Boolean(phone) && !isValidPhone(phone)}
                 />
+                 {phone && !isValidPhone(phone) && <span className="mt-1 block text-xs text-destructive">Use o formato +55 (11) 9999-9999.</span>}
               </label>
               <label className="text-sm font-medium">
                 {a.formCpf}

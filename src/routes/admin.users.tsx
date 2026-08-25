@@ -117,6 +117,9 @@ function Field({
   onBlur,
   disabled,
   missing,
+  inputMode,
+  autoComplete,
+  maxLength,
 }: {
   label: string;
   value: string;
@@ -129,6 +132,9 @@ function Field({
   onBlur?: (() => void) | undefined;
   disabled?: boolean | undefined;
   missing?: boolean | undefined;
+  inputMode?: "numeric" | "tel" | undefined;
+  autoComplete?: string | undefined;
+  maxLength?: number | undefined;
 }) {
   return (
     <label className="block text-xs font-medium text-muted-foreground">
@@ -141,6 +147,9 @@ function Field({
         disabled={disabled}
         onBlur={onBlur}
         onChange={(e) => onChange(e.target.value)}
+        inputMode={inputMode}
+        autoComplete={autoComplete}
+        maxLength={maxLength}
         className={`mt-1 ${input} ${
           error || missing ? "border-destructive" : valid ? "border-emerald-500" : ""
         } ${disabled ? "opacity-70" : ""}`}
@@ -312,7 +321,7 @@ function TeamTab() {
   const passwordOk = rules.every((r) => r.ok);
   const emailOk = isValidEmail(form.email);
   const cpfOk = isValidCpf(form.cpf);
-  const phoneOk = !form.phone || isValidPhone(form.phone);
+  const phoneOk = isValidPhone(form.phone);
   const cepOk = isValidCep(form.address_zip);
 
   const lookupCep = async () => {
@@ -386,7 +395,7 @@ function TeamTab() {
       return;
     }
     if (!phoneOk) {
-      toast.error("Informe o celular no formato (11) 91234-5678.");
+       toast.error("Informe o celular no formato +55 (11) 9999-9999.");
       return;
     }
     if (!cepOk) {
@@ -491,11 +500,16 @@ function TeamTab() {
           />
           <Field
             label="Celular"
+             required
+             type="tel"
+             inputMode="numeric"
+             autoComplete="tel"
+             maxLength={21}
             value={form.phone}
             onChange={(v) => set("phone", formatPhone(v))}
             valid={Boolean(form.phone) && phoneOk}
             error={form.phone && !phoneOk ? "Celular inválido." : undefined}
-            hint="(11) 91234-5678"
+             hint="+55 (11) 9999-9999"
             missing={hasError("phone", form.phone)}
           />
         </div>

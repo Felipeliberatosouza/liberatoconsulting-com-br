@@ -1,11 +1,13 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
+import { isValidPhone } from "./validation";
 
 export const leadSchema = z.object({
   name: z.string().trim().min(2).max(100),
   company: z.string().trim().min(2).max(120),
   country: z.string().trim().min(2).max(80),
   email: z.string().trim().email().max(255).optional().or(z.literal("")),
+  phone: z.string().trim().refine(isValidPhone, "Use o formato +55 (11) 9999-9999."),
   serviceSlug: z.string().trim().min(1).max(120),
   serviceTitle: z.string().trim().max(200).optional().or(z.literal("")),
   message: z.string().trim().max(1500).optional().or(z.literal("")),
@@ -59,6 +61,7 @@ export async function insertLead(data: LeadInput, ipHash: string | null) {
     company: data.company,
     country: data.country,
     email: data.email || null,
+    phone: data.phone,
     service_slug: data.serviceSlug,
     service_title: data.serviceTitle || null,
     message: data.message || null,
@@ -86,6 +89,7 @@ async function notifyNewLead(data: LeadInput, leadId: string | null) {
         company: data.company,
         country: data.country,
         email: data.email || "",
+        phone: data.phone,
         serviceTitle: data.serviceTitle || "",
         serviceSlug: data.serviceSlug,
         message: data.message || "",
