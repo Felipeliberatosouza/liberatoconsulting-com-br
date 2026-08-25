@@ -74,8 +74,7 @@ ${companyFooterHtml(input.company)}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:92%;background:#ffffff;border-radius:12px;overflow:hidden">
 <tr><td align="center" style="padding:28px 32px;border-bottom:1px solid #e7e5e4;text-align:center">
-<span style="font-size:20px;font-weight:800;letter-spacing:-0.02em;color:#111111">LIBERATO</span>
-<span style="font-size:20px;font-weight:600;color:#ea580c"> consulting</span>
+${logoBlock}
 </td></tr>
 <tr><td style="padding:32px">
 <h1 style="margin:0 0 20px;font-size:24px;line-height:1.25;color:#111111;text-align:center">${escapeHtml(input.subject)}</h1>
