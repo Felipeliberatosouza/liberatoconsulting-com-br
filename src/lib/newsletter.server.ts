@@ -4,7 +4,7 @@ import { sendLovableEmail } from "@lovable.dev/email-js";
 import {
   companyFooterHtml,
   companyFooterText,
-  loadCompanyFooter,
+  loadEmailBrand,
   type CompanyFooter,
 } from "./company-footer.server";
 import { emailLang, labelsFor, type EmailLang } from "./email-i18n.server";
@@ -38,6 +38,7 @@ export function renderCampaignHtml(input: {
   unsubscribeUrl: string;
   company?: CompanyFooter;
   lang?: EmailLang;
+  logoUrl?: string;
 }) {
   const labels = labelsFor(input.lang ?? "pt");
   const paragraphs = input.body
@@ -52,6 +53,16 @@ export function renderCampaignHtml(input: {
     )
     .join("");
 
+  const brandName = input.company?.name || "Liberato Consulting";
+  const site = input.company?.website || "";
+  // Logomarca atual do painel; sem logo cadastrada, cai no logotipo em texto.
+  const logoImg = input.logoUrl
+    ? `<img src="${input.logoUrl}" alt="${escapeHtml(brandName)}" width="180" style="display:block;margin:0 auto;max-width:220px;height:auto;border:0" />`
+    : `<span style="font-size:20px;font-weight:800;letter-spacing:-0.02em;color:#111111">LIBERATO</span><span style="font-size:20px;font-weight:600;color:#ea580c"> consulting</span>`;
+  const logoBlock = site
+    ? `<a href="${site}" style="text-decoration:none">${logoImg}</a>`
+    : logoImg;
+
   const companyBlock = input.company
     ? `<tr><td style="padding:22px 32px;background:#14192a;color:#f7f6f4">
 ${companyFooterHtml(input.company)}
@@ -63,8 +74,7 @@ ${companyFooterHtml(input.company)}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:92%;background:#ffffff;border-radius:12px;overflow:hidden">
 <tr><td align="center" style="padding:28px 32px;border-bottom:1px solid #e7e5e4;text-align:center">
-<span style="font-size:20px;font-weight:800;letter-spacing:-0.02em;color:#111111">LIBERATO</span>
-<span style="font-size:20px;font-weight:600;color:#ea580c"> consulting</span>
+${logoBlock}
 </td></tr>
 <tr><td style="padding:32px">
 <h1 style="margin:0 0 20px;font-size:24px;line-height:1.25;color:#111111;text-align:center">${escapeHtml(input.subject)}</h1>
@@ -169,8 +179,10 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
   }
   // Sempre enviar pelo subdomínio verificado; o e-mail configurado vira reply-to.
   const from = `${settings.fromName} <contato@${SENDER_DOMAIN}>`;
-  const origin = process.env["PUBLIC_SITE_URL"] || "https://liberato.com";
-  const company = await loadCompanyFooter(origin);
+  const { siteOrigin } = await import("./bulletin.server");
+  const origin = siteOrigin();
+  // Logomarca e dados institucionais lidos do painel a cada disparo.
+  const { company, logoUrl } = await loadEmailBrand(origin);
 
 
   type Recipient = { email: string; unsubscribe_token: string; language?: string | null };
@@ -233,6 +245,7 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
           unsubscribeUrl,
           company,
           lang,
+          logoUrl,
         }),
         text: renderCampaignText(v.body, unsubscribeUrl, company, lang),
         idempotencyKey: `nl-${campaignId}-${runId}-${lang}-${r.unsubscribe_token}-${r.email}`.slice(0, 200),
@@ -280,7 +293,8 @@ export async function announceArticle(article: {
   };
   if (!settings.autoSendOnPublish || !settings.fromEmail) return;
 
-  const origin = process.env["PUBLIC_SITE_URL"] || "https://liberato.com";
+  const { siteOrigin } = await import("./bulletin.server");
+  const origin = siteOrigin();
   const body = `${article.summary}\n\nLeia o conteúdo completo: ${origin}/content/${article.slug}`;
 
   const { data: created } = await supabaseAdmin
