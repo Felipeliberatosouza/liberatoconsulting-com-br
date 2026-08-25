@@ -44,20 +44,16 @@ function CompanyPage() {
   const [busy, setBusy] = useState(false);
   const { validate, hasError, inputClass, a11yProps } = useFieldErrors();
 
-  /** Campo do formulário com destaque vermelho quando obrigatório e vazio. */
-  const F = ({
-    label,
-    k,
-    type,
-  }: {
-    label: string;
-    k: keyof CompanyProfile;
-    type?: string;
-  }) => {
+  /**
+   * Campo do formulário com destaque vermelho quando obrigatório e vazio.
+   * Função (não componente) para não remontar o input a cada re-render —
+   * remontar fazia o campo perder o foco após o primeiro caractere.
+   */
+  const F = (label: string, k: keyof CompanyProfile, type?: string) => {
     const value = (form?.[k] ?? "") as string;
     const invalid = hasError(k as string, value);
     return (
-      <L label={label} invalid={invalid} errorId={`${k}-error`}>
+      <L key={k as string} label={label} invalid={invalid} errorId={`${k}-error`}>
         <input
           type={type ?? "text"}
           value={value}
@@ -68,6 +64,7 @@ function CompanyPage() {
       </L>
     );
   };
+
 
   useEffect(() => {
     if (q.data) setForm(q.data);
