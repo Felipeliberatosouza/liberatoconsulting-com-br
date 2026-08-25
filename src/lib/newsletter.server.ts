@@ -38,6 +38,7 @@ export function renderCampaignHtml(input: {
   unsubscribeUrl: string;
   company?: CompanyFooter;
   lang?: EmailLang;
+  logoUrl?: string;
 }) {
   const labels = labelsFor(input.lang ?? "pt");
   const paragraphs = input.body
