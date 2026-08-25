@@ -129,8 +129,15 @@ function CompanyPage() {
               toast.success("Dados da consultoria salvos.");
               await q.refetch();
             }
-          } catch {
-            toast.error("Não foi possível salvar.");
+          } catch (error) {
+            const message = error instanceof Error ? error.message : "";
+            if (message.includes("Forbidden") || message.includes("Unauthorized")) {
+              toast.error("Sua sessão expirou ou não possui permissão de administrador. Entre novamente e tente salvar.");
+            } else if (message.includes("Invalid input") || message.includes("validation")) {
+              toast.error("Alguns dados estão em formato inválido. Revise os campos destacados e tente novamente.");
+            } else {
+              toast.error(message && message.length < 240 ? message : "Falha inesperada ao salvar os dados da consultoria. Tente novamente.");
+            }
           } finally {
             setBusy(false);
           }

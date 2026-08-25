@@ -2,54 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { companySchema, EMPTY_COMPANY, type CompanyProfile, type Partner } from "./company-profile";
 
-export type Partner = { name: string; cpf: string; share: string };
-
-export type CompanyProfile = {
-  id: string;
-  legal_name: string;
-  trade_name: string;
-  cnpj: string;
-  state_registration: string;
-  municipal_registration: string;
-  founded_on: string | null;
-  address_street: string;
-  address_number: string;
-  address_complement: string;
-  address_district: string;
-  address_city: string;
-  address_state: string;
-  address_zip: string;
-  address_country: string;
-  email: string;
-  phone: string;
-  website: string;
-  logo_url: string | null;
-  partners: Partner[];
-};
-
-const EMPTY: CompanyProfile = {
-  id: "",
-  legal_name: "",
-  trade_name: "Liberato Consulting",
-  cnpj: "",
-  state_registration: "",
-  municipal_registration: "",
-  founded_on: null,
-  address_street: "",
-  address_number: "",
-  address_complement: "",
-  address_district: "",
-  address_city: "",
-  address_state: "",
-  address_zip: "",
-  address_country: "Brasil",
-  email: "",
-  phone: "",
-  website: "",
-  logo_url: null,
-  partners: [],
-};
+export type { CompanyProfile, Partner } from "./company-profile";
 
 /** Dados cadastrais da consultoria (somente administradores). */
 export const getCompany = createServerFn({ method: "GET" })
@@ -63,46 +18,14 @@ export const getCompany = createServerFn({ method: "GET" })
       .order("created_at", { ascending: true })
       .limit(1)
       .maybeSingle();
-    if (!data) return EMPTY;
+    if (!data) return EMPTY_COMPANY;
     const row = data as Record<string, unknown>;
     return {
-      ...EMPTY,
+      ...EMPTY_COMPANY,
       ...(row as unknown as CompanyProfile),
       partners: (row["partners"] as Partner[]) ?? [],
     };
   });
-
-const companySchema = z.object({
-  id: z.string().uuid().optional(),
-  legal_name: z.string().trim().max(200).default(""),
-  trade_name: z.string().trim().max(200).default(""),
-  cnpj: z.string().trim().max(30).default(""),
-  state_registration: z.string().trim().max(40).default(""),
-  municipal_registration: z.string().trim().max(40).default(""),
-  founded_on: z.string().trim().max(20).nullable().optional(),
-  address_street: z.string().trim().max(160).default(""),
-  address_number: z.string().trim().max(20).default(""),
-  address_complement: z.string().trim().max(80).default(""),
-  address_district: z.string().trim().max(80).default(""),
-  address_city: z.string().trim().max(80).default(""),
-  address_state: z.string().trim().max(40).default(""),
-  address_zip: z.string().trim().max(20).default(""),
-  address_country: z.string().trim().max(60).default("Brasil"),
-  email: z.string().trim().max(255).default(""),
-  phone: z.string().trim().max(40).default(""),
-  website: z.string().trim().max(200).default(""),
-  logo_url: z.string().max(1_400_000).nullable().optional(),
-  partners: z
-    .array(
-      z.object({
-        name: z.string().trim().max(160),
-        cpf: z.string().trim().max(20),
-        share: z.string().trim().max(20),
-      }),
-    )
-    .max(30)
-    .default([]),
-});
 
 export const saveCompany = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -112,11 +35,34 @@ export const saveCompany = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { id, founded_on, ...rest } = data;
     const row = { ...rest, founded_on: founded_on || null, partners: rest.partners as never };
-    const { error } = id
-      ? await context.supabase.from("company_profile").update(row as never).eq("id", id)
-      : await context.supabase.from("company_profile").insert(row as never);
-    if (error) return { ok: false as const, error: error.message };
-    return { ok: true as const };
+    const result = id
+      ? await context.supabase.from("company_profile").update(row as never).eq("id", id).select("id").maybeSingle()
+      : await context.supabase.from("company_profile").insert(row as never).select("id").single();
+    if (result.error) {
+      console.error("Falha ao salvar dados da consultoria", {
+        code: result.error.code,
+        details: result.error.details,
+        hint: result.error.hint,
+      });
+      if (result.error.code === "42501") {
+        return { ok: false as const, error: "Sua sessão não tem permissão para alterar os dados da consultoria." };
+      }
+      if (result.error.code === "22007" || result.error.code === "22008") {
+        return { ok: false as const, error: "A data de fundação é inválida. Revise o campo e tente novamente." };
+      }
+      if (result.error.code === "23502") {
+        return { ok: false as const, error: "Um campo obrigatório não foi enviado. Revise os dados e tente novamente." };
+      }
+      return { ok: false as const, error: `O banco de dados recusou o salvamento (${result.error.code || "erro desconhecido"}).` };
+    }
+    if (id && !result.data) {
+      return { ok: false as const, error: "O cadastro da consultoria não foi encontrado ou não pode ser alterado." };
+    }
+    const savedId = result.data?.id;
+    if (!savedId) {
+      return { ok: false as const, error: "O salvamento não retornou a confirmação do cadastro." };
+    }
+    return { ok: true as const, id: savedId };
   });
 
 /* ------------------------------------------------------------------ */
