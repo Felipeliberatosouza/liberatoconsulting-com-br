@@ -140,7 +140,11 @@ export const saveCompany = createServerFn({ method: "POST" })
     if (id && !result.data) {
       return { ok: false as const, error: "O cadastro da consultoria não foi encontrado ou não pode ser alterado." };
     }
-    return { ok: true as const, id: result.data.id };
+    const savedId = result.data?.id;
+    if (!savedId) {
+      return { ok: false as const, error: "O salvamento não retornou a confirmação do cadastro." };
+    }
+    return { ok: true as const, id: savedId };
   });
 
 /* ------------------------------------------------------------------ */
