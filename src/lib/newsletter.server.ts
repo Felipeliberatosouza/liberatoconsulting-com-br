@@ -4,7 +4,7 @@ import { sendLovableEmail } from "@lovable.dev/email-js";
 import {
   companyFooterHtml,
   companyFooterText,
-  loadCompanyFooter,
+  loadEmailBrand,
   type CompanyFooter,
 } from "./company-footer.server";
 import { emailLang, labelsFor, type EmailLang } from "./email-i18n.server";
