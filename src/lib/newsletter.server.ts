@@ -293,7 +293,8 @@ export async function announceArticle(article: {
   };
   if (!settings.autoSendOnPublish || !settings.fromEmail) return;
 
-  const origin = process.env["PUBLIC_SITE_URL"] || "https://liberato.com";
+  const { siteOrigin } = await import("./bulletin.server");
+  const origin = siteOrigin();
   const body = `${article.summary}\n\nLeia o conteúdo completo: ${origin}/content/${article.slug}`;
 
   const { data: created } = await supabaseAdmin
