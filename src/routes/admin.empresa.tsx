@@ -101,6 +101,7 @@ function CompanyPage() {
         className="rounded-lg border border-border bg-background p-6"
         onSubmit={async (e) => {
           e.preventDefault();
+          const formEl = e.currentTarget;
           if (
             !validate({
               legal_name: form.legal_name,
