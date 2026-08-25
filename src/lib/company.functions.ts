@@ -73,7 +73,12 @@ export const getCompany = createServerFn({ method: "GET" })
   });
 
 const companySchema = z.object({
-  id: z.string().uuid().optional(),
+  // O formulário usa string vazia enquanto ainda não existe registro. Converta-a
+  // para undefined para que o primeiro salvamento seja tratado como INSERT.
+  id: z.preprocess(
+    (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
+    z.string().uuid().optional(),
+  ),
   legal_name: z.string().trim().max(200).default(""),
   trade_name: z.string().trim().max(200).default(""),
   cnpj: z.string().trim().max(30).default(""),
@@ -112,11 +117,30 @@ export const saveCompany = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { id, founded_on, ...rest } = data;
     const row = { ...rest, founded_on: founded_on || null, partners: rest.partners as never };
-    const { error } = id
-      ? await context.supabase.from("company_profile").update(row as never).eq("id", id)
-      : await context.supabase.from("company_profile").insert(row as never);
-    if (error) return { ok: false as const, error: error.message };
-    return { ok: true as const };
+    const result = id
+      ? await context.supabase.from("company_profile").update(row as never).eq("id", id).select("id").maybeSingle()
+      : await context.supabase.from("company_profile").insert(row as never).select("id").single();
+    if (result.error) {
+      console.error("Falha ao salvar dados da consultoria", {
+        code: result.error.code,
+        details: result.error.details,
+        hint: result.error.hint,
+      });
+      if (result.error.code === "42501") {
+        return { ok: false as const, error: "Sua sessão não tem permissão para alterar os dados da consultoria." };
+      }
+      if (result.error.code === "22007" || result.error.code === "22008") {
+        return { ok: false as const, error: "A data de fundação é inválida. Revise o campo e tente novamente." };
+      }
+      if (result.error.code === "23502") {
+        return { ok: false as const, error: "Um campo obrigatório não foi enviado. Revise os dados e tente novamente." };
+      }
+      return { ok: false as const, error: `O banco de dados recusou o salvamento (${result.error.code || "erro desconhecido"}).` };
+    }
+    if (id && !result.data) {
+      return { ok: false as const, error: "O cadastro da consultoria não foi encontrado ou não pode ser alterado." };
+    }
+    return { ok: true as const, id: result.data.id };
   });
 
 /* ------------------------------------------------------------------ */
