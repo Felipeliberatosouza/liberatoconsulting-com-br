@@ -53,6 +53,16 @@ export function renderCampaignHtml(input: {
     )
     .join("");
 
+  const brandName = input.company?.name || "Liberato Consulting";
+  const site = input.company?.website || "";
+  // Logomarca atual do painel; sem logo cadastrada, cai no logotipo em texto.
+  const logoImg = input.logoUrl
+    ? `<img src="${input.logoUrl}" alt="${escapeHtml(brandName)}" width="180" style="display:block;margin:0 auto;max-width:220px;height:auto;border:0" />`
+    : `<span style="font-size:20px;font-weight:800;letter-spacing:-0.02em;color:#111111">LIBERATO</span><span style="font-size:20px;font-weight:600;color:#ea580c"> consulting</span>`;
+  const logoBlock = site
+    ? `<a href="${site}" style="text-decoration:none">${logoImg}</a>`
+    : logoImg;
+
   const companyBlock = input.company
     ? `<tr><td style="padding:22px 32px;background:#14192a;color:#f7f6f4">
 ${companyFooterHtml(input.company)}
