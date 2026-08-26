@@ -43,6 +43,7 @@ function CompanyPage() {
   const q = useQuery({ queryKey: ["company"], queryFn: () => getCompany(), retry: false });
   const [form, setForm] = useState<CompanyProfile | null>(null);
   const [busy, setBusy] = useState(false);
+  const [phoneError, setPhoneError] = useState(false);
   const { validate, hasError, inputClass, a11yProps } = useFieldErrors();
 
   /**
@@ -52,18 +53,32 @@ function CompanyPage() {
    */
   const F = (label: string, k: keyof CompanyProfile, type?: string) => {
     const value = (form?.[k] ?? "") as string;
-    const invalid = hasError(k as string, value);
+    const invalid = k === "phone" ? phoneError || hasError(k, value) : hasError(k, value);
+    const fieldA11y = k === "phone" && invalid
+      ? { "aria-invalid": true as const, "aria-describedby": "phone-error" }
+      : a11yProps(k, value);
     return (
-      <L key={k as string} label={label} invalid={invalid} errorId={`${k}-error`}>
+      <L
+        key={k as string}
+        label={label}
+        invalid={invalid}
+        errorId={`${k}-error`}
+        errorMessage={k === "phone" ? "Informe o número completo: +55 (11) 9999-9999." : undefined}
+      >
         <input
           type={type ?? "text"}
           value={value}
-          onChange={(e) => set(k, k === "phone" ? formatPhone(e.target.value) : e.target.value)}
+          onChange={(e) => {
+            const nextValue = k === "phone" ? formatPhone(e.target.value) : e.target.value;
+            set(k, nextValue);
+            if (k === "phone" && phoneError) setPhoneError(!isValidPhone(nextValue));
+          }}
           inputMode={k === "phone" ? "numeric" : undefined}
           autoComplete={k === "phone" ? "tel" : undefined}
-          maxLength={k === "phone" ? 21 : undefined}
-          className={inputClass(input, k as string, value)}
-          {...a11yProps(k as string, value)}
+          maxLength={k === "phone" ? 20 : undefined}
+          placeholder={k === "phone" ? "+55 (11) 9999-9999" : undefined}
+          className={invalid ? `${input} border-destructive ring-1 ring-destructive` : inputClass(input, k, value)}
+          {...fieldA11y}
         />
       </L>
     );
@@ -126,9 +141,16 @@ function CompanyPage() {
             return;
           }
           if (!isValidPhone(form.phone)) {
+            setPhoneError(true);
             toast.error("Informe o telefone no formato +55 (11) 9999-9999.");
+            setTimeout(() => {
+              const phone = formEl.querySelector<HTMLInputElement>('[aria-describedby="phone-error"]');
+              phone?.scrollIntoView({ behavior: "smooth", block: "center" });
+              phone?.focus({ preventScroll: true });
+            }, 0);
             return;
           }
+          setPhoneError(false);
           setBusy(true);
           try {
             const r = await saveCompany({ data: form });
@@ -237,11 +259,13 @@ function L({
   children,
   invalid,
   errorId,
+  errorMessage,
 }: {
   label: string;
   children: React.ReactNode;
   invalid?: boolean;
   errorId?: string;
+  errorMessage?: string;
 }) {
   return (
     <label
@@ -251,7 +275,7 @@ function L({
       <span className="mt-1 block">{children}</span>
       {invalid ? (
         <span id={errorId} role="alert" className="mt-1 block text-xs font-medium text-destructive">
-          Campo obrigatório
+          {errorMessage ?? "Campo obrigatório"}
         </span>
       ) : null}
     </label>
