@@ -63,7 +63,9 @@ function CompanyPage() {
         label={label}
         invalid={invalid}
         errorId={`${k}-error`}
-        errorMessage={k === "phone" ? "Informe o número completo: +55 (11) 9999-9999." : undefined}
+        {...(k === "phone"
+          ? { errorMessage: "Informe o número completo: +55 (11) 9999-9999." }
+          : {})}
       >
         <input
           type={type ?? "text"}
