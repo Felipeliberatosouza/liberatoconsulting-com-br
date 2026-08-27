@@ -6,19 +6,46 @@ export function onlyDigits(value: string) {
 
 /* ------------------------------- celular ------------------------------- */
 
+export const PHONE_PLACEHOLDER = "+55 (11) 99999-9999";
+export const PHONE_ERROR =
+  "Informe um número internacional válido com DDI. Para o Brasil, use +55 (11) 99999-9999.";
+
+/**
+ * Máscara progressiva internacional. O +55 é apenas a sugestão inicial:
+ * quando o valor começa com outro DDI, ele é preservado e continua editável.
+ */
 export function formatPhone(value: string) {
-  const raw = onlyDigits(value);
-  const d = (raw.startsWith("55") ? raw.slice(2) : raw).slice(0, 10);
-  if (!d.length) return "";
-  if (d.length <= 2) return `+55 (${d}`;
-  if (d.length <= 6) return `+55 (${d.slice(0, 2)}) ${d.slice(2)}`;
-  return `+55 (${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  const trimmed = (value ?? "").trim();
+  const digits = onlyDigits(trimmed).slice(0, 15);
+  if (!digits) return trimmed.startsWith("+") ? "+" : "";
+
+  const explicitInternational = trimmed.startsWith("+");
+  const normalized = explicitInternational || digits.startsWith("55") ? digits : `55${digits}`;
+
+  if (normalized.startsWith("55")) {
+    const national = normalized.slice(2, 13);
+    if (!national.length) return "+55";
+    if (national.length <= 2) return `+55 (${national}`;
+    if (national.length <= 7) return `+55 (${national.slice(0, 2)}) ${national.slice(2)}`;
+    return `+55 (${national.slice(0, 2)}) ${national.slice(2, 7)}-${national.slice(7)}`;
+  }
+
+  // Outros países permanecem em formato E.164 legível e sem DDI fixo.
+  return `+${normalized}`;
 }
 
 export function isValidPhone(value: string) {
-  if (!/^\+55 \([1-9][0-9]\) [0-9]{4}-[0-9]{4}$/.test(value.trim())) return false;
-  const d = onlyDigits(value).slice(2);
-  return Number(d.slice(0, 2)) >= 11;
+  const trimmed = (value ?? "").trim();
+  if (!trimmed.startsWith("+")) return false;
+  const digits = onlyDigits(trimmed);
+
+  if (digits.startsWith("55")) {
+    const national = digits.slice(2);
+    return /^[1-9][0-9]9[0-9]{8}$/.test(national);
+  }
+
+  // E.164: DDI não iniciado em zero e entre 8 e 15 dígitos no total.
+  return /^[1-9][0-9]{7,14}$/.test(digits);
 }
 
 /* --------------------------------- CPF --------------------------------- */

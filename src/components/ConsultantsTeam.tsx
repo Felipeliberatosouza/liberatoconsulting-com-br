@@ -16,7 +16,7 @@ import {
 import { contactConsultant, listPublicConsultants, type PublicConsultant } from "@/lib/consultants.functions";
 import { useLanguage } from "@/i18n";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
-import { formatPhone, isValidPhone } from "@/lib/validation";
+import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
 function Initials({ name }: { name: string }) {
   const initials = name
@@ -67,7 +67,7 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
     e.preventDefault();
     if (!validate({ name: form.name, email: form.email, phone: form.phone, message: form.message })) return;
     if (!isValidPhone(form.phone)) {
-      toast.error("Informe o telefone no formato +55 (11) 9999-9999.");
+      toast.error(PHONE_ERROR);
       return;
     }
     setSending(true);
@@ -124,16 +124,17 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
       <Input
         required
         type="tel"
-        inputMode="numeric"
+        inputMode="tel"
         autoComplete="tel"
-        maxLength={21}
-        placeholder="+55 (11) 9999-9999"
+        maxLength={25}
+        placeholder={PHONE_PLACEHOLDER}
         className={`${errorClass("phone", form.phone)}${form.phone && !isValidPhone(form.phone) ? " border-destructive ring-1 ring-destructive" : ""}`}
         value={form.phone}
+        onFocus={() => !form.phone && setForm({ ...form, phone: "+55" })}
         onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })}
         aria-invalid={Boolean(form.phone) && !isValidPhone(form.phone)}
       />
-      {form.phone && !isValidPhone(form.phone) && <p className="text-xs text-destructive">Use o formato +55 (11) 9999-9999.</p>}
+      {form.phone && !isValidPhone(form.phone) && <p className="text-xs text-destructive">{PHONE_ERROR}</p>}
       <Input
         placeholder={tt.companyPlaceholder}
         value={form.company}

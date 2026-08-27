@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { isValidPhone } from "./validation";
+import { isValidPhone, PHONE_ERROR } from "./validation";
 
 export type PublicConsultant = {
   id: string;
@@ -107,7 +107,7 @@ const contactSchema = z.object({
   consultantId: z.string().uuid(),
   name: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(255),
-  phone: z.string().trim().refine(isValidPhone, "Use o formato +55 (11) 9999-9999."),
+  phone: z.string().trim().refine(isValidPhone, PHONE_ERROR),
   company: z.string().trim().max(160).default(""),
   message: z.string().trim().min(10).max(2000),
   website: z.string().max(200).optional(),

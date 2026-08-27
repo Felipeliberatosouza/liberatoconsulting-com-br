@@ -6,7 +6,7 @@ import { useLanguage } from "@/i18n";
 import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
-import { formatPhone, isValidPhone } from "@/lib/validation";
+import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
 
 type Props = { serviceSlug: string; serviceTitle: string };
@@ -42,7 +42,7 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
     const fd = new FormData(form);
     if (!validate({ name: values.name, company: values.company, country: values.country, email: values.email, phone: values.phone, message: values.message, captcha: values.captcha })) return;
     if (!isValidPhone(values.phone)) {
-      setError("Informe o telefone no formato +55 (11) 9999-9999.");
+      setError(PHONE_ERROR);
       return;
     }
     setStatus("sending");
@@ -126,8 +126,8 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
           </label>
           <label className="text-sm font-medium">
             Telefone
-            <input name="phone" type="tel" required inputMode="numeric" autoComplete="tel" maxLength={21} value={values.phone} onChange={(e) => setValues((v) => ({ ...v, phone: formatPhone(e.target.value) }))} placeholder="+55 (11) 9999-9999" className={`${field}${errorClass("phone", values.phone)}${values.phone && !isValidPhone(values.phone) ? " border-destructive ring-1 ring-destructive" : ""}`} aria-invalid={Boolean(values.phone) && !isValidPhone(values.phone)} />
-            {values.phone && !isValidPhone(values.phone) && <span className="mt-1 block text-xs text-destructive">Use o formato +55 (11) 9999-9999.</span>}
+            <input name="phone" type="tel" required inputMode="tel" autoComplete="tel" maxLength={25} value={values.phone} onFocus={() => !values.phone && setValues((v) => ({ ...v, phone: "+55" }))} onChange={(e) => setValues((v) => ({ ...v, phone: formatPhone(e.target.value) }))} placeholder={PHONE_PLACEHOLDER} className={`${field}${errorClass("phone", values.phone)}${values.phone && !isValidPhone(values.phone) ? " border-destructive ring-1 ring-destructive" : ""}`} aria-invalid={Boolean(values.phone) && !isValidPhone(values.phone)} />
+            {values.phone && !isValidPhone(values.phone) && <span className="mt-1 block text-xs text-destructive">{PHONE_ERROR}</span>}
           </label>
           <label className="text-sm font-medium sm:col-span-2">
             {F.service}
@@ -154,7 +154,7 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
             <input
               name="captcha"
               required
-              inputMode="numeric"
+              inputMode="tel"
               autoComplete="off"
               value={values.captcha}
               onChange={onField("captcha")}

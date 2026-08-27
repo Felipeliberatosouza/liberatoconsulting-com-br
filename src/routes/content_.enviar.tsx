@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { CtaBand } from "@/components/CtaBand";
 import { useLanguage } from "@/i18n";
 import { submitArticle } from "@/lib/content.functions";
-import { formatCpf, formatPhone, isValidCpf, isValidEmail, isValidPhone } from "@/lib/validation";
+import { formatCpf, formatPhone, isValidCpf, isValidEmail, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
@@ -93,7 +93,7 @@ function SubmitArticlePage() {
       return;
     }
     if (!isValidPhone(phone)) {
-      toast.error("Informe o celular no formato +55 (11) 9999-9999.");
+      toast.error(PHONE_ERROR);
       return;
     }
     if (cpf && !isValidCpf(cpf)) {
@@ -209,16 +209,17 @@ function SubmitArticlePage() {
                   name="phone"
                    type="tel"
                    required
-                   inputMode="numeric"
+                   inputMode="tel"
                    autoComplete="tel"
-                   maxLength={21}
+                   maxLength={25}
                   value={phone}
+                  onFocus={() => !phone && setPhone("+55")}
                   onChange={(e) => setPhone(formatPhone(e.target.value))}
-                   placeholder="+55 (11) 9999-9999"
+                   placeholder={PHONE_PLACEHOLDER}
                    className={`${input}${phone && !isValidPhone(phone) ? " border-destructive ring-1 ring-destructive" : ""}`}
                    aria-invalid={Boolean(phone) && !isValidPhone(phone)}
                 />
-                 {phone && !isValidPhone(phone) && <span className="mt-1 block text-xs text-destructive">Use o formato +55 (11) 9999-9999.</span>}
+                 {phone && !isValidPhone(phone) && <span className="mt-1 block text-xs text-destructive">{PHONE_ERROR}</span>}
               </label>
               <label className="text-sm font-medium">
                 {a.formCpf}

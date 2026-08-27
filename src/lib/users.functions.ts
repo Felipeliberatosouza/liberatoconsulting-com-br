@@ -157,7 +157,7 @@ const profileFields = z.object({
     .trim()
     .min(1, "Celular obrigatório.")
     .max(40)
-    .refine(isValidPhone, "Use o formato +55 (11) 9999-9999."),
+    .refine(isValidPhone, PHONE_ERROR),
   birth_date: z.string().trim().min(1, "Data de nascimento obrigatória.").max(20),
   cpf: z
     .string()

@@ -19,7 +19,7 @@ import {
   type BulletinSubscriberRow,
 } from "@/lib/bulletin.functions";
 import { useLanguage } from "@/i18n";
-import { formatPhone, isValidPhone } from "@/lib/validation";
+import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
 export const Route = createFileRoute("/admin/boletim")({
   head: () => ({
@@ -164,12 +164,13 @@ function AdminBulletin() {
               WhatsApp de teste
               <input
                 type="tel"
-                inputMode="numeric"
+                inputMode="tel"
                 autoComplete="tel"
-                maxLength={21}
+                maxLength={25}
                 value={testWhatsApp}
+                onFocus={() => !testWhatsApp && setTestWhatsApp("+55")}
                 onChange={(e) => setTestWhatsApp(formatPhone(e.target.value))}
-                placeholder="+55 (11) 9999-9999"
+                placeholder={PHONE_PLACEHOLDER}
                 className={`${field}${testWhatsApp && !isValidPhone(testWhatsApp) ? " border-destructive ring-1 ring-destructive" : ""}`}
               />
             </label>
@@ -183,7 +184,7 @@ function AdminBulletin() {
                     return;
                   }
                   if (testWhatsApp && !isValidPhone(testWhatsApp)) {
-                    toast.error("Informe o WhatsApp no formato +55 (11) 9999-9999.");
+                    toast.error(PHONE_ERROR);
                     return;
                   }
                   setBusy(true);

@@ -10,7 +10,7 @@ import { submitLead } from "@/lib/leads.functions";
 import { getPublicCompanyAddress } from "@/lib/company-public.functions";
 import { postalAddressSchema } from "@/lib/company-address";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
-import { formatPhone, isValidPhone } from "@/lib/validation";
+import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
 
 export const Route = createFileRoute("/contact")({
@@ -143,7 +143,7 @@ function ContactPage() {
     });
     if (!ok) return;
     if (!isValidPhone(phone)) {
-      setError("Informe o telefone no formato +55 (11) 9999-9999.");
+      setError(PHONE_ERROR);
       return;
     }
     setStatus("sending");
@@ -231,8 +231,8 @@ function ContactPage() {
               </label>
               <label className="block text-sm font-medium">
                 Telefone
-                <input name="phone" type="tel" required inputMode="numeric" autoComplete="tel" maxLength={21} value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} placeholder="+55 (11) 9999-9999" className={`${field}${phone && !isValidPhone(phone) ? " border-destructive ring-1 ring-destructive" : ""}`} aria-invalid={Boolean(phone) && !isValidPhone(phone)} />
-                {phone && !isValidPhone(phone) && <span className="mt-1 block text-xs text-destructive">Use o formato +55 (11) 9999-9999.</span>}
+                <input name="phone" type="tel" required inputMode="tel" autoComplete="tel" maxLength={25} value={phone} onFocus={() => !phone && setPhone("+55")} onChange={(e) => setPhone(formatPhone(e.target.value))} placeholder={PHONE_PLACEHOLDER} className={`${field}${phone && !isValidPhone(phone) ? " border-destructive ring-1 ring-destructive" : ""}`} aria-invalid={Boolean(phone) && !isValidPhone(phone)} />
+                {phone && !isValidPhone(phone) && <span className="mt-1 block text-xs text-destructive">{PHONE_ERROR}</span>}
               </label>
               <label className="block text-sm font-medium">
                 {t.contact.company}
@@ -264,7 +264,7 @@ function ContactPage() {
               <input
                 name="captcha"
                 required
-                inputMode="numeric"
+                inputMode="tel"
                 autoComplete="off"
                 {...fieldProps("captcha", `${field} sm:max-w-40`)}
               />
