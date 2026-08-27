@@ -117,6 +117,7 @@ function Field({
   valid,
   hint,
   onBlur,
+  onFocus,
   disabled,
   missing,
   inputMode,
@@ -132,6 +133,7 @@ function Field({
   valid?: boolean | undefined;
   hint?: string | undefined;
   onBlur?: (() => void) | undefined;
+  onFocus?: (() => void) | undefined;
   disabled?: boolean | undefined;
   missing?: boolean | undefined;
   inputMode?: "numeric" | "tel" | undefined;
@@ -148,6 +150,7 @@ function Field({
         value={value}
         disabled={disabled}
         onBlur={onBlur}
+        onFocus={onFocus}
         onChange={(e) => onChange(e.target.value)}
         inputMode={inputMode}
         autoComplete={autoComplete}
@@ -508,6 +511,7 @@ function TeamTab() {
              autoComplete="tel"
              maxLength={25}
             value={form.phone}
+            onFocus={() => !form.phone && set("phone", "+55")}
             onChange={(v) => set("phone", formatPhone(v))}
             valid={Boolean(form.phone) && phoneOk}
             error={form.phone && !phoneOk ? "Celular inválido." : undefined}

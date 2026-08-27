@@ -126,8 +126,8 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
           </label>
           <label className="text-sm font-medium">
             Telefone
-            <input name="phone" type="tel" required inputMode="tel" autoComplete="tel" maxLength={25} value={values.phone} onChange={(e) => setValues((v) => ({ ...v, phone: formatPhone(e.target.value) }))} placeholder={PHONE_PLACEHOLDER} className={`${field}${errorClass("phone", values.phone)}${values.phone && !isValidPhone(values.phone) ? " border-destructive ring-1 ring-destructive" : ""}`} aria-invalid={Boolean(values.phone) && !isValidPhone(values.phone)} />
-            {values.phone && !isValidPhone(values.phone) && <span className="mt-1 block text-xs text-destructive">Use o formato +55 (11) 9999-9999.</span>}
+            <input name="phone" type="tel" required inputMode="tel" autoComplete="tel" maxLength={25} value={values.phone} onFocus={() => !values.phone && setValues((v) => ({ ...v, phone: "+55" }))} onChange={(e) => setValues((v) => ({ ...v, phone: formatPhone(e.target.value) }))} placeholder={PHONE_PLACEHOLDER} className={`${field}${errorClass("phone", values.phone)}${values.phone && !isValidPhone(values.phone) ? " border-destructive ring-1 ring-destructive" : ""}`} aria-invalid={Boolean(values.phone) && !isValidPhone(values.phone)} />
+            {values.phone && !isValidPhone(values.phone) && <span className="mt-1 block text-xs text-destructive">{PHONE_ERROR}</span>}
           </label>
           <label className="text-sm font-medium sm:col-span-2">
             {F.service}

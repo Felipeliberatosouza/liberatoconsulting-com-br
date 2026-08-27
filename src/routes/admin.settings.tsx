@@ -222,6 +222,7 @@ function ContactsBlock() {
           autoComplete="tel"
           maxLength={25}
           value={number}
+          onFocus={() => !number && setNumber("+55")}
           onChange={(e) => setNumber(formatPhone(e.target.value))}
           placeholder={PHONE_PLACEHOLDER}
           className={`mt-4 ${input}${number && !isValidPhone(number) ? " border-destructive ring-1 ring-destructive" : ""}`}

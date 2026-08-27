@@ -168,6 +168,7 @@ function AdminBulletin() {
                 autoComplete="tel"
                 maxLength={25}
                 value={testWhatsApp}
+                onFocus={() => !testWhatsApp && setTestWhatsApp("+55")}
                 onChange={(e) => setTestWhatsApp(formatPhone(e.target.value))}
                 placeholder={PHONE_PLACEHOLDER}
                 className={`${field}${testWhatsApp && !isValidPhone(testWhatsApp) ? " border-destructive ring-1 ring-destructive" : ""}`}

@@ -217,12 +217,13 @@ function CareersPage() {
                    autoComplete="tel"
                    maxLength={25}
                    value={phone}
+                   onFocus={() => !phone && setPhone("+55")}
                    onChange={(e) => setPhone(formatPhone(e.target.value))}
                    placeholder={PHONE_PLACEHOLDER}
                    className={`${field}${errorClass("phone", phone)}`}
                    aria-invalid={Boolean(phone) && !isValidPhone(phone)}
                 />
-                 {phone && !isValidPhone(phone) && <span className="mt-1 block text-xs text-destructive">Use o formato +55 (11) 9999-9999.</span>}
+                 {phone && !isValidPhone(phone) && <span className="mt-1 block text-xs text-destructive">{PHONE_ERROR}</span>}
               </label>
               <label className="text-sm font-medium">
                 {C.email}

@@ -213,12 +213,13 @@ function SubmitArticlePage() {
                    autoComplete="tel"
                    maxLength={25}
                   value={phone}
+                  onFocus={() => !phone && setPhone("+55")}
                   onChange={(e) => setPhone(formatPhone(e.target.value))}
                    placeholder={PHONE_PLACEHOLDER}
                    className={`${input}${phone && !isValidPhone(phone) ? " border-destructive ring-1 ring-destructive" : ""}`}
                    aria-invalid={Boolean(phone) && !isValidPhone(phone)}
                 />
-                 {phone && !isValidPhone(phone) && <span className="mt-1 block text-xs text-destructive">Use o formato +55 (11) 9999-9999.</span>}
+                 {phone && !isValidPhone(phone) && <span className="mt-1 block text-xs text-destructive">{PHONE_ERROR}</span>}
               </label>
               <label className="text-sm font-medium">
                 {a.formCpf}

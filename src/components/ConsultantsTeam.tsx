@@ -130,10 +130,11 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
         placeholder={PHONE_PLACEHOLDER}
         className={`${errorClass("phone", form.phone)}${form.phone && !isValidPhone(form.phone) ? " border-destructive ring-1 ring-destructive" : ""}`}
         value={form.phone}
+        onFocus={() => !form.phone && setForm({ ...form, phone: "+55" })}
         onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })}
         aria-invalid={Boolean(form.phone) && !isValidPhone(form.phone)}
       />
-      {form.phone && !isValidPhone(form.phone) && <p className="text-xs text-destructive">Use o formato +55 (11) 9999-9999.</p>}
+      {form.phone && !isValidPhone(form.phone) && <p className="text-xs text-destructive">{PHONE_ERROR}</p>}
       <Input
         placeholder={tt.companyPlaceholder}
         value={form.company}

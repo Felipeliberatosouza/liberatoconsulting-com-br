@@ -145,12 +145,13 @@ export function BulletinSignup() {
                autoComplete="tel"
                maxLength={25}
               value={whatsapp}
+               onFocus={() => !whatsapp && setWhatsapp("+55")}
                onChange={(e) => setWhatsapp(formatPhone(e.target.value))}
                placeholder={PHONE_PLACEHOLDER}
                className={`${field}${errorClass("whatsapp", whatsapp)}${whatsapp && !isValidPhone(whatsapp) ? " border-destructive ring-1 ring-destructive" : ""}`}
                aria-invalid={Boolean(whatsapp) && !isValidPhone(whatsapp)}
             />
-             {whatsapp && !isValidPhone(whatsapp) && <span className="mt-1 block text-xs text-destructive">Use o formato +55 (11) 9999-9999.</span>}
+             {whatsapp && !isValidPhone(whatsapp) && <span className="mt-1 block text-xs text-destructive">{PHONE_ERROR}</span>}
           </label>
 
           <label className="text-sm font-medium">
