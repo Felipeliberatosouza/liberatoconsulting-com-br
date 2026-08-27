@@ -30,6 +30,8 @@ import {
   isValidCpf,
   isValidEmail,
   isValidPhone,
+  PHONE_ERROR,
+  PHONE_PLACEHOLDER,
   passwordRules,
 } from "@/lib/validation";
 import { getResumeUrl, listApplications, listLeads } from "@/lib/admin.functions";
@@ -395,7 +397,7 @@ function TeamTab() {
       return;
     }
     if (!phoneOk) {
-       toast.error("Informe o celular no formato +55 (11) 9999-9999.");
+       toast.error(PHONE_ERROR);
       return;
     }
     if (!cepOk) {
@@ -502,14 +504,14 @@ function TeamTab() {
             label="Celular"
              required
              type="tel"
-             inputMode="numeric"
+             inputMode="tel"
              autoComplete="tel"
-             maxLength={21}
+             maxLength={25}
             value={form.phone}
             onChange={(v) => set("phone", formatPhone(v))}
             valid={Boolean(form.phone) && phoneOk}
             error={form.phone && !phoneOk ? "Celular inválido." : undefined}
-             hint="+55 (11) 9999-9999"
+             hint={PHONE_PLACEHOLDER}
             missing={hasError("phone", form.phone)}
           />
         </div>

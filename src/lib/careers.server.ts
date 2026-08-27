@@ -1,12 +1,12 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
-import { isValidPhone } from "./validation";
+import { isValidPhone, PHONE_ERROR } from "./validation";
 
 const MAX_FILE_BYTES = 3 * 1024 * 1024; // 3 MB
 
 export const applicationSchema = z.object({
   fullName: z.string().trim().min(3).max(120),
-  phone: z.string().trim().refine(isValidPhone, "Use o formato +55 (11) 9999-9999."),
+  phone: z.string().trim().refine(isValidPhone, PHONE_ERROR),
   email: z.string().trim().email().max(255),
   area: z.string().trim().min(2).max(120),
   linkedin: z

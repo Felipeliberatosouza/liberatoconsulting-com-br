@@ -16,7 +16,7 @@ import {
 import { getSegments, saveSegments } from "@/lib/admin.functions";
 import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
-import { formatPhone, isValidPhone } from "@/lib/validation";
+import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
 export const Route = createFileRoute("/admin/empresa")({
   head: () => ({
@@ -64,7 +64,7 @@ function CompanyPage() {
         invalid={invalid}
         errorId={`${k}-error`}
         {...(k === "phone"
-          ? { errorMessage: "Informe o número completo: +55 (11) 9999-9999." }
+          ? { errorMessage: PHONE_ERROR }
           : {})}
       >
         <input
@@ -144,7 +144,7 @@ function CompanyPage() {
           }
           if (!isValidPhone(form.phone)) {
             setPhoneError(true);
-            toast.error("Informe o telefone no formato +55 (11) 9999-9999.");
+            toast.error(PHONE_ERROR);
             setTimeout(() => {
               const phone = formEl.querySelector<HTMLInputElement>('[aria-describedby="phone-error"]');
               phone?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -191,7 +191,7 @@ function CompanyPage() {
           {F("CEP", "address_zip")}
           {F("País", "address_country")}
           {F("E-mail institucional", "email", "email")}
-           {F("Telefone (+55 (11) 9999-9999)", "phone", "tel")}
+           {F("Telefone (DDI editável)", "phone", "tel")}
           {F("Site", "website")}
 
         </div>

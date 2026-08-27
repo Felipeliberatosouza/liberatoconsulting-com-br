@@ -16,7 +16,7 @@ import {
   saveWhatsApp,
 } from "@/lib/admin.functions";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
-import { formatPhone, isValidPhone } from "@/lib/validation";
+import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
 export const Route = createFileRoute("/admin/settings")({
   head: () => ({
@@ -170,7 +170,7 @@ function ContactsBlock() {
         onSubmit={async (e) => {
           e.preventDefault();
           if (!isValidPhone(number)) {
-            toast.error("Informe o WhatsApp no formato +55 (11) 9999-9999.");
+            toast.error(PHONE_ERROR);
             return;
           }
           if (!validate({ email })) return;
@@ -213,17 +213,17 @@ function ContactsBlock() {
       >
         <h2 className="font-display text-lg font-bold">WhatsApp flutuante</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Formato obrigatório: +55 (11) 9999-9999.
+          DDI editável. No Brasil: +55 (11) 99999-9999.
         </p>
         <input
           type="tel"
           required
-          inputMode="numeric"
+          inputMode="tel"
           autoComplete="tel"
-          maxLength={21}
+          maxLength={25}
           value={number}
           onChange={(e) => setNumber(formatPhone(e.target.value))}
-          placeholder="+55 (11) 9999-9999"
+          placeholder={PHONE_PLACEHOLDER}
           className={`mt-4 ${input}${number && !isValidPhone(number) ? " border-destructive ring-1 ring-destructive" : ""}`}
           aria-invalid={Boolean(number) && !isValidPhone(number)}
         />

@@ -11,7 +11,7 @@ import { trackEvent } from "@/lib/gtag";
 import { breadcrumb, jobBoardSchema, jsonLd } from "@/lib/schema";
 import { submitApplication } from "@/lib/careers.functions";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
-import { formatPhone, isValidPhone } from "@/lib/validation";
+import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
 
 export const Route = createFileRoute("/careers")({
@@ -104,7 +104,7 @@ function CareersPage() {
     });
     if (!ok) return;
     if (!isValidPhone(phone)) {
-      setError("Informe o telefone no formato +55 (11) 9999-9999.");
+      setError(PHONE_ERROR);
       return;
     }
 
@@ -213,12 +213,12 @@ function CareersPage() {
                   name="phone"
                   type="tel"
                   required
-                   inputMode="numeric"
+                   inputMode="tel"
                    autoComplete="tel"
-                   maxLength={21}
+                   maxLength={25}
                    value={phone}
                    onChange={(e) => setPhone(formatPhone(e.target.value))}
-                   placeholder="+55 (11) 9999-9999"
+                   placeholder={PHONE_PLACEHOLDER}
                    className={`${field}${errorClass("phone", phone)}`}
                    aria-invalid={Boolean(phone) && !isValidPhone(phone)}
                 />
@@ -289,7 +289,7 @@ function CareersPage() {
                 <input
                   name="captcha"
                   required
-                  inputMode="numeric"
+                  inputMode="tel"
                   autoComplete="off"
                   {...fieldProps("captcha", `${field} sm:max-w-40`)}
                 />

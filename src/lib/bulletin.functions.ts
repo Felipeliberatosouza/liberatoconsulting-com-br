@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { isValidPhone } from "./validation";
+import { isValidPhone, PHONE_ERROR } from "./validation";
 
 export type BulletinSubscriberRow = {
   id: string;
@@ -25,7 +25,7 @@ const subscribeInput = z.object({
   company: z.string().trim().min(2).max(140),
   segment: z.string().trim().min(1).max(80),
   email: z.string().trim().email().max(255),
-  whatsapp: z.string().trim().refine(isValidPhone, "Use o formato +55 (11) 9999-9999."),
+  whatsapp: z.string().trim().refine(isValidPhone, PHONE_ERROR),
   viaEmail: z.boolean(),
   viaWhatsApp: z.boolean(),
   language: z.string().trim().max(8).optional().default("pt"),
@@ -214,7 +214,7 @@ export const sendBulletinNow = createServerFn({ method: "POST" })
     z
       .object({
         testEmail: z.string().trim().email().max(255).optional(),
-        testWhatsApp: z.string().trim().refine((v) => !v || isValidPhone(v), "Use o formato +55 (11) 9999-9999.").optional(),
+        testWhatsApp: z.string().trim().refine((v) => !v || isValidPhone(v), PHONE_ERROR).optional(),
         testSegment: z.string().trim().max(80).optional(),
       })
       .parse(d),
