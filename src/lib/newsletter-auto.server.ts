@@ -95,7 +95,7 @@ export async function autoCreateCampaign(since: string | null): Promise<AutoResu
     .from("newsletter_campaigns")
     .insert({
       subject: subject.slice(0, 200),
-      preheader: (out.preheader ?? "").slice(0, 400),
+      preheader: (out?.preheader ?? "").slice(0, 400),
       body,
       status: "draft",
       reference_date: new Date().toISOString().slice(0, 10),
