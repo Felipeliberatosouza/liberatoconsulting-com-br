@@ -9,6 +9,7 @@ import {
   isValidCpf,
   isValidEmail,
   isValidPhone,
+  PHONE_ERROR,
 } from "./validation";
 
 export type TeamRow = {

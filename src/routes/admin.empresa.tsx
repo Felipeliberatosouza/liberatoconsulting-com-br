@@ -78,9 +78,9 @@ function CompanyPage() {
           onFocus={() => {
             if (k === "phone" && !value) set(k, "+55");
           }}
-          inputMode={k === "phone" ? "numeric" : undefined}
+          inputMode={k === "phone" ? "tel" : undefined}
           autoComplete={k === "phone" ? "tel" : undefined}
-          maxLength={k === "phone" ? 20 : undefined}
+          maxLength={k === "phone" ? 25 : undefined}
           placeholder={k === "phone" ? PHONE_PLACEHOLDER : undefined}
           className={invalid ? `${input} border-destructive ring-1 ring-destructive` : inputClass(input, k, value)}
           {...fieldA11y}
