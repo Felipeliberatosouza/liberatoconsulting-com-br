@@ -191,14 +191,20 @@ const MONTHS = [
 /** Ordena períodos ("2025", "Novembro/2024", "3T2024") para comparar recência. */
 function periodRank(period: string): number {
   const text = (period ?? "").toLowerCase();
+  // Datas diárias no formato dd/mm/aaaa (ex.: cotações e CDS).
+  const daily = text.match(/(\d{1,2})\/(\d{1,2})\/((?:19|20)\d{2})/);
+  if (daily) {
+    return Number(daily[3]) * 10000 + Number(daily[2]) * 100 + Number(daily[1]);
+  }
   const year = Number(text.match(/(19|20)\d{2}/)?.[0] ?? 0);
   if (!year) return 0;
   const monthIndex = MONTHS.findIndex((m) => text.includes(m.slice(0, 4)));
-  if (monthIndex >= 0) return year * 100 + (monthIndex + 1);
+  if (monthIndex >= 0) return year * 10000 + (monthIndex + 1) * 100;
   const quarter = Number(text.match(/([1-4])\s*t/)?.[1] ?? 0);
-  if (quarter) return year * 100 + quarter * 3;
-  return year * 100 + 99;
+  if (quarter) return year * 10000 + quarter * 300;
+  return year * 10000 + 9999;
 }
+
 
 /**
  * Busca nas fontes oficiais a leitura mais recente de cada indicador.
