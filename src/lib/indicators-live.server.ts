@@ -195,50 +195,95 @@ async function fetchSeries(spec: SeriesSpec): Promise<LiveIndicator | null> {
   }
 }
 
-/** Risco-país (EMBI+ Brasil) direto do Ipeadata: última e penúltima cotação publicadas. */
+/** Risco-país (CDS soberano de 5 anos do Brasil): última cotação e o patamar distinto anterior. */
 async function fetchCountryRisk(): Promise<LiveIndicator | null> {
   try {
+    const payload = {
+      GLOBALVAR: {
+        JS_VARIABLE: "jsGlobalVars",
+        FUNCTION: "CDS",
+        DOMESTIC: true,
+        ENDPOINT: "http://www.worldgovernmentbonds.com/wp-json/common/v1/historical",
+        DATE_RIF: "2099-12-31",
+        DEBUG: true,
+        OBJ: { UNIT: "", DECIMAL: 2, UNIT_DELTA: "%", DECIMAL_DELTA: 2 },
+        COUNTRY1: {
+          SYMBOL: "7",
+          PAESE: "Brazil",
+          PAESE_UPPERCASE: "BRAZIL",
+          BANDIERA: "br",
+          URL_PAGE: "brazil",
+        },
+        COUNTRY2: null,
+        OBJ1: { DURATA_STRING: "5 Years", DURATA: 60 },
+        OBJ2: null,
+      },
+    };
     const response = await fetch(
-      "http://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='JPM366_EMBI366')",
-      { headers: { Accept: "application/json" } },
+      "http://www.worldgovernmentbonds.com/wp-json/common/v1/historical",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json; charset=UTF-8",
+          Origin: "http://www.worldgovernmentbonds.com",
+          Referer: "http://www.worldgovernmentbonds.com/cds-historical-data/brazil/5-years/",
+        },
+        body: JSON.stringify(payload),
+      },
     );
     if (!response.ok) return null;
     const json = (await response.json()) as {
-      value?: Array<{ VALDATA?: string; VALVALOR?: number | null }>;
+      success?: boolean;
+      result?: {
+        quote?: Record<string, { CLOSE_VAL?: number | null; DATA_VAL?: string | null }>;
+      };
     };
-    const points = (json.value ?? []).filter(
-      (p) => typeof p.VALVALOR === "number" && Number.isFinite(p.VALVALOR) && p.VALDATA,
-    );
+    if (!json.success) return null;
+    const points = Object.values(json.result?.quote ?? {})
+      .filter(
+        (p): p is { CLOSE_VAL: number; DATA_VAL: string } =>
+          typeof p.CLOSE_VAL === "number" && Number.isFinite(p.CLOSE_VAL) && !!p.DATA_VAL,
+      )
+      .sort((a, b) => a.DATA_VAL.localeCompare(b.DATA_VAL));
     if (points.length === 0) return null;
     const current = points[points.length - 1]!;
-    const previous = points[points.length - 2];
+    // Ignora repetições do mesmo patamar: usa a última cotação com valor diferente.
+    let previous: { CLOSE_VAL: number; DATA_VAL: string } | undefined;
+    for (let i = points.length - 2; i >= 0; i -= 1) {
+      const candidate = points[i]!;
+      if (Math.round(candidate.CLOSE_VAL) !== Math.round(current.CLOSE_VAL)) {
+        previous = candidate;
+        break;
+      }
+    }
     const label = (iso?: string) => {
       if (!iso) return "";
       const [year, month, day] = iso.slice(0, 10).split("-");
       return `${day}/${month}/${year}`;
     };
     const trend = previous
-      ? current.VALVALOR! > previous.VALVALOR!
+      ? current.CLOSE_VAL > previous.CLOSE_VAL
         ? "alta"
-        : current.VALVALOR! < previous.VALVALOR!
+        : current.CLOSE_VAL < previous.CLOSE_VAL
           ? "baixa"
           : "estável"
       : "";
     return {
       slug: "risco-pais",
-      value: String(Math.round(current.VALVALOR!)),
+      value: String(Math.round(current.CLOSE_VAL)),
       unit: "pontos",
-      reference_period: label(current.VALDATA),
-      previous_value: previous ? String(Math.round(previous.VALVALOR!)) : "",
-      previous_period: previous ? label(previous.VALDATA) : "",
-      source_name: "Ipeadata / J.P. Morgan (EMBI+ Brasil)",
-      source_url: "http://www.ipeadata.gov.br/",
+      reference_period: label(current.DATA_VAL),
+      previous_value: previous ? String(Math.round(previous.CLOSE_VAL)) : "",
+      previous_period: previous ? label(previous.DATA_VAL) : "",
+      source_name: "World Government Bonds (CDS soberano 5 anos)",
+      source_url: "https://www.worldgovernmentbonds.com/cds-historical-data/brazil/5-years/",
       trend,
     };
   } catch {
     return null;
   }
 }
+
 
 /** Retorna as leituras oficiais mais recentes disponíveis na internet, por slug. */
 export async function fetchLiveIndicators(): Promise<Map<string, LiveIndicator>> {
