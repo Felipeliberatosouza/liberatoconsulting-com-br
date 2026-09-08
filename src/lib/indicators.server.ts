@@ -1,6 +1,8 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 import { askJson } from "./ai.server";
+import { fetchLiveIndicators } from "./indicators-live.server";
+
 
 type PendingIndicator = {
   id: string;
@@ -220,49 +222,78 @@ export async function refreshIndicatorsFromSources() {
   }>;
   if (list.length === 0) return { ok: false as const, error: "Nenhum indicador cadastrado." };
 
-  const out = await askJson<RefreshOut>(
-    "Você é um economista sênior brasileiro. Informe a leitura MAIS RECENTE já publicada de " +
-      "cada indicador do Brasil, com a fonte oficial (IBGE, Banco Central do Brasil, " +
-      "MDIC/Comex Stat, Ipeadata) e o período de referência exato. " +
-      "Regra obrigatória: value/reference_period = última observação publicada; " +
-      "previous_value/previous_period = observação imediatamente anterior da MESMA série e " +
-      "MESMA fonte (nunca uma leitura antiga de anos atrás quando existir uma mais recente). " +
-      "Informe também a projeção oficial para o próximo período (Focus, IBGE, Ipea) com nome e " +
-      "link. Use vírgula como separador decimal. Não invente fontes.",
-    JSON.stringify({
-      formato: {
-        indicators: [
-          {
-            slug: "string",
-            value: "string",
-            unit: "string",
-            reference_period: "string",
-            previous_value: "string (observação imediatamente anterior)",
-            previous_period: "string",
-            forecast_value: "string",
-            forecast_period: "string",
-            forecast_source_name: "string",
-            forecast_source_url: "string",
-            trend: "alta|baixa|estável",
-            note: "1 frase de contexto",
-            source_name: "string",
-            source_url: "string",
+  // 1) Busca automática na internet, direto nas séries oficiais publicadas.
+  const live = await fetchLiveIndicators();
+  const items: RefreshOut["indicators"] = [];
+  for (const item of live.values()) {
+    items.push({
+      slug: item.slug,
+      value: item.value,
+      unit: item.unit,
+      reference_period: item.reference_period,
+      previous_value: item.previous_value,
+      previous_period: item.previous_period,
+      trend: item.trend,
+      source_name: item.source_name,
+      source_url: item.source_url,
+    });
+  }
+
+  // 2) Para os indicadores sem série oficial automatizada, a IA pesquisa a leitura mais recente.
+  const remaining = list.filter((i) => !live.has(i.slug));
+  if (remaining.length > 0) {
+    try {
+      const out = await askJson<RefreshOut>(
+        "Você é um economista sênior brasileiro. Informe a leitura MAIS RECENTE já publicada de " +
+          "cada indicador do Brasil, com a fonte oficial (IBGE, Banco Central do Brasil, " +
+          "MDIC/Comex Stat, Ipeadata) e o período de referência exato. " +
+          "Regra obrigatória: value/reference_period = última observação publicada; " +
+          "previous_value/previous_period = observação imediatamente anterior da MESMA série e " +
+          "MESMA fonte (nunca uma leitura antiga de anos atrás quando existir uma mais recente). " +
+          "Informe também a projeção oficial para o próximo período (Focus, IBGE, Ipea) com nome e " +
+          "link. Use vírgula como separador decimal. Não invente fontes.",
+        JSON.stringify({
+          formato: {
+            indicators: [
+              {
+                slug: "string",
+                value: "string",
+                unit: "string",
+                reference_period: "string",
+                previous_value: "string (observação imediatamente anterior)",
+                previous_period: "string",
+                forecast_value: "string",
+                forecast_period: "string",
+                forecast_source_name: "string",
+                forecast_source_url: "string",
+                trend: "alta|baixa|estável",
+                note: "1 frase de contexto",
+                source_name: "string",
+                source_url: "string",
+              },
+            ],
           },
-        ],
-      },
-      indicadores: list.map((i) => ({
-        slug: i.slug,
-        label: i.label,
-        unidade: i.unit,
-        valor_atual_registrado: i.value,
-        periodo_atual_registrado: i.reference_period,
-      })),
-    }),
-  );
+          indicadores: remaining.map((i) => ({
+            slug: i.slug,
+            label: i.label,
+            unidade: i.unit,
+            valor_atual_registrado: i.value,
+            periodo_atual_registrado: i.reference_period,
+          })),
+        }),
+      );
+      for (const item of out.indicators ?? []) {
+        if (!live.has(item.slug)) items.push(item);
+      }
+    } catch {
+      // Se a IA estiver indisponível, mantemos ao menos os dados oficiais coletados.
+    }
+  }
 
   const now = new Date().toISOString();
   let updated = 0;
-  for (const item of out.indicators ?? []) {
+  for (const item of items) {
+
     const target = list.find((i) => i.slug === item.slug);
     if (!target) continue;
 
@@ -292,8 +323,10 @@ export async function refreshIndicatorsFromSources() {
     if (aiPrev && aiPrevPeriod && aiPrevPeriod !== newPeriod && aiPrevRank < newRank) {
       if (
         !previous.previous_value?.trim() ||
+        periodRank(previous.previous_period ?? "") >= newRank ||
         aiPrevRank >= periodRank(previous.previous_period ?? "")
       ) {
+
 
         previous = { previous_value: aiPrev, previous_period: aiPrevPeriod };
       }
