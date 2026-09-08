@@ -13,6 +13,15 @@ export const Route = createFileRoute("/api/public/bulletin-weekly")({
           return new Response("Unauthorized", { status: 401 });
         }
 
+        // Antes de enviar, buscamos a leitura mais recente de cada indicador:
+        // o dado atual vira o anterior automaticamente.
+        try {
+          const { refreshIndicatorsFromSources } = await import("@/lib/indicators.server");
+          await refreshIndicatorsFromSources();
+        } catch {
+          // Sem atualização disponível, o boletim segue com os dados já cadastrados.
+        }
+
         const { dispatchBulletin } = await import("@/lib/bulletin.server");
         try {
           const result = await dispatchBulletin();
