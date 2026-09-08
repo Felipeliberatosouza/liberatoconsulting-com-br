@@ -35,8 +35,12 @@ type SeriesSpec = {
   slug: string;
   series: number;
   unit: string;
-  /** monthly = Mês/Ano, yearly = Ano, daily = Mês/Ano da data da cotação */
-  period: "monthly" | "yearly" | "daily";
+  /**
+   * monthly = Mês/Ano, yearly = Ano, daily = Mês/Ano da data da cotação,
+   * step = série diária que só muda por decisão (ex.: Selic): o valor anterior
+   * é o último patamar diferente, e não o dia anterior.
+   */
+  period: "monthly" | "yearly" | "daily" | "step";
   /** divisor aplicado ao valor bruto (ex.: US$ milhões -> US$ bilhões) */
   divide?: number;
   decimals: number;
