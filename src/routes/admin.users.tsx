@@ -514,7 +514,7 @@ function TeamTab() {
             onFocus={() => !form.phone && set("phone", "+55")}
             onChange={(v) => set("phone", formatPhone(v))}
             valid={Boolean(form.phone) && phoneOk}
-            error={form.phone && !phoneOk ? "Celular inválido." : undefined}
+            error={form.phone && !phoneOk ? PHONE_ERROR : undefined}
              hint={PHONE_PLACEHOLDER}
             missing={hasError("phone", form.phone)}
           />
