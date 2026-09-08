@@ -195,9 +195,54 @@ async function fetchSeries(spec: SeriesSpec): Promise<LiveIndicator | null> {
   }
 }
 
+/** Risco-país (EMBI+ Brasil) direto do Ipeadata: última e penúltima cotação publicadas. */
+async function fetchCountryRisk(): Promise<LiveIndicator | null> {
+  try {
+    const response = await fetch(
+      "http://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='JPM366_EMBI366')",
+      { headers: { Accept: "application/json" } },
+    );
+    if (!response.ok) return null;
+    const json = (await response.json()) as {
+      value?: Array<{ VALDATA?: string; VALVALOR?: number | null }>;
+    };
+    const points = (json.value ?? []).filter(
+      (p) => typeof p.VALVALOR === "number" && Number.isFinite(p.VALVALOR) && p.VALDATA,
+    );
+    if (points.length === 0) return null;
+    const current = points[points.length - 1]!;
+    const previous = points[points.length - 2];
+    const label = (iso?: string) => {
+      if (!iso) return "";
+      const [year, month, day] = iso.slice(0, 10).split("-");
+      return `${day}/${month}/${year}`;
+    };
+    const trend = previous
+      ? current.VALVALOR! > previous.VALVALOR!
+        ? "alta"
+        : current.VALVALOR! < previous.VALVALOR!
+          ? "baixa"
+          : "estável"
+      : "";
+    return {
+      slug: "risco-pais",
+      value: String(Math.round(current.VALVALOR!)),
+      unit: "pontos",
+      reference_period: label(current.VALDATA),
+      previous_value: previous ? String(Math.round(previous.VALVALOR!)) : "",
+      previous_period: previous ? label(previous.VALDATA) : "",
+      source_name: "Ipeadata / J.P. Morgan (EMBI+ Brasil)",
+      source_url: "http://www.ipeadata.gov.br/",
+      trend,
+    };
+  } catch {
+    return null;
+  }
+}
+
 /** Retorna as leituras oficiais mais recentes disponíveis na internet, por slug. */
 export async function fetchLiveIndicators(): Promise<Map<string, LiveIndicator>> {
-  const results = await Promise.all(SPECS.map((spec) => fetchSeries(spec)));
+  const results = await Promise.all([...SPECS.map((spec) => fetchSeries(spec)), fetchCountryRisk()]);
   const map = new Map<string, LiveIndicator>();
   for (const item of results) {
     if (item) map.set(item.slug, item);
