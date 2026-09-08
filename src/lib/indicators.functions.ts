@@ -165,6 +165,28 @@ export const saveIndicator = createServerFn({ method: "POST" })
         payload: row,
       });
     }
+    if (id) {
+      // Rotação automática: ao registrar um dado novo, o que estava como
+      // "atual" passa a ser o "anterior" (a menos que já tenha sido editado).
+      const { data: prev } = await context.supabase
+        .from("economic_indicators")
+        .select("value, reference_period, previous_value, previous_period")
+        .eq("id", id)
+        .maybeSingle();
+      const changed =
+        !!prev &&
+        !!prev.value &&
+        (row.value.trim() !== (prev.value ?? "").trim() ||
+          row.reference_period.trim() !== (prev.reference_period ?? "").trim());
+      const previousUntouched =
+        !!prev &&
+        row.previous_value.trim() === (prev.previous_value ?? "").trim() &&
+        row.previous_period.trim() === (prev.previous_period ?? "").trim();
+      if (changed && previousUntouched) {
+        row.previous_value = prev.value ?? "";
+        row.previous_period = prev.reference_period ?? "";
+      }
+    }
     const { error } = id
       ? await context.supabase.from("economic_indicators").update(row).eq("id", id)
       : await context.supabase.from("economic_indicators").insert(row);
