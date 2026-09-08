@@ -35,8 +35,12 @@ type SeriesSpec = {
   slug: string;
   series: number;
   unit: string;
-  /** monthly = Mês/Ano, yearly = Ano, daily = Mês/Ano da data da cotação */
-  period: "monthly" | "yearly" | "daily";
+  /**
+   * monthly = Mês/Ano, yearly = Ano, daily = Mês/Ano da data da cotação,
+   * step = série diária que só muda por decisão (ex.: Selic): o valor anterior
+   * é o último patamar diferente, e não o dia anterior.
+   */
+  period: "monthly" | "yearly" | "daily" | "step";
   /** divisor aplicado ao valor bruto (ex.: US$ milhões -> US$ bilhões) */
   divide?: number;
   decimals: number;
@@ -49,7 +53,7 @@ const SPECS: SeriesSpec[] = [
     slug: "selic",
     series: 432,
     unit: "% a.a.",
-    period: "daily",
+    period: "step",
     decimals: 2,
     source_name: "Banco Central do Brasil (Copom)",
     source_url: "https://www.bcb.gov.br/controleinflacao/taxaselic",
@@ -131,7 +135,17 @@ function formatValue(raw: string, spec: SeriesSpec): string {
 }
 
 async function fetchSeries(spec: SeriesSpec): Promise<LiveIndicator | null> {
-  const url = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${spec.series}/dados/ultimos/2?formato=json`;
+  // Séries "step" (Selic) precisam de histórico para achar o patamar anterior:
+  // a API só aceita "ultimos/N" pequeno, então usamos intervalo de datas (2 anos).
+  const base = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${spec.series}/dados`;
+  let url = `${base}/ultimos/2?formato=json`;
+  if (spec.period === "step") {
+    const today = new Date();
+    const fmt = (d: Date) =>
+      `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+    const start = new Date(today.getFullYear() - 2, today.getMonth(), today.getDate());
+    url = `${base}?formato=json&dataInicial=${fmt(start)}&dataFinal=${fmt(today)}`;
+  }
   try {
     const response = await fetch(url, { headers: { Accept: "application/json" } });
     if (!response.ok) return null;
@@ -139,8 +153,20 @@ async function fetchSeries(spec: SeriesSpec): Promise<LiveIndicator | null> {
     if (!Array.isArray(points) || points.length === 0) return null;
 
     const current = points[points.length - 1];
-    const previous = points.length > 1 ? points[points.length - 2] : undefined;
+    let previous = points.length > 1 ? points[points.length - 2] : undefined;
     if (!current?.valor || !current?.data) return null;
+
+    if (spec.period === "step") {
+      // último dia com patamar diferente do atual
+      previous = undefined;
+      for (let i = points.length - 2; i >= 0; i--) {
+        const point = points[i];
+        if (point && Number(point.valor) !== Number(current.valor)) {
+          previous = point;
+          break;
+        }
+      }
+    }
 
     const currentNumber = Number(current.valor);
     const previousNumber = previous ? Number(previous.valor) : Number.NaN;
@@ -169,9 +195,54 @@ async function fetchSeries(spec: SeriesSpec): Promise<LiveIndicator | null> {
   }
 }
 
+/** Risco-país (EMBI+ Brasil) direto do Ipeadata: última e penúltima cotação publicadas. */
+async function fetchCountryRisk(): Promise<LiveIndicator | null> {
+  try {
+    const response = await fetch(
+      "http://www.ipeadata.gov.br/api/odata4/ValoresSerie(SERCODIGO='JPM366_EMBI366')",
+      { headers: { Accept: "application/json" } },
+    );
+    if (!response.ok) return null;
+    const json = (await response.json()) as {
+      value?: Array<{ VALDATA?: string; VALVALOR?: number | null }>;
+    };
+    const points = (json.value ?? []).filter(
+      (p) => typeof p.VALVALOR === "number" && Number.isFinite(p.VALVALOR) && p.VALDATA,
+    );
+    if (points.length === 0) return null;
+    const current = points[points.length - 1]!;
+    const previous = points[points.length - 2];
+    const label = (iso?: string) => {
+      if (!iso) return "";
+      const [year, month, day] = iso.slice(0, 10).split("-");
+      return `${day}/${month}/${year}`;
+    };
+    const trend = previous
+      ? current.VALVALOR! > previous.VALVALOR!
+        ? "alta"
+        : current.VALVALOR! < previous.VALVALOR!
+          ? "baixa"
+          : "estável"
+      : "";
+    return {
+      slug: "risco-pais",
+      value: String(Math.round(current.VALVALOR!)),
+      unit: "pontos",
+      reference_period: label(current.VALDATA),
+      previous_value: previous ? String(Math.round(previous.VALVALOR!)) : "",
+      previous_period: previous ? label(previous.VALDATA) : "",
+      source_name: "Ipeadata / J.P. Morgan (EMBI+ Brasil)",
+      source_url: "http://www.ipeadata.gov.br/",
+      trend,
+    };
+  } catch {
+    return null;
+  }
+}
+
 /** Retorna as leituras oficiais mais recentes disponíveis na internet, por slug. */
 export async function fetchLiveIndicators(): Promise<Map<string, LiveIndicator>> {
-  const results = await Promise.all(SPECS.map((spec) => fetchSeries(spec)));
+  const results = await Promise.all([...SPECS.map((spec) => fetchSeries(spec)), fetchCountryRisk()]);
   const map = new Map<string, LiveIndicator>();
   for (const item of results) {
     if (item) map.set(item.slug, item);
