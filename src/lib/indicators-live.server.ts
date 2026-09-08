@@ -53,7 +53,7 @@ const SPECS: SeriesSpec[] = [
     slug: "selic",
     series: 432,
     unit: "% a.a.",
-    period: "daily",
+    period: "step",
     decimals: 2,
     source_name: "Banco Central do Brasil (Copom)",
     source_url: "https://www.bcb.gov.br/controleinflacao/taxaselic",
