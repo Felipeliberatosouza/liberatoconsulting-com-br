@@ -3,5 +3,5 @@
 - [x] Corrigir importação de PHONE_ERROR em users.functions.ts
 - [x] Verificar erros remanescentes da máscara internacional
 - [x] Executar typecheck e build completos
-- [ ] Testar acesso ao painel e telefones em desktop/mobile
-- [ ] Publicar para restabelecer a área administrativa
+- [x] Testar acesso ao painel e telefones em desktop/mobile
+- [x] Publicar para restabelecer a área administrativa
