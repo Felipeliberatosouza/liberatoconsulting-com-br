@@ -49,7 +49,7 @@ export async function autoCreateCampaign(since: string | null): Promise<AutoResu
   const { askJson } = await import("./ai.server");
 
   type Out = { subject: string; preheader: string; body: string };
-  let out: Out;
+  let out: Out | null = null;
   try {
     out = await askJson<Out>(
       "Você é editor sênior de uma consultoria de gestão brasileira (Liberato Consulting), " +
@@ -76,17 +76,19 @@ export async function autoCreateCampaign(since: string | null): Promise<AutoResu
         },
       }),
     );
-  } catch (err) {
-    const status = (err as { status?: number } | null)?.status;
-    const message = err instanceof Error ? err.message : String(err);
-    const blocked = status === 402 || status === 403 || /402|403/.test(message);
-    return { ok: false as const, error: message, blocked };
+  } catch {
+    // Sem IA disponível (créditos/limite), a edição é montada com os próprios
+    // conteúdos publicados — o envio nunca fica em silêncio por causa disso.
+    out = null;
   }
 
-  const subject = (out.subject ?? "").trim() || `Newsletter Liberato Consulting`;
-  const body =
-    (out.body ?? "").trim() ||
-    articles.map((a) => `${a.title}\n${a.summary}\n${origin}/content/${a.slug}`).join("\n\n");
+  const fallbackBody = [
+    "Confira os conteúdos publicados recentemente pela Liberato Consulting:",
+    ...articles.map((a) => `${a.title}\n${a.summary}\n${origin}/content/${a.slug}`),
+  ].join("\n\n");
+
+  const subject = (out?.subject ?? "").trim() || `Newsletter Liberato Consulting`;
+  const body = (out?.body ?? "").trim() || fallbackBody;
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: created, error } = await supabaseAdmin
