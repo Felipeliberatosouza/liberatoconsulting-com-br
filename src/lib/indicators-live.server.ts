@@ -135,7 +135,9 @@ function formatValue(raw: string, spec: SeriesSpec): string {
 }
 
 async function fetchSeries(spec: SeriesSpec): Promise<LiveIndicator | null> {
-  const url = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${spec.series}/dados/ultimos/2?formato=json`;
+  // Séries "step" (Selic) precisam de histórico para achar o patamar anterior.
+  const count = spec.period === "step" ? 1500 : 2;
+  const url = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${spec.series}/dados/ultimos/${count}?formato=json`;
   try {
     const response = await fetch(url, { headers: { Accept: "application/json" } });
     if (!response.ok) return null;
@@ -143,8 +145,20 @@ async function fetchSeries(spec: SeriesSpec): Promise<LiveIndicator | null> {
     if (!Array.isArray(points) || points.length === 0) return null;
 
     const current = points[points.length - 1];
-    const previous = points.length > 1 ? points[points.length - 2] : undefined;
+    let previous = points.length > 1 ? points[points.length - 2] : undefined;
     if (!current?.valor || !current?.data) return null;
+
+    if (spec.period === "step") {
+      // último dia com patamar diferente do atual
+      previous = undefined;
+      for (let i = points.length - 2; i >= 0; i--) {
+        const point = points[i];
+        if (point && Number(point.valor) !== Number(current.valor)) {
+          previous = point;
+          break;
+        }
+      }
+    }
 
     const currentNumber = Number(current.valor);
     const previousNumber = previous ? Number(previous.valor) : Number.NaN;
