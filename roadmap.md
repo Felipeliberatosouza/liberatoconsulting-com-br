@@ -1,7 +1,7 @@
 
 ## Correção urgente — painel administrativo
-- [ ] Corrigir importação de PHONE_ERROR em users.functions.ts
-- [ ] Verificar erros remanescentes da máscara internacional
-- [ ] Executar typecheck e build completos
+- [x] Corrigir importação de PHONE_ERROR em users.functions.ts
+- [x] Verificar erros remanescentes da máscara internacional
+- [x] Executar typecheck e build completos
 - [ ] Testar acesso ao painel e telefones em desktop/mobile
 - [ ] Publicar para restabelecer a área administrativa
