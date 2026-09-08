@@ -135,9 +135,17 @@ function formatValue(raw: string, spec: SeriesSpec): string {
 }
 
 async function fetchSeries(spec: SeriesSpec): Promise<LiveIndicator | null> {
-  // Séries "step" (Selic) precisam de histórico para achar o patamar anterior.
-  const count = spec.period === "step" ? 1500 : 2;
-  const url = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${spec.series}/dados/ultimos/${count}?formato=json`;
+  // Séries "step" (Selic) precisam de histórico para achar o patamar anterior:
+  // a API só aceita "ultimos/N" pequeno, então usamos intervalo de datas (2 anos).
+  const base = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${spec.series}/dados`;
+  let url = `${base}/ultimos/2?formato=json`;
+  if (spec.period === "step") {
+    const today = new Date();
+    const fmt = (d: Date) =>
+      `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+    const start = new Date(today.getFullYear() - 2, today.getMonth(), today.getDate());
+    url = `${base}?formato=json&dataInicial=${fmt(start)}&dataFinal=${fmt(today)}`;
+  }
   try {
     const response = await fetch(url, { headers: { Accept: "application/json" } });
     if (!response.ok) return null;
