@@ -1,6 +1,8 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 import { askJson } from "./ai.server";
+import { fetchLiveIndicators } from "./indicators-live.server";
+
 
 type PendingIndicator = {
   id: string;
