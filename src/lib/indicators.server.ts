@@ -323,8 +323,10 @@ export async function refreshIndicatorsFromSources() {
     if (aiPrev && aiPrevPeriod && aiPrevPeriod !== newPeriod && aiPrevRank < newRank) {
       if (
         !previous.previous_value?.trim() ||
+        periodRank(previous.previous_period ?? "") >= newRank ||
         aiPrevRank >= periodRank(previous.previous_period ?? "")
       ) {
+
 
         previous = { previous_value: aiPrev, previous_period: aiPrevPeriod };
       }
