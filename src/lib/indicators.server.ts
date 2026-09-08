@@ -171,6 +171,33 @@ type RefreshOut = {
   }>;
 };
 
+const MONTHS = [
+  "janeiro",
+  "fevereiro",
+  "março",
+  "abril",
+  "maio",
+  "junho",
+  "julho",
+  "agosto",
+  "setembro",
+  "outubro",
+  "novembro",
+  "dezembro",
+];
+
+/** Ordena períodos ("2025", "Novembro/2024", "3T2024") para comparar recência. */
+function periodRank(period: string): number {
+  const text = (period ?? "").toLowerCase();
+  const year = Number(text.match(/(19|20)\d{2}/)?.[0] ?? 0);
+  if (!year) return 0;
+  const monthIndex = MONTHS.findIndex((m) => text.includes(m.slice(0, 4)));
+  if (monthIndex >= 0) return year * 100 + (monthIndex + 1);
+  const quarter = Number(text.match(/([1-4])\s*t/)?.[1] ?? 0);
+  if (quarter) return year * 100 + quarter * 3;
+  return year * 100 + 99;
+}
+
 /**
  * Busca nas fontes oficiais a leitura mais recente de cada indicador.
  * Regra: o valor ATUAL é sempre a última leitura publicada e o valor ANTERIOR
