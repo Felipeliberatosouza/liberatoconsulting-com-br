@@ -33,6 +33,9 @@ export async function collectEntries(): Promise<SitemapEntry[]> {
     { path: "/terms", changefreq: "yearly", priority: "0.3" },
   ];
 
+  for (const family of pt.serviceFamilies.items) {
+    entries.push({ path: `/services/${family.id}`, changefreq: "monthly", priority: "0.85" });
+  }
   for (const page of pt.serviceDetail.pages) {
     entries.push({ path: `/services/${page.id}`, changefreq: "monthly", priority: "0.8" });
   }
