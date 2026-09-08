@@ -243,6 +243,11 @@ export async function refreshIndicatorsFromSources() {
     const newPeriod = (item.reference_period ?? "").trim();
     if (!newValue) continue;
 
+    // Nunca substituir um dado publicado por outro mais antigo.
+    const newRank = periodRank(newPeriod);
+    const currentRank = periodRank(target.reference_period ?? "");
+    if (newRank > 0 && currentRank > 0 && newRank < currentRank) continue;
+
     const changed =
       (!!target.value && newValue !== target.value.trim()) ||
       (!!target.reference_period && newPeriod !== target.reference_period.trim());
@@ -252,14 +257,17 @@ export async function refreshIndicatorsFromSources() {
       ? { previous_value: target.value, previous_period: target.reference_period }
       : { previous_value: target.previous_value, previous_period: target.previous_period };
 
-    // Se a fonte informou explicitamente a penúltima leitura e ela é mais recente
-    // do que a que temos guardada, usamos a da fonte.
+    // Se a fonte informou a penúltima leitura e ela é mais recente do que a
+    // que temos guardada (e anterior à atual), usamos a da fonte.
     const aiPrev = (item.previous_value ?? "").trim();
     const aiPrevPeriod = (item.previous_period ?? "").trim();
-    if (aiPrev && aiPrevPeriod && aiPrevPeriod !== newPeriod) {
-      const currentPrevYear = Number((previous.previous_period ?? "").match(/\d{4}/)?.[0] ?? 0);
-      const aiPrevYear = Number(aiPrevPeriod.match(/\d{4}/)?.[0] ?? 0);
-      if (!previous.previous_value?.trim() || aiPrevYear >= currentPrevYear) {
+    const aiPrevRank = periodRank(aiPrevPeriod);
+    if (aiPrev && aiPrevPeriod && aiPrevPeriod !== newPeriod && aiPrevRank < newRank) {
+      if (
+        !previous.previous_value?.trim() ||
+        aiPrevRank >= periodRank(previous.previous_period ?? "")
+      ) {
+
         previous = { previous_value: aiPrev, previous_period: aiPrevPeriod };
       }
     }
