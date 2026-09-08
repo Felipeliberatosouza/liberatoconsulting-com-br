@@ -151,3 +151,145 @@ export async function fillMissingIndicatorSeries() {
 
 /** Compatibilidade com chamadas anteriores. */
 export const fillMissingPreviousIndicators = fillMissingIndicatorSeries;
+
+type RefreshOut = {
+  indicators: Array<{
+    slug: string;
+    value: string;
+    unit?: string;
+    reference_period: string;
+    previous_value?: string;
+    previous_period?: string;
+    forecast_value?: string;
+    forecast_period?: string;
+    forecast_source_name?: string;
+    forecast_source_url?: string;
+    trend?: string;
+    note?: string;
+    source_name: string;
+    source_url: string;
+  }>;
+};
+
+/**
+ * Busca nas fontes oficiais a leitura mais recente de cada indicador.
+ * Regra: o valor ATUAL é sempre a última leitura publicada e o valor ANTERIOR
+ * é a penúltima — ou seja, ao entrar um dado novo, o dado que estava como atual
+ * passa automaticamente para a coluna "anterior".
+ */
+export async function refreshIndicatorsFromSources() {
+  const { data: rows } = await supabaseAdmin
+    .from("economic_indicators")
+    .select("id, slug, label, unit, value, reference_period, previous_value, previous_period");
+  const list = (rows ?? []) as Array<{
+    id: string;
+    slug: string;
+    label: string;
+    unit: string;
+    value: string;
+    reference_period: string;
+    previous_value: string;
+    previous_period: string;
+  }>;
+  if (list.length === 0) return { ok: false as const, error: "Nenhum indicador cadastrado." };
+
+  const out = await askJson<RefreshOut>(
+    "Você é um economista sênior brasileiro. Informe a leitura MAIS RECENTE já publicada de " +
+      "cada indicador do Brasil, com a fonte oficial (IBGE, Banco Central do Brasil, " +
+      "MDIC/Comex Stat, Ipeadata) e o período de referência exato. " +
+      "Regra obrigatória: value/reference_period = última observação publicada; " +
+      "previous_value/previous_period = observação imediatamente anterior da MESMA série e " +
+      "MESMA fonte (nunca uma leitura antiga de anos atrás quando existir uma mais recente). " +
+      "Informe também a projeção oficial para o próximo período (Focus, IBGE, Ipea) com nome e " +
+      "link. Use vírgula como separador decimal. Não invente fontes.",
+    JSON.stringify({
+      formato: {
+        indicators: [
+          {
+            slug: "string",
+            value: "string",
+            unit: "string",
+            reference_period: "string",
+            previous_value: "string (observação imediatamente anterior)",
+            previous_period: "string",
+            forecast_value: "string",
+            forecast_period: "string",
+            forecast_source_name: "string",
+            forecast_source_url: "string",
+            trend: "alta|baixa|estável",
+            note: "1 frase de contexto",
+            source_name: "string",
+            source_url: "string",
+          },
+        ],
+      },
+      indicadores: list.map((i) => ({
+        slug: i.slug,
+        label: i.label,
+        unidade: i.unit,
+        valor_atual_registrado: i.value,
+        periodo_atual_registrado: i.reference_period,
+      })),
+    }),
+  );
+
+  const now = new Date().toISOString();
+  let updated = 0;
+  for (const item of out.indicators ?? []) {
+    const target = list.find((i) => i.slug === item.slug);
+    if (!target) continue;
+
+    const newValue = (item.value ?? "").trim();
+    const newPeriod = (item.reference_period ?? "").trim();
+    if (!newValue) continue;
+
+    const changed =
+      (!!target.value && newValue !== target.value.trim()) ||
+      (!!target.reference_period && newPeriod !== target.reference_period.trim());
+
+    // Rotação: o dado que estava como atual vira o "anterior".
+    let previous = changed
+      ? { previous_value: target.value, previous_period: target.reference_period }
+      : { previous_value: target.previous_value, previous_period: target.previous_period };
+
+    // Se a fonte informou explicitamente a penúltima leitura e ela é mais recente
+    // do que a que temos guardada, usamos a da fonte.
+    const aiPrev = (item.previous_value ?? "").trim();
+    const aiPrevPeriod = (item.previous_period ?? "").trim();
+    if (aiPrev && aiPrevPeriod && aiPrevPeriod !== newPeriod) {
+      const currentPrevYear = Number((previous.previous_period ?? "").match(/\d{4}/)?.[0] ?? 0);
+      const aiPrevYear = Number(aiPrevPeriod.match(/\d{4}/)?.[0] ?? 0);
+      if (!previous.previous_value?.trim() || aiPrevYear >= currentPrevYear) {
+        previous = { previous_value: aiPrev, previous_period: aiPrevPeriod };
+      }
+    }
+
+    const forecast = item.forecast_value?.trim()
+      ? {
+          forecast_value: item.forecast_value,
+          forecast_period: item.forecast_period ?? "",
+          forecast_source_name: item.forecast_source_name ?? "",
+          forecast_source_url: item.forecast_source_url ?? "",
+        }
+      : {};
+
+    const { error } = await supabaseAdmin
+      .from("economic_indicators")
+      .update({
+        ...previous,
+        ...forecast,
+        value: newValue,
+        unit: item.unit ?? target.unit,
+        reference_period: newPeriod,
+        trend: item.trend ?? "",
+        note: item.note ?? "",
+        source_name: item.source_name ?? "",
+        source_url: item.source_url ?? "",
+        updated_by_ai: true,
+        last_checked_at: now,
+      })
+      .eq("id", target.id);
+    if (!error) updated += 1;
+  }
+  return { ok: true as const, updated };
+}
