@@ -810,6 +810,7 @@ export const pt = {
   whatsapp: {
     label: "Fale pelo WhatsApp",
     title: "Abrir conversa no WhatsApp em nova aba",
+    message: "Olá! Gostaria de saber mais sobre os serviços da Liberato Consulting.",
   },
   careers: {
     eyebrow: "Trabalhe Conosco",

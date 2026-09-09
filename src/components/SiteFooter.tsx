@@ -9,6 +9,7 @@ export function SiteFooter() {
   const { t, logoUrl, lang, whatsapp } = useLanguage();
   const lg = (legal[lang] ?? legal.pt).footer;
   const whatsappNumber = normalizeWhatsApp(whatsapp);
+  const whatsappMessage = t.whatsapp?.message ?? "";
 
   return (
     <footer className="bg-ink text-ink-foreground">
@@ -53,12 +54,12 @@ export function SiteFooter() {
             </a>
             {whatsappNumber ? (
               <a
-                href={whatsappHref(whatsappNumber)}
+                href={whatsappHref(whatsappNumber, whatsappMessage)}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(event) => {
                   event.preventDefault();
-                  openWhatsApp(whatsappHref(whatsappNumber));
+                  openWhatsApp(whatsappHref(whatsappNumber, whatsappMessage));
                 }}
                 aria-label="WhatsApp"
                 title="WhatsApp"

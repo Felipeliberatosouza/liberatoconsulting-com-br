@@ -1045,7 +1045,8 @@ export const dict: Dict = {
   },
   "whatsapp": {
     "label": "通过 WhatsApp 交流",
-    "title": "在预览标签页中打开 WhatsApp 对话"
+    "title": "在预览标签页中打开 WhatsApp 对话",
+    "message": "您好！我想了解更多关于 Liberato Consulting 的服务信息。"
   },
   "careers": {
     "eyebrow": "加入我们",

@@ -1045,7 +1045,8 @@ export const dict: Dict = {
   },
   "whatsapp": {
     "label": "Speak via WhatsApp",
-    "title": "Open WhatsApp chat in new tab"
+    "title": "Open WhatsApp chat in new tab",
+    "message": "Hello! I would like to know more about Liberato Consulting services."
   },
   "careers": {
     "eyebrow": "Careers",

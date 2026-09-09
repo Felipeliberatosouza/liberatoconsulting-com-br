@@ -10,16 +10,17 @@ export function WhatsAppFloat() {
 
   const label = t.whatsapp?.label ?? "WhatsApp";
   const title = t.whatsapp?.title ?? "Abrir conversa no WhatsApp";
+  const message = t.whatsapp?.message ?? "";
 
   return (
     <a
-      href={whatsappHref(number)}
+      href={whatsappHref(number, message)}
       target="_blank"
       rel="noopener noreferrer"
       onClick={(event) => {
         trackEvent("cta_click", { label: "whatsapp_float", category: "engagement" });
         event.preventDefault();
-        openWhatsApp(whatsappHref(number));
+        openWhatsApp(whatsappHref(number, message));
       }}
       aria-label={label}
       title={title}
