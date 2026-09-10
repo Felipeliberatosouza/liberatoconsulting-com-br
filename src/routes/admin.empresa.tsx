@@ -17,14 +17,25 @@ import { getSegments, saveSegments } from "@/lib/admin.functions";
 import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
 import {
+  formatCep,
   formatCnpj,
+  formatCpf,
   formatMunicipalRegistration,
   formatPhone,
+  formatSharePercent,
   formatStateRegistration,
+  formatWebsite,
+  isValidCep,
+  isValidCnpj,
+  isValidCpf,
+  isValidEmail,
   isValidPhone,
+  isValidSharePercent,
+  isValidWebsite,
   PHONE_ERROR,
   PHONE_PLACEHOLDER,
 } from "@/lib/validation";
+import { lookupCep } from "@/lib/cep";
 
 export const Route = createFileRoute("/admin/empresa")({
   head: () => ({
