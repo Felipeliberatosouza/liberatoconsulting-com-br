@@ -83,10 +83,13 @@ export const getPanelSession = createServerFn({ method: "GET" })
           .eq("version", tpl.version)
           .maybeSingle();
         if (!signed) {
+          const { buildContractVars } = await import("./contract-fill.server");
+          const { fillContract } = await import("./contract-fill");
+          const vars = await buildContractVars({ userId: context.userId });
           needsContract = {
             audience: tpl.audience,
             title: tpl.title,
-            body: tpl.body,
+            body: fillContract(tpl.body, vars),
             version: tpl.version,
           };
         }

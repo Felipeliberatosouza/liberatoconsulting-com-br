@@ -143,6 +143,10 @@ export const signContract = createServerFn({ method: "POST" })
       .eq("audience", data.audience)
       .maybeSingle();
     if (!tpl) return { ok: false as const, error: "Contrato não encontrado." };
+    const { buildContractVars } = await import("./contract-fill.server");
+    const { fillContract } = await import("./contract-fill");
+    const vars = await buildContractVars({ userId: context.userId });
+    const signedBody = fillContract(tpl.body, vars);
     const { error } = await context.supabase.from("contract_signatures").insert({
       user_id: context.userId,
       template_id: tpl.id,
