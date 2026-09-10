@@ -114,6 +114,36 @@ export function isValidCep(value: string) {
   return onlyDigits(value).length === 8;
 }
 
+/* ------------------------------- cota (%) ------------------------------- */
+
+/** Cota societária: apenas números e vírgula/ponto decimal, sempre com "%". */
+export function formatSharePercent(value: string) {
+  const raw = (value ?? "").replace(/[^\d.,]/g, "").replace(/\./g, ",");
+  if (!raw) return "";
+  const [int = "", dec] = raw.split(",");
+  const intPart = int.slice(0, 3);
+  const body = dec === undefined ? intPart : `${intPart},${dec.slice(0, 2)}`;
+  return `${body}%`;
+}
+
+export function isValidSharePercent(value: string) {
+  const n = Number((value ?? "").replace("%", "").replace(",", "."));
+  return Number.isFinite(n) && n > 0 && n <= 100;
+}
+
+/* --------------------------------- site --------------------------------- */
+
+/** Normaliza o site digitado: remove protocolo/barras e valida o domínio. */
+export function formatWebsite(value: string) {
+  return (value ?? "").trim().replace(/^https?:\/\//i, "").replace(/\/+$/, "");
+}
+
+export function isValidWebsite(value: string) {
+  const v = formatWebsite(value);
+  if (!v) return true; // opcional
+  return /^[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/i.test(v);
+}
+
 /* -------------------------------- e-mail -------------------------------- */
 
 export function isValidEmail(value: string) {
