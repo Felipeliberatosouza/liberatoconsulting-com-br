@@ -64,24 +64,79 @@ const MASKS: Record<string, ((v: string) => string) | undefined> = {
   cnpj: formatCnpj,
   state_registration: formatStateRegistration,
   municipal_registration: formatMunicipalRegistration,
+  address_zip: formatCep,
 };
 const MASK_LENGTHS: Record<string, number | undefined> = {
   cnpj: 18,
   state_registration: 15,
   municipal_registration: 10,
+  address_zip: 9,
 };
 const MASK_PLACEHOLDERS: Record<string, string | undefined> = {
   cnpj: "00.000.000/0000-00",
   state_registration: "000.000.000.000",
   municipal_registration: "0.000.000-0",
+  address_zip: "00000-000",
+  email: "contato@empresa.com.br",
+  website: "empresa.com.br",
 };
+
+/** Campos exigidos legalmente no cadastro da consultoria. */
+const REQUIRED: Array<keyof CompanyProfile> = [
+  "legal_name",
+  "cnpj",
+  "address_zip",
+  "address_street",
+  "address_number",
+  "address_district",
+  "address_city",
+  "address_state",
+  "address_country",
+  "email",
+  "phone",
+];
 
 function CompanyPage() {
   const q = useQuery({ queryKey: ["company"], queryFn: () => getCompany(), retry: false });
   const [form, setForm] = useState<CompanyProfile | null>(null);
   const [busy, setBusy] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
+  const [cepBusy, setCepBusy] = useState(false);
+  const [formatErrors, setFormatErrors] = useState<Record<string, string>>({});
+  const [partnerErrors, setPartnerErrors] = useState<Record<string, string>>({});
   const { validate, hasError, inputClass, a11yProps } = useFieldErrors();
+
+  const clearFormatError = (k: string) =>
+    setFormatErrors((prev) => {
+      if (!prev[k]) return prev;
+      const next = { ...prev };
+      delete next[k];
+      return next;
+    });
+
+  /** Preenche rua, bairro, cidade e estado a partir do CEP (edição continua livre). */
+  const applyCep = async (cep: string) => {
+    if (!isValidCep(cep)) return;
+    setCepBusy(true);
+    const address = await lookupCep(cep);
+    setCepBusy(false);
+    if (!address) {
+      setFormatErrors((p) => ({ ...p, address_zip: "CEP não encontrado." }));
+      return;
+    }
+    setForm((f) =>
+      f
+        ? {
+            ...f,
+            address_street: address.street || f.address_street,
+            address_district: address.district || f.address_district,
+            address_city: address.city || f.address_city,
+            address_state: address.state || f.address_state,
+            address_country: f.address_country || "Brasil",
+          }
+        : f,
+    );
+  };
 
   /**
    * Campo do formulário com destaque vermelho quando obrigatório e vazio.
@@ -89,38 +144,49 @@ function CompanyPage() {
    * remontar fazia o campo perder o foco após o primeiro caractere.
    */
   const F = (label: string, k: keyof CompanyProfile, type?: string) => {
+    const key = k as string;
     const value = (form?.[k] ?? "") as string;
-    const invalid = k === "phone" ? phoneError || hasError(k, value) : hasError(k, value);
-    const fieldA11y = k === "phone" && invalid
-      ? { "aria-invalid": true as const, "aria-describedby": "phone-error" }
-      : a11yProps(k, value);
+    const formatError = formatErrors[key];
+    const invalid =
+      Boolean(formatError) || (k === "phone" ? phoneError || hasError(k, value) : hasError(k, value));
+    const required = REQUIRED.includes(k);
+    const fieldA11y = invalid
+      ? { "aria-invalid": true as const, "aria-describedby": `${key}-error` }
+      : a11yProps(key, value);
+    const errorMessage = formatError ?? (k === "phone" && phoneError ? PHONE_ERROR : undefined);
     return (
       <L
-        key={k as string}
+        key={key}
         label={label}
+        required={required}
         invalid={invalid}
-        errorId={`${k}-error`}
-        {...(k === "phone"
-          ? { errorMessage: PHONE_ERROR }
-          : {})}
+        errorId={`${key}-error`}
+        {...(errorMessage ? { errorMessage } : {})}
       >
         <input
           type={type ?? "text"}
           value={value}
           onChange={(e) => {
-            const mask = MASKS[k as string];
+            const mask = MASKS[key];
             const nextValue = mask ? mask(e.target.value) : e.target.value;
             set(k, nextValue);
+            clearFormatError(key);
             if (k === "phone" && phoneError) setPhoneError(!isValidPhone(nextValue));
           }}
           onFocus={() => {
             if (k === "phone" && !value) set(k, "+55");
           }}
-          inputMode={k === "phone" ? "tel" : MASKS[k as string] ? "numeric" : undefined}
-          autoComplete={k === "phone" ? "tel" : undefined}
-          maxLength={k === "phone" ? 25 : MASK_LENGTHS[k as string]}
-          placeholder={k === "phone" ? PHONE_PLACEHOLDER : MASK_PLACEHOLDERS[k as string]}
-          className={invalid ? `${input} border-destructive ring-1 ring-destructive` : inputClass(input, k, value)}
+          onBlur={(e) => {
+            if (k === "address_zip") void applyCep(e.target.value);
+            if (k === "website" && e.target.value) set(k, formatWebsite(e.target.value));
+          }}
+          inputMode={
+            k === "phone" ? "tel" : k === "email" ? "email" : MASKS[key] ? "numeric" : undefined
+          }
+          autoComplete={k === "phone" ? "tel" : k === "address_zip" ? "postal-code" : undefined}
+          maxLength={k === "phone" ? 25 : MASK_LENGTHS[key]}
+          placeholder={k === "phone" ? PHONE_PLACEHOLDER : MASK_PLACEHOLDERS[key]}
+          className={invalid ? `${input} border-destructive ring-1 ring-destructive` : inputClass(input, key, value)}
           {...fieldA11y}
         />
       </L>
