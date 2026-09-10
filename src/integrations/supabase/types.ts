@@ -415,6 +415,7 @@ export type Database = {
           published: boolean
           segments: Json
           specialties: Json
+          translations: Json
           updated_at: string
           website_url: string
           works: string
@@ -435,6 +436,7 @@ export type Database = {
           published?: boolean
           segments?: Json
           specialties?: Json
+          translations?: Json
           updated_at?: string
           website_url?: string
           works?: string
@@ -455,6 +457,7 @@ export type Database = {
           published?: boolean
           segments?: Json
           specialties?: Json
+          translations?: Json
           updated_at?: string
           website_url?: string
           works?: string
