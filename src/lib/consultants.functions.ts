@@ -27,13 +27,18 @@ export type ConsultantRecord = Omit<PublicConsultant, "sort_order"> & {
   published: boolean;
 };
 
-/** Consultores publicados (sem expor e-mail de contato). */
-export const listPublicConsultants = createServerFn({ method: "GET" }).handler(
-  async (): Promise<PublicConsultant[]> => {
+/** Consultores publicados (sem expor e-mail de contato), no idioma pedido. */
+export const listPublicConsultants = createServerFn({ method: "GET" })
+  .inputValidator((d: unknown) =>
+    z
+      .object({ lang: z.enum(["pt", "en", "es", "zh"]).default("pt") })
+      .parse(d ?? {}),
+  )
+  .handler(async ({ data }): Promise<PublicConsultant[]> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin.rpc("list_public_consultants" as never);
+    const { data: rows, error } = await supabaseAdmin.rpc("list_public_consultants" as never);
     if (error) return [];
-    return ((data ?? []) as PublicConsultant[]).map((c) => ({
+    const list = ((rows ?? []) as PublicConsultant[]).map((c) => ({
       ...c,
       specialties: Array.isArray(c.specialties) ? c.specialties : [],
       segments: Array.isArray(c.segments) ? c.segments : [],
@@ -41,8 +46,15 @@ export const listPublicConsultants = createServerFn({ method: "GET" }).handler(
       lattes_url: c.lattes_url ?? "",
       website_url: c.website_url ?? "",
     }));
-  },
-);
+    if (data.lang === "pt") return list;
+    try {
+      const { localizeConsultants } = await import("./consultants-i18n.server");
+      return await localizeConsultants(list, data.lang);
+    } catch (err) {
+      console.error("[consultants] i18n failed", err);
+      return list;
+    }
+  });
 
 /** Lista completa para o painel (somente administradores). */
 export const listConsultants = createServerFn({ method: "GET" })
