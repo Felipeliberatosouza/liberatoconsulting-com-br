@@ -249,17 +249,38 @@ function CompanyPage() {
             }, 0);
             return;
           }
-          if (!isValidPhone(form.phone)) {
-            setPhoneError(true);
-            toast.error(PHONE_ERROR);
+          const fmt: Record<string, string> = {};
+          if (!isValidCnpj(form.cnpj)) fmt["cnpj"] = "CNPJ deve ter 14 dígitos.";
+          if (!isValidCep(form.address_zip)) fmt["address_zip"] = "CEP deve ter 8 dígitos.";
+          if (!isValidEmail(form.email)) fmt["email"] = "Informe um e-mail válido.";
+          if (!isValidWebsite(form.website)) fmt["website"] = "Informe um site válido (ex.: empresa.com.br).";
+
+          const pErrors: Record<string, string> = {};
+          form.partners.forEach((p, i) => {
+            if (!p.name.trim()) pErrors[`${i}:name`] = "Informe o nome do sócio.";
+            if (!isValidCpf(p.cpf)) pErrors[`${i}:cpf`] = "CPF inválido.";
+            if (!isValidSharePercent(p.share)) pErrors[`${i}:share`] = "Cota entre 0,01% e 100%.";
+          });
+
+          setFormatErrors(fmt);
+          setPartnerErrors(pErrors);
+
+          const phoneInvalid = !isValidPhone(form.phone);
+          setPhoneError(phoneInvalid);
+
+          if (phoneInvalid || Object.keys(fmt).length > 0 || Object.keys(pErrors).length > 0) {
+            toast.error(
+              phoneInvalid && Object.keys(fmt).length === 0 && Object.keys(pErrors).length === 0
+                ? PHONE_ERROR
+                : "Revise os campos destacados em vermelho.",
+            );
             setTimeout(() => {
-              const phone = formEl.querySelector<HTMLInputElement>('[aria-describedby="phone-error"]');
-              phone?.scrollIntoView({ behavior: "smooth", block: "center" });
-              phone?.focus({ preventScroll: true });
+              const first = formEl.querySelector<HTMLInputElement>('[aria-invalid="true"]');
+              first?.scrollIntoView({ behavior: "smooth", block: "center" });
+              first?.focus({ preventScroll: true });
             }, 0);
             return;
           }
-          setPhoneError(false);
           setBusy(true);
           try {
             const r = await saveCompany({ data: form });
