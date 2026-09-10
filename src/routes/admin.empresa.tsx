@@ -106,6 +106,14 @@ function CompanyPage() {
   const [partnerErrors, setPartnerErrors] = useState<Record<string, string>>({});
   const { validate, hasError, inputClass, a11yProps } = useFieldErrors();
 
+  const clearPartnerError = (k: string) =>
+    setPartnerErrors((prev) => {
+      if (!prev[k]) return prev;
+      const next = { ...prev };
+      delete next[k];
+      return next;
+    });
+
   const clearFormatError = (k: string) =>
     setFormatErrors((prev) => {
       if (!prev[k]) return prev;
