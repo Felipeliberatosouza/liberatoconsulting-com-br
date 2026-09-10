@@ -157,14 +157,14 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
 
 /** Vitrine pública dos consultores da equipe. */
 export function ConsultantsTeam() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const tt = t.team;
   const [openId, setOpenId] = useState<string | null>(null);
   const [contactId, setContactId] = useState<string | null>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["public-consultants"],
-    queryFn: () => listPublicConsultants(),
+    queryKey: ["public-consultants", lang],
+    queryFn: () => listPublicConsultants({ data: { lang } }),
     staleTime: 60_000,
   });
 
