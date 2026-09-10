@@ -68,7 +68,6 @@ function ServicesPage() {
       groups.map((group) => ({
         ...group,
         families: fam.items
-          .filter((f) => f.groups.includes(group.id))
           .map((f) => ({
             ...f,
             products: pages.filter((p) => p.family === f.title && p.groups.includes(group.id)),
