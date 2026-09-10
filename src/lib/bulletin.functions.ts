@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { isValidPhone, PHONE_ERROR } from "./validation";
+import { WHATSAPP_SENDING_ENABLED } from "./bulletin.server";
 
 export type BulletinSubscriberRow = {
   id: string;
@@ -67,7 +68,7 @@ export const subscribeBulletin = createServerFn({ method: "POST" })
       email,
       whatsapp: data.whatsapp,
       via_email: data.viaEmail,
-      via_whatsapp: data.viaWhatsApp,
+      via_whatsapp: WHATSAPP_SENDING_ENABLED && data.viaWhatsApp,
       language: data.language ?? "pt",
       source_path: data.sourcePath ?? "",
       status: "active",

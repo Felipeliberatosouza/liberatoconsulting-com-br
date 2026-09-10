@@ -47,6 +47,9 @@ type Indicator = {
 
 type Article = { slug: string; title: string; summary: string; kind: string };
 
+/** Desativa envios pelo WhatsApp enquanto a integração não é reativada. */
+export const WHATSAPP_SENDING_ENABLED = false;
+
 export type BulletinContent = {
   segment: string;
   dateLabel: string;
@@ -559,7 +562,7 @@ export async function dispatchBulletin(options?: {
         email: options.testEmail ?? "",
         whatsapp: options.testWhatsApp ?? "",
         via_email: Boolean(options.testEmail),
-        via_whatsapp: Boolean(options.testWhatsApp),
+        via_whatsapp: WHATSAPP_SENDING_ENABLED && Boolean(options.testWhatsApp),
         status: "active",
         unsubscribe_token: "00000000-0000-0000-0000-000000000000",
         language: options.testLanguage ?? "pt",
@@ -614,7 +617,7 @@ export async function dispatchBulletin(options?: {
       }
     }
 
-    if (r.via_whatsapp && r.whatsapp) {
+    if (WHATSAPP_SENDING_ENABLED && r.via_whatsapp && r.whatsapp) {
       try {
         await sendWhatsAppMessage({
           to: r.whatsapp,
@@ -685,7 +688,7 @@ export async function sendUnsubscribeConfirmation(sub: {
       /* confirmação é best-effort */
     }
   }
-  if (sub.via_whatsapp && sub.whatsapp) {
+  if (WHATSAPP_SENDING_ENABLED && sub.via_whatsapp && sub.whatsapp) {
     try {
       await sendWhatsAppMessage({ to: sub.whatsapp, caption: message });
     } catch {

@@ -160,18 +160,21 @@ function AdminBulletin() {
                 className={field}
               />
             </label>
-            <label className="mt-3 block text-sm font-medium">
+            <label className="mt-3 block text-sm font-medium opacity-50 cursor-not-allowed">
               WhatsApp de teste
+              <span className="mt-1 block text-xs font-normal text-muted-foreground">
+                Envio pelo WhatsApp temporariamente desativado.
+              </span>
               <input
                 type="tel"
                 inputMode="tel"
                 autoComplete="tel"
                 maxLength={25}
                 value={testWhatsApp}
-                onFocus={() => !testWhatsApp && setTestWhatsApp("+55")}
+                disabled
                 onChange={(e) => setTestWhatsApp(formatPhone(e.target.value))}
                 placeholder={PHONE_PLACEHOLDER}
-                className={`${field}${testWhatsApp && !isValidPhone(testWhatsApp) ? " border-destructive ring-1 ring-destructive" : ""}`}
+                className={`${field}${testWhatsApp && !isValidPhone(testWhatsApp) ? " border-destructive ring-1 ring-destructive" : ""} opacity-50 cursor-not-allowed`}
               />
             </label>
             <div className="mt-4 flex flex-wrap gap-3">
@@ -179,12 +182,8 @@ function AdminBulletin() {
                 type="button"
                 disabled={busy}
                 onClick={async () => {
-                  if (!testEmail && !testWhatsApp) {
-                    toast.error("Informe um e-mail ou WhatsApp de teste.");
-                    return;
-                  }
-                  if (testWhatsApp && !isValidPhone(testWhatsApp)) {
-                    toast.error(PHONE_ERROR);
+                  if (!testEmail) {
+                    toast.error("Informe um e-mail de teste.");
                     return;
                   }
                   setBusy(true);
@@ -192,7 +191,6 @@ function AdminBulletin() {
                     const r = await sendBulletinNow({
                       data: {
                         ...(testEmail ? { testEmail } : {}),
-                        ...(testWhatsApp ? { testWhatsApp } : {}),
                         testSegment: segment,
                       },
                     });
@@ -219,7 +217,7 @@ function AdminBulletin() {
                     const r = await sendBulletinNow({ data: {} });
                     if (r.ok)
                       toast.success(
-                        `Enviado: ${r.sentEmail} e-mails e ${r.sentWhatsApp} mensagens de WhatsApp.`,
+                        `Enviado: ${r.sentEmail} e-mail${r.sentEmail === 1 ? "" : "s"}${r.sentWhatsApp > 0 ? ` e ${r.sentWhatsApp} mensagens de WhatsApp` : ""}.`,
                       );
                     else toast.error(r.error);
                     await refresh();

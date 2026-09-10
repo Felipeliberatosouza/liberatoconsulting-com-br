@@ -182,11 +182,15 @@ export function BulletinSignup() {
                 />
                 <Mail className="size-4 text-accent" /> {tb.channelEmail}
               </label>
-              <label className="inline-flex items-center gap-2 text-sm font-normal">
+              <label
+                className="inline-flex items-center gap-2 text-sm font-normal opacity-50 cursor-not-allowed"
+                title="Envio pelo WhatsApp temporariamente desativado."
+              >
                 <input
                   type="checkbox"
-                  checked={viaWhatsApp}
-                  onChange={(e) => setViaWhatsApp(e.target.checked)}
+                  checked={false}
+                  disabled
+                  onChange={() => {}}
                   className="size-4 accent-[var(--accent)]"
                 />
                 <MessageCircle className="size-4 text-accent" /> {tb.channelWhatsApp}
