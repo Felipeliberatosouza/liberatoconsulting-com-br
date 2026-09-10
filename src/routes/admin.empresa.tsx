@@ -71,17 +71,18 @@ function CompanyPage() {
           type={type ?? "text"}
           value={value}
           onChange={(e) => {
-            const nextValue = k === "phone" ? formatPhone(e.target.value) : e.target.value;
+            const mask = MASKS[k as string];
+            const nextValue = mask ? mask(e.target.value) : e.target.value;
             set(k, nextValue);
             if (k === "phone" && phoneError) setPhoneError(!isValidPhone(nextValue));
           }}
           onFocus={() => {
             if (k === "phone" && !value) set(k, "+55");
           }}
-          inputMode={k === "phone" ? "tel" : undefined}
+          inputMode={k === "phone" ? "tel" : MASKS[k as string] ? "numeric" : undefined}
           autoComplete={k === "phone" ? "tel" : undefined}
-          maxLength={k === "phone" ? 25 : undefined}
-          placeholder={k === "phone" ? PHONE_PLACEHOLDER : undefined}
+          maxLength={k === "phone" ? 25 : MASK_LENGTHS[k as string]}
+          placeholder={k === "phone" ? PHONE_PLACEHOLDER : MASK_PLACEHOLDERS[k as string]}
           className={invalid ? `${input} border-destructive ring-1 ring-destructive` : inputClass(input, k, value)}
           {...fieldA11y}
         />
