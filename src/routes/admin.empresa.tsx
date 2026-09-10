@@ -17,14 +17,25 @@ import { getSegments, saveSegments } from "@/lib/admin.functions";
 import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
 import {
+  formatCep,
   formatCnpj,
+  formatCpf,
   formatMunicipalRegistration,
   formatPhone,
+  formatSharePercent,
   formatStateRegistration,
+  formatWebsite,
+  isValidCep,
+  isValidCnpj,
+  isValidCpf,
+  isValidEmail,
   isValidPhone,
+  isValidSharePercent,
+  isValidWebsite,
   PHONE_ERROR,
   PHONE_PLACEHOLDER,
 } from "@/lib/validation";
+import { lookupCep } from "@/lib/cep";
 
 export const Route = createFileRoute("/admin/empresa")({
   head: () => ({
@@ -53,24 +64,87 @@ const MASKS: Record<string, ((v: string) => string) | undefined> = {
   cnpj: formatCnpj,
   state_registration: formatStateRegistration,
   municipal_registration: formatMunicipalRegistration,
+  address_zip: formatCep,
 };
 const MASK_LENGTHS: Record<string, number | undefined> = {
   cnpj: 18,
   state_registration: 15,
   municipal_registration: 10,
+  address_zip: 9,
 };
 const MASK_PLACEHOLDERS: Record<string, string | undefined> = {
   cnpj: "00.000.000/0000-00",
   state_registration: "000.000.000.000",
   municipal_registration: "0.000.000-0",
+  address_zip: "00000-000",
+  email: "contato@empresa.com.br",
+  website: "empresa.com.br",
 };
+
+/** Campos exigidos legalmente no cadastro da consultoria. */
+const REQUIRED: Array<keyof CompanyProfile> = [
+  "legal_name",
+  "cnpj",
+  "address_zip",
+  "address_street",
+  "address_number",
+  "address_district",
+  "address_city",
+  "address_state",
+  "address_country",
+  "email",
+  "phone",
+];
 
 function CompanyPage() {
   const q = useQuery({ queryKey: ["company"], queryFn: () => getCompany(), retry: false });
   const [form, setForm] = useState<CompanyProfile | null>(null);
   const [busy, setBusy] = useState(false);
   const [phoneError, setPhoneError] = useState(false);
+  const [cepBusy, setCepBusy] = useState(false);
+  const [formatErrors, setFormatErrors] = useState<Record<string, string>>({});
+  const [partnerErrors, setPartnerErrors] = useState<Record<string, string>>({});
   const { validate, hasError, inputClass, a11yProps } = useFieldErrors();
+
+  const clearPartnerError = (k: string) =>
+    setPartnerErrors((prev) => {
+      if (!prev[k]) return prev;
+      const next = { ...prev };
+      delete next[k];
+      return next;
+    });
+
+  const clearFormatError = (k: string) =>
+    setFormatErrors((prev) => {
+      if (!prev[k]) return prev;
+      const next = { ...prev };
+      delete next[k];
+      return next;
+    });
+
+  /** Preenche rua, bairro, cidade e estado a partir do CEP (edição continua livre). */
+  const applyCep = async (cep: string) => {
+    if (!isValidCep(cep)) return;
+    setCepBusy(true);
+    const address = await lookupCep(cep);
+    setCepBusy(false);
+    if (!address) {
+      setFormatErrors((p) => ({ ...p, address_zip: "CEP não encontrado." }));
+      return;
+    }
+    setForm((f) =>
+      f
+        ? {
+            ...f,
+            address_street: address.street || f.address_street,
+            address_district: address.district || f.address_district,
+            address_city: address.city || f.address_city,
+            address_state: address.state || f.address_state,
+            address_country: f.address_country || "Brasil",
+          }
+        : f,
+    );
+  };
 
   /**
    * Campo do formulário com destaque vermelho quando obrigatório e vazio.
@@ -78,38 +152,49 @@ function CompanyPage() {
    * remontar fazia o campo perder o foco após o primeiro caractere.
    */
   const F = (label: string, k: keyof CompanyProfile, type?: string) => {
+    const key = k as string;
     const value = (form?.[k] ?? "") as string;
-    const invalid = k === "phone" ? phoneError || hasError(k, value) : hasError(k, value);
-    const fieldA11y = k === "phone" && invalid
-      ? { "aria-invalid": true as const, "aria-describedby": "phone-error" }
-      : a11yProps(k, value);
+    const formatError = formatErrors[key];
+    const invalid =
+      Boolean(formatError) || (k === "phone" ? phoneError || hasError(k, value) : hasError(k, value));
+    const required = REQUIRED.includes(k);
+    const fieldA11y = invalid
+      ? { "aria-invalid": true as const, "aria-describedby": `${key}-error` }
+      : a11yProps(key, value);
+    const errorMessage = formatError ?? (k === "phone" && phoneError ? PHONE_ERROR : undefined);
     return (
       <L
-        key={k as string}
+        key={key}
         label={label}
+        required={required}
         invalid={invalid}
-        errorId={`${k}-error`}
-        {...(k === "phone"
-          ? { errorMessage: PHONE_ERROR }
-          : {})}
+        errorId={`${key}-error`}
+        {...(errorMessage ? { errorMessage } : {})}
       >
         <input
           type={type ?? "text"}
           value={value}
           onChange={(e) => {
-            const mask = MASKS[k as string];
+            const mask = MASKS[key];
             const nextValue = mask ? mask(e.target.value) : e.target.value;
             set(k, nextValue);
+            clearFormatError(key);
             if (k === "phone" && phoneError) setPhoneError(!isValidPhone(nextValue));
           }}
           onFocus={() => {
             if (k === "phone" && !value) set(k, "+55");
           }}
-          inputMode={k === "phone" ? "tel" : MASKS[k as string] ? "numeric" : undefined}
-          autoComplete={k === "phone" ? "tel" : undefined}
-          maxLength={k === "phone" ? 25 : MASK_LENGTHS[k as string]}
-          placeholder={k === "phone" ? PHONE_PLACEHOLDER : MASK_PLACEHOLDERS[k as string]}
-          className={invalid ? `${input} border-destructive ring-1 ring-destructive` : inputClass(input, k, value)}
+          onBlur={(e) => {
+            if (k === "address_zip") void applyCep(e.target.value);
+            if (k === "website" && e.target.value) set(k, formatWebsite(e.target.value));
+          }}
+          inputMode={
+            k === "phone" ? "tel" : k === "email" ? "email" : MASKS[key] ? "numeric" : undefined
+          }
+          autoComplete={k === "phone" ? "tel" : k === "address_zip" ? "postal-code" : undefined}
+          maxLength={k === "phone" ? 25 : MASK_LENGTHS[key]}
+          placeholder={k === "phone" ? PHONE_PLACEHOLDER : MASK_PLACEHOLDERS[key]}
+          className={invalid ? `${input} border-destructive ring-1 ring-destructive` : inputClass(input, key, value)}
           {...fieldA11y}
         />
       </L>
@@ -172,17 +257,38 @@ function CompanyPage() {
             }, 0);
             return;
           }
-          if (!isValidPhone(form.phone)) {
-            setPhoneError(true);
-            toast.error(PHONE_ERROR);
+          const fmt: Record<string, string> = {};
+          if (!isValidCnpj(form.cnpj)) fmt["cnpj"] = "CNPJ deve ter 14 dígitos.";
+          if (!isValidCep(form.address_zip)) fmt["address_zip"] = "CEP deve ter 8 dígitos.";
+          if (!isValidEmail(form.email)) fmt["email"] = "Informe um e-mail válido.";
+          if (!isValidWebsite(form.website)) fmt["website"] = "Informe um site válido (ex.: empresa.com.br).";
+
+          const pErrors: Record<string, string> = {};
+          form.partners.forEach((p, i) => {
+            if (!p.name.trim()) pErrors[`${i}:name`] = "Informe o nome do sócio.";
+            if (!isValidCpf(p.cpf)) pErrors[`${i}:cpf`] = "CPF inválido.";
+            if (!isValidSharePercent(p.share)) pErrors[`${i}:share`] = "Cota entre 0,01% e 100%.";
+          });
+
+          setFormatErrors(fmt);
+          setPartnerErrors(pErrors);
+
+          const phoneInvalid = !isValidPhone(form.phone);
+          setPhoneError(phoneInvalid);
+
+          if (phoneInvalid || Object.keys(fmt).length > 0 || Object.keys(pErrors).length > 0) {
+            toast.error(
+              phoneInvalid && Object.keys(fmt).length === 0 && Object.keys(pErrors).length === 0
+                ? PHONE_ERROR
+                : "Revise os campos destacados em vermelho.",
+            );
             setTimeout(() => {
-              const phone = formEl.querySelector<HTMLInputElement>('[aria-describedby="phone-error"]');
-              phone?.scrollIntoView({ behavior: "smooth", block: "center" });
-              phone?.focus({ preventScroll: true });
+              const first = formEl.querySelector<HTMLInputElement>('[aria-invalid="true"]');
+              first?.scrollIntoView({ behavior: "smooth", block: "center" });
+              first?.focus({ preventScroll: true });
             }, 0);
             return;
           }
-          setPhoneError(false);
           setBusy(true);
           try {
             const r = await saveCompany({ data: form });
@@ -205,6 +311,9 @@ function CompanyPage() {
           }
         }}
       >
+        <p className="mb-4 text-xs text-muted-foreground">
+          Campos com <span className="text-destructive">*</span> são obrigatórios por exigência legal.
+        </p>
         <div className="grid gap-4 md:grid-cols-3">
           {F("Razão social", "legal_name")}
           {F("Nome fantasia", "trade_name")}
@@ -212,13 +321,13 @@ function CompanyPage() {
           {F("Inscrição estadual", "state_registration")}
           {F("Inscrição municipal", "municipal_registration")}
           <L label="Data de fundação"><input type="date" value={form.founded_on ?? ""} onChange={(e) => set("founded_on", e.target.value)} className={input} /></L>
+          {F(cepBusy ? "CEP (buscando endereço…)" : "CEP", "address_zip")}
           {F("Rua", "address_street")}
           {F("Número", "address_number")}
           {F("Complemento", "address_complement")}
           {F("Bairro", "address_district")}
           {F("Cidade", "address_city")}
           {F("Estado", "address_state")}
-          {F("CEP", "address_zip")}
           {F("País", "address_country")}
           {F("E-mail institucional", "email", "email")}
            {F("Telefone (DDI editável)", "phone", "tel")}
@@ -226,28 +335,64 @@ function CompanyPage() {
 
         </div>
 
-        <h2 className="mt-8 font-display text-lg font-bold">Sócios</h2>
+        <h2 className="mt-8 font-display text-lg font-bold">
+          Sócios <span className="text-destructive">*</span>
+        </h2>
         <div className="mt-3 space-y-3">
           {form.partners.map((p, i) => (
             <div key={i} className="grid gap-3 md:grid-cols-[2fr_1fr_1fr_auto]">
-              <input
-                value={p.name}
-                onChange={(e) => setPartner(i, { name: e.target.value })}
-                placeholder="Nome"
-                className={input}
-              />
-              <input
-                value={p.cpf}
-                onChange={(e) => setPartner(i, { cpf: e.target.value })}
-                placeholder="CPF"
-                className={input}
-              />
-              <input
-                value={p.share}
-                onChange={(e) => setPartner(i, { share: e.target.value })}
-                placeholder="Cota (%)"
-                className={input}
-              />
+              <PartnerField error={partnerErrors[`${i}:name`]}>
+                <input
+                  value={p.name}
+                  onChange={(e) => {
+                    setPartner(i, { name: e.target.value });
+                    clearPartnerError(`${i}:name`);
+                  }}
+                  placeholder="Nome *"
+                  aria-invalid={partnerErrors[`${i}:name`] ? true : undefined}
+                  className={
+                    partnerErrors[`${i}:name`]
+                      ? `${input} border-destructive ring-1 ring-destructive`
+                      : input
+                  }
+                />
+              </PartnerField>
+              <PartnerField error={partnerErrors[`${i}:cpf`]}>
+                <input
+                  value={p.cpf}
+                  onChange={(e) => {
+                    setPartner(i, { cpf: formatCpf(e.target.value) });
+                    clearPartnerError(`${i}:cpf`);
+                  }}
+                  placeholder="CPF *"
+                  inputMode="numeric"
+                  maxLength={14}
+                  aria-invalid={partnerErrors[`${i}:cpf`] ? true : undefined}
+                  className={
+                    partnerErrors[`${i}:cpf`]
+                      ? `${input} border-destructive ring-1 ring-destructive`
+                      : input
+                  }
+                />
+              </PartnerField>
+              <PartnerField error={partnerErrors[`${i}:share`]}>
+                <input
+                  value={p.share}
+                  onChange={(e) => {
+                    setPartner(i, { share: formatSharePercent(e.target.value) });
+                    clearPartnerError(`${i}:share`);
+                  }}
+                  placeholder="Cota (%) *"
+                  inputMode="decimal"
+                  maxLength={8}
+                  aria-invalid={partnerErrors[`${i}:share`] ? true : undefined}
+                  className={
+                    partnerErrors[`${i}:share`]
+                      ? `${input} border-destructive ring-1 ring-destructive`
+                      : input
+                  }
+                />
+              </PartnerField>
               <button
                 type="button"
                 onClick={() =>
@@ -286,24 +431,41 @@ function CompanyPage() {
   );
 }
 
+/** Campo de sócio com mensagem de erro abaixo do input. */
+function PartnerField({ error, children }: { error?: string | undefined; children: React.ReactNode }) {
+  return (
+    <div>
+      {children}
+      {error ? (
+        <span role="alert" className="mt-1 block text-xs font-medium text-destructive">
+          {error}
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
 function L({
   label,
   children,
   invalid,
   errorId,
   errorMessage,
+  required,
 }: {
   label: string;
   children: React.ReactNode;
-  invalid?: boolean;
-  errorId?: string;
-  errorMessage?: string;
+  invalid?: boolean | undefined;
+  errorId?: string | undefined;
+  errorMessage?: string | undefined;
+  required?: boolean | undefined;
 }) {
   return (
     <label
       className={`block text-xs font-medium ${invalid ? "text-destructive" : "text-muted-foreground"}`}
     >
       {label}
+      {required ? <span className="text-destructive"> *</span> : null}
       <span className="mt-1 block">{children}</span>
       {invalid ? (
         <span id={errorId} role="alert" className="mt-1 block text-xs font-medium text-destructive">
