@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { isValidPhone, PHONE_ERROR } from "./validation";
+import { WHATSAPP_SENDING_ENABLED } from "./bulletin.server";
 
 export type BulletinSubscriberRow = {
   id: string;
