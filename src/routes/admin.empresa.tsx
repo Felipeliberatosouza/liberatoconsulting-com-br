@@ -16,7 +16,15 @@ import {
 import { getSegments, saveSegments } from "@/lib/admin.functions";
 import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
-import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
+import {
+  formatCnpj,
+  formatMunicipalRegistration,
+  formatPhone,
+  formatStateRegistration,
+  isValidPhone,
+  PHONE_ERROR,
+  PHONE_PLACEHOLDER,
+} from "@/lib/validation";
 
 export const Route = createFileRoute("/admin/empresa")({
   head: () => ({
@@ -38,6 +46,24 @@ export const Route = createFileRoute("/admin/empresa")({
 
 const input =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
+
+/** Máscaras progressivas dos campos cadastrais (só números, pontuação automática). */
+const MASKS: Record<string, ((v: string) => string) | undefined> = {
+  phone: formatPhone,
+  cnpj: formatCnpj,
+  state_registration: formatStateRegistration,
+  municipal_registration: formatMunicipalRegistration,
+};
+const MASK_LENGTHS: Record<string, number | undefined> = {
+  cnpj: 18,
+  state_registration: 15,
+  municipal_registration: 10,
+};
+const MASK_PLACEHOLDERS: Record<string, string | undefined> = {
+  cnpj: "00.000.000/0000-00",
+  state_registration: "000.000.000.000",
+  municipal_registration: "0.000.000-0",
+};
 
 function CompanyPage() {
   const q = useQuery({ queryKey: ["company"], queryFn: () => getCompany(), retry: false });
@@ -71,17 +97,18 @@ function CompanyPage() {
           type={type ?? "text"}
           value={value}
           onChange={(e) => {
-            const nextValue = k === "phone" ? formatPhone(e.target.value) : e.target.value;
+            const mask = MASKS[k as string];
+            const nextValue = mask ? mask(e.target.value) : e.target.value;
             set(k, nextValue);
             if (k === "phone" && phoneError) setPhoneError(!isValidPhone(nextValue));
           }}
           onFocus={() => {
             if (k === "phone" && !value) set(k, "+55");
           }}
-          inputMode={k === "phone" ? "tel" : undefined}
+          inputMode={k === "phone" ? "tel" : MASKS[k as string] ? "numeric" : undefined}
           autoComplete={k === "phone" ? "tel" : undefined}
-          maxLength={k === "phone" ? 25 : undefined}
-          placeholder={k === "phone" ? PHONE_PLACEHOLDER : undefined}
+          maxLength={k === "phone" ? 25 : MASK_LENGTHS[k as string]}
+          placeholder={k === "phone" ? PHONE_PLACEHOLDER : MASK_PLACEHOLDERS[k as string]}
           className={invalid ? `${input} border-destructive ring-1 ring-destructive` : inputClass(input, k, value)}
           {...fieldA11y}
         />
