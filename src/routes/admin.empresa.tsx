@@ -431,24 +431,41 @@ function CompanyPage() {
   );
 }
 
+/** Campo de sócio com mensagem de erro abaixo do input. */
+function PartnerField({ error, children }: { error?: string | undefined; children: React.ReactNode }) {
+  return (
+    <div>
+      {children}
+      {error ? (
+        <span role="alert" className="mt-1 block text-xs font-medium text-destructive">
+          {error}
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
 function L({
   label,
   children,
   invalid,
   errorId,
   errorMessage,
+  required,
 }: {
   label: string;
   children: React.ReactNode;
-  invalid?: boolean;
-  errorId?: string;
-  errorMessage?: string;
+  invalid?: boolean | undefined;
+  errorId?: string | undefined;
+  errorMessage?: string | undefined;
+  required?: boolean | undefined;
 }) {
   return (
     <label
       className={`block text-xs font-medium ${invalid ? "text-destructive" : "text-muted-foreground"}`}
     >
       {label}
+      {required ? <span className="text-destructive"> *</span> : null}
       <span className="mt-1 block">{children}</span>
       {invalid ? (
         <span id={errorId} role="alert" className="mt-1 block text-xs font-medium text-destructive">
