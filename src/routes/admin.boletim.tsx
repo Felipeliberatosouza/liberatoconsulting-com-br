@@ -160,18 +160,21 @@ function AdminBulletin() {
                 className={field}
               />
             </label>
-            <label className="mt-3 block text-sm font-medium">
+            <label className="mt-3 block text-sm font-medium opacity-50 cursor-not-allowed">
               WhatsApp de teste
+              <span className="mt-1 block text-xs font-normal text-muted-foreground">
+                Envio pelo WhatsApp temporariamente desativado.
+              </span>
               <input
                 type="tel"
                 inputMode="tel"
                 autoComplete="tel"
                 maxLength={25}
                 value={testWhatsApp}
-                onFocus={() => !testWhatsApp && setTestWhatsApp("+55")}
+                disabled
                 onChange={(e) => setTestWhatsApp(formatPhone(e.target.value))}
                 placeholder={PHONE_PLACEHOLDER}
-                className={`${field}${testWhatsApp && !isValidPhone(testWhatsApp) ? " border-destructive ring-1 ring-destructive" : ""}`}
+                className={`${field}${testWhatsApp && !isValidPhone(testWhatsApp) ? " border-destructive ring-1 ring-destructive" : ""} opacity-50 cursor-not-allowed`}
               />
             </label>
             <div className="mt-4 flex flex-wrap gap-3">
