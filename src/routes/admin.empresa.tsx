@@ -36,6 +36,7 @@ import {
   PHONE_PLACEHOLDER,
 } from "@/lib/validation";
 import { lookupCep } from "@/lib/cep";
+import { CONTRACT_TOKENS } from "@/lib/contract-fill";
 
 export const Route = createFileRoute("/admin/empresa")({
   head: () => ({
@@ -560,6 +561,22 @@ function ContractsBlock() {
         Este texto aparece para consultores e autores assinarem digitalmente no primeiro acesso.
         Sem a assinatura, eles não conseguem usar o sistema.
       </p>
+      <details className="mt-3 rounded-md border border-border bg-secondary/40 p-3 text-xs text-muted-foreground">
+        <summary className="cursor-pointer font-semibold text-foreground">
+          Campos preenchidos automaticamente
+        </summary>
+        <p className="mt-2">
+          Escreva o campo entre chaves duplas no texto. Ao abrir o contrato, ele é substituído pelos
+          dados do cadastro da pessoa e da consultoria.
+        </p>
+        <ul className="mt-2 grid gap-1 sm:grid-cols-2">
+          {CONTRACT_TOKENS.map((t) => (
+            <li key={t.token}>
+              <code>{"{{"}{t.token}{"}}"}</code> — {t.label}
+            </li>
+          ))}
+        </ul>
+      </details>
 
       <div className="mt-4 flex gap-2">
         {(["consultor", "autor"] as const).map((a) => (
