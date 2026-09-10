@@ -1,7 +1,7 @@
 import type { Dict } from "../pt";
 
 // Gerado automaticamente por scripts/translate-i18n.ts — não editar à mão.
-export const sourceHash = "1eehskx";
+export const sourceHash = "11qsy4d";
 
 export const dict: Dict = {
   "nav": {
@@ -21,10 +21,6 @@ export const dict: Dict = {
         "anchor": "gestao",
         "items": [
           {
-            "id": "eficiencia-operacional",
-            "label": "Eficiencia Operativa"
-          },
-          {
             "id": "crescimento-expansao-e-novos-produtos",
             "label": "Crecimiento, Expansión y Nuevos Productos"
           },
@@ -41,12 +37,16 @@ export const dict: Dict = {
             "label": "Finanzas Estratégicas y Controles"
           },
           {
+            "id": "cliente-vendas-e-experiencia",
+            "label": "Cliente, Ventas y Experiencia"
+          },
+          {
             "id": "esg-sustentabilidade-e-clima",
             "label": "ESG, Sostenibilidad y Clima"
           },
           {
-            "id": "pessoas-lideranca-e-gestao-da-mudanca",
-            "label": "Personas, Liderazgo y Gestión del Cambio"
+            "id": "inteligencia-de-mercado-e-decisoes",
+            "label": "Inteligencia de Mercado y Decisiones"
           }
         ]
       },
@@ -57,7 +57,7 @@ export const dict: Dict = {
         "items": [
           {
             "id": "eficiencia-operacional",
-            "label": "Eficiencia Operativa"
+            "label": "Eficiencia Operacional"
           },
           {
             "id": "digital-dados-e-ia-aplicada",
@@ -68,10 +68,6 @@ export const dict: Dict = {
             "label": "Cliente, Ventas y Experiencia"
           },
           {
-            "id": "esg-sustentabilidade-e-clima",
-            "label": "ESG, Sostenibilidad y Clima"
-          },
-          {
             "id": "pessoas-lideranca-e-gestao-da-mudanca",
             "label": "Personas, Liderazgo y Gestión del Cambio"
           }
@@ -79,28 +75,16 @@ export const dict: Dict = {
       },
       {
         "id": "empreendedorismo",
-        "title": "Emprendimiento",
+        "title": "Emprendimiento y Decisiones",
         "anchor": "empreendedorismo",
         "items": [
-          {
-            "id": "eficiencia-operacional",
-            "label": "Eficiencia Operativa"
-          },
           {
             "id": "crescimento-expansao-e-novos-produtos",
             "label": "Crecimiento, Expansión y Nuevos Productos"
           },
           {
-            "id": "financas-estrategicas-e-controles",
-            "label": "Finanzas Estratégicas y Controles"
-          },
-          {
-            "id": "cliente-vendas-e-experiencia",
-            "label": "Cliente, Ventas y Experiencia"
-          },
-          {
-            "id": "pessoas-lideranca-e-gestao-da-mudanca",
-            "label": "Personas, Liderazgo y Gestión del Cambio"
+            "id": "inteligencia-de-mercado-e-decisoes",
+            "label": "Inteligencia de Mercado y Decisiones"
           }
         ]
       },
@@ -112,14 +96,6 @@ export const dict: Dict = {
           {
             "id": "crescimento-expansao-e-novos-produtos",
             "label": "Crecimiento, Expansión y Nuevos Productos"
-          },
-          {
-            "id": "ciberseguranca-privacidade-e-confianca-digital",
-            "label": "Ciberseguridad, Privacidad y Confianza Digital"
-          },
-          {
-            "id": "cliente-vendas-e-experiencia",
-            "label": "Cliente, Ventas y Experiencia"
           },
           {
             "id": "esg-sustentabilidade-e-clima",
@@ -158,11 +134,11 @@ export const dict: Dict = {
       },
       {
         "id": "trabalhe-conosco",
-        "label": "Trabaje con nosotros"
+        "label": "Trabaje con Nosotros"
       },
       {
         "id": "fale-conosco",
-        "label": "Hable con nosotros"
+        "label": "Hable con Nosotros"
       }
     ]
   },
@@ -175,7 +151,7 @@ export const dict: Dict = {
         "items": [
           {
             "id": "desdobramento-de-metas",
-            "label": "Desglose de Metas"
+            "label": "Despliegue de Metas"
           },
           {
             "id": "projetos-de-capital",
@@ -193,7 +169,7 @@ export const dict: Dict = {
         "items": [
           {
             "id": "modelagem-de-negocio",
-            "label": "Modelado de Negocios"
+            "label": "Modelado de Negocio"
           },
           {
             "id": "validacao-de-mercado",
@@ -241,7 +217,7 @@ export const dict: Dict = {
       },
       {
         "id": "pesquisas",
-        "title": "Investigaciones de Mercado",
+        "title": "Investigación de Mercado",
         "items": [
           {
             "id": "dimensionamento-de-mercado",
@@ -294,7 +270,7 @@ export const dict: Dict = {
       },
       {
         "id": "tributos-e-regulacao",
-        "label": "Tributos y regulación"
+        "label": "Impuestos y regulación"
       },
       {
         "id": "comercio-exterior",
@@ -312,24 +288,24 @@ export const dict: Dict = {
   },
   "brazil": {
     "eyebrow": "Datos de Brasil",
-    "title": "Lo que los inversores internacionales necesitan saber sobre el mercado brasileño",
-    "body": "Una lectura organizada de la economía brasileña para quienes evalúan entrar, expandirse o adquirir en Brasil: panorama macroeconómico, sectores estratégicos, reglas de inversión extranjera, carga tributaria, comercio exterior, perfil del consumidor e infraestructura. Cada tema puede profundizarse en un estudio sectorial a medida.",
+    "title": "Lo que los inversores internacionales deben saber sobre el mercado brasileño",
+    "body": "Una visión organizada de la economía brasileña para quienes evalúan entrar, expandirse o adquirir en Brasil: panorama macroeconómico, sectores estratégicos, reglas de inversión extranjera, carga tributaria, comercio exterior, perfil del consumidor e infraestructura. Cada tema puede profundizarse mediante un estudio sectorial a medida.",
     "ctaTitle": "¿Necesita un estudio específico sobre un sector brasileño?",
-    "ctaBody": "Producimos investigaciones de mercado sobre Brasil para empresas internacionales, con dimensionamiento, análisis competitivo, lectura regulatoria y mapeo de socios locales.",
+    "ctaBody": "Producimos investigación de mercado sobre Brasil para empresas internacionales, con dimensionamiento, análisis competitivo, lectura regulatoria y mapeo de socios locales.",
     "sectionsLabel": "Temas",
     "sourcesLabel": "Dónde verificar los datos oficiales",
     "indicators": {
       "title": "Indicadores económicos",
-      "intro": "Números macroeconómicos monitoreados en fuentes oficiales brasileñas y revisados por nuestro equipo.",
-      "scopeNote": "Mostrando solo datos del segmento",
-      "empty": "Aún no hay indicadores publicados para el segmento seleccionado. Ajuste los filtros o contacte a nuestro equipo para una investigación a medida.",
+      "intro": "Cifras macroeconómicas monitoreadas en fuentes oficiales brasileñas y revisadas por nuestro equipo.",
+      "scopeNote": "Mostrando solo los datos del recorte",
+      "empty": "Aún no hay indicadores publicados para el recorte seleccionado. Ajuste los filtros o contacte a nuestro equipo para una investigación a medida.",
       "previous": "Últimos datos",
-      "change": "Comparativa",
+      "change": "Comparativo",
       "forecast": "Tendencia",
       "source": "Fuente",
-      "forecastSource": "Fuente de estimación",
+      "forecastSource": "Fuente de la estimación",
       "filterNote": "Nota: los datos y textos de esta sección corresponden a los filtros aplicados —",
-      "updating": "actualizando los textos para este segmento..."
+      "updating": "actualizando los textos para este recorte..."
     },
     "sources": [
       {
@@ -354,28 +330,28 @@ export const dict: Dict = {
       }
     ],
     "topic": {
-      "loading": "Reuniendo datos actualizados en fuentes oficiales brasileñas…"
+      "loading": "Reuniendo datos actualizados de fuentes oficiales brasileñas…"
     },
     "sections": [
       {
         "id": "panorama-economico",
         "title": "Panorama económico",
-        "body": "Brasil es la mayor economía de América Latina y uno de los mayores mercados consumidores del mundo, con moneda flotante, cambio libre y un sistema financiero maduro. Para el inversor internacional, los indicadores clave son el PIB y crecimiento sectorial, inflación (IPCA), tasa de interés básica (Selic), tipo de cambio real/dólar, riesgo país y cuentas públicas.",
+        "body": "Brasil es la mayor economía de América Latina y uno de los mercados de consumo más grandes del mundo, con moneda flotante, cambio libre y un sistema financiero maduro. Para el inversor internacional, los indicadores clave son el PIB y crecimiento sectorial, inflación (IPCA), tasa de interés básica (Selic), tipo de cambio real/dólar, riesgo país y cuentas públicas.",
         "bullets": [
           "PIB brasileño por sector: agropecuario, industria y servicios",
           "Inflación (IPCA), tasa Selic y costo de capital en Brasil",
-          "Tipo de cambio, convertibilidad y remesa de utilidades al exterior",
-          "Ciclos políticos, fiscales y el efecto sobre el entorno de negocios"
+          "Cambio, convertibilidad y remesa de utilidades al exterior",
+          "Ciclos políticos, fiscales y su efecto en el entorno de negocios"
         ]
       },
       {
         "id": "setores-estrategicos",
         "title": "Sectores estratégicos",
-        "body": "La economía brasileña es diversificada y cada sector posee una dinámica competitiva propia. Mapeamos el tamaño del mercado, jugadores dominantes, márgenes típicos, barreras de entrada y ventanas de oportunidad en cada vertical.",
+        "body": "La economía brasileña es diversificada y cada sector posee su propia dinámica competitiva. Mapeamos el tamaño del mercado, actores dominantes, márgenes típicos, barreras de entrada y ventanas de oportunidad en cada vertical.",
         "bullets": [
-          "Agronegocio: soja, maíz, carnes, café, azúcar y etanol",
+          "Agronegocios: soja, maíz, carnes, café, azúcar y etanol",
           "Energía y transición energética: hidroeléctrica, eólica, solar, biocombustibles e hidrógeno verde",
-          "Petróleo, gas y minería: presal, mineral de hierro y minerales críticos",
+          "Petróleo, gas y minería: pre-sal, mineral de hierro y minerales críticos",
           "Industria y manufactura: automotriz, químico, alimentos y bienes de capital",
           "Tecnología: fintechs, SaaS, e-commerce, agtech y healthtech",
           "Salud, retail, educación, inmobiliario y servicios financieros"
@@ -384,7 +360,7 @@ export const dict: Dict = {
       {
         "id": "investimento-estrangeiro",
         "title": "Inversión extranjera (IED)",
-        "body": "Brasil se encuentra entre los principales destinos globales de inversión extranjera directa. El capital externo ingresa libremente en la mayoría de los sectores, con registro obligatorio en el Banco Central, garantizando la remesa futura de utilidades, dividendos y repatriación de capital.",
+        "body": "Brasil se encuentra entre los principales destinos globales de inversión extranjera directa. El capital externo entra libremente en la mayoría de los sectores, con registro obligatorio en el Banco Central, lo que garantiza la futura remesa de utilidades, dividendos y repatriación de capital.",
         "bullets": [
           "Registro de capital extranjero en el Banco Central (RDE-IED)",
           "Remesa de utilidades, dividendos y repatriación de inversión",
@@ -395,7 +371,7 @@ export const dict: Dict = {
       {
         "id": "abrir-empresa",
         "title": "Cómo abrir una empresa en Brasil",
-        "body": "La constitución de una empresa en Brasil requiere un tipo societario definido, CNPJ, representante legal residente y registros fiscales en las tres esferas. El plazo total varía según el municipio y la actividad licenciada.",
+        "body": "La constitución de una empresa en Brasil exige un tipo societario definido, CNPJ, representante legal residente y registros fiscales en las tres esferas. El plazo total varía según el municipio y la actividad licenciada.",
         "bullets": [
           "Tipos societarios más usados por extranjeros: LTDA y S.A.",
           "CNPJ, CPF del socio extranjero y apoderado residente en Brasil",
@@ -405,19 +381,19 @@ export const dict: Dict = {
       },
       {
         "id": "tributos-e-regulacao",
-        "title": "Tributos y regulación",
-        "body": "La carga tributaria brasileña es relevante y su complejidad reside más en el cálculo que en la alícuota. La reforma tributaria sobre el consumo, en implementación por etapas, sustituye tributos actuales por un modelo de IVA dual (CBS e IBS).",
+        "title": "Impuestos y regulación",
+        "body": "La carga tributaria brasileña es significativa y la complejidad radica más en el cálculo que en la alícuota. La reforma tributaria al consumo, en implementación por etapas, sustituye los impuestos actuales por un modelo de IVA dual (CBS e IBS).",
         "bullets": [
-          "Tributos sobre el consumo: ICMS, ISS, PIS/Cofins e IPI",
+          "Impuestos al consumo: ICMS, ISS, PIS/Cofins e IPI",
           "Reforma tributaria: CBS, IBS, Impuesto Selectivo y cronograma de transición",
-          "Tributos sobre la utilidad: IRPJ y CSLL, utilidad real y utilidad presunta",
+          "Impuestos sobre la utilidad: IRPJ y CSLL, lucro real y lucro presunto",
           "Regulación sectorial: ANVISA, ANEEL, ANP, ANATEL, CADE y LGPD"
         ]
       },
       {
         "id": "comercio-exterior",
         "title": "Comercio exterior y Mercosur",
-        "body": "Brasil es un gran exportador de materias primas agrícolas y minerales e importador relevante de bienes industriales, insumos y tecnología. El país integra el Mercosur, lo que define el Arancel Externo Común y acuerdos preferenciales.",
+        "body": "Brasil es un gran exportador de commodities agrícolas y minerales e importador relevante de bienes industriales e insumos. El país integra el Mercosur, lo que define el Arancel Externo Común y acuerdos preferenciales.",
         "bullets": [
           "Importación y exportación: NCM, Siscomex, Drawback y regímenes especiales",
           "Arancel Externo Común del Mercosur y acuerdos comerciales vigentes",
@@ -428,10 +404,10 @@ export const dict: Dict = {
       {
         "id": "mercado-consumidor",
         "title": "Mercado consumidor",
-        "body": "Con más de 200 millones de habitantes y alta urbanización, Brasil es un mercado de consumo profundo y desigual: los ingresos, hábitos de compra y canales varían fuertemente entre regiones y clases sociales.",
+        "body": "Con más de 200 millones de habitantes, alta urbanización y adopción digital superior a la media global, Brasil es un mercado de consumo profundo y desigual, con hábitos que varían por región y clase social.",
         "bullets": [
           "Demografía, urbanización y distribución de ingresos por región",
-          "Pix, tarjeta de crédito en cuotas y comportamiento de pago",
+          "Pix, tarjetas de crédito en cuotas y comportamiento de pago",
           "E-commerce, marketplaces y social commerce",
           "Diferencias entre Sureste, Sur, Noreste, Centro-Oeste y Norte"
         ]
@@ -439,9 +415,9 @@ export const dict: Dict = {
       {
         "id": "infraestrutura-logistica",
         "title": "Infraestructura y logística",
-        "body": "La dimensión continental del país hace estratégica la decisión de localización. El costo logístico, la matriz de transporte y la disponibilidad de energía limpia influyen directamente en la viabilidad operativa en Brasil.",
+        "body": "La dimensión continental del país hace que la ubicación sea estratégica. El costo logístico, la matriz de transporte y la disponibilidad de energía limpia influyen directamente en la viabilidad de la operación.",
         "bullets": [
-          "Matriz de transporte: vial, ferroviario, hidroviario y portuario",
+          "Matriz de transporte: vial, ferroviaria, hidroviaria y portuaria",
           "Concesiones, APP y subastas de infraestructura",
           "Matriz eléctrica mayoritariamente renovable y costo de energía",
           "Conectividad, centros de datos e infraestructura digital"
@@ -452,7 +428,7 @@ export const dict: Dict = {
   "hero": {
     "eyebrow": "Consultoría en gestión e investigación de mercado sobre Brasil",
     "title": "Entienda el mercado brasileño. Decida con método e inteligencia artificial.",
-    "body": "Liberato Consulting produce investigaciones de mercado sobre Brasil para empresas internacionales y gestión estratégica para empresas que buscan crecer aquí — estudios sectoriales, datos económicos, entorno regulatorio e IA en el centro de cada entrega.",
+    "body": "Liberato Consulting produce investigación de mercado sobre Brasil para empresas internacionales y gestión estratégica para empresas que desean crecer aquí: estudios sectoriales, datos económicos, entorno regulatorio e IA en el centro de cada entrega.",
     "primary": "Ver datos de Brasil",
     "secondary": "Agendar conversación",
     "slides": [
@@ -468,7 +444,7 @@ export const dict: Dict = {
         "id": "empreendedorismo",
         "eyebrow": "Emprendimiento",
         "title": "Del modelo de negocio a la tracción, con menos capital quemado por hipótesis.",
-        "body": "Modelado, validación de mercado, precios y materiales para inversores. Usamos IA para probar hipótesis con evidencia real antes de comprometer estructura fija.",
+        "body": "Modelado, validación de mercado, precios y materiales para inversores. Usamos IA para probar hipótesis con evidencia real antes de estructurar costos fijos.",
         "primary": "Conocer el servicio",
         "secondary": "Agendar conversación"
       },
@@ -476,15 +452,15 @@ export const dict: Dict = {
         "id": "operacoes",
         "eyebrow": "Operaciones",
         "title": "Excelencia operativa que se refleja en el margen, mes a mes.",
-        "body": "Gestión de la rutina, excelencia industrial, comercial y de procesos. La IA anticipa desviaciones, predice demanda y mantiene el estándar de ejecución en la planta y en la línea de frente.",
+        "body": "Gestión de la rutina, excelencia industrial, comercial y de procesos. La IA anticipa desviaciones, predice la demanda y mantiene el estándar de ejecución.",
         "primary": "Conocer el servicio",
         "secondary": "Agendar conversación"
       },
       {
         "id": "estrategia",
         "eyebrow": "Estrategia",
-        "title": "De la ambición al desglose de metas que la operación puede ejecutar.",
-        "body": "Planeación estratégica, desglose de metas, transformación digital y gestión de proyectos de capital, con escenarios simulados por inteligencia artificial.",
+        "title": "De la ambición al despliegue de metas que la operación puede ejecutar.",
+        "body": "Planeación estratégica, despliegue de metas, transformación digital y gestión de proyectos de capital, con escenarios simulados por inteligencia artificial.",
         "primary": "Conocer el servicio",
         "secondary": "Agendar conversación"
       }
@@ -493,10 +469,10 @@ export const dict: Dict = {
   "brazilFocus": {
     "eyebrow": "Investigación de mercado sobre Brasil",
     "title": "Inteligencia de mercado sobre Brasil para decisiones de inversión",
-    "body": "Empresas internacionales que evalúan entrar, expandirse o adquirir en Brasil necesitan más que números sueltos. Producimos estudios sectoriales sobre la economía brasileña con dimensionamiento de mercado, análisis competitivo, lectura regulatoria y mapeo de socios, combinando fuentes oficiales e IA.",
+    "body": "Las empresas internacionales que evalúan entrar, expandirse o adquirir en Brasil necesitan más que cifras sueltas. Producimos estudios sectoriales con dimensionamiento de mercado, análisis competitivo, lectura regulatoria y mapeo de socios, combinando fuentes oficiales, datos primarios e IA.",
     "sectorsLabel": "Sectores de la economía brasileña que cubrimos",
     "sectors": [
-      "Agronegocio",
+      "Agronegocios",
       "Energía y transición energética",
       "Petróleo, gas y minería",
       "Industria y manufactura",
@@ -516,7 +492,7 @@ export const dict: Dict = {
       },
       {
         "t": "Análisis competitivo y regulatorio",
-        "d": "Jugadores locales, barreras de entrada, tributos y agencias reguladoras."
+        "d": "Actores locales, barreras de entrada, impuestos y agencias reguladoras."
       },
       {
         "t": "Entrada y socios locales",
@@ -557,7 +533,7 @@ export const dict: Dict = {
     "labels": {
       "scope": "Qué hacemos",
       "ai": "Dónde entra la inteligencia artificial",
-      "deliverables": "Qué recibe usted",
+      "deliverables": "Qué recibe",
       "audience": "Para quién es",
       "duration": "Duración típica"
     },
@@ -566,37 +542,37 @@ export const dict: Dict = {
         "id": "gestao",
         "title": "Gestión estratégica de negocios",
         "lead": "De la ambición a la rutina de gestión que sostiene el resultado.",
-        "body": "Estrategia, desglose de metas, eficiencia operativa y rutina de gestión. Traducimos ambición en indicadores monitoreados semana a semana, con análisis y predicciones apoyadas por IA.",
-        "audience": "Empresas con operación establecida que necesitan recuperar margen, acelerar el crecimiento o dar previsibilidad al resultado.",
+        "body": "Estrategia, despliegue de metas, eficiencia operativa y rutina de gestión. Traducimos ambición en indicadores semanales con análisis apoyados por IA.",
+        "audience": "Empresas con operación establecida que necesitan recuperar margen, acelerar crecimiento o dar previsibilidad al resultado.",
         "duration": "3 a 9 meses, con ciclos mensuales de revisión.",
         "bullets": [
-          "Planeación estratégica y desglose de metas",
+          "Planeación estratégica y despliegue de metas",
           "Reducción de costos y eficiencia operativa",
           "Rutina de gestión: reuniones, indicadores y planes de acción",
           "Gobernanza de datos y estandarización de procesos"
         ],
         "ai": {
-          "body": "La IA no sustituye la decisión del gestor: acorta el camino hacia la información confiable y anticipa lo que aún no aparece en los reportes.",
+          "body": "La IA no sustituye la decisión del gestor: acorta el camino hacia la información confiable y anticipa lo que aún no aparece en los informes.",
           "items": [
-            "Predicción de demanda, ingresos y caja basada en el historial",
-            "Paneles con lectura automática de desviaciones y causas probables",
+            "Predicción de demanda, ingresos y caja basada en el histórico",
+            "Tableros con lectura automática de desviaciones y causas probables",
             "Agentes que consolidan datos de ERP, CRM y hojas de cálculo",
             "Simulación de escenarios de precio, costo y capacidad"
           ]
         },
         "deliverables": [
-          "Mapa estratégico con metas desglosadas por área",
-          "Panel de indicadores automatizado en operación",
-          "Cartera de proyectos de ganancia con retorno estimado",
-          "Equipo capacitado para conducir la rutina sin la consultoría"
+          "Mapa estratégico con metas desplegadas por área",
+          "Tablero de indicadores automatizado",
+          "Cartera de proyectos de mejora con retorno estimado",
+          "Equipo entrenado para conducir la rutina sin la consultoría"
         ]
       },
       {
         "id": "operacoes",
         "title": "Operaciones",
         "lead": "Excelencia operativa que se refleja en el margen, mes a mes.",
-        "body": "Gestión de la rutina, excelencia industrial, comercial y de procesos. Estandarizamos la ejecución, eliminamos pérdidas e instalamos una rutina de seguimiento sustentada por datos e IA.",
-        "audience": "Industrias, redes de servicio y operaciones comerciales que requieren productividad y calidad en la ejecución diaria.",
+        "body": "Gestión de la rutina, excelencia industrial, comercial y de procesos. Estandarizamos la ejecución y eliminamos pérdidas con una rutina basada en datos e IA.",
+        "audience": "Industrias, redes de servicio y operaciones comerciales que requieren productividad, calidad y previsibilidad.",
         "duration": "4 a 12 meses, con ciclos quincenales de seguimiento.",
         "bullets": [
           "Gestión de la rutina y estandarización de procesos críticos",
@@ -605,11 +581,11 @@ export const dict: Dict = {
           "Reducción de pérdidas, inventarios y costos operativos"
         ],
         "ai": {
-          "body": "La IA transforma el dato operativo en alertas anticipadas: la desviación se gestiona antes de convertirse en pérdida al cierre del mes.",
+          "body": "La IA transforma los datos operativos en alertas tempranas: la desviación se trata antes de convertirse en una pérdida al cierre del mes.",
           "items": [
             "Predicción de demanda y planeación de producción",
             "Mantenimiento predictivo basado en señales de equipos",
-            "Detección automática de fallas en calidad y productividad",
+            "Detección automática de desviaciones de calidad y productividad",
             "Asistentes de apoyo en análisis de causa raíz y planes de acción"
           ]
         },
@@ -617,44 +593,44 @@ export const dict: Dict = {
           "Procesos críticos estandarizados y documentados",
           "Rutina de gestión instalada con indicadores por turno o región",
           "Cartera de ganancias operativas con retorno monitoreado",
-          "Líderes entrenados para sostener el estándar de ejecución"
+          "Líderes entrenados para mantener el estándar"
         ]
       },
       {
         "id": "empreendedorismo",
         "title": "Emprendimiento",
-        "lead": "Del modelo de negocio a la tracción, con menos capital quemado por hipótesis.",
-        "body": "Estructuramos operación, precios y captación para fundadores, utilizando IA para validar hipótesis más rápido y con menos capital.",
+        "lead": "Del modelo de negocio a la tracción, con menos capital quemado.",
+        "body": "Estructuramos operación, precios y captación para fundadores, usando IA para validar hipótesis más rápido y con menos capital.",
         "audience": "Fundadores, negocios en etapa temprana y nuevas unidades de negocio corporativas.",
         "duration": "6 a 16 semanas, en sprints de validación.",
         "bullets": [
           "Modelado de negocio y validación de mercado",
           "Precios, unit economics y estructura financiera",
           "Material para inversores y preparación de rondas",
-          "Diseño de la operación mínima viable (MVO) y contrataciones"
+          "Diseño de la operación mínima viable"
         ],
         "ai": {
-          "body": "Usamos IA para reducir el costo del aprendizaje: cada hipótesis se prueba con evidencia real antes de invertir en estructura fija.",
+          "body": "Usamos IA para reducir el costo del aprendizaje: cada hipótesis se prueba con evidencia real antes de estructurar costos fijos.",
           "items": [
-            "Investigación de mercado y análisis competitivo acelerado por LLM",
-            "Pruebas de propuesta de valor con síntesis automática de respuestas",
-            "Modelo financiero con escenarios generados y estresados por IA",
+            "Investigación de mercado y análisis competitivo acelerado por LLMs",
+            "Pruebas de propuesta de valor con síntesis automática",
+            "Modelo financiero con escenarios generados por IA",
             "Automatización de ventas y back office desde el primer día"
           ]
         },
         "deliverables": [
-          "Modelo de negocio validado con hipótesis documentadas",
+          "Modelo de negocio validado con hipótesis probadas",
           "Modelo financiero y política de precios",
-          "Deck y materiales de captación listos para inversores",
-          "Stack inicial de automatización e IA en funcionamiento"
+          "Deck y materiales de captación para inversores",
+          "Stack inicial de automatización e IA funcionando"
         ]
       },
       {
         "id": "pesquisas-brasil",
         "title": "Investigación de mercado sobre Brasil",
         "lead": "Inteligencia local para quienes deciden sobre Brasil desde el exterior.",
-        "body": "Inteligencia de mercado para empresas internacionales que buscan entender, entrar o expandirse en Brasil: sector, competencia, regulación y cultura.",
-        "audience": "Empresas internacionales, fondos y áreas de expansión evaluando el mercado brasileño.",
+        "body": "Inteligencia para empresas internacionales que desean entender, entrar o expandirse en Brasil: sector, competencia, regulación y cultura de consumo.",
+        "audience": "Empresas internacionales, fondos y áreas corporativas de expansión.",
         "duration": "4 a 12 semanas, según la profundidad sectorial.",
         "bullets": [
           "Estudios sectoriales y dimensionamiento de mercado",
@@ -663,17 +639,17 @@ export const dict: Dict = {
           "Escenarios de entrada: orgánico, alianza o adquisición"
         ],
         "ai": {
-          "body": "Brasil produce gran volumen de datos públicos en portugués. La IA nos permite procesarlos a escala y entregar conclusiones en el idioma del cliente.",
+          "body": "Brasil produce muchos datos públicos en portugués. La IA nos permite analizarlos a escala y entregar conclusiones en el idioma del cliente.",
           "items": [
-            "Lectura automatizada de bases públicas, balances y noticias en PT",
+            "Lectura automatizada de bases públicas y balances en portugués",
             "Monitoreo continuo de competidores y movimientos de mercado",
             "Análisis de sentimiento y cultura de consumo mediante datos sociales",
-            "Reportes en inglés o español con trazabilidad de fuentes"
+            "Informes en inglés, español o mandarín con trazabilidad de fuentes"
           ]
         },
         "deliverables": [
-          "Reporte sectorial con dimensionamiento y proyecciones",
-          "Mapa competitivo y shortlist de socios u objetivos locales",
+          "Informe sectorial con dimensionamiento y proyecciones",
+          "Mapa competitivo y shortlist de socios o activos locales",
           "Evaluación de riesgo regulatorio y operativo",
           "Recomendación de entrada con plan de 12 meses"
         ]
@@ -697,7 +673,7 @@ export const dict: Dict = {
       {
         "n": "03",
         "t": "Implantación",
-        "d": "Trabajo hombro a hombro con el equipo en la rutina real."
+        "d": "Trabajo hombro con hombro con el equipo, en la rutina real."
       },
       {
         "n": "04",
@@ -709,8 +685,8 @@ export const dict: Dict = {
   "about": {
     "eyebrow": "Quiénes somos",
     "title": "Consultoría brasileña con visión global",
-    "body": "Liberato Consulting nació de la convicción de que la buena gestión es disciplina, y que la IA solo crea valor cuando está anclada en procesos y datos confiables.",
-    "body2": "Trabajamos con empresas brasileñas que buscan crecer con método y con empresas internacionales que necesitan entender Brasil antes de invertir. Entregamos claridad: qué hacer, en qué orden y cómo medir.",
+    "body": "Liberato Consulting nació de la convicción de que la buena gestión es disciplina, y que la inteligencia artificial solo crea valor cuando está anclada en procesos, datos confiables y personas preparadas.",
+    "body2": "Trabajamos junto a empresas brasileñas que quieren crecer con método y empresas internacionales que necesitan entender Brasil antes de invertir. Entregamos claridad: qué hacer, en qué orden y cómo medir.",
     "values": [
       {
         "t": "Método antes que herramienta",
@@ -718,11 +694,11 @@ export const dict: Dict = {
       },
       {
         "t": "Resultado medido",
-        "d": "Cada proyecto tiene indicadores acordados desde el inicio."
+        "d": "Cada proyecto tiene indicadores acordados al inicio."
       },
       {
         "t": "Transferencia de conocimiento",
-        "d": "El cliente finaliza el proyecto con mayores capacidades."
+        "d": "El cliente termina el proyecto con mayores capacidades."
       }
     ],
     "nav": [
@@ -748,11 +724,11 @@ export const dict: Dict = {
       },
       {
         "id": "trabalhe-conosco",
-        "label": "Trabaje con nosotros"
+        "label": "Trabaje con Nosotros"
       },
       {
         "id": "fale-conosco",
-        "label": "Hable con nosotros"
+        "label": "Hable con Nosotros"
       }
     ],
     "banner": {
@@ -760,68 +736,68 @@ export const dict: Dict = {
       "strong1": "real",
       "middle": ", inversión",
       "strong2": "justa!",
-      "body": "Cuatro frentes, un método: entregas medidas por indicadores y una inversión proporcional a la ganancia que queda en su operación.",
+      "body": "Cuatro frentes, un método: entregas medidas por indicadores acordados al inicio y una inversión proporcional a la ganancia generada.",
       "cta": "Hable con nuestro equipo"
     },
     "sections": {
       "sobre": {
         "title": "Sobre",
-        "body": "Liberato Consulting es una consultoría de gestión empresarial que une método, emprendimiento e inteligencia de mercado sobre Brasil. Traducimos la ambición en resultados con la IA como eje central."
+        "body": "Liberato Consulting es una consultoría de gestión empresarial que une método, emprendimiento e inteligencia de mercado sobre Brasil. Nuestro trabajo es traducir la ambición en resultados medibles, con la IA como propósito central."
       },
       "oQueFazemos": {
         "title": "Qué hacemos",
-        "body": "Actuamos en cuatro frentes: gestión estratégica, emprendimiento, operaciones e investigación de mercado. La IA acelera diagnósticos y automatiza entregas repetitivas.",
+        "body": "Actuamos en cuatro frentes integrados: gestión estratégica, emprendimiento, operaciones e investigación de mercado. La inteligencia artificial acelera diagnósticos, prioriza decisiones y automatiza tareas repetitivas.",
         "items": [
-          "Gestión estratégica: planeación, desglose de metas y transformación digital.",
-          "Emprendimiento: modelado de negocio, validación y estructuración inicial.",
-          "Operaciones: excelencia comercial, industrial y reducción de costos.",
-          "Investigación de mercado: estudios sectoriales, análisis competitivo y regulación."
+          "Gestión estratégica: planeación, despliegue de metas, transformación digital y rutina.",
+          "Emprendimiento: modelado, validación de mercado, precios, captación y operación inicial.",
+          "Operaciones: excelencia comercial, industrial y de procesos, productividad y costos.",
+          "Investigación de mercado: estudios sectoriales, dimensionamiento y lectura regulatoria."
         ]
       },
       "equipe": {
         "title": "Equipo",
-        "body": "Nuestro equipo reúne consultores expertos en estrategia, operaciones e IA. Trabajamos en squads ágiles junto al cliente, enfocados en la transferencia de método.",
+        "body": "Nuestro equipo reúne consultores expertos en estrategia, operaciones e investigación, junto a especialistas en IA y datos. Trabajamos en squads ágiles, hombro con hombro con el cliente.",
         "members": [
           {
             "role": "Socios y líderes estratégicos",
-            "desc": "Orientan el rumbo de los proyectos y la relación con clientes globales."
+            "desc": "Orientan la dirección de los proyectos y la relación con clientes globales."
           },
           {
-            "role": "Consultores senior",
-            "desc": "Conducen diagnósticos e implementaciones en gestión y operaciones."
+            "role": "Consultores sénior",
+            "desc": "Conducen diagnósticos, diseños e implantaciones en gestión y operaciones."
           },
           {
             "role": "Especialistas en IA y datos",
-            "desc": "Desarrollan modelos y paneles que aceleran la entrega de valor."
+            "desc": "Desarrollan modelos, tableros y agentes que aceleran la entrega de valor."
           },
           {
             "role": "Analistas de investigación",
-            "desc": "Mapean mercados, competidores, regulación y consumo en Brasil."
+            "desc": "Mapean mercados brasileños, competidores, regulación y consumo."
           }
         ]
       },
       "sustentabilidadeEInclusao": {
         "title": "Sostenibilidad e Inclusión",
-        "body": "Resultados duraderos dependen de prácticas responsables. Nuestros proyectos consideran el impacto social y ambiental, buscando optimizar recursos mediante IA."
+        "body": "Creemos que los resultados duraderos dependen de prácticas responsables. Nuestros proyectos consideran el impacto social y ambiental. Usamos la IA para reducir desperdicios, optimizar recursos y democratizar la información."
       },
       "etica": {
         "title": "Ética",
-        "body": "Nuestro uso de la inteligencia artificial sigue principios claros:",
+        "body": "Trabajamos con datos y decisiones críticas. Por ello, nuestro uso de IA sigue principios claros:",
         "items": [
           "Transparencia: explicamos cómo los modelos llegan a las recomendaciones.",
           "Privacidad: los datos se tratan con seguridad y sin reutilización no autorizada.",
-          "Responsabilidad: la IA asiste, pero la decisión final es del cliente.",
-          "Trazabilidad: documentamos fuentes y limitaciones en cada entrega."
+          "Responsabilidad humana: la IA asiste, pero el cliente decide.",
+          "Trazabilidad: fuentes, premisas y limitaciones son documentadas."
         ]
       },
       "trabalheConosco": {
-        "title": "Trabaje con nosotros",
-        "body": "Buscamos profesionales que unan rigor de gestión y curiosidad por la IA para construir resultados reales.",
-        "cta": "Enviar currículum"
+        "title": "Trabaje con Nosotros",
+        "body": "Buscamos profesionales que unan rigor de gestión, curiosidad por la IA y deseo de construir resultados reales. Envíe su CV informando su área de interés.",
+        "cta": "Enviar CV"
       },
       "faleConosco": {
-        "title": "Hable con nosotros",
-        "body": "¿Quiere entender cómo Liberato Consulting puede ayudar a su empresa? Cuéntenos su desafío.",
+        "title": "Hable con Nosotros",
+        "body": "¿Quiere entender cómo Liberato Consulting puede ayudar a su empresa? Cuéntenos su desafío y responderemos en dos días hábiles.",
         "cta": "Hablar con nosotros"
       }
     }
@@ -830,7 +806,7 @@ export const dict: Dict = {
     "labels": {
       "breadcrumb": "Quiénes somos",
       "audience": "Para quién",
-      "highlights": "Destacados",
+      "highlights": "Puntos destacados",
       "ai": "Cómo entra la IA aquí",
       "ctaBody": "¿Quiere conversar sobre este tema con nuestro equipo?",
       "cta": "Hable con nuestro equipo",
@@ -841,56 +817,56 @@ export const dict: Dict = {
       {
         "id": "sobre",
         "title": "Sobre",
-        "lead": "Una consultoría brasileña de gestión con visión global e IA como propósito central.",
-        "body": "Liberato Consulting une método, emprendimiento e inteligencia de mercado. Traducimos la ambición en resultados mensurables y rutinas que sostienen la ganancia.",
+        "lead": "Consultoría brasileña de gestión con visión global e inteligencia artificial integrada.",
+        "body": "Liberato Consulting es una firma de gestión que une método e inteligencia de mercado sobre Brasil. Traducimos la ambición en resultados medibles mediante prioridades claras y una rutina de gestión sostenible.",
         "audience": "Empresas brasileñas en crecimiento y empresas internacionales que necesitan entender Brasil.",
         "bullets": [
           "Método antes que herramienta: la tecnología sirve a la decisión.",
-          "Resultado medido con indicadores acordados desde el inicio.",
-          "Transferencia de conocimiento para empoderar al cliente.",
-          "Squads ágiles trabajando junto al equipo del cliente."
+          "Resultado medido, con indicadores acordados al inicio.",
+          "Transferencia de conocimiento: el cliente termina más capaz.",
+          "Squads ágiles trabajando hombro con hombro con el cliente."
         ],
-        "ai": "La IA acelera la lectura de datos y revela patrones que la observación directa no capta, liberando al equipo para el juicio humano."
+        "ai": "La IA está presente desde el diagnóstico: acelera el análisis de datos, revela patrones ocultos y libera al equipo para el juicio humano."
       },
       {
         "id": "o-que-fazemos",
         "title": "Qué hacemos",
-        "lead": "Cuatro frentes integrados: gestión, emprendimiento, operaciones e investigación de mercado.",
-        "body": "Actuamos en áreas que se comunican entre sí. La IA acelera diagnósticos y prioriza decisiones sin quitar al cliente la responsabilidad de elección.",
-        "audience": "Directorios, fundadores y equipos de estrategia que buscan pasar del diagnóstico a la ejecución.",
+        "lead": "Frentes integrados: gestión estratégica, emprendimiento, operaciones e investigación.",
+        "body": "Actuamos en frentes complementarios donde la IA acelera diagnósticos y automatiza entregas, manteniendo siempre la responsabilidad humana en la elección.",
+        "audience": "Direcciones, fundadores y equipos de estrategia que necesitan pasar del diagnóstico a la ejecución.",
         "bullets": [
-          "Gestión estratégica: planeación, metas y transformación digital.",
-          "Emprendimiento: modelado, validación y operación inicial.",
-          "Operaciones: excelencia comercial e industrial, productividad y costos.",
-          "Investigación de mercado: estudios sectoriales y lectura regulatoria."
+          "Gestión estratégica: planeación, metas, transformación digital y rutina.",
+          "Emprendimiento: modelado, validación de mercado, precios y captación.",
+          "Operaciones: excelencia comercial, industrial y de procesos.",
+          "Investigación de mercado: estudios sectoriales, dimensionamiento y regulación."
         ],
-        "ai": "Modelos y agentes asisten cada frente, simulando escenarios y manteniendo paneles de metas en tiempo real."
+        "ai": "Modelos y agentes asisten cada frente: sintetizan bases de datos, simulan escenarios y mantienen tableros vivos de avance en tiempo real."
       },
       {
         "id": "equipe",
         "title": "Equipo",
-        "lead": "Consultores de gestión, expertos en IA y analistas en squads eficientes.",
-        "body": "Nuestro equipo combina experiencia en estrategia y operaciones con especialistas en datos. Fomentamos la transferencia de método en cada intervención.",
-        "audience": "Clientes que prefieren equipos senior presentes en lugar de estructuras pesadas tradicionales.",
+        "lead": "Consultores de gestión, especialistas en IA y analistas de investigación en squads eficientes.",
+        "body": "Reunimos experiencia en estrategia y operaciones con especialistas en IA. Enfocamos nuestro trabajo en la transferencia de método al cliente.",
+        "audience": "Clientes que prefieren equipos sénior y presentes frente a la estructura pesada de la consultoría tradicional.",
         "bullets": [
-          "Líderes estratégicos: rumbo de proyectos y relaciones globales.",
-          "Consultores senior: ejecución de diagnósticos e implantaciones.",
-          "Especialistas en IA: modelos y agentes que aceleran la entrega.",
-          "Analistas: expertos en mercado, regulación y consumidor brasileño."
+          "Socios y líderes: dirección de proyectos y relaciones globales.",
+          "Consultores sénior: diagnósticos e implantaciones operativas.",
+          "Especialistas en IA y datos: modelos y agentes de valor.",
+          "Analistas de investigación: mercados, regulación y consumidor."
         ],
-        "ai": "Cada squad opera con asistentes de IA para investigación y documentación, reduciendo el tiempo entre el dato y la decisión."
+        "ai": "Cada squad opera con asistentes de IA propios para investigación y análisis, reduciendo el tiempo entre el dato y la decisión."
       },
       {
         "id": "sustentabilidade-e-inclusao",
         "title": "Sostenibilidad e Inclusión",
         "lead": "Resultados duraderos dependen de prácticas responsables dentro y fuera de la empresa.",
-        "body": "Consideramos el impacto social y ambiental en nuestros proyectos, buscando ampliar el acceso a oportunidades en las comunidades donde actuamos.",
+        "body": "Creemos que la sostenibilidad es clave para el éxito a largo plazo. Integramos el impacto social y ambiental en nuestros diseños y ampliamos el acceso a oportunidades.",
         "audience": "Empresas con agenda ESG activa o exigencias de cumplimiento de inversores.",
         "bullets": [
           "Impacto social y ambiental en el diseño de prioridades.",
-          "Acceso a oportunidades en los equipos de proyecto.",
+          "Ampliación del acceso a oportunidades en los equipos.",
           "Eficiencia de recursos como criterio operativo.",
-          "Información accesible en múltiples idiomas."
+          "Información accesible en varios idiomas para equipos globales."
         ],
         "ai": "La IA se utiliza para reducir desperdicios, optimizar recursos y hacer la información accesible, ampliando el alcance de las decisiones."
       },
@@ -898,15 +874,15 @@ export const dict: Dict = {
         "id": "etica",
         "title": "Ética",
         "lead": "Principios claros para el uso de datos e IA en cada entrega.",
-        "body": "Trabajamos con decisiones que afectan mercados y personas. Nuestro uso de la IA sigue principios explícitos comunicados al inicio de cada proyecto.",
+        "body": "Manejamos decisiones que afectan mercados y personas. Nuestro uso de la IA sigue principios explícitos comunicados al cliente desde el inicio.",
         "audience": "Organizaciones reguladas y equipos legales, de riesgo y cumplimiento.",
         "bullets": [
-          "Transparencia en las recomendaciones de los modelos.",
-          "Privacidad y seguridad estricta de los datos del cliente.",
-          "Responsabilidad humana en la toma final de decisiones.",
-          "Trazabilidad documentada de fuentes y premisas."
+          "Transparencia: explicamos el origen de las recomendaciones.",
+          "Privacidad: tratamiento seguro sin reutilización no autorizada.",
+          "Responsabilidad humana: la IA asiste, el cliente decide.",
+          "Trazabilidad: fuentes y limitaciones documentadas."
         ],
-        "ai": "Cada resultado generado por IA se entrega con su fuente y limitación, permitiendo al cliente distinguir entre modelo y juicio humano."
+        "ai": "Cada resultado generado con IA incluye su fuente y limitaciones: el cliente sabe qué fue asistido por modelo y qué fue juicio humano."
       }
     ]
   },
@@ -919,23 +895,23 @@ export const dict: Dict = {
     "company": "Empresa",
     "message": "¿Cómo podemos ayudar?",
     "submit": "Enviar mensaje",
-    "sent": "Mensaje registrado. ¡Gracias por contactarnos!",
+    "sent": "Mensaje registrado. ¡Gracias por el contacto!",
     "info": "O escriba directamente a"
   },
   "cta": {
     "title": "¿Listo para poner la IA al servicio de su gestión?",
-    "body": "Una charla inicial de 45 minutos suele ser suficiente para mapear las primeras oportunidades.",
+    "body": "Una conversación inicial de 45 minutos suele ser suficiente para mapear las primeras oportunidades.",
     "button": "Hablar con Liberato"
   },
   "content": {
     "eyebrow": "Contenido",
-    "title": "Conocimiento aplicado en gestión e IA",
-    "lead": "Artículos, guías y estudios producidos por nuestro equipo. Contenido objetivo con ejemplos reales de IA en la ejecución.",
-    "metaDescription": "Artículos y estudios de Liberato Consulting sobre gestión, operaciones, emprendimiento e investigación de mercado con IA.",
+    "title": "Conocimiento aplicado en gestión e inteligencia artificial",
+    "lead": "Artículos, guías y estudios producidos por nuestro equipo, organizados por frentes de servicio. Contenido objetivo con ejemplos reales de IA en la ejecución.",
+    "metaDescription": "Artículos y estudios de Liberato Consulting sobre gestión estratégica, operaciones, emprendimiento e IA.",
     "readMore": "Leer contenido",
     "relatedService": "Servicio relacionado",
     "allLabel": "Todos",
-    "emptyNote": "Nuevos contenidos se publican mensualmente.",
+    "emptyNote": "Nuevos contenidos publicados cada mes.",
     "article": {
       "by": "Por",
       "summaryLabel": "Resumen",
@@ -950,7 +926,7 @@ export const dict: Dict = {
       "share": "Compartir",
       "back": "Volver a Contenido",
       "publishTitle": "¡Publique usted también! ¡Envíe su artículo!",
-      "publishLead": "¿Tiene un artículo sobre gestión o investigación? Envíelo a nuestra curaduría.",
+      "publishLead": "¿Tiene un artículo sobre gestión, emprendimiento u operaciones? Envíelo a nuestra curaduría.",
       "publishCta": "¡Publique usted también! ¡Envíe su artículo!",
       "formName": "Nombre completo",
       "formRole": "Identificación (autor, investigador, estudiante…)",
@@ -966,16 +942,16 @@ export const dict: Dict = {
       "formFile": "Archivo del artículo (PDF o DOC, hasta 4 MB)",
       "formSubmit": "Enviar artículo",
       "formSending": "Enviando...",
-      "formSuccess": "¡Artículo recibido! Nuestra curaduría lo contactará.",
-      "formError": "No fue posible enviar. Intente nuevamente."
+      "formSuccess": "¡Artículo recibido! Nuestra curaduría se pondrá en contacto.",
+      "formError": "No fue posible enviar. Inténtelo de nuevo."
     },
     "items": [
       {
         "id": "metas-que-saem-do-papel",
         "group": "estrategia",
         "kind": "Artículo",
-        "title": "Metas que se hacen realidad: cómo desglosar la estrategia",
-        "summary": "Método para transformar objetivos anuales en metas por área, monitoreadas semanalmente.",
+        "title": "Metas que se hacen realidad: cómo desplegar la estrategia hasta la rutina",
+        "summary": "Un método sencillo para transformar objetivos anuales en metas por área con indicadores semanales.",
         "service": "desdobramento-de-metas"
       },
       {
@@ -983,23 +959,23 @@ export const dict: Dict = {
         "group": "estrategia",
         "kind": "Guía",
         "title": "IA en la priorización de proyectos de capital",
-        "summary": "Uso de modelos predictivos para comparar escenarios de inversión y estimar riesgos.",
+        "summary": "Cómo usar modelos predictivos para comparar escenarios de inversión y elegir el portafolio con mayor retorno.",
         "service": "projetos-de-capital"
       },
       {
         "id": "rotina-que-sustenta-resultado",
         "group": "operacoes",
         "kind": "Artículo",
-        "title": "La rutina que sostiene el resultado post-proyecto",
-        "summary": "Por qué las ganancias operativas se pierden y qué rituales evitan la regresión.",
+        "title": "La rutina que sostiene el resultado después del proyecto",
+        "summary": "Por qué las ganancias operativas se pierden en seis meses y qué rituales de gestión evitan la regresión.",
         "service": "gestao-da-rotina"
       },
       {
         "id": "analytics-em-processos",
         "group": "operacoes",
         "kind": "Estudio",
-        "title": "Process mining e IA: hallando pérdidas invisibles",
-        "summary": "Lo que los datos revelan sobre cuellos de botella que la observación no captura.",
+        "title": "Process mining e IA: encontrando pérdidas invisibles",
+        "summary": "Lo que los datos del sistema revelan sobre cuellos de botella y retrabajos que la observación no capta.",
         "service": "excelencia-em-processos"
       },
       {
@@ -1007,7 +983,7 @@ export const dict: Dict = {
         "group": "empreendedorismo",
         "kind": "Guía",
         "title": "Unit economics antes de escalar",
-        "summary": "Cómo calcular la rentabilidad por cliente y canal para asegurar un crecimiento sano.",
+        "summary": "Cómo calcular la rentabilidad por cliente y canal para asegurar que el crecimiento no destruya el margen.",
         "service": "precificacao-unit-economics"
       },
       {
@@ -1015,15 +991,15 @@ export const dict: Dict = {
         "group": "empreendedorismo",
         "kind": "Artículo",
         "title": "Validar mercado en 8 semanas con apoyo de IA",
-        "summary": "Hoja de ruta ágil para confirmar demanda antes de inversiones pesadas.",
+        "summary": "Un plan ágil de entrevistas y análisis asistido por IA para confirmar la demanda antes de invertir.",
         "service": "validacao-de-mercado"
       },
       {
         "id": "entrar-no-brasil",
         "group": "pesquisas",
         "kind": "Estudio",
-        "title": "Entrar en Brasil: lo que las empresas subestiman",
-        "summary": "Tributos, logística y cultura: factores que alteran el caso de negocio de entrada.",
+        "title": "Entrar en Brasil: lo que las empresas extranjeras subestiman",
+        "summary": "Impuestos, logística y cultura de negociación: factores que alteran el business case de entrada.",
         "service": "estudos-setoriais-brasil"
       },
       {
@@ -1031,28 +1007,28 @@ export const dict: Dict = {
         "group": "pesquisas",
         "kind": "Guía",
         "title": "Dimensionar mercado con datos públicos brasileños",
-        "summary": "Combinación de bases oficiales e IA para estimar TAM, SAM y SOM.",
+        "summary": "Cómo combinar bases oficiales e IA para estimar TAM, SAM y SOM con transparencia.",
         "service": "dimensionamento-de-mercado"
       }
     ]
   },
   "footer": {
-    "tagline": "Consultoría en gestión empresarial con IA en el centro.",
+    "tagline": "Consultoría en gestión empresarial con inteligencia artificial en el centro.",
     "rights": "Todos los derechos reservados.",
-    "careers": "Trabaje con nosotros",
-    "careersResume": "Enviar currículum",
+    "careers": "Trabaje con Nosotros",
+    "careersResume": "Enviar CV",
     "careersLinkedin": "LinkedIn"
   },
   "whatsapp": {
     "label": "Hable por WhatsApp",
-    "title": "Abrir chat de WhatsApp en nueva pestaña",
+    "title": "Abrir conversación en WhatsApp en pestaña nueva",
     "message": "¡Hola! Me gustaría saber más sobre los servicios de Liberato Consulting."
   },
   "careers": {
-    "eyebrow": "Trabaje con nosotros",
-    "title": "Envíe su currículum",
-    "lead": "Buscamos profesionales que unan gestión e IA. Complete los datos y envíe su perfil.",
-    "metaDescription": "Envíe su currículum a Liberato Consulting: consultoría con IA en el centro.",
+    "eyebrow": "Trabaje con Nosotros",
+    "title": "Envíe su currículo",
+    "lead": "Buscamos profesionales que unan gestión e IA. Complete los datos y envíe su CV.",
+    "metaDescription": "Envíe su currículo a Liberato Consulting: gestión empresarial con IA.",
     "fullName": "Nombre completo",
     "phone": "Celular",
     "email": "E-mail",
@@ -1063,30 +1039,30 @@ export const dict: Dict = {
       "Operaciones",
       "Emprendimiento",
       "Investigación de Mercado",
-      "IA y Datos",
+      "Inteligencia Artificial y Datos",
       "Administrativo y Soporte",
       "Pasantía"
     ],
-    "resume": "Upload de currículum (PDF o DOC, hasta 3 MB)",
+    "resume": "Cargar currículo (PDF o DOC, hasta 3 MB)",
     "linkedin": "Enlace de LinkedIn",
     "linkedinPlaceholder": "https://www.linkedin.com/in/su-perfil",
     "captcha": "Verificación anti-spam: cuánto es",
-    "submit": "Enviar currículum",
+    "submit": "Enviar currículo",
     "sending": "Enviando...",
-    "success": "¡Currículum recibido! Analizaremos su perfil y lo contactaremos si hay afinidad.",
-    "errorCaptcha": "Resultado incorrecto. Intente nuevamente.",
-    "errorTooFast": "Envío muy rápido. Revise los datos.",
-    "errorRate": "Demasiados envíos. Intente más tarde.",
-    "errorFileType": "Formato no aceptado. Envíe PDF o DOC.",
+    "success": "¡Currículo recibido! Nuestro equipo analizará su perfil.",
+    "errorCaptcha": "Resultado incorrecto. Inténtelo de nuevo.",
+    "errorTooFast": "Envío demasiado rápido. Revise los datos e inténtelo de nuevo.",
+    "errorRate": "Demasiados envíos. Inténtelo más tarde.",
+    "errorFileType": "Formato no aceptado. Envíe PDF, DOC o similares.",
     "errorFileSize": "Archivo demasiado grande. El límite es 3 MB.",
     "errorLinkedin": "Inserte un enlace válido de LinkedIn.",
-    "errorGeneric": "No fue posible enviar ahora. Reintente en unos instantes.",
-    "note": "Las candidaturas se envían a contato@liberatoconsulting.com.br."
+    "errorGeneric": "No fue posible enviar ahora. Inténtelo en unos instantes.",
+    "note": "Las candidaturas se dirigen a contato@liberatoconsulting.com.br."
   },
   "serviceFamilies": {
     "eyebrow": "Familias de producto",
     "title": "Nueve familias de producto para decisiones y resultados",
-    "body": "Cada familia reúne servicios con alcance y plazos definidos, siempre con IA aplicada al método.",
+    "body": "Cada familia reúne servicios de consultoría con alcance y plazos definidos, siempre con IA aplicada al método.",
     "labels": {
       "problem": "Problema que resolvemos",
       "audience": "Para quién es",
@@ -1096,14 +1072,14 @@ export const dict: Dict = {
       {
         "id": "eficiencia-operacional",
         "code": "P1",
-        "title": "Eficiencia Operativa",
+        "title": "Eficiencia Operacional",
         "groups": [
           "estrategia",
           "operacoes",
           "empreendedorismo"
         ],
         "problem": "Costos altos, procesos lentos y baja productividad.",
-        "audience": "PyMEs en crecimiento e industria.",
+        "audience": "PyMEs en crecimiento, industria, servicios y corporaciones.",
         "products": [
           "eficiencia-90",
           "sprint-de-produtividade",
@@ -1120,7 +1096,7 @@ export const dict: Dict = {
           "pesquisas"
         ],
         "problem": "Crecimiento sin foco o falta de claridad en el posicionamiento.",
-        "audience": "Empresas establecidas e internacionales.",
+        "audience": "Empresas establecidas, startups y empresas internacionales.",
         "products": [
           "plano-de-crescimento-e-posicionamento",
           "validacao-e-viabilidade",
@@ -1137,7 +1113,7 @@ export const dict: Dict = {
           "operacoes"
         ],
         "problem": "Sistemas desconectados y datos poco utilizados.",
-        "audience": "Empresas en transformación digital.",
+        "audience": "PyMEs digitalizándose y corporaciones en transformación.",
         "products": [
           "mapa-digital-e-ia-pratica",
           "automacao-de-processo-prioritario",
@@ -1152,8 +1128,8 @@ export const dict: Dict = {
           "estrategia",
           "pesquisas"
         ],
-        "problem": "Exposición a incidentes y riesgos regulatorios.",
-        "audience": "Sectores regulados y empresas con datos sensibles.",
+        "problem": "Exposición a incidentes, riesgos de terceros y gobernanza de IA.",
+        "audience": "Empresas con datos sensibles y sectores regulados.",
         "products": [
           "cyber-essentials-pme",
           "trust-review-mensal",
@@ -1168,8 +1144,8 @@ export const dict: Dict = {
           "estrategia",
           "empreendedorismo"
         ],
-        "problem": "Falta de visibilidad de caja y márgenes.",
-        "audience": "PyMEs y scale-ups.",
+        "problem": "Falta de visibilidad de caja, margen y controles.",
+        "audience": "PyMEs, scale-ups y unidades corporativas.",
         "products": [
           "financeiro-sob-controle",
           "advisory-financeiro",
@@ -1185,8 +1161,8 @@ export const dict: Dict = {
           "empreendedorismo",
           "pesquisas"
         ],
-        "problem": "Baja conversión y falta de previsibilidad comercial.",
-        "audience": "Retail, servicios y negocios B2B.",
+        "problem": "Baja conversión, precios inadecuados y poca previsibilidad.",
+        "audience": "Empresas B2B/B2C, retail y servicios.",
         "products": [
           "cliente-que-retem",
           "sprint-comercial",
@@ -1202,8 +1178,8 @@ export const dict: Dict = {
           "operacoes",
           "pesquisas"
         ],
-        "problem": "Riesgos ambientales y exigencias de inversores.",
-        "audience": "Exportadoras, energía y agronegocio.",
+        "problem": "Exigencias regulatorias y riesgos ambientales.",
+        "audience": "Exportadoras, industria, energía y agronegocio.",
         "products": [
           "esg-essencial",
           "carbono-e-cadeia",
@@ -1219,8 +1195,8 @@ export const dict: Dict = {
           "empreendedorismo",
           "operacoes"
         ],
-        "problem": "Roles confusos y transformaciones que no se sostienen.",
-        "audience": "Empresas en reorganización o integración.",
+        "problem": "Baja adopción, roles confusos y falta de competencias.",
+        "audience": "Empresas en crecimiento o reorganización.",
         "products": [
           "organizacao-e-pessoas-para-crescer",
           "rotina-de-gestao",
@@ -1234,8 +1210,8 @@ export const dict: Dict = {
         "groups": [
           "pesquisas"
         ],
-        "problem": "Reducir la incertidumbre en inversiones y precios.",
-        "audience": "Inversores y corporaciones.",
+        "problem": "Reducir incertidumbre en decisiones de entrada e inversión.",
+        "audience": "PyMEs, startups, corporaciones e inversores.",
         "products": [
           "market-opportunity-decision",
           "customer-insight-sprint",
@@ -1243,7 +1219,10 @@ export const dict: Dict = {
           "price-and-value-intelligence",
           "competitive-response-radar",
           "market-signal-monitor",
-          "decision-room"
+          "decision-room",
+          "modelagem-de-negocio",
+          "plano-de-negocios",
+          "informacoes-de-segmentos-de-mercado"
         ]
       }
     ]
@@ -1254,8 +1233,8 @@ export const dict: Dict = {
       "audience": "Para quién es",
       "duration": "Tiempo estimado",
       "scope": "Qué hacemos",
-      "ai": "Dónde entra la IA",
-      "cta": "Contacte a nuestro equipo",
+      "ai": "Donde entra la IA",
+      "cta": "Contacte con nuestro equipo",
       "ctaBody": "Cuéntenos su contexto y diseñaremos el alcance adecuado.",
       "back": "Ver todos los servicios",
       "related": "Otros productos de este frente",
@@ -1266,7 +1245,7 @@ export const dict: Dict = {
       "family": "Familia de producto",
       "limits": "Premisas y límites",
       "familyProducts": "Productos de esta familia",
-      "familyIntro": "Elija el producto según su etapa: diagnóstico, plan o ejecución."
+      "familyIntro": "Elija el producto según su etapa de decisión."
     },
     "form": {
       "title": "Hable con nuestro equipo",
@@ -1282,65 +1261,59 @@ export const dict: Dict = {
       "sending": "Enviando...",
       "success": "Recibimos su contacto. Responderemos pronto.",
       "errorCaptcha": "Resultado incorrecto.",
-      "errorTooFast": "Envío muy rápido.",
-      "errorRate": "Demasiados envíos.",
+      "errorTooFast": "Envío rápido. Intente de nuevo.",
+      "errorRate": "Muchos envíos. Intente más tarde.",
       "errorGeneric": "No fue posible enviar ahora."
     },
     "pages": [
       {
         "id": "eficiencia-90",
-        "group": "estrategia",
+        "group": "operacoes",
         "groups": [
-          "estrategia",
-          "operacoes",
-          "empreendedorismo"
+          "operacoes"
         ],
         "code": "P1",
-        "family": "Eficiencia Operativa",
+        "family": "Eficiencia Operacional",
         "title": "Eficiencia 90",
-        "lead": "Reducir desperdicios y crear rutinas que sostengan ganancias.",
-        "problem": "Costos altos y baja productividad.",
-        "body": "Diagnóstico de cadena de valor, mapa de desperdicios, rediseño e indicadores para un plan de 90 días.",
-        "audience": "PyMEs y empresas de servicios",
-        "duration": "4–8 semanas (PyME) · 6–12 semanas (Corp)",
+        "lead": "Reducir desperdicios y crear una rutina sostenible.",
+        "problem": "Costos altos, procesos lentos y retrabajo.",
+        "body": "Diagnóstico de cadena de valor, baseline, mapa de desperdicios y plan de 90 días.",
+        "audience": "PyMEs en crecimiento y empresas de servicios",
+        "duration": "4–8 semanas (PyME) · 6–12 semanas (corporativo)",
         "level": "Plan 90 Días",
         "bullets": [
           "Diagnóstico de proceso",
           "Baseline",
           "Mapa de desperdicios",
-          "Rediseño",
-          "Estándares",
-          "Plan de 90 días"
+          "Rediseño e indicadores"
         ],
         "results": [
           "Lead time",
           "Costo unitario",
-          "Productividad",
-          "Nivel de servicio"
+          "Retrabajo",
+          "Productividad"
         ],
         "modules": [
           "Excelencia en Procesos",
-          "Gestión de la Rutina",
-          "Estructuración Inicial"
+          "Gestión de la Rutina"
         ],
-        "limits": "Ahorros dependen de datos y ejecución del cliente.",
-        "ai": "Identificación de cuellos de botella y apoyo a la documentación."
+        "limits": "Ahorros dependen de datos y equipo; no se promete resultado sin validación.",
+        "ai": "Lectura de logs, identificación de cuellos de botella y apoyo a documentación."
       },
       {
         "id": "sprint-de-produtividade",
-        "group": "estrategia",
+        "group": "operacoes",
         "groups": [
-          "estrategia",
           "operacoes"
         ],
         "code": "P1",
-        "family": "Eficiencia Operativa",
+        "family": "Eficiencia Operacional",
         "title": "Sprint de Productividad",
         "lead": "Convertir oportunidad operativa en resultado mensurable.",
-        "problem": "Mejora prioritaria no implementada o no sostenida.",
-        "body": "Implementación de mejora o automatización con medición antes/después y transferencia de método.",
+        "problem": "Mejoría prioritaria identificada pero no implementada.",
+        "body": "Implementación de mejora o automatización con transferencia de método.",
         "audience": "PyMEs e industria",
-        "duration": "6–12 semanas (PyME) · 8–16 semanas (Corp)",
+        "duration": "6–12 semanas (PyME) · 8–16 semanas (corporativo)",
         "level": "Sprint de Resultado",
         "bullets": [
           "Implementación de mejora",
@@ -1349,202 +1322,191 @@ export const dict: Dict = {
         "results": [
           "Horas ahorradas",
           "Reducción de errores",
-          "Productividad"
+          "Costo"
         ],
         "modules": [
           "Excelencia en Procesos",
-          "Gestión de la Rutina",
           "Transformación Digital"
         ],
-        "limits": "Licencias de tecnología no incluidas.",
-        "ai": "Monitoreo de desviaciones y apoyo al análisis de causa."
+        "limits": "Licencias y desarrollo pueden presupuestarse aparte.",
+        "ai": "Automatización de tareas, monitoreo de desviaciones y análisis de causa."
       },
       {
         "id": "programa-de-excelencia-operacional",
-        "group": "estrategia",
+        "group": "operacoes",
         "groups": [
-          "estrategia",
           "operacoes"
         ],
         "code": "P1",
-        "family": "Eficiencia Operativa",
+        "family": "Eficiencia Operacional",
         "title": "Programa de Excelencia Operacional",
         "lead": "Coordinar transformación operativa con impacto económico.",
-        "problem": "Baja productividad y poca estandarización en múltiples áreas.",
-        "body": "Gestión integral de supply chain, procesos, productividad e inversiones con PMO.",
-        "audience": "Industria y logística",
-        "duration": "8–16 semanas (PyME) · 3–12 meses (Corp)",
+        "problem": "Baja productividad o poca estandarización en múltiples áreas.",
+        "body": "Diagnóstico ampliado para unidades o procesos complejos.",
+        "audience": "Industria, logística y corporaciones",
+        "duration": "8–16 semanas (PyME) · 3–12 meses (corporativo)",
         "level": "Sprint / Advisory- PMO",
         "bullets": [
-          "Diagnóstico ampliado y ejecución multi-unidad"
+          "Diagnóstico ampliado de unidad"
         ],
         "results": [
-          "OEE",
           "Costo unitario",
-          "Ahorro validado"
+          "OEE aplicable",
+          "Productividad"
         ],
         "modules": [
           "Excelencia Industrial",
-          "Proyectos de Capital",
-          "Gestión de la Rutina"
+          "Gestión de Proyectos de Capital"
         ],
-        "limits": "Requiere sponsor ejecutivo y acceso a datos reales.",
-        "ai": "Detección de cuellos de botella y monitoreo de indicadores."
+        "limits": "Requiere sponsor ejecutivo y acceso a datos.",
+        "ai": "Análisis de datos operativos y monitoreo de indicadores."
       },
       {
         "id": "plano-de-crescimento-e-posicionamento",
         "group": "estrategia",
         "groups": [
-          "estrategia",
-          "empreendedorismo",
-          "pesquisas"
+          "estrategia"
         ],
         "code": "P2",
         "family": "Crecimiento, Expansión y Nuevos Productos",
         "title": "Plan de Crecimiento y Posicionamiento",
-        "lead": "Transformar ambición en plan ejecutable.",
-        "problem": "Crecimiento sin foco o canales no priorizados.",
-        "body": "Segmentación, propuesta de valor, canales, pricing y plan de acción con gobernanza.",
+        "lead": "Transformar ambición en un plan priorizado y ejecutable.",
+        "problem": "Crecimiento sin foco o posicionamiento confuso.",
+        "body": "Segmentación, propuesta de valor, pricing y plan de acción.",
         "audience": "PyMEs y empresas establecidas",
-        "duration": "4–6 semanas (PyME) · 8–16 semanas (Corp)",
+        "duration": "4–6 semanas (PyME) · 8–16 semanas (corporativo)",
         "level": "Plan 90 Días",
         "bullets": [
           "Segmentación",
-          "Pricing",
-          "Canales",
-          "Metas"
+          "Propuesta de valor",
+          "Pricing y metas"
         ],
         "results": [
-          "Ingresos incremental",
-          "Pipeline",
+          "Ingreso incremental",
+          "Segmentos priorizados",
           "Margen"
         ],
         "modules": [
           "Modelado de Negocio",
-          "Análisis Competitivo",
-          "Excelencia Comercial"
+          "Análisis Competitivo"
         ],
-        "limits": "No garantiza demanda ni aprobación regulatoria.",
-        "ai": "Síntese de fuentes y escenarios de priorización."
+        "limits": "No garantiza demanda o aprobación regulatoria.",
+        "ai": "Síntese de fuentes, análisis de competencia y escenarios."
       },
       {
         "id": "validacao-e-viabilidade",
         "group": "empreendedorismo",
         "groups": [
-          "empreendedorismo",
-          "pesquisas"
+          "empreendedorismo"
         ],
         "code": "P2",
         "family": "Crecimiento, Expansión y Nuevos Productos",
         "title": "Validación y Viabilidad",
-        "lead": "Decidir avanzar o ajustar con base en evidencia.",
-        "problem": "Incertidumbre sobre demanda de nueva idea.",
-        "body": "Pruebas de hipótesis, entrevistas y escenario financiero para decisión go/no-go.",
+        "lead": "Decidir avanzar o ajustar basado en evidencia.",
+        "problem": "Idea sin validación de demanda o riesgo de capital.",
+        "body": "Prueba de hipótesis, entrevistas y escenario financiero.",
         "audience": "Startups y nuevos negocios",
-        "duration": "4–8 semanas (PyME) · 6–12 semanas (Corp)",
+        "duration": "4–8 semanas (PyME) · 6–12 semanas (corporativo)",
         "level": "Plan 90 Días",
         "bullets": [
-          "Prueba de hipótesis",
-          "Escenario financiero"
+          "Hipótesis",
+          "Entrevistas",
+          "Decisión go/no-go"
         ],
         "results": [
+          "Hipótesis validadas",
           "Intención de compra",
-          "Decisión go/no-go"
+          "Escenarios"
         ],
         "modules": [
           "Validación de Mercado",
-          "Viabilidad",
-          "Modelado"
+          "Estudio de Viabilidad"
         ],
         "limits": "La muestra debe ser adecuada al riesgo de la decisión.",
-        "ai": "Síntesis de evidencias y preparación de materiales."
+        "ai": "Organización de entrevistas, síntesis de evidencia y materiales."
       },
       {
         "id": "growth-strategy-office",
         "group": "estrategia",
         "groups": [
-          "estrategia",
-          "pesquisas"
+          "estrategia"
         ],
         "code": "P2",
-        "family": "Crecimiento, Expansión y Nuevos Productos",
+        "family": "Crecimiento, Expansão e Novos Produtos",
         "title": "Growth Strategy Office",
-        "lead": "Coordinar expansión y nuevos productos.",
-        "problem": "Crecimiento fragmentado sin gobernanza.",
-        "body": "Roadmap de unidad, portafolio, escenarios, inversiones y PMO de crecimiento.",
-        "audience": "Corporaciones en expansión",
-        "duration": "6–12 semanas (PyME) · 3–9 meses (Corp)",
-        "level": "Plano / Advisory- PMO",
+        "lead": "Coordinar crecimiento y ejecución de nuevos productos.",
+        "problem": "Crecimiento fragmentado o expansión sin gobernanza.",
+        "body": "Diagnóstico de crecimiento y roadmap de unidad.",
+        "audience": "Corporaciones y grupos en expansión",
+        "duration": "6–12 semanas (PyME) · 3–9 meses (corporativo)",
+        "level": "Plan / Advisory- PMO",
         "bullets": [
-          "Gestión de portafolio y roadmap de crecimiento"
+          "Diagnóstico y roadmap"
         ],
         "results": [
-          "Ingresos",
-          "Ejecución de roadmap",
+          "Ingreso incremental",
+          "Margen",
           "Participación"
         ],
         "modules": [
-          "Desglose de Metas",
-          "Proyectos de Capital",
-          "Estudios"
+          "Despliegue de Metas",
+          "Modelado"
         ],
-        "limits": "Depende de disponibilidad de datos estratégicos.",
-        "ai": "Priorización y materiales ejecutivos."
+        "limits": "Depende de decisiones del cliente y datos estratégicos.",
+        "ai": "Análisis de escenarios y materiales ejecutivos."
       },
       {
         "id": "brazil-entry-navigator",
-        "group": "estrategia",
+        "group": "pesquisas",
         "groups": [
-          "estrategia",
           "pesquisas"
         ],
         "code": "P2",
-        "family": "Crecimiento, Expansión y Nuevos Produtos",
+        "family": "Crecimiento, Expansão e Novos Produtos",
         "title": "Brazil Entry Navigator",
-        "lead": "Reducir riesgo de entrada en el mercado brasileño.",
-        "problem": "Desconocimiento de barreras y socios en Brasil.",
-        "body": "Mapa de regiones, canales, barreras regulatorias y shortlist de socios locales.",
-        "audience": "Empresas internacionales",
-        "duration": "4–8 semanas (PyME) · 8–16 semanas (Corp)",
+        "lead": "Reducir riesgo de entrada en Brasil con secuencia práctica.",
+        "problem": "Desconocimiento de canales, socios o barreras locales.",
+        "body": "Mapa de regiones, competidores y shortlist de socios.",
+        "audience": "Empresas internacionales e inversores",
+        "duration": "4–8 semanas (PyME) · 8–16 semanas (corporativo)",
         "level": "Plan 90 Días",
         "bullets": [
-          "Mapa de regiones",
-          "Shortlist de socios",
-          "Riesgos"
+          "Mapa regional",
+          "Barreras",
+          "Socios cualificados"
         ],
         "results": [
           "Regiones comparadas",
-          "Socios calificados",
-          "Business case"
+          "Costo de entrada",
+          "Tiempo estimado"
         ],
         "modules": [
           "Dimensionamiento",
-          "Regulación",
+          "Lectura Regulatoria",
           "Socios y Objetivos"
         ],
-        "limits": "No garantiza aprobación regulatoria ni ventas.",
-        "ai": "Investigación documental y traducción técnica."
+        "limits": "No garantiza ventas ni aprobaciones regulatorias.",
+        "ai": "Investigación documental en portugués y escenarios."
       },
       {
         "id": "mapa-digital-e-ia-pratica",
-        "group": "estrategia",
+        "group": "operacoes",
         "groups": [
-          "estrategia",
           "operacoes"
         ],
         "code": "P3",
         "family": "Digital, Datos e IA Aplicada",
         "title": "Mapa Digital e IA Práctica",
-        "lead": "Elegir casos de uso de IA con retorno real.",
+        "lead": "Elegir tecnología que genere retorno de negocio.",
         "problem": "Procesos manuales e IA sin priorización.",
-        "body": "Roadmap de digitalización, cinco a diez casos de uso y política de IA.",
-        "audience": "PyMEs digitalizando",
-        "duration": "3–6 semanas (PyME) · 6–10 semanas (Corp)",
+        "body": "Roadmap de casos de uso, inversión y política de IA.",
+        "audience": "PyMEs y empresas establecidas",
+        "duration": "3–6 semanas (PyME) · 6–10 semanas (corporativo)",
         "level": "Radar / Plan 90 Días",
         "bullets": [
-          "Maturidad",
-          "Roadmap",
-          "Política de IA"
+          "Madurez",
+          "Casos de uso",
+          "Roadmap e inversión"
         ],
         "results": [
           "Casos priorizados",
@@ -1553,42 +1515,41 @@ export const dict: Dict = {
         ],
         "modules": [
           "Transformación Digital",
-          "Eficiencia en Procesos"
+          "Excelencia en Procesos"
         ],
-        "limits": "Hardware y software no incluidos.",
-        "ai": "Priorización de casos y automatización inicial."
+        "limits": "Infraestructura no incluida sin propuesta específica.",
+        "ai": "Priorización de casos y apoyo a decisiones."
       },
       {
         "id": "automacao-de-processo-prioritario",
-        "group": "estrategia",
+        "group": "operacoes",
         "groups": [
-          "estrategia",
           "operacoes"
         ],
         "code": "P3",
         "family": "Digital, Datos e IA Aplicada",
         "title": "Automatización de Proceso Prioritario",
-        "lead": "Implementar IA con medición de impacto.",
-        "problem": "Tareas manuales que generan errores.",
-        "body": "Diseño e implantación de agentes de IA o dashboards con gobernanza.",
-        "audience": "Áreas corporativas",
-        "duration": "6–12 semanas (PyME) · 8–20 semanas (Corp)",
+        "lead": "Implementar IA con medición de impacto directo.",
+        "problem": "Tareas manuales que consumen tiempo o generan errores.",
+        "body": "Diseño, implementación y medición de un caso de IA.",
+        "audience": "PyMEs y áreas corporativas",
+        "duration": "6–12 semanas (PyME) · 8–20 semanas (corporativo)",
         "level": "Sprint de Resultado",
         "bullets": [
-          "Implementación de caso de uso",
-          "Gobernanza"
+          "Diseño e implementación",
+          "Dashboards o IA operativa"
         ],
         "results": [
           "Horas ahorradas",
-          "Ciclo de tiempo",
+          "Costo por transacción",
           "Adopción"
         ],
         "modules": [
           "Transformación Digital",
-          "Excelencia en Procesos"
+          "Gestión de la Rutina"
         ],
-        "limits": "Sujeto a integración con sistemas del cliente.",
-        "ai": "Agentes internos y análisis documental."
+        "limits": "Dependencia de licencias de terceros.",
+        "ai": "Automatización, agentes internos y análisis."
       },
       {
         "id": "enterprise-digital-and-ai-transformation",
@@ -1599,180 +1560,177 @@ export const dict: Dict = {
         "code": "P3",
         "family": "Digital, Datos e IA Aplicada",
         "title": "Enterprise Digital and AI Transformation",
-        "lead": "Coordinar transformación digital integral.",
-        "problem": "Tecnología sin conexión con resultados.",
-        "body": "Arquitectura de datos, operating model, gobernanza y PMO de transformación.",
-        "audience": "Grandes grupos",
-        "duration": "8–16 semanas (PyME) · 3–18 meses (Corp)",
+        "lead": "Coordinar transformación digital con arquitectura y gobernanza.",
+        "problem": "Tecnología sin integración ni conexión con resultados.",
+        "body": "Discovery de unidad, arquitectura, datos y PMO.",
+        "audience": "Grandes empresas",
+        "duration": "8–16 semanas (PyME) · 3–18 meses (corporativo)",
         "level": "Sprint / Advisory- PMO",
         "bullets": [
-          "Operating model y arquitectura de datos"
+          "Discovery de negocio",
+          "Modelo operativo y gobernanza"
         ],
         "results": [
-          "ROI",
           "Adopción",
+          "ROI tecnológico",
           "Tiempo de decisión"
         ],
         "modules": [
           "Transformación Digital",
-          "Desglose de Metas"
+          "Despliegue de Metas"
         ],
-        "limits": "No incluye SOC ni operación técnica contínua.",
-        "ai": "IA aplicada con trazabilidad y validación."
+        "limits": "No incluye SOC; alcance técnico a definir.",
+        "ai": "IA aplicada con validación humana y trazabilidad."
       },
       {
         "id": "cyber-essentials-pme",
         "group": "estrategia",
         "groups": [
-          "estrategia",
-          "pesquisas"
+          "estrategia"
         ],
         "code": "P4",
         "family": "Ciberseguridad, Privacidad y Confianza Digital",
         "title": "Cyber Essentials PME",
-        "lead": "Reducir exposición y crear plan de respuesta.",
-        "problem": "Backups frágiles y riesgo de incidentes.",
-        "body": "Inventario de activos, accesos, respuesta a incidentes y cumplimiento LGPD prioritario.",
-        "audience": "PyMEs digitales",
-        "duration": "4–8 semanas (PyME) · 6–10 semanas (Corp)",
+        "lead": "Reducir exposición básica y crear plan de respuesta.",
+        "problem": "Backups frágiles e incertidumbre sobre LGPD.",
+        "body": "Inventario, accesos, respuesta a incidentes y plan 90 días.",
+        "audience": "PyMEs con canales digitales",
+        "duration": "4–8 semanas (PyME) · 6–10 semanas (corporativo)",
         "level": "Plan 90 Días",
         "bullets": [
-          "Backups",
-          "Accesos",
-          "Plan de respuesta"
+          "Inventario y accesos",
+          "Backups y LGPD"
         ],
         "results": [
           "Activos cubiertos",
           "Riesgos tratados"
         ],
         "modules": [
-          "Regulación",
+          "Lectura Regulatoria",
           "Transformación Digital"
         ],
-        "limits": "Pentest y SOC requieren socios especializados.",
+        "limits": "Pentest y SOC 24/7 requieren socios especializados.",
         "ai": "Clasificación de riesgos y priorización."
       },
       {
         "id": "trust-review-mensal",
         "group": "estrategia",
         "groups": [
-          "estrategia",
-          "pesquisas"
+          "estrategia"
         ],
         "code": "P4",
         "family": "Ciberseguridad, Privacidad y Confianza Digital",
         "title": "Trust Review Mensal",
-        "lead": "Ciclo mensual de corrección de riesgos.",
-        "problem": "Falta de rutina para revisar riesgos digitales cambiantes.",
-        "body": "Revisión mensual de incidentes, proveedores y plan de corrección.",
-        "audience": "Scale-ups",
-        "duration": "Mensual",
+        "lead": "Ciclo mensual de revisión de riesgos críticos.",
+        "problem": "Riesgos digitales cambiantes sin rutina de revisión.",
+        "body": "Revisión de riesgos, accesos e incidentes mensuales.",
+        "audience": "PyMEs y scale-ups",
+        "duration": "Recurrente (PyME) · Mensal (corporativo)",
         "level": "Advisory- PMO",
         "bullets": [
-          "Revisión de accesos y proveedores"
+          "Revisión de riesgos",
+          "Plan de corrección"
         ],
         "results": [
-          "Tiempo de respuesta",
-          "Cumplimiento"
+          "Riesgos tratados",
+          "Tiempo de respuesta"
         ],
         "modules": [
-          "Regulación",
+          "Lectura Regulatoria",
           "Transformación Digital"
         ],
-        "limits": "No es monitoreo 24/7.",
-        "ai": "Clasificación de alertas."
+        "limits": "No es servicio de monitoreo en tiempo real.",
+        "ai": "Clasificación de alertas y evidencias."
       },
       {
         "id": "cyber-resilience-and-digital-trust",
         "group": "estrategia",
         "groups": [
-          "estrategia",
-          "pesquisas"
+          "estrategia"
         ],
         "code": "P4",
         "family": "Ciberseguridad, Privacidad y Confianza Digital",
         "title": "Cyber Resilience and Digital Trust",
-        "lead": "Integrar ciberseguridad al riesgo corporativo.",
-        "problem": "Riesgos de terceros y gobernanza de IA.",
-        "body": "Continuidad de negocio, métricas para consejo y riesgo financiero digital.",
-        "audience": "Sectores regulados",
-        "duration": "6–10 semanas (PyME) · 3–9 meses (Corp)",
-        "level": "Plano / Sprint / Advisory- PMO",
+        "lead": "Integrar ciberseguridad al riesgo y agenda ejecutiva.",
+        "problem": "Riesgos de nube y dificultad de cuantificar impacto.",
+        "body": "Assessment de madurez, continuidad y gobernanza de IA.",
+        "audience": "Corporaciones y sectores regulados",
+        "duration": "6–10 semanas (PyME) · 3–9 meses (corporativo)",
+        "level": "Plan / Sprint / Advisory- PMO",
         "bullets": [
-          "Riesgo financiero y gobernanza de IA"
+          "Assessment de madurez",
+          "Gobernanza de IA"
         ],
         "results": [
           "Madurez",
-          "Cobertura de terceros"
+          "Impacto financiero estimado"
         ],
         "modules": [
-          "Regulación",
+          "Lectura Regulatoria",
           "Gobernanza"
         ],
-        "limits": "Certificaciones requieren especialistas externos.",
-        "ai": "Escenarios y análisis documental."
+        "limits": "Exige socio para pruebas técnicas o certificaciones.",
+        "ai": "Análisis documental y escenarios."
       },
       {
         "id": "financeiro-sob-controle",
         "group": "estrategia",
         "groups": [
-          "estrategia",
-          "empreendedorismo"
+          "estrategia"
         ],
         "code": "P5",
         "family": "Finanzas Estratégicas y Controles",
         "title": "Financeiro sob Controle",
-        "lead": "Información financiera para decidir.",
-        "problem": "Falta de visibilidad de caja y márgenes.",
-        "body": "Flujo de caja, capital de trabajo, presupuesto e indicadores esenciales.",
+        "lead": "Dar información financiera clara para decidir.",
+        "problem": "Falta de visibilidad de caja y margen.",
+        "body": "Flujo de caja, capital de trabajo e indicadores esenciales.",
         "audience": "PyMEs y scale-ups",
-        "duration": "4–8 semanas (PyME) · 6–10 semanas (Corp)",
+        "duration": "4–8 semanas (PyME) · 6–10 semanas (corporativo)",
         "level": "Plan 90 Días",
         "bullets": [
-          "Caja",
-          "Presupuesto",
-          "Controles"
+          "Flujo de caja",
+          "Presupuesto y controles"
         ],
         "results": [
-          "Previsibilidad",
-          "Ciclo financiero"
+          "Previsibilidad de caja",
+          "Margen real"
         ],
         "modules": [
           "Unit Economics",
-          "Viabilidad"
+          "Modelado"
         ],
         "limits": "No sustituye contabilidad ni auditoría.",
-        "ai": "Clasificación de gastos y escenarios."
+        "ai": "Clasificación de gastos y análisis de variaciones."
       },
       {
         "id": "advisory-financeiro",
         "group": "estrategia",
         "groups": [
-          "estrategia",
-          "empreendedorismo"
+          "estrategia"
         ],
         "code": "P5",
         "family": "Finanzas Estratégicas y Controles",
         "title": "Advisory Financeiro",
-        "lead": "Datos financieros convertidos en disciplina.",
-        "problem": "Falta de rutina para acompañar decisiones financieras.",
-        "body": "Reunión mensual, análisis de variaciones y prioridades de caja.",
-        "audience": "PyMEs",
-        "duration": "Mensual",
+        "lead": "Datos financieros convertidos en disciplina mensual.",
+        "problem": "Gestor con datos pero sin rutina de acompañamiento.",
+        "body": "Actualización de indicadores y análisis de prioridades.",
+        "audience": "PyMEs en crecimiento",
+        "duration": "Recurrente (PyME) · Mensal (corporativo)",
         "level": "Advisory- PMO",
         "bullets": [
-          "Seguimiento mensual"
+          "Actualización de KPIs",
+          "Análisis de caja"
         ],
         "results": [
           "Forecast",
-          "Margen"
+          "Cumplimiento presupuestario"
         ],
         "modules": [
-          "Pricing",
+          "Precificación",
           "Modelado"
         ],
-        "limits": "No es outsourcing contable.",
-        "ai": "Reportes gerenciales automáticos."
+        "limits": "Consultoría separada de contabilidad.",
+        "ai": "Informes gerenciales y escenarios."
       },
       {
         "id": "performance-finance-and-controls",
@@ -1783,364 +1741,356 @@ export const dict: Dict = {
         "code": "P5",
         "family": "Finanzas Estratégicas y Controles",
         "title": "Performance Finance and Controls",
-        "lead": "Disciplina financiera integrada a la estrategia.",
-        "problem": "Tesorería y controles no integrados.",
-        "body": "FP&A, working capital, gobernanza financiera e integración estratégica.",
-        "audience": "Unidades de negocio",
-        "duration": "8–16 semanas (PyME) · 3–9 meses (Corp)",
+        "lead": "Aumentar calidad de información y disciplina financiera.",
+        "problem": "Tesorería y controles no integrados a la estrategia.",
+        "body": "Assessment financiero y plan de controles robusto.",
+        "audience": "Corporaciones",
+        "duration": "8–16 semanas (PyME) · 3–9 meses (corporativo)",
         "level": "Sprint / Advisory- PMO",
         "bullets": [
-          "FP&A y gobernanza"
+          "FP&A y Tesorería",
+          "Gobernanza financiera"
         ],
         "results": [
-          "Calidad de cierre",
-          "Working capital"
+          "Ciclo financiero",
+          "Calidad de cierre"
         ],
         "modules": [
-          "Viabilidad",
-          "Proyectos de Capital"
+          "Projetos de Capital",
+          "Unit Economics"
         ],
-        "limits": "Opinión legal excluida.",
-        "ai": "Análisis de variaciones y preparación de reportes."
+        "limits": "Servicios regulados fuera de alcance sin socio.",
+        "ai": "Análisis de variaciones y preparación de informes."
       },
       {
         "id": "cliente-que-retem",
         "group": "operacoes",
         "groups": [
-          "operacoes",
-          "empreendedorismo",
-          "pesquisas"
+          "operacoes"
         ],
         "code": "P6",
-        "family": "Cliente, Vendas e Experiência",
-        "title": "Cliente que Retém",
-        "lead": "Aumentar conversión y retención.",
-        "problem": "Churn alto y poca previsibilidad.",
-        "body": "Segmentación, embudo de ventas, CRM y rutina comercial.",
-        "audience": "PyMEs B2B/B2C",
-        "duration": "4–8 semanas (PyME) · 6–12 semanas (Corp)",
+        "family": "Cliente, Ventas y Experiencia",
+        "title": "Cliente que Retiene",
+        "lead": "Aumentar conversión y retención con sistema medible.",
+        "problem": "Baja conversión y alta tasa de churn.",
+        "body": "Jornada, embudo, CRM y rutina comercial.",
+        "audience": "PyMEs B2B/B2C, retail",
+        "duration": "4–8 semanas (PyME) · 6–12 semanas (corporativo)",
         "level": "Plan 90 Días",
         "bullets": [
-          "Embudo",
-          "CRM",
-          "Retención"
+          "Jornada y embudo",
+          "Rutina comercial"
         ],
         "results": [
           "Conversión",
-          "CAC",
-          "Retención"
+          "CAC y Churn"
         ],
         "modules": [
           "Excelencia Comercial",
-          "Consumidor"
+          "Precificación"
         ],
-        "limits": "Sujeto a privacidad de datos.",
-        "ai": "Propensión y segmentación inteligente."
+        "limits": "Uso de datos debe respetar la LGPD.",
+        "ai": "Propensión, segmentación y análisis de conversaciones."
       },
       {
         "id": "sprint-comercial",
-        "group": "operacoes",
+        "group": "estrategia",
         "groups": [
-          "operacoes",
           "estrategia"
         ],
         "code": "P6",
-        "family": "Cliente, Vendas e Experiência",
+        "family": "Cliente, Ventas y Experiencia",
         "title": "Sprint Comercial",
-        "lead": "Mejora comercial en ingresos o eficiencia.",
-        "problem": "Falta implementación en CRM o pricing.",
-        "body": "Implantación piloto en canal o cartera con gestión del cambio.",
-        "audience": "Áreas comerciales",
-        "duration": "6–12 semanas (PyME) · 8–16 semanas (Corp)",
+        "lead": "Mejora comercial con efecto en ingresos.",
+        "problem": "Falta implementación en embudo o pricing.",
+        "body": "Implantación de mejora en canal o CRM.",
+        "audience": "PyMEs y áreas comerciales",
+        "duration": "6–12 semanas (PyME) · 8–16 semanas (corporativo)",
         "level": "Sprint de Resultado",
         "bullets": [
-          "Piloto en canal o CRM"
+          "Mejora en embudo",
+          "Pricing o CRM"
         ],
         "results": [
-          "Ticket promedio",
-          "Pipeline"
+          "Conversión",
+          "Adopción de CRM"
         ],
         "modules": [
           "Excelencia Comercial",
-          "Digital"
+          "Transformación Digital"
         ],
-        "limits": "Resultado depende de ejecución comercial.",
-        "ai": "Análisis de conversaciones y recomendación de acciones."
+        "limits": "Resultado depende de la ejecución comercial del equipo.",
+        "ai": "Recomendación de próxima acción y segmentación."
       },
       {
         "id": "customer-growth-and-experience-transformation",
         "group": "operacoes",
         "groups": [
-          "operacoes",
-          "estrategia"
+          "operacoes"
         ],
         "code": "P6",
-        "family": "Cliente, Vendas e Experiência",
+        "family": "Cliente, Ventas y Experiencia",
         "title": "Customer Growth and Experience Transformation",
-        "lead": "Integrar datos y canales para crecer.",
-        "problem": "Experiencia fragmentada.",
-        "body": "Omnicanalidad, CRM, ventas y PMO de experiencia.",
+        "lead": "Integrar datos y canales para crecer y retener.",
+        "problem": "Jornadas fragmentadas y experiencia sin conexión.",
+        "body": "Omnicanalidad, CRM, retención y PMO.",
         "audience": "Corporaciones",
-        "duration": "8–16 semanas (PyME) · 3–12 meses (Corp)",
+        "duration": "8–16 semanas (PyME) · 3–12 meses (corporativo)",
         "level": "Sprint / Advisory- PMO",
         "bullets": [
-          "Omnicanalidad y retención"
+          "Jornada piloto",
+          "Omnicanalidad"
         ],
         "results": [
           "NPS",
-          "Ingresos por cliente"
+          "Ingreso por cliente"
         ],
         "modules": [
-          "Excelencia Comercial",
-          "Consumidor"
+          "Transformación Digital",
+          "Comportamento"
         ],
-        "limits": "Mantenimiento de plataformas no incluido.",
-        "ai": "Personalización responsable y análisis de jornada."
+        "limits": "Plataformas y pauta se contratan aparte.",
+        "ai": "Análisis de jornada y personalización responsable."
       },
       {
         "id": "esg-essencial",
         "group": "estrategia",
         "groups": [
-          "estrategia",
-          "operacoes",
-          "pesquisas"
+          "estrategia"
         ],
         "code": "P7",
-        "family": "ESG, Sustentabilidade e Clima",
-        "title": "ESG Essencial",
-        "lead": "Prioridades ESG en la gestión.",
-        "problem": "Exigencias de cadena sin plan de acción.",
-        "body": "Materialidad, riesgos, proveedores y plan de acción ESG.",
+        "family": "ESG, Sostenibilidad y Clima",
+        "title": "ESG Esencial",
+        "lead": "Sostenibilidad convertida en prioridades y acciones.",
+        "problem": "Exigencias de clientes sin indicadores claros.",
+        "body": "Materialidad, riesgos, proveedores y plan de acción.",
         "audience": "PyMEs y proveedores",
-        "duration": "4–8 semanas (PyME) · 6–10 semanas (Corp)",
+        "duration": "4–8 semanas (PyME) · 6–10 semanas (corporativo)",
         "level": "Plan 90 Días",
         "bullets": [
           "Materialidad",
-          "Plan de acción"
+          "Proveedores y plan"
         ],
         "results": [
-          "Indicadores materiales",
-          "Cobertura de cadena"
+          "KPIs materiales",
+          "Acciones implementadas"
         ],
         "modules": [
-          "Sostenibilidad",
-          "Regulación"
+          "Sustentabilidade",
+          "Leitura Regulatória"
         ],
-        "limits": "No incluye certificación.",
-        "ai": "Identificación de brechas y lectura documental."
+        "limits": "No incluye certificación formal sin socio.",
+        "ai": "Organización de datos y brechas documentales."
       },
       {
         "id": "carbono-e-cadeia",
-        "group": "operacoes",
+        "group": "pesquisas",
         "groups": [
-          "operacoes",
           "pesquisas"
         ],
         "code": "P7",
-        "family": "ESG, Sustentabilidade e Clima",
-        "title": "Carbono e Cadeia",
-        "lead": "Datos ambientales para exigencias comerciales.",
-        "problem": "Falta de inventario de emisiones.",
-        "body": "Inventario inicial y preparación de datos de proveedores.",
-        "audience": "Exportadores",
-        "duration": "6–10 semanas (PyME) · 8–16 semanas (Corp)",
+        "family": "ESG, Sostenibilidad y Clima",
+        "title": "Carbono y Cadena",
+        "lead": "Preparar datos ambientales para el mercado.",
+        "problem": "Falta de inventario o datos de proveedores.",
+        "body": "Inventario inicial y preparación para exigencias.",
+        "audience": "PyMEs exportadoras",
+        "duration": "6–10 semanas (PyME) · 8–16 semanas (corporativo)",
         "level": "Sprint de Resultado",
         "bullets": [
-          "Inventario inicial"
+          "Inventario inicial",
+          "Datos de cadena"
         ],
         "results": [
-          "Datos recolectados",
+          "Emisiones",
           "Requisitos atendidos"
         ],
         "modules": [
           "Excelencia en Procesos",
-          "Estudios"
+          "Estudos Setoriais"
         ],
-        "limits": "Metodología debe ser validada.",
-        "ai": "Consolidación de evidencias."
+        "limits": "Metodología de inventario a validar.",
+        "ai": "Recopilación y consolidación de evidencias."
       },
       {
         "id": "sustainability-and-climate-strategy",
         "group": "estrategia",
         "groups": [
-          "estrategia",
-          "operacoes"
+          "estrategia"
         ],
         "code": "P7",
-        "family": "ESG, Sustentabilidade e Clima",
+        "family": "ESG, Sostenibilidad y Clima",
         "title": "Sustainability and Climate Strategy",
-        "lead": "Clima conectado a la eficiencia.",
-        "problem": "Riesgos climáticos no integrados.",
-        "body": "Riesgos físicos y de transición, reporte y metas climáticas.",
-        "audience": "Industria y energía",
-        "duration": "8–16 semanas (PyME) · 3–12 meses (Corp)",
+        "lead": "Conectar clima a riesgo y acceso a inversión.",
+        "problem": "Riesgos climáticos no integrados a la estrategia.",
+        "body": "Diagnóstico de materialidad, riesgos de transición y reporte.",
+        "audience": "Corporaciones y exportadores",
+        "duration": "8–16 semanas (PyME) · 3–12 meses (corporativo)",
         "level": "Sprint / Advisory- PMO",
         "bullets": [
-          "Estrategia climática y reporte"
+          "Roadmap de materialidad",
+          "Inventario y riesgos"
         ],
         "results": [
-          "Eficiencia",
-          "Riesgo material"
+          "Metas",
+          "Eficiencia y Cadena"
         ],
         "modules": [
-          "Estudios",
-          "Proyectos de Capital"
+          "Projetos de Capital",
+          "Leitura Regulatória"
         ],
-        "limits": "Aseguración requiere expertos externos.",
-        "ai": "Análisis de escenarios y monitoreo."
+        "limits": "Certificaciones pueden requerir especialistas externos.",
+        "ai": "Monitoreo de indicadores y escenarios."
       },
       {
         "id": "organizacao-e-pessoas-para-crescer",
-        "group": "estrategia",
+        "group": "operacoes",
         "groups": [
-          "estrategia",
-          "empreendedorismo",
           "operacoes"
         ],
         "code": "P8",
         "family": "Pessoas, Liderança e Gestão da Mudança",
-        "title": "Organização e Pessoas para Crescer",
-        "lead": "Organizar roles para el próximo ciclo.",
-        "problem": "Liderazgo sobrecargado.",
-        "body": "Estructura, ritos, competencias y capacitación de líderes.",
-        "audience": "Scale-ups",
-        "duration": "4–8 semanas (PyME) · 6–10 semanas (Corp)",
+        "title": "Organización y Personas para Crecer",
+        "lead": "Organizar roles y competencias para el próximo ciclo.",
+        "problem": "Roles confusos y liderazgo sobrecargado.",
+        "body": "Estructura, ritos, competencias y capacitación.",
+        "audience": "PyMEs y scale-ups",
+        "duration": "4–8 semanas (PyME) · 6–10 semanas (corporativo)",
         "level": "Plan 90 Días",
         "bullets": [
-          "Roles",
-          "Estructura",
-          "Capacitación"
+          "Roles y Estructura",
+          "Liderazgo y Ritos"
         ],
         "results": [
-          "Retención",
-          "Prontitud"
+          "Productividad",
+          "Retención y Ramp-up"
         ],
         "modules": [
-          "Desglose de Metas",
-          "Gestión de la Rutina"
+          "Desdobramento de Metas",
+          "Gestão da Rotina"
         ],
-        "limits": "Requiere validación humana.",
-        "ai": "Identificación de brechas de competencia."
+        "limits": "Decisiones sobre personas requieren validación humana.",
+        "ai": "Análisis de competencias e identificación de brechas."
       },
       {
         "id": "rotina-de-gestao",
-        "group": "estrategia",
+        "group": "operacoes",
         "groups": [
-          "estrategia",
           "operacoes"
         ],
         "code": "P8",
         "family": "Pessoas, Liderança e Gestão da Mudança",
-        "title": "Rotina de Gestão",
-        "lead": "Disciplina para ejecutar el plan.",
-        "problem": "La estrategia no se sostiene en reuniones.",
-        "body": "Implantación de metas, ritos de gestión y responsabilidades.",
-        "audience": "PyMEs",
-        "duration": "6–12 semanas (PyME) · 8–16 semanas (Corp)",
+        "title": "Rutina de Gestión",
+        "lead": "Disciplina para transformar planes en ejecución.",
+        "problem": "Estrategia que no se sostiene en ritos y metas.",
+        "body": "Implantación de reuniones, KPIs y seguimiento.",
+        "audience": "PyMEs y áreas en transformación",
+        "duration": "6–12 semanas (PyME) · 8–16 semanas (corporativo)",
         "level": "Sprint de Resultado",
         "bullets": [
-          "Metas e indicadores"
+          "Reuniones y Metas",
+          "KPIs y Responsables"
         ],
         "results": [
-          "Cumplimiento",
-          "Adopción"
+          "Aderencia a la rutina",
+          "Cumplimiento de metas"
         ],
         "modules": [
-          "Gestión de la Rutina",
-          "Procesos"
+          "Gestão da Rotina",
+          "Excelencia en Procesos"
         ],
-        "limits": "Depende de la disciplina del cliente.",
-        "ai": "Seguimiento de acciones y desvíos."
+        "limits": "Depende de la disciplina del liderazgo del cliente.",
+        "ai": "Resumen de reuniones y monitoreo de desviaciones."
       },
       {
         "id": "people-and-transformation-office",
-        "group": "estrategia",
+        "group": "operacoes",
         "groups": [
-          "estrategia"
+          "operacoes"
         ],
         "code": "P8",
         "family": "Pessoas, Liderança e Gestão da Mudança",
         "title": "People and Transformation Office",
-        "lead": "Coordinar cultura y cambio.",
-        "problem": "Falta de adopción tecnológica.",
-        "body": "Workforce planning, comunicación y adopción digital.",
-        "audience": "Corporaciones",
-        "duration": "8–16 semanas (PyME) · 3–12 meses (Corp)",
+        "lead": "Coordinar cultura y cambio para capturar resultados.",
+        "problem": "Baja adopción tecnológica o falta de alineación.",
+        "body": "Operating model, cultura y adopción tecnológica.",
+        "audience": "Corporaciones en integración",
+        "duration": "8–16 semanas (PyME) · 3–12 meses (corporativo)",
         "level": "Sprint / Advisory- PMO",
         "bullets": [
-          "Operating model y cultura"
+          "Assessment de prontitud",
+          "Operating model"
         ],
         "results": [
           "Adopción",
-          "Productividad"
+          "Turnover y Prontitud"
         ],
         "modules": [
-          "Desglose de Metas",
-          "Transformación Digital"
+          "Transformação Digital",
+          "Desdobramento de Metas"
         ],
-        "limits": "No automatizar decisiones sensibles.",
-        "ai": "Monitoreo de adopción."
+        "limits": "No automatizar decisiones sensibles sin revisión humana.",
+        "ai": "Análisis de competencias y monitoreo de adopción."
       },
       {
         "id": "market-opportunity-decision",
-        "group": "pesquisas",
+        "group": "empreendedorismo",
         "groups": [
-          "pesquisas"
-        ],
-        "code": "P9",
-        "family": "Inteligencia de Mercado y Decisiones",
-        "title": "Market Opportunity Decision",
-        "lead": "Recomendar dónde invertir.",
-        "problem": "Incertidumbre sobre viabilidad.",
-        "body": "TAM/SAM/SOM, escenarios competitivos y business case.",
-        "audience": "Inversores",
-        "duration": "3–6 semanas (PyME) · 6–12 semanas (Corp)",
-        "level": "Plan 90 Días",
-        "bullets": [
-          "Atracción",
-          "Competidores"
-        ],
-        "results": [
-          "Opción priorizada",
-          "Decisión"
-        ],
-        "modules": [
-          "Dimensionamiento",
-          "Viabilidad"
-        ],
-        "limits": "No garantiza retorno.",
-        "ai": "Síntesis de fuentes."
-      },
-      {
-        "id": "customer-insight-sprint",
-        "group": "pesquisas",
-        "groups": [
-          "pesquisas",
           "empreendedorismo"
         ],
         "code": "P9",
         "family": "Inteligencia de Mercado y Decisiones",
-        "title": "Customer Insight Sprint",
-        "lead": "Motivos de compra y abandono.",
-        "problem": "Pérdida de clientes sin saber por qué.",
-        "body": "Jornada del cliente y prioridades de experiencia.",
-        "audience": "Retail",
-        "duration": "4–6 semanas (PyME) · 8–16 semanas (Corp)",
+        "title": "Market Opportunity Decision",
+        "lead": "Comparar alternativas y recomendar inversiones.",
+        "problem": "Incertidumbre sobre el tamaño o viabilidad de oportunidad.",
+        "body": "TAM/SAM/SOM, competidores, barreras y recomendación.",
+        "audience": "PyMEs, startups e inversores",
+        "duration": "3–6 semanas (PyME) · 6–12 semanas (corporativo)",
         "level": "Plan 90 Días",
         "bullets": [
-          "Jornada",
-          "Entrevistas"
+          "Tamaño y Segmentos",
+          "Escenarios y Business Case"
+        ],
+        "results": [
+          "Hipótesis validadas",
+          "Plazo hasta decisión"
+        ],
+        "modules": [
+          "Dimensionamiento",
+          "Viabilidade"
+        ],
+        "limits": "La investigación no garantiza retorno.",
+        "ai": "Síntesis de fuentes y escenarios."
+      },
+      {
+        "id": "customer-insight-sprint",
+        "group": "estrategia",
+        "groups": [
+          "estrategia"
+        ],
+        "code": "P9",
+        "family": "Inteligencia de Mercado y Decisiones",
+        "title": "Customer Insight Sprint",
+        "lead": "Identificar motivos de compra o abandono.",
+        "problem": "Pérdida de clientes sin saber la causa raíz.",
+        "body": "Jornada, encuestas, puntos de ruptura y acciones.",
+        "audience": "Retail, servicios y corporaciones",
+        "duration": "4–6 semanas (PyME) · 8–16 semanas (corporativo)",
+        "level": "Plan 90 Días",
+        "bullets": [
+          "Jornada y encuestas",
+          "Plan de acción"
         ],
         "results": [
           "Retención",
           "Satisfacción"
         ],
         "modules": [
-          "Consumidor",
-          "Comercial"
+          "Comportamento",
+          "Excelência Comercial"
         ],
-        "limits": "Sujeto a privacidad.",
-        "ai": "Análisis de textos y sentimientos."
+        "limits": "Muestra y privacidad según el método.",
+        "ai": "Análisis de textos y síntesis de jornadas."
       },
       {
         "id": "concept-and-proposition-test",
@@ -2151,53 +2101,55 @@ export const dict: Dict = {
         "code": "P9",
         "family": "Inteligencia de Mercado y Decisiones",
         "title": "Concept and Proposition Test",
-        "lead": "Validar propuesta antes de invertir.",
-        "problem": "Desconocimiento si el cliente pagaría.",
-        "body": "Pruebas de concepto y recomendación de portafolio.",
-        "audience": "Inovación",
-        "duration": "3–6 semanas (PyME) · 6–12 semanas (Corp)",
+        "lead": "Validar propuesta antes de comprometer recursos.",
+        "problem": "Producto sin validación de disposición a pago.",
+        "body": "Hipótesis, entrevistas y test de concepto.",
+        "audience": "Innovación corporativa y startups",
+        "duration": "3–6 semanas (PyME) · 6–12 semanas (corporativo)",
         "level": "Plan 90 Días",
         "bullets": [
-          "Test de concepto"
+          "Test de concepto",
+          "Recomendación"
         ],
         "results": [
-          "Intención",
+          "Relevancia",
           "Go/no-go"
         ],
         "modules": [
-          "Validación",
-          "Modelado"
+          "Validação de Mercado",
+          "Modelagem"
         ],
-        "limits": "Comportamiento puede variar.",
-        "ai": "Identificación de patrones."
+        "limits": "Intención declarada frente a comportamiento real.",
+        "ai": "Identificación de patrones e hipótesis."
       },
       {
         "id": "price-and-value-intelligence",
-        "group": "pesquisas",
+        "group": "estrategia",
         "groups": [
-          "pesquisas"
+          "estrategia"
         ],
         "code": "P9",
         "family": "Inteligencia de Mercado y Decisiones",
         "title": "Price and Value Intelligence",
-        "lead": "Definir precio con evidencia.",
-        "problem": "Equilibrio entre margen y conversión.",
-        "body": "Elasticidad, arquitectura de precios y escenarios.",
-        "audience": "Scale-ups",
-        "duration": "3–6 semanas (PyME) · 6–12 semanas (Corp)",
+        "lead": "Definir precios y paquetes con evidencia de valor.",
+        "problem": "Desconocimiento del balance precio/margen.",
+        "body": "Arquitectura de precios, elasticidad y canales.",
+        "audience": "Scale-ups y empresas B2B/B2C",
+        "duration": "3–6 semanas (PyME) · 6–12 semanas (corporativo)",
         "level": "Plan / Sprint",
         "bullets": [
-          "Escenarios de precio"
+          "Rango de precios",
+          "Plan de prueba"
         ],
         "results": [
           "Margen",
           "Price realization"
         ],
         "modules": [
-          "Unit Economics",
-          "Pricing"
+          "Precificação",
+          "Comportamento"
         ],
-        "limits": "Debe triangularse con datos reales.",
+        "limits": "Triangular disposición a pagar con datos reales.",
         "ai": "Análisis de patrones y escenarios."
       },
       {
@@ -2209,24 +2161,25 @@ export const dict: Dict = {
         "code": "P9",
         "family": "Inteligencia de Mercado y Decisiones",
         "title": "Competitive Response Radar",
-        "lead": "Radar para respuesta competitiva.",
-        "problem": "Reacción tardía a competidores.",
-        "body": "Mapa de competidores y alertas mensuales de oferta.",
-        "audience": "Corporaciones",
-        "duration": "3–5 semanas (PyME) · 6–10 semanas (Corp)",
+        "lead": "Radar accionable ante movimientos competitivos.",
+        "problem": "Reacción tardía ante cambios del mercado.",
+        "body": "Mapa de competidores y alertas mensuales.",
+        "audience": "Corporaciones y PyMEs competitivas",
+        "duration": "3–5 semanas (PyME) · 6–10 semanas (corporativo)",
         "level": "Radar / Advisory- PMO",
         "bullets": [
-          "Mapa competitivo"
+          "Mapa competitivo",
+          "Alertas de oferta"
         ],
         "results": [
           "Tiempo de respuesta",
-          "Posición"
+          "Price position"
         ],
         "modules": [
-          "Competencia",
-          "Estudios"
+          "Análise Competitiva",
+          "Estudos Setoriais"
         ],
-        "limits": "Fuentes éticas y legales.",
+        "limits": "Fuentes legales y éticas exclusivamente.",
         "ai": "Síntesis de fuentes públicas."
       },
       {
@@ -2238,54 +2191,146 @@ export const dict: Dict = {
         "code": "P9",
         "family": "Inteligencia de Mercado y Decisiones",
         "title": "Market Signal Monitor",
-        "lead": "Alertas para decisiones continuas.",
-        "problem": "Necesidad de seguimiento sin grandes estudios.",
-        "body": "Resumen mensual y reunión ejecutiva de mercado.",
-        "audience": "Inversores",
-        "duration": "Recurrente",
+        "lead": "Alertas relevantes para decisiones continuas.",
+        "problem": "Necesidad de seguimiento sin estudios completos.",
+        "body": "Tablero simple y reunión ejecutiva mensual.",
+        "audience": "Inversores y empresas internacionales",
+        "duration": "3–4 sem (PyME) · 6–10 sem (corp) implantación",
         "level": "Advisory- PMO",
         "bullets": [
+          "Resumen mensual",
           "Alertas por tema"
         ],
         "results": [
-          "Relevancia",
-          "Tiempo de reacción"
+          "Decisiones apoyadas",
+          "Tiempo de respuesta"
         ],
         "modules": [
-          "Datos de Brasil",
-          "Estudios"
+          "Dados do Brasil",
+          "Estudos Setoriais"
         ],
         "limits": "Depende de fuentes disponibles.",
-        "ai": "Traducción y síntesis rastreable."
+        "ai": "Traducción y síntesis con fuentes rastreables."
       },
       {
         "id": "decision-room",
+        "group": "estrategia",
+        "groups": [
+          "estrategia"
+        ],
+        "code": "P9",
+        "family": "Inteligencia de Mercado y Decisiones",
+        "title": "Decision Room",
+        "lead": "Organizar evidencias y próximos 30/60/90 días.",
+        "problem": "Datos existentes que no se convierten en plan.",
+        "body": "Memo ejecutivo, workshop y matriz de decisión.",
+        "audience": "Clientes con estudios previos",
+        "duration": "1–3 semanas (PyME) · 3–8 semanas (corporativo)",
+        "level": "Radar / Plan 90 Días",
+        "bullets": [
+          "Memo ejecutivo",
+          "Plan de acción"
+        ],
+        "results": [
+          "Decisión tomada",
+          "Alineación"
+        ],
+        "modules": [
+          "Pesquisa",
+          "Estratégia"
+        ],
+        "limits": "Depende de la calidad de datos del cliente.",
+        "ai": "Síntesis y preparación de workshops."
+      },
+      {
+        "id": "modelagem-de-negocio",
+        "group": "empreendedorismo",
+        "groups": [
+          "empreendedorismo"
+        ],
+        "code": "P9",
+        "family": "Inteligencia de Mercado y Decisiones",
+        "title": "Modelado de Negocio",
+        "lead": "Estructurar y probar un modelo viable.",
+        "problem": "Falta de conexión entre valor, canales y costos.",
+        "body": "Canvas, unit economics y experimentos.",
+        "audience": "Startups y scale-ups",
+        "duration": "2–5 semanas (PyME) · 5–10 semanas (corporativo)",
+        "level": "Radar / Plan 90 Días",
+        "bullets": [
+          "Mapa de valor",
+          "Unit economics"
+        ],
+        "results": [
+          "Margen potencial",
+          "Test priorizados"
+        ],
+        "modules": [
+          "Validação",
+          "Precificação"
+        ],
+        "limits": "Resultados dependen de validación real.",
+        "ai": "Modelado de escenarios y diseño de hipótesis."
+      },
+      {
+        "id": "plano-de-negocios",
+        "group": "empreendedorismo",
+        "groups": [
+          "empreendedorismo"
+        ],
+        "code": "P9",
+        "family": "Inteligencia de Mercado y Decisiones",
+        "title": "Plan de Negocios",
+        "lead": "Construir plan orientado a la decisión.",
+        "problem": "Necesidad de plan integrado para financiación.",
+        "body": "Modelo financiero, escenarios y plan 90 días.",
+        "audience": "PyMEs y startups",
+        "duration": "4–8 semanas (PyME) · 8–16 semanas (corporativo)",
+        "level": "Plan 90 Días / Sprint",
+        "bullets": [
+          "Business Plan",
+          "Cenários"
+        ],
+        "results": [
+          "Capital requerido",
+          "Riesgos tratados"
+        ],
+        "modules": [
+          "Modelagem",
+          "Viabilidade"
+        ],
+        "limits": "Proyecciones no garantizan resultados.",
+        "ai": "Investigación secundaria y modelado financiero."
+      },
+      {
+        "id": "informacoes-de-segmentos-de-mercado",
         "group": "pesquisas",
         "groups": [
           "pesquisas"
         ],
         "code": "P9",
         "family": "Inteligencia de Mercado y Decisiones",
-        "title": "Decision Room",
-        "lead": "Organizar trade-offs y próximos pasos.",
-        "problem": "Datos no convertidos en decisión.",
-        "body": "Matriz de decisión y gobernanza de ejecución.",
-        "audience": "Clientes con estudios previos",
-        "duration": "1–3 semanas (PyME) · 3–8 semanas (Corp)",
+        "title": "Información de Segmentos de Mercado",
+        "lead": "Priorizar segmentos con evidencias de crecimiento.",
+        "problem": "Falta de visión estructurada de verticales.",
+        "body": "TAM-SAM-SOM, perfiles y dinámica competitiva.",
+        "audience": "Inversores y expansión",
+        "duration": "3–6 semanas (PyME) · 6–12 semanas (corporativo)",
         "level": "Radar / Plan 90 Días",
         "bullets": [
-          "Matriz de decisión"
+          "Mapa de segmentos",
+          "Atratividad"
         ],
         "results": [
-          "Decisión tomada",
-          "Alineamiento"
+          "Potencial ingresos",
+          "Conversión"
         ],
         "modules": [
-          "Estrategia",
-          "Finanzas"
+          "Dimensionamento",
+          "Estudos Setoriais"
         ],
-        "limits": "Sujeto a calidad de datos previos.",
-        "ai": "Comparación de alternativas."
+        "limits": "Estimativas según disponibilidad de datos.",
+        "ai": "Triangulación de datos y fuentes públicas."
       }
     ]
   },
@@ -2298,7 +2343,7 @@ export const dict: Dict = {
     "education": "Formación académica",
     "experience": "Experiencia profesional",
     "clients": "Clientes",
-    "works": "Proyectos realizados",
+    "works": "Trabajos realizados",
     "specialties": "Especialidades",
     "segments": "Segmentos",
     "links": "Enlaces",
@@ -2306,7 +2351,7 @@ export const dict: Dict = {
     "lattes": "Currículo Lattes",
     "website": "Sitio propio",
     "contactTitle": "Enviar e-mail a",
-    "contactDescription": "Su mensaje se envía directamente al consultor.",
+    "contactDescription": "Su mensaje se envía al consultor. Su contacto es privado.",
     "namePlaceholder": "Su nombre",
     "emailPlaceholder": "Su e-mail",
     "companyPlaceholder": "Empresa (opcional)",
@@ -2318,22 +2363,22 @@ export const dict: Dict = {
   "bulletin": {
     "eyebrow": "Boletín Semanal",
     "title": "Reciba datos actualizados semanalmente",
-    "description": "Indicadores económicos y artículos enviados por e-mail o WhatsApp. Cancele cuando quiera.",
-    "done": "Registro confirmado. Su próximo Boletín Semanal llegará pronto.",
+    "description": "Indicadores económicos y artículos de su segmento por e-mail o WhatsApp. Cancele cuando quiera.",
+    "done": "Registro confirmado. Su próximo boletín llegará pronto.",
     "name": "Nombre completo",
     "company": "Empresa / institución",
     "email": "E-mail",
     "emailPlaceholder": "usted@empresa.com",
-    "whatsapp": "WhatsApp",
+    "whatsapp": "WhatsApp (con código)",
     "segment": "Segmento de interés",
     "allSegments": "Todos los segmentos",
-    "channels": "Cómo prefiere recibirlo",
+    "channels": "Cómo recibir",
     "channelEmail": "E-mail",
     "channelWhatsApp": "WhatsApp",
     "submit": "Quiero recibir el Boletín",
     "sending": "Enviando…",
-    "note": "Contenido personalizado según el segmento. Sus datos solo se usan para el boletín.",
-    "chooseChannel": "Elija al menos una forma de recepción.",
+    "note": "El contenido se ajusta a su segmento. Datos usados solo para el boletín.",
+    "chooseChannel": "Elija al menos una forma.",
     "success": "Registro exitoso.",
     "error": "No fue posible completar el registro."
   },
@@ -2346,12 +2391,12 @@ export const dict: Dict = {
     "translating": "Traduciendo el contenido…"
   },
   "newsletterForm": {
-    "done": "Suscripción confirmada. ¡Gracias!",
+    "done": "Inscripción confirmada. ¡Gracias!",
     "emailPlaceholder": "su@email.com",
-    "submit": "Suscribirse",
+    "submit": "Inscribirse",
     "sending": "Enviando…",
-    "success": "Suscripción realizada con éxito.",
-    "error": "No fue posible completar la suscripción."
+    "success": "Inscripción exitosa.",
+    "error": "No fue posible completar la inscripción."
   },
   "filters": {
     "heading": "Personalice los datos",

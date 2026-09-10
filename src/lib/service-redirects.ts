@@ -10,7 +10,7 @@ export const LEGACY_SERVICE_REDIRECTS: Record<string, string> = {
   "excelencia-em-processos": "eficiencia-operacional",
   "excelencia-industrial": "eficiencia-operacional",
   "gestao-da-rotina": "eficiencia-operacional",
-  "modelagem-de-negocio": "crescimento-expansao-e-novos-produtos",
+  
   "validacao-de-mercado": "crescimento-expansao-e-novos-produtos",
   "precificacao-unit-economics": "financas-estrategicas-e-controles",
   "captacao-investidores": "financas-estrategicas-e-controles",
