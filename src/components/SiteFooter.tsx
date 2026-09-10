@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Linkedin, Youtube } from "lucide-react";
 import { useLanguage } from "@/i18n";
+import { getPublicCompanyIdentity } from "@/lib/company-public.functions";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { legal } from "@/i18n/legal";
 import { normalizeWhatsApp, openWhatsApp, whatsappHref } from "@/lib/whatsapp";
@@ -142,6 +144,9 @@ export function SiteFooter() {
       <div className="border-t border-ink-foreground/10">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-6 text-xs text-ink-foreground/50">
           <span>© {new Date().getFullYear()} Liberato Consulting. {t.footer.rights}</span>
+          {companyLine ? (
+            <span className="min-w-0 flex-1 text-center text-ink-foreground/50">{companyLine}</span>
+          ) : null}
           <Link
             to="/admin"
             className="text-ink-foreground/30 transition-colors hover:text-accent"
