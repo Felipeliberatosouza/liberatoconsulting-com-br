@@ -102,7 +102,7 @@ function ServicesPage() {
                     className="flex flex-col rounded-2xl border border-border p-6 transition-colors hover:border-accent"
                   >
                     <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-                      {fam.labels.products}
+                      {t.serviceDetail.labels.family}
                     </p>
                     <h3 className="mt-2 font-display text-lg font-bold leading-snug">
                       <Link to="/services/$slug" params={{ slug: f.id }} className="hover:text-accent">
