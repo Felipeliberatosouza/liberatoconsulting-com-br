@@ -63,11 +63,20 @@ function ServicesPage() {
   const groups = t.megaMenu.groups;
   const pages = t.serviceDetail.pages;
 
-  const familiesByGroup = useMemo(() => {
-    const map: Record<string, typeof fam.items> = {};
-    for (const g of groups) map[g.id] = fam.items.filter((f) => f.groups.includes(g.id));
-    return map;
-  }, [groups, fam.items]);
+  const tree = useMemo(
+    () =>
+      groups.map((group) => ({
+        ...group,
+        families: fam.items
+          .filter((f) => f.groups.includes(group.id))
+          .map((f) => ({
+            ...f,
+            products: pages.filter((p) => p.family === f.title && p.groups.includes(group.id)),
+          }))
+          .filter((f) => f.products.length > 0),
+      })),
+    [groups, fam.items, pages],
+  );
 
   return (
     <div>
@@ -80,66 +89,54 @@ function ServicesPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-20">
-        <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-4">
-          {groups.map((group) => (
-            <div key={group.id} className="flex flex-col">
-              <h2 className="mb-6 border-b-2 border-accent pb-3 text-sm font-semibold uppercase tracking-[0.2em] text-accent">
+        <div className="flex flex-col gap-20">
+          {tree.map((group) => (
+            <div key={group.id}>
+              <h2 className="border-b-2 border-accent pb-3 font-display text-2xl font-bold md:text-3xl">
                 {group.title}
               </h2>
-              <div className="flex flex-col gap-6">
-                {familiesByGroup[group.id]?.map((f) => (
-                  <article key={`${group.id}-${f.id}`} className="border-t border-border pt-5 first:border-t-0 first:pt-0">
-                    <h3 className="font-display text-lg font-bold leading-snug">
+
+              <div className="mt-8 grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+                {group.families.map((f) => (
+                  <article
+                    key={`${group.id}-${f.id}`}
+                    className="flex flex-col rounded-2xl border border-border p-6 transition-colors hover:border-accent"
+                  >
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+                      {fam.labels.products}
+                    </p>
+                    <h3 className="mt-2 font-display text-lg font-bold leading-snug">
                       <Link to="/services/$slug" params={{ slug: f.id }} className="hover:text-accent">
                         {f.title}
                       </Link>
                     </h3>
                     <p className="mt-2 text-sm text-muted-foreground">{f.problem}</p>
-                    <ul className="mt-3 flex flex-col gap-1">
-                      {f.products.map((pid) => {
-                        const p = pages.find((x) => x.id === pid);
-                        if (!p) return null;
-                        return (
-                          <li key={pid}>
-                            <Link
-                              to="/services/$slug"
-                              params={{ slug: pid }}
-                              className="text-sm text-muted-foreground transition-colors hover:text-accent"
-                            >
-                              → {p.title}
-                            </Link>
-                          </li>
-                        );
-                      })}
+
+                    <ul className="mt-5 flex flex-col gap-3 border-t border-border pt-5">
+                      {f.products.map((p) => (
+                        <li key={p.id}>
+                          <Link
+                            to="/services/$slug"
+                            params={{ slug: p.id }}
+                            className="group flex flex-col gap-1"
+                          >
+                            <span className="flex items-center gap-2 text-sm font-semibold transition-colors group-hover:text-accent">
+                              <ArrowRight className="size-3.5 shrink-0 text-accent" />
+                              {p.title}
+                            </span>
+                            <span className="pl-5 text-xs text-muted-foreground">{p.lead}</span>
+                            <span className="flex items-center gap-1.5 pl-5 text-xs text-muted-foreground">
+                              <Clock className="size-3 text-accent" />
+                              {p.duration}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
                     </ul>
                   </article>
                 ))}
               </div>
             </div>
-          ))}
-        </div>
-
-        <h2 className="mt-20 text-2xl font-bold">{fam.labels.products}</h2>
-        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {pages.map((p) => (
-            <Link
-              key={p.id}
-              to="/services/$slug"
-              params={{ slug: p.id }}
-              className="flex flex-col rounded-2xl border border-border p-6 transition-colors hover:border-accent"
-            >
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">{p.family}</p>
-              <h3 className="mt-3 font-display text-lg font-bold leading-snug">{p.title}</h3>
-              <p className="mt-2 flex-1 text-sm text-muted-foreground">{p.lead}</p>
-              <p className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-                <Clock className="size-3.5 text-accent" />
-                {p.duration}
-              </p>
-              <span className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-accent">
-                {t.content.readMore}
-                <ArrowRight className="size-4" />
-              </span>
-            </Link>
           ))}
         </div>
 
