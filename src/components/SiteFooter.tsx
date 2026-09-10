@@ -12,6 +12,16 @@ export function SiteFooter() {
   const lg = (legal[lang] ?? legal.pt).footer;
   const whatsappNumber = normalizeWhatsApp(whatsapp);
   const whatsappMessage = t.whatsapp?.message ?? "";
+  const company = useQuery({
+    queryKey: ["public-company-identity"],
+    queryFn: () => getPublicCompanyIdentity(),
+    staleTime: 5 * 60 * 1000,
+  });
+  const c = company.data;
+  const companyLine = [c?.name, c?.cnpj ? `CNPJ ${c.cnpj}` : "", c?.address, c?.phone]
+    .filter(Boolean)
+    .join(" — ");
+
 
   return (
     <footer className="bg-ink text-ink-foreground">
