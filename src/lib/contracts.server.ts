@@ -66,7 +66,7 @@ ${paragraphs}
 <tr><td style="padding:20px 30px;background:#14192a;color:#f7f6f4">${companyFooterHtml(company)}</td></tr>
 </table></td></tr></table></body></html>`;
 
-  const text = `Olá, ${input.toName}.\n\nEste documento foi preparado para você após o seu cadastro como ${input.audience}. Segue o contrato para leitura e assinatura. Após assinar, responda diretamente a este e-mail para que o seu acesso ao painel seja liberado.\n\n${tpl.title} (versão ${tpl.version})\n\n${tpl.body}\n\n${companyFooterText(company)}`;
+  const text = `Olá, ${input.toName}.\n\nEste documento foi preparado para você após o seu cadastro como ${input.audience}. Segue o contrato para leitura e assinatura. Após assinar, responda diretamente a este e-mail para que o seu acesso ao painel seja liberado.\n\n${tpl.title} (versão ${tpl.version})\n\n${filledBody}\n\n${companyFooterText(company)}`;
 
   await sendLovableEmail(
     {
