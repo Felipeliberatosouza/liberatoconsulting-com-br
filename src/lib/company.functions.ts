@@ -154,7 +154,7 @@ export const signContract = createServerFn({ method: "POST" })
       version: tpl.version,
       signer_name: data.signer_name,
       signer_cpf: data.signer_cpf,
-      signed_body: tpl.body,
+      signed_body: signedBody,
     });
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };

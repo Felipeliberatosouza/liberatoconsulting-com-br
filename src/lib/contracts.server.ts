@@ -37,7 +37,11 @@ export async function sendContractEmail(input: {
   const replyTo = company.email || "contato@liberatoconsulting.com.br";
   const fromName = company.name || "Liberato Consulting";
 
-  const paragraphs = String(tpl.body)
+  const { buildContractVars } = await import("./contract-fill.server");
+  const { fillContract } = await import("./contract-fill");
+  const filledBody = fillContract(String(tpl.body), await buildContractVars({ email: input.toEmail }));
+
+  const paragraphs = filledBody
     .split(/\n{2,}/)
     .map((p) => p.trim())
     .filter(Boolean)
