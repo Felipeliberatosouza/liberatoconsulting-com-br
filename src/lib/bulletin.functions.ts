@@ -68,7 +68,7 @@ export const subscribeBulletin = createServerFn({ method: "POST" })
       email,
       whatsapp: data.whatsapp,
       via_email: data.viaEmail,
-      via_whatsapp: data.viaWhatsApp,
+      via_whatsapp: WHATSAPP_SENDING_ENABLED && data.viaWhatsApp,
       language: data.language ?? "pt",
       source_path: data.sourcePath ?? "",
       status: "active",
