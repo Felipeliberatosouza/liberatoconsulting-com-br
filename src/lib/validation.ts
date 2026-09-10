@@ -70,6 +70,39 @@ export function isValidCpf(value: string) {
   return digit(9) === Number(d[9]) && digit(10) === Number(d[10]);
 }
 
+/* --------------------------- CNPJ e inscrições --------------------------- */
+
+/** CNPJ: 00.000.000/0000-00 */
+export function formatCnpj(value: string) {
+  const d = onlyDigits(value).slice(0, 14);
+  let out = d.slice(0, 2);
+  if (d.length > 2) out += `.${d.slice(2, 5)}`;
+  if (d.length > 5) out += `.${d.slice(5, 8)}`;
+  if (d.length > 8) out += `/${d.slice(8, 12)}`;
+  if (d.length > 12) out += `-${d.slice(12, 14)}`;
+  return out;
+}
+
+export function isValidCnpj(value: string) {
+  return onlyDigits(value).length === 14;
+}
+
+/** Inscrição estadual: 000.000.000.000 */
+export function formatStateRegistration(value: string) {
+  const d = onlyDigits(value).slice(0, 12);
+  return (d.match(/.{1,3}/g) ?? []).join(".");
+}
+
+/** Inscrição municipal (CCM): 0.000.000-0 */
+export function formatMunicipalRegistration(value: string) {
+  const d = onlyDigits(value).slice(0, 8);
+  let out = d.slice(0, 1);
+  if (d.length > 1) out += `.${d.slice(1, 4)}`;
+  if (d.length > 4) out += `.${d.slice(4, 7)}`;
+  if (d.length > 7) out += `-${d.slice(7, 8)}`;
+  return out;
+}
+
 /* --------------------------------- CEP --------------------------------- */
 
 export function formatCep(value: string) {
