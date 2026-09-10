@@ -303,6 +303,9 @@ function CompanyPage() {
           }
         }}
       >
+        <p className="mb-4 text-xs text-muted-foreground">
+          Campos com <span className="text-destructive">*</span> são obrigatórios por exigência legal.
+        </p>
         <div className="grid gap-4 md:grid-cols-3">
           {F("Razão social", "legal_name")}
           {F("Nome fantasia", "trade_name")}
@@ -310,13 +313,13 @@ function CompanyPage() {
           {F("Inscrição estadual", "state_registration")}
           {F("Inscrição municipal", "municipal_registration")}
           <L label="Data de fundação"><input type="date" value={form.founded_on ?? ""} onChange={(e) => set("founded_on", e.target.value)} className={input} /></L>
+          {F(cepBusy ? "CEP (buscando endereço…)" : "CEP", "address_zip")}
           {F("Rua", "address_street")}
           {F("Número", "address_number")}
           {F("Complemento", "address_complement")}
           {F("Bairro", "address_district")}
           {F("Cidade", "address_city")}
           {F("Estado", "address_state")}
-          {F("CEP", "address_zip")}
           {F("País", "address_country")}
           {F("E-mail institucional", "email", "email")}
            {F("Telefone (DDI editável)", "phone", "tel")}
@@ -324,28 +327,64 @@ function CompanyPage() {
 
         </div>
 
-        <h2 className="mt-8 font-display text-lg font-bold">Sócios</h2>
+        <h2 className="mt-8 font-display text-lg font-bold">
+          Sócios <span className="text-destructive">*</span>
+        </h2>
         <div className="mt-3 space-y-3">
           {form.partners.map((p, i) => (
             <div key={i} className="grid gap-3 md:grid-cols-[2fr_1fr_1fr_auto]">
-              <input
-                value={p.name}
-                onChange={(e) => setPartner(i, { name: e.target.value })}
-                placeholder="Nome"
-                className={input}
-              />
-              <input
-                value={p.cpf}
-                onChange={(e) => setPartner(i, { cpf: e.target.value })}
-                placeholder="CPF"
-                className={input}
-              />
-              <input
-                value={p.share}
-                onChange={(e) => setPartner(i, { share: e.target.value })}
-                placeholder="Cota (%)"
-                className={input}
-              />
+              <PartnerField error={partnerErrors[`${i}:name`]}>
+                <input
+                  value={p.name}
+                  onChange={(e) => {
+                    setPartner(i, { name: e.target.value });
+                    clearPartnerError(`${i}:name`);
+                  }}
+                  placeholder="Nome *"
+                  aria-invalid={partnerErrors[`${i}:name`] ? true : undefined}
+                  className={
+                    partnerErrors[`${i}:name`]
+                      ? `${input} border-destructive ring-1 ring-destructive`
+                      : input
+                  }
+                />
+              </PartnerField>
+              <PartnerField error={partnerErrors[`${i}:cpf`]}>
+                <input
+                  value={p.cpf}
+                  onChange={(e) => {
+                    setPartner(i, { cpf: formatCpf(e.target.value) });
+                    clearPartnerError(`${i}:cpf`);
+                  }}
+                  placeholder="CPF *"
+                  inputMode="numeric"
+                  maxLength={14}
+                  aria-invalid={partnerErrors[`${i}:cpf`] ? true : undefined}
+                  className={
+                    partnerErrors[`${i}:cpf`]
+                      ? `${input} border-destructive ring-1 ring-destructive`
+                      : input
+                  }
+                />
+              </PartnerField>
+              <PartnerField error={partnerErrors[`${i}:share`]}>
+                <input
+                  value={p.share}
+                  onChange={(e) => {
+                    setPartner(i, { share: formatSharePercent(e.target.value) });
+                    clearPartnerError(`${i}:share`);
+                  }}
+                  placeholder="Cota (%) *"
+                  inputMode="decimal"
+                  maxLength={8}
+                  aria-invalid={partnerErrors[`${i}:share`] ? true : undefined}
+                  className={
+                    partnerErrors[`${i}:share`]
+                      ? `${input} border-destructive ring-1 ring-destructive`
+                      : input
+                  }
+                />
+              </PartnerField>
               <button
                 type="button"
                 onClick={() =>
