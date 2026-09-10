@@ -18,9 +18,7 @@ export function SiteFooter() {
     staleTime: 5 * 60 * 1000,
   });
   const c = company.data;
-  const companyLine = [c?.name, c?.cnpj ? `CNPJ ${c.cnpj}` : "", c?.address, c?.phone]
-    .filter(Boolean)
-    .join(" — ");
+  const addressLine = [c?.address, c?.phone, c?.email].filter(Boolean).join(" — ");
 
 
   return (
@@ -152,17 +150,27 @@ export function SiteFooter() {
 
       </div>
       <div className="border-t border-ink-foreground/10">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-6 text-xs text-ink-foreground/50">
-          <span>© {new Date().getFullYear()} Liberato Consulting. {t.footer.rights}</span>
-          {companyLine ? (
-            <span className="min-w-0 flex-1 text-center text-ink-foreground/50">{companyLine}</span>
+        <div className="mx-auto max-w-7xl px-6 py-6 text-sm">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span className="text-ink-foreground/80">
+              © {new Date().getFullYear()} Liberato Consulting. {t.footer.rights}
+            </span>
+            <Link
+              to="/admin"
+              className="text-ink-foreground/60 transition-colors hover:text-accent"
+            >
+              Área administrativa
+            </Link>
+          </div>
+          {c?.legalName ? (
+            <p className="mt-2 font-semibold text-ink-foreground/90">{c.legalName}</p>
           ) : null}
-          <Link
-            to="/admin"
-            className="text-ink-foreground/30 transition-colors hover:text-accent"
-          >
-            Área administrativa
-          </Link>
+          {c?.cnpj ? (
+            <p className="mt-1 text-ink-foreground/70">CNPJ {c.cnpj}</p>
+          ) : null}
+          {addressLine ? (
+            <p className="mt-1 text-ink-foreground/70">{addressLine}</p>
+          ) : null}
         </div>
       </div>
     </footer>
