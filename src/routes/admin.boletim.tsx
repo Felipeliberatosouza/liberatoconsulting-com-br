@@ -182,12 +182,8 @@ function AdminBulletin() {
                 type="button"
                 disabled={busy}
                 onClick={async () => {
-                  if (!testEmail && !testWhatsApp) {
-                    toast.error("Informe um e-mail ou WhatsApp de teste.");
-                    return;
-                  }
-                  if (testWhatsApp && !isValidPhone(testWhatsApp)) {
-                    toast.error(PHONE_ERROR);
+                  if (!testEmail) {
+                    toast.error("Informe um e-mail de teste.");
                     return;
                   }
                   setBusy(true);
@@ -195,7 +191,6 @@ function AdminBulletin() {
                     const r = await sendBulletinNow({
                       data: {
                         ...(testEmail ? { testEmail } : {}),
-                        ...(testWhatsApp ? { testWhatsApp } : {}),
                         testSegment: segment,
                       },
                     });
@@ -222,7 +217,7 @@ function AdminBulletin() {
                     const r = await sendBulletinNow({ data: {} });
                     if (r.ok)
                       toast.success(
-                        `Enviado: ${r.sentEmail} e-mails e ${r.sentWhatsApp} mensagens de WhatsApp.`,
+                        `Enviado: ${r.sentEmail} e-mail${r.sentEmail === 1 ? "" : "s"}${r.sentWhatsApp > 0 ? ` e ${r.sentWhatsApp} mensagens de WhatsApp` : ""}.`,
                       );
                     else toast.error(r.error);
                     await refresh();

@@ -47,6 +47,9 @@ type Indicator = {
 
 type Article = { slug: string; title: string; summary: string; kind: string };
 
+/** Desativa envios pelo WhatsApp enquanto a integração não é reativada. */
+const WHATSAPP_SENDING_ENABLED = false;
+
 export type BulletinContent = {
   segment: string;
   dateLabel: string;
