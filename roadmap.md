@@ -30,6 +30,6 @@
 - [x] Todos os campos obrigatórios com destaque em vermelho
 
 ## Cadastro de serviços na área administrativa
-- [ ] Criar área de criação/edição de serviços em Dados da consultoria (família, grupo, problema, frase, tempo, preço interno etc.)
-- [ ] Sincronizar em duas vias com a seção Áreas e textos do site
-- [ ] Remover campos duplicados e melhorar a apresentação de Áreas e textos
+- [x] Criar área de criação/edição de serviços em Dados da consultoria (família, grupo, problema, frase, tempo, preço interno etc.)
+- [x] Sincronizar com a seção Áreas e textos do site
+- [x] Remover campos duplicados e melhorar a apresentação de Áreas e textos
