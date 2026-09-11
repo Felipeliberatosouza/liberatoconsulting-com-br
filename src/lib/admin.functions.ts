@@ -21,12 +21,11 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
     const supabase = publicClient();
     const [settings, articles] = await Promise.all([
       supabase.from("site_settings").select("key, value"),
-      supabase
-        .from("content_articles")
-        .select("*")
-        .eq("published", true)
-        .order("position", { ascending: true })
-        .order("created_at", { ascending: false }),
+      // RPC leve: só os campos usados nas listagens (sem textos completos nem
+      // traduções integrais dos PDFs), evitando leituras pesadas a cada página.
+      (supabase as unknown as { rpc: (name: string) => Promise<{ data: unknown }> }).rpc(
+        "list_site_articles",
+      ),
     ]);
 
     const map = new Map((settings.data ?? []).map((r) => [r.key, r.value]));
