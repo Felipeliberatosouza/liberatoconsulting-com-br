@@ -22,3 +22,14 @@
 ## Correção do carrossel administrativo
 - [x] Mostrar novos slides no topo quando ainda não existem na configuração salva
 - [x] Validar a normalização dos banners e a compilação
+
+## Formulário de contato (11/09/2026)
+- [x] Validação de e-mail com mensagem abaixo do campo
+- [x] Campo País substituído por lista de serviços + "Outros serviços"
+- [x] Mensagem automática editável com o problema do serviço e assinatura
+- [x] Todos os campos obrigatórios com destaque em vermelho
+
+## Cadastro de serviços na área administrativa
+- [ ] Criar área de criação/edição de serviços em Dados da consultoria (família, grupo, problema, frase, tempo, preço interno etc.)
+- [ ] Sincronizar em duas vias com a seção Áreas e textos do site
+- [ ] Remover campos duplicados e melhorar a apresentação de Áreas e textos
