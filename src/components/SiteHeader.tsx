@@ -145,7 +145,9 @@ export function SiteHeader() {
           >
             <Link
               to="/services"
-              onFocus={() => setServicesOpen(true)}
+              onFocus={() => {
+                if (!servicesDismissed) setServicesOpen(true);
+              }}
               onClick={closeAll}
               className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
               activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
