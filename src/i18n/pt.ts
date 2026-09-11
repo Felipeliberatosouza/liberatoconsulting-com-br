@@ -677,7 +677,7 @@ export const pt = {
     info: "Ou escreva diretamente para",
   },
   cta: {
-    title: "Pronto para colocar IA a serviço da sua gestão?",
+    title: "Pronto para fazer seu negócio crescer, vender mais, melhorar sua margem, melhorar processos e a capacidade de execução do seu time?",
     body: "Uma conversa inicial de 45 minutos costuma ser suficiente para mapear as primeiras oportunidades.",
     button: "Falar com a Liberato",
   },

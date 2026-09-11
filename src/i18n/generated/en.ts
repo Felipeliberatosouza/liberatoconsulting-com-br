@@ -907,7 +907,7 @@ export const dict: Dict = {
     "info": "Or write directly to"
   },
   "cta": {
-    "title": "Ready to put AI to work for your management?",
+    "title": "Ready to make your business grow, sell more, improve your margin, improve processes and your team's execution capacity?",
     "body": "An initial 45-minute conversation is usually enough to map the first opportunities.",
     "button": "Speak with Liberato"
   },
