@@ -653,3 +653,21 @@ export const saveBrazilSection = createServerFn({ method: "POST" })
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });
+
+const bannersSchema = z.record(
+  z.enum(["services", "about", "content", "brazil"]),
+  z.object({ imageUrl: z.string().trim().max(3_000_000).optional() }),
+);
+
+/** Salva as imagens de banner das quatro grandes áreas do site. */
+export const saveAreaBanners = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => bannersSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("site_settings")
+      .upsert({ key: "banners", value: data }, { onConflict: "key" });
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
