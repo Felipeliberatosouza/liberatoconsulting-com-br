@@ -904,7 +904,14 @@ export const dict: Dict = {
     "message": "我们能如何提供帮助？",
     "submit": "发送信息",
     "sent": "信息已记录。感谢您的联系！",
-    "info": "或直接致信"
+    "info": "或直接致信",
+    "serviceLabel": "Liberato Consulting 的服务",
+    "servicePlaceholder": "请选择一项服务",
+    "serviceOther": "其他服务",
+    "messageIntro": "您好！我想进一步了解 Liberato Consulting 如何帮助解决 ",
+    "messageOutro": "期待您的联系。",
+    "required": "请填写此栏。",
+    "invalidEmail": "请输入有效的电子邮件地址。"
   },
   "cta": {
     "title": "准备好让您的业务增长、销售更多、提高利润率、改进流程并提升团队的执行能力了吗？",
