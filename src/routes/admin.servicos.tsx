@@ -185,7 +185,7 @@ function AdminServicesPage() {
               family_title: FAMILIES[0]?.title ?? "",
               code: FAMILIES[0]?.code ?? "",
               group_id: GROUPS[0]?.id ?? "",
-              groups: GROUPS[0］ ? [GROUPS[0].id] : [],
+              groups: GROUPS[0] ? [GROUPS[0].id] : [],
             })
           }
         >
