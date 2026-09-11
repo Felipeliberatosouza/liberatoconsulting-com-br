@@ -131,14 +131,16 @@ export const saveServiceProduct = createServerFn({ method: "POST" })
       translations = {};
     }
 
-    const row = {
-      ...data,
+    const { id, ...rest } = data;
+    const row: Record<string, unknown> = {
+      ...rest,
+      ...(id ? { id } : {}),
       ...(Object.keys(translations).length > 0 ? { translations } : {}),
     };
 
     const { error } = await context.supabase
       .from("service_products")
-      .upsert(row, { onConflict: "slug" });
+      .upsert(row as never, { onConflict: "slug" });
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });
