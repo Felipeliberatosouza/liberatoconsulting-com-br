@@ -115,8 +115,13 @@ function humanize(path: string) {
   return { base, parent };
 }
 
+/** Campos de cada produto: editados apenas no cadastro de serviços. */
+function isProductField(path: string) {
+  return path.startsWith("serviceDetail.pages") || path.startsWith("serviceFamilies.items");
+}
+
 function AdminAreas() {
-  const all = useMemo(() => flattenTexts(pt), []);
+  const all = useMemo(() => flattenTexts(pt).filter((i) => !isProductField(i.path)), []);
 
   // Toda seção de texto aparece uma única vez: nas grandes áreas ou em "Outras áreas".
   const areas = useMemo<Area[]>(() => {
