@@ -1093,6 +1093,7 @@ export type Database = {
           results: Json
           slug: string
           title: string
+          translations: Json
           updated_at: string
         }
         Insert: {
@@ -1121,6 +1122,7 @@ export type Database = {
           results?: Json
           slug: string
           title?: string
+          translations?: Json
           updated_at?: string
         }
         Update: {
@@ -1149,6 +1151,7 @@ export type Database = {
           results?: Json
           slug?: string
           title?: string
+          translations?: Json
           updated_at?: string
         }
         Relationships: []
