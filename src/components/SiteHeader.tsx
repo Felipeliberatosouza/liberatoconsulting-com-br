@@ -104,6 +104,7 @@ export function SiteHeader() {
   const { t, logoUrl } = useLanguage();
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [servicesDismissed, setServicesDismissed] = useState(false);
   const groups = t.megaMenu.groups;
   const aboutItems = t.aboutMenu.items;
   const contentGroups = t.contentMenu.groups;
@@ -113,6 +114,7 @@ export function SiteHeader() {
   const closeAll = () => {
     setOpen(false);
     setServicesOpen(false);
+    setServicesDismissed(true);
   };
 
   return (
@@ -133,8 +135,13 @@ export function SiteHeader() {
 
         <nav className="hidden items-center gap-8 md:flex">
           <div
-            onMouseEnter={() => setServicesOpen(true)}
-            onMouseLeave={() => setServicesOpen(false)}
+            onMouseEnter={() => {
+              if (!servicesDismissed) setServicesOpen(true);
+            }}
+            onMouseLeave={() => {
+              setServicesOpen(false);
+              setServicesDismissed(false);
+            }}
           >
             <Link
               to="/services"
@@ -382,7 +389,7 @@ export function SiteHeader() {
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
           <MobileAccordion title={t.nav.services} to="/services" onNavigate={closeAll}>
-            <div className="grid grid-cols-2 gap-x-4">
+            <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
               {groups.map((g) => (
                 <div key={g.id} className="min-w-0">
                   <p className="pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
