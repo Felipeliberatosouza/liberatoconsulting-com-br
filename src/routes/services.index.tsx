@@ -1,3 +1,4 @@
+import { AreaBannerSection } from "@/components/AreaBannerSection";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { ArrowRight, Clock } from "lucide-react";
@@ -79,7 +80,7 @@ function ServicesPage() {
 
   return (
     <div>
-      <section className="bg-ink py-24 text-ink-foreground">
+      <AreaBannerSection area="services">
         <div className="mx-auto max-w-7xl px-6">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{c.eyebrow}</p>
           <h1 className="mt-5 max-w-4xl text-4xl font-bold leading-tight md:text-6xl">{fam.title}</h1>
