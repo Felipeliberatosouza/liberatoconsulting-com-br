@@ -1136,6 +1136,32 @@ export type Database = {
           works: string
         }[]
       }
+      list_site_articles: {
+        Args: never
+        Returns: {
+          article_date: string
+          author_contact: string
+          authors: string
+          cover_url: string
+          created_at: string
+          file_name: string
+          file_path: string
+          group_id: string
+          id: string
+          kind: string
+          link_url: string
+          position: number
+          published: boolean
+          rating_count: number
+          rating_sum: number
+          read_count: number
+          service: string
+          slug: string
+          summary: string
+          title: string
+          translations: Json
+        }[]
+      }
       set_weekly_schedule: {
         Args: { _job: string; _schedule: string }
         Returns: undefined
