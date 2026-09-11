@@ -433,6 +433,14 @@ export const dict: Dict = {
     "secondary": "预约咨询",
     "slides": [
       {
+        "id": "consultoria",
+        "eyebrow": "Liberato Consulting：真实成果，合理投入！",
+        "title": "将战略转化为巴西企业的可持续收益",
+        "body": "我们帮助成长型企业提升利润率、销售业绩、流程效率和执行能力。",
+        "primary": "了解我们的服务",
+        "secondary": "预约咨询"
+      },
+      {
         "id": "pesquisas",
         "eyebrow": "巴西市场研究",
         "title": "洞察巴西市场。依托方法论与人工智能决策。",

@@ -270,6 +270,14 @@ export const pt = {
     secondary: "Agendar conversa",
     slides: [
       {
+        id: "consultoria",
+        eyebrow: "Liberato Consulting: resultado real, investimento justo!",
+        title: "Transformando estratégia em ganho sustentável para negócios no Brasil",
+        body: "Ajudamos empresas em crescimento a melhorar margem, vendas, processos e capacidade de execução.",
+        primary: "Conhecer os serviços",
+        secondary: "Agendar conversa",
+      },
+      {
         id: "pesquisas",
         eyebrow: "Pesquisas de mercado sobre o Brasil",
         title: "Entenda o mercado brasileiro. Decida com método e inteligência artificial.",

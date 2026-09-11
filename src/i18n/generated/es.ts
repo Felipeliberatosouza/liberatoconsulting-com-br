@@ -433,6 +433,14 @@ export const dict: Dict = {
     "secondary": "Agendar conversación",
     "slides": [
       {
+        "id": "consultoria",
+        "eyebrow": "Liberato Consulting: resultados reales, inversión justa!",
+        "title": "Transformando la estrategia en ganancias sostenibles para negocios en Brasil",
+        "body": "Ayudamos a empresas en crecimiento a mejorar márgenes, ventas, procesos y capacidad de ejecución.",
+        "primary": "Conocer los servicios",
+        "secondary": "Agendar conversación"
+      },
+      {
         "id": "pesquisas",
         "eyebrow": "Investigación de mercado sobre Brasil",
         "title": "Entienda el mercado brasileño. Decida con método e inteligencia artificial.",
