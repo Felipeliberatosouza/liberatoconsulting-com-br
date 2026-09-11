@@ -1,0 +1,1 @@
+ALTER FUNCTION public.list_site_articles() SECURITY INVOKER;
