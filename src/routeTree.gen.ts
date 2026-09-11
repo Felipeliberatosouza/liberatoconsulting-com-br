@@ -42,6 +42,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
 import { Route as AdminPropagandaRouteImport } from './routes/admin.propaganda'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
+import { Route as AdminServicosRouteImport } from './routes/admin.servicos'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminTextsRouteImport } from './routes/admin.texts'
 import { Route as AdminThemeRouteImport } from './routes/admin.theme'
@@ -226,6 +227,11 @@ const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
   path: '/admin/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminServicosRoute = AdminServicosRouteImport.update({
+  id: '/admin/servicos',
+  path: '/admin/servicos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/admin/settings',
   path: '/admin/settings',
@@ -353,6 +359,7 @@ export interface FileRoutesByFullPath {
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/servicos': typeof AdminServicosRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
@@ -406,6 +413,7 @@ export interface FileRoutesByTo {
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/servicos': typeof AdminServicosRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
@@ -460,6 +468,7 @@ export interface FileRoutesById {
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/servicos': typeof AdminServicosRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
@@ -515,6 +524,7 @@ export interface FileRouteTypes {
     | '/admin/newsletter'
     | '/admin/propaganda'
     | '/admin/reset-password'
+    | '/admin/servicos'
     | '/admin/settings'
     | '/admin/texts'
     | '/admin/theme'
@@ -568,6 +578,7 @@ export interface FileRouteTypes {
     | '/admin/newsletter'
     | '/admin/propaganda'
     | '/admin/reset-password'
+    | '/admin/servicos'
     | '/admin/settings'
     | '/admin/texts'
     | '/admin/theme'
@@ -621,6 +632,7 @@ export interface FileRouteTypes {
     | '/admin/newsletter'
     | '/admin/propaganda'
     | '/admin/reset-password'
+    | '/admin/servicos'
     | '/admin/settings'
     | '/admin/texts'
     | '/admin/theme'
@@ -675,6 +687,7 @@ export interface RootRouteChildren {
   AdminNewsletterRoute: typeof AdminNewsletterRoute
   AdminPropagandaRoute: typeof AdminPropagandaRoute
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
+  AdminServicosRoute: typeof AdminServicosRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AdminTextsRoute: typeof AdminTextsRoute
   AdminThemeRoute: typeof AdminThemeRoute
@@ -929,6 +942,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/servicos': {
+      id: '/admin/servicos'
+      path: '/admin/servicos'
+      fullPath: '/admin/servicos'
+      preLoaderRoute: typeof AdminServicosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/admin/settings'
@@ -1091,6 +1111,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminNewsletterRoute: AdminNewsletterRoute,
   AdminPropagandaRoute: AdminPropagandaRoute,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
+  AdminServicosRoute: AdminServicosRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AdminTextsRoute: AdminTextsRoute,
   AdminThemeRoute: AdminThemeRoute,
