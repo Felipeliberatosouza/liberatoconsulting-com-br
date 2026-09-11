@@ -1,3 +1,4 @@
+import { AreaBannerSection } from "@/components/AreaBannerSection";
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { CtaBand } from "@/components/CtaBand";
@@ -116,13 +117,13 @@ function ContentPage() {
 
   return (
     <div>
-      <section className="bg-ink py-24 text-ink-foreground">
+      <AreaBannerSection area="content">
         <div className="mx-auto max-w-7xl px-6">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{c.eyebrow}</p>
           <h1 className="mt-5 max-w-4xl text-4xl font-bold leading-tight md:text-6xl">{c.title}</h1>
           <p className="mt-6 max-w-2xl text-lg text-ink-foreground/75">{c.lead}</p>
         </div>
-      </section>
+      </AreaBannerSection>
 
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="flex flex-wrap gap-2">

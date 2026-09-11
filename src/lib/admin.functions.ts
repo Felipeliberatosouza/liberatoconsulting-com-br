@@ -4,6 +4,7 @@ import { isValidPhone, PHONE_ERROR } from "./validation";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type {
+  AreaBanners,
   ArticleRecord,
   BrazilOverrides,
   Branding,
@@ -36,6 +37,7 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
       branding: (map.get("branding") ?? {}) as Branding,
       hero: (map.get("hero") ?? {}) as HeroSettings,
       brazil: (map.get("brazil") ?? {}) as BrazilOverrides,
+      banners: (map.get("banners") ?? {}) as AreaBanners,
     };
   },
 );
@@ -648,6 +650,24 @@ export const saveBrazilSection = createServerFn({ method: "POST" })
     const { error } = await context.supabase
       .from("site_settings")
       .upsert({ key: "brazil", value: overrides }, { onConflict: "key" });
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
+const bannersSchema = z.record(
+  z.enum(["services", "about", "content", "brazil"]),
+  z.object({ imageUrl: z.string().trim().max(3_000_000).optional() }),
+);
+
+/** Salva as imagens de banner das quatro grandes áreas do site. */
+export const saveAreaBanners = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => bannersSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("site_settings")
+      .upsert({ key: "banners", value: data }, { onConflict: "key" });
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });

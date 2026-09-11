@@ -27,6 +27,7 @@ import { Route as AboutSlugRouteImport } from './routes/about_.$slug'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminApplicationsRouteImport } from './routes/admin.applications'
 import { Route as AdminApprovalsRouteImport } from './routes/admin.approvals'
+import { Route as AdminAreasRouteImport } from './routes/admin.areas'
 import { Route as AdminBoletimRouteImport } from './routes/admin.boletim'
 import { Route as AdminBrasilRouteImport } from './routes/admin.brasil'
 import { Route as AdminConsultoresRouteImport } from './routes/admin.consultores'
@@ -148,6 +149,11 @@ const AdminApplicationsRoute = AdminApplicationsRouteImport.update({
 const AdminApprovalsRoute = AdminApprovalsRouteImport.update({
   id: '/admin/approvals',
   path: '/admin/approvals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminAreasRoute = AdminAreasRouteImport.update({
+  id: '/admin/areas',
+  path: '/admin/areas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminBoletimRoute = AdminBoletimRouteImport.update({
@@ -332,6 +338,7 @@ export interface FileRoutesByFullPath {
   '/about/$slug': typeof AboutSlugRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/approvals': typeof AdminApprovalsRoute
+  '/admin/areas': typeof AdminAreasRoute
   '/admin/boletim': typeof AdminBoletimRoute
   '/admin/brasil': typeof AdminBrasilRoute
   '/admin/consultores': typeof AdminConsultoresRoute
@@ -384,6 +391,7 @@ export interface FileRoutesByTo {
   '/about/$slug': typeof AboutSlugRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/approvals': typeof AdminApprovalsRoute
+  '/admin/areas': typeof AdminAreasRoute
   '/admin/boletim': typeof AdminBoletimRoute
   '/admin/brasil': typeof AdminBrasilRoute
   '/admin/consultores': typeof AdminConsultoresRoute
@@ -437,6 +445,7 @@ export interface FileRoutesById {
   '/about_/$slug': typeof AboutSlugRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/approvals': typeof AdminApprovalsRoute
+  '/admin/areas': typeof AdminAreasRoute
   '/admin/boletim': typeof AdminBoletimRoute
   '/admin/brasil': typeof AdminBrasilRoute
   '/admin/consultores': typeof AdminConsultoresRoute
@@ -491,6 +500,7 @@ export interface FileRouteTypes {
     | '/about/$slug'
     | '/admin/applications'
     | '/admin/approvals'
+    | '/admin/areas'
     | '/admin/boletim'
     | '/admin/brasil'
     | '/admin/consultores'
@@ -543,6 +553,7 @@ export interface FileRouteTypes {
     | '/about/$slug'
     | '/admin/applications'
     | '/admin/approvals'
+    | '/admin/areas'
     | '/admin/boletim'
     | '/admin/brasil'
     | '/admin/consultores'
@@ -595,6 +606,7 @@ export interface FileRouteTypes {
     | '/about_/$slug'
     | '/admin/applications'
     | '/admin/approvals'
+    | '/admin/areas'
     | '/admin/boletim'
     | '/admin/brasil'
     | '/admin/consultores'
@@ -648,6 +660,7 @@ export interface RootRouteChildren {
   AboutSlugRoute: typeof AboutSlugRoute
   AdminApplicationsRoute: typeof AdminApplicationsRoute
   AdminApprovalsRoute: typeof AdminApprovalsRoute
+  AdminAreasRoute: typeof AdminAreasRoute
   AdminBoletimRoute: typeof AdminBoletimRoute
   AdminBrasilRoute: typeof AdminBrasilRoute
   AdminConsultoresRoute: typeof AdminConsultoresRoute
@@ -809,6 +822,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/approvals'
       fullPath: '/admin/approvals'
       preLoaderRoute: typeof AdminApprovalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/areas': {
+      id: '/admin/areas'
+      path: '/admin/areas'
+      fullPath: '/admin/areas'
+      preLoaderRoute: typeof AdminAreasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/boletim': {
@@ -1056,6 +1076,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutSlugRoute: AboutSlugRoute,
   AdminApplicationsRoute: AdminApplicationsRoute,
   AdminApprovalsRoute: AdminApprovalsRoute,
+  AdminAreasRoute: AdminAreasRoute,
   AdminBoletimRoute: AdminBoletimRoute,
   AdminBrasilRoute: AdminBrasilRoute,
   AdminConsultoresRoute: AdminConsultoresRoute,
