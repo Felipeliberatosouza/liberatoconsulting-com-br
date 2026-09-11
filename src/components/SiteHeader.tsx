@@ -300,22 +300,31 @@ export function SiteHeader() {
             </div>
           </div>
 
-          <div className="group/menu">
+          <div
+            onMouseEnter={() => setBrasilOpen(true)}
+            onMouseLeave={() => setBrasilOpen(false)}
+          >
             <Link
               to="/brasil"
+              onClick={closeAll}
               className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
               activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
             >
               {t.brazilMenu.label}
-              <ChevronDown className="size-3.5 transition-transform group-hover/menu:rotate-180" />
+              <ChevronDown className={`size-3.5 transition-transform ${brasilOpen ? "rotate-180" : ""}`} />
             </Link>
 
-            <div className="invisible absolute inset-x-0 top-full z-40 border-b border-border bg-background opacity-0 shadow-lg transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100">
+            <div
+              className={`absolute inset-x-0 top-full z-40 max-h-[calc(100vh-5rem)] overflow-y-auto border-b border-border bg-background shadow-lg transition-all duration-200 ${
+                brasilOpen ? "visible opacity-100" : "invisible opacity-0"
+              }`}
+            >
               <div className="mx-auto max-w-7xl px-6 py-8">
                 <p className="mb-5 text-sm font-semibold text-accent">{t.brazilMenu.label}</p>
                 <Link
                   to="/brasil"
                   hash="indicadores"
+                  onClick={closeAll}
                   className="mb-5 block text-sm font-semibold text-foreground transition-colors hover:text-accent"
                 >
                   {t.brazilMenu.indicatorsItem}
@@ -334,6 +343,7 @@ export function SiteHeader() {
                           <Link
                             to="/brasil/$slug"
                             params={{ slug: item.id }}
+                            onClick={closeAll}
                             className="block text-sm text-muted-foreground transition-colors hover:text-accent"
                           >
                             {item.label}
@@ -347,6 +357,7 @@ export function SiteHeader() {
                 <div className="mt-8 text-right">
                   <Link
                     to="/brasil"
+                    onClick={closeAll}
                     className="text-xs font-semibold uppercase tracking-[0.2em] text-accent"
                   >
                     {t.brazilMenu.more}
@@ -355,6 +366,7 @@ export function SiteHeader() {
               </div>
             </div>
           </div>
+
         </nav>
 
 
