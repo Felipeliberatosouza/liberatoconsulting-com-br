@@ -675,6 +675,13 @@ export const pt = {
     submit: "Enviar mensagem",
     sent: "Mensagem registrada. Obrigado pelo contato!",
     info: "Ou escreva diretamente para",
+    serviceLabel: "Serviços da Liberato Consulting",
+    servicePlaceholder: "Selecione um serviço",
+    serviceOther: "Outros serviços",
+    messageIntro: "Olá! Gostaria de obter mais informações de como a Liberato Consulting pode ajudar com ",
+    messageOutro: "Espero um contato.",
+    required: "Preencha este campo.",
+    invalidEmail: "Informe um e-mail válido.",
   },
   cta: {
     title: "Pronto para fazer seu negócio crescer, vender mais, melhorar sua margem, melhorar processos e a capacidade de execução do seu time?",
