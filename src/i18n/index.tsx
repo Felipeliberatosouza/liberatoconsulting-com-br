@@ -30,6 +30,7 @@ import {
   applyTextOverrides,
   applyTheme,
   type ArticleRecord,
+  type AreaBanners,
   type HeroSettings,
   type SiteConfig,
 } from "@/lib/site-config";
@@ -59,6 +60,8 @@ type LanguageContextValue = {
   whatsapp: string | undefined;
   /** Configuração do carrossel da página inicial. */
   hero: HeroSettings;
+  /** Imagens de banner das grandes áreas do site. */
+  banners: AreaBanners;
   /** Segmentos atendidos pela consultoria (configuráveis no painel). */
   segments: string[];
 };
@@ -158,6 +161,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       logoUrl: config.branding?.logoUrl || "/logo.png",
       whatsapp: config.branding?.whatsapp,
       hero: config.hero ?? {},
+      banners: config.banners ?? {},
       segments:
         config.branding?.segments && config.branding.segments.length > 0
           ? config.branding.segments
