@@ -49,7 +49,7 @@ export const pt = {
       },
       {
         id: "pesquisas",
-        title: "Inteligência de Mercado e Decisões",
+        title: "Pesquisas de Mercado/Inteligência de Mercado",
         anchor: "pesquisas-brasil",
         items: [
           { id: "crescimento-expansao-e-novos-produtos", label: "Crescimento, Expansão e Novos Produtos" },

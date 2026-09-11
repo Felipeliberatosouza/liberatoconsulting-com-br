@@ -90,7 +90,7 @@ export const dict: Dict = {
       },
       {
         "id": "pesquisas",
-        "title": "市场情报与决策",
+        "title": "市场研究/市场情报",
         "anchor": "pesquisas-brasil",
         "items": [
           {

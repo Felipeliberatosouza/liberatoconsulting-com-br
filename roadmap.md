@@ -7,3 +7,9 @@
 - [x] Publicar para restabelecer a área administrativa
 
 - [x] Serviços remodelados a partir da planilha de produtos (9 famílias, 32 produtos, sem preços) — 08/09/2026
+
+## Menu de Serviços — hierarquia da planilha
+- [ ] Renomear a frente de Pesquisas de Mercado
+- [ ] Exibir frente, família e produto no menu desktop e mobile
+- [ ] Fechar o menu e abrir o destino ao selecionar um item
+- [ ] Validar navegação, idiomas e compilação
