@@ -4,6 +4,7 @@ import { isValidPhone, PHONE_ERROR } from "./validation";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type {
+  AreaBanners,
   ArticleRecord,
   BrazilOverrides,
   Branding,
@@ -36,6 +37,7 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
       branding: (map.get("branding") ?? {}) as Branding,
       hero: (map.get("hero") ?? {}) as HeroSettings,
       brazil: (map.get("brazil") ?? {}) as BrazilOverrides,
+      banners: (map.get("banners") ?? {}) as AreaBanners,
     };
   },
 );
