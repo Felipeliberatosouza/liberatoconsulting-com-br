@@ -12,4 +12,4 @@
 - [x] Renomear a frente de Pesquisas de Mercado
 - [x] Exibir frente, família e produto no menu desktop e mobile
 - [x] Fechar o menu e abrir o destino ao selecionar um item
-- [ ] Validar navegação, idiomas e compilação
+- [x] Validar navegação, idiomas e compilação
