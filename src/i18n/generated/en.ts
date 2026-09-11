@@ -432,14 +432,7 @@ export const dict: Dict = {
     "primary": "View Brazil Data",
     "secondary": "Schedule a call",
     "slides": [
-      {
-        "id": "consultoria",
-        "eyebrow": "Liberato Consulting: real results, fair investment!",
-        "title": "Transforming strategy into sustainable gains for businesses in Brazil",
-        "body": "We help growing companies improve margins, sales, processes, and execution capacity.",
-        "primary": "Explore our services",
-        "secondary": "Schedule a call"
-      },
+      
       {
         "id": "pesquisas",
         "eyebrow": "Market research on Brazil",
@@ -471,7 +464,15 @@ export const dict: Dict = {
         "body": "Strategic planning, goal cascading, digital transformation, and capital project management, with scenarios simulated by artificial intelligence.",
         "primary": "Explore service",
         "secondary": "Schedule a call"
-      }
+      },
+      {
+        "id": "consultoria",
+        "eyebrow": "Liberato Consulting: real results, fair investment!",
+        "title": "Transforming strategy into sustainable gains for businesses in Brazil",
+        "body": "We help growing companies improve margins, sales, processes, and execution capacity.",
+        "primary": "Explore our services",
+        "secondary": "Schedule a call"
+      },
     ]
   },
   "brazilFocus": {

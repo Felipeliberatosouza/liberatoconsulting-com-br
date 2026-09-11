@@ -432,14 +432,7 @@ export const dict: Dict = {
     "primary": "Ver datos de Brasil",
     "secondary": "Agendar conversación",
     "slides": [
-      {
-        "id": "consultoria",
-        "eyebrow": "Liberato Consulting: resultados reales, inversión justa!",
-        "title": "Transformando la estrategia en ganancias sostenibles para negocios en Brasil",
-        "body": "Ayudamos a empresas en crecimiento a mejorar márgenes, ventas, procesos y capacidad de ejecución.",
-        "primary": "Conocer los servicios",
-        "secondary": "Agendar conversación"
-      },
+      
       {
         "id": "pesquisas",
         "eyebrow": "Investigación de mercado sobre Brasil",
@@ -471,7 +464,15 @@ export const dict: Dict = {
         "body": "Planeación estratégica, despliegue de metas, transformación digital y gestión de proyectos de capital, con escenarios simulados por inteligencia artificial.",
         "primary": "Conocer el servicio",
         "secondary": "Agendar conversación"
-      }
+      },
+      {
+        "id": "consultoria",
+        "eyebrow": "Liberato Consulting: resultados reales, inversión justa!",
+        "title": "Transformando la estrategia en ganancias sostenibles para negocios en Brasil",
+        "body": "Ayudamos a empresas en crecimiento a mejorar márgenes, ventas, procesos y capacidad de ejecución.",
+        "primary": "Conocer los servicios",
+        "secondary": "Agendar conversación"
+      },
     ]
   },
   "brazilFocus": {

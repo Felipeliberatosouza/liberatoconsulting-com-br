@@ -269,14 +269,7 @@ export const pt = {
     primary: "Ver dados do Brasil",
     secondary: "Agendar conversa",
     slides: [
-{
-        id: "pesquisas",
-        eyebrow: "Pesquisas de mercado sobre o Brasil",
-        title: "Entenda o mercado brasileiro. Decida com método e inteligência artificial.",
-        body: "Estudos setoriais, dados econômicos e leitura regulatória sobre o Brasil para empresas internacionais — com IA no centro de cada entrega.",
-        primary: "Ver dados do Brasil",
-        secondary: "Agendar conversa",
-      },
+
 {
         id: "empreendedorismo",
         eyebrow: "Empreendedorismo",
@@ -307,6 +300,14 @@ export const pt = {
         title: "Transformando estratégia em ganho sustentável para negócios no Brasil",
         body: "Ajudamos empresas em crescimento a melhorar margem, vendas, processos e capacidade de execução.",
         primary: "Conhecer os serviços",
+        secondary: "Agendar conversa",
+      },,
+      {
+        id: "pesquisas",
+        eyebrow: "Pesquisas de mercado sobre o Brasil",
+        title: "Entenda o mercado brasileiro. Decida com método e inteligência artificial.",
+        body: "Estudos setoriais, dados econômicos e leitura regulatória sobre o Brasil para empresas internacionais — com IA no centro de cada entrega.",
+        primary: "Ver dados do Brasil",
         secondary: "Agendar conversa",
       },
     ],
