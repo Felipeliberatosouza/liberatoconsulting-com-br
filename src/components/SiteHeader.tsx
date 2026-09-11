@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronDown, ChevronRight, Menu, X } from "lucide-react";
-import { useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useLanguage, LANGS, LANG_LABELS, LANG_SHORT } from "@/i18n";
 
 function LangSwitch() {
@@ -104,8 +104,6 @@ export function SiteHeader() {
   const { t, logoUrl } = useLanguage();
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
-  const [servicesDismissed, setServicesDismissed] = useState(false);
-  const servicesDismissedRef = useRef(false);
   const groups = t.megaMenu.groups;
   const aboutItems = t.aboutMenu.items;
   const contentGroups = t.contentMenu.groups;
@@ -115,8 +113,6 @@ export function SiteHeader() {
   const closeAll = () => {
     setOpen(false);
     setServicesOpen(false);
-    setServicesDismissed(true);
-    servicesDismissedRef.current = true;
   };
 
   return (
@@ -137,20 +133,11 @@ export function SiteHeader() {
 
         <nav className="hidden items-center gap-8 md:flex">
           <div
-            onMouseEnter={() => {
-              if (!servicesDismissedRef.current) setServicesOpen(true);
-            }}
-            onMouseLeave={() => {
-              setServicesOpen(false);
-              setServicesDismissed(false);
-              servicesDismissedRef.current = false;
-            }}
+            onMouseEnter={() => setServicesOpen(true)}
+            onMouseLeave={() => setServicesOpen(false)}
           >
             <Link
               to="/services"
-              onFocus={() => {
-                if (!servicesDismissedRef.current) setServicesOpen(true);
-              }}
               onClick={closeAll}
               className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
               activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
