@@ -35,6 +35,7 @@ import {
   type SiteConfig,
 } from "@/lib/site-config";
 import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
+import { applyServiceProducts } from "@/lib/services-catalog";
 
 export type { Lang };
 export { LANGS, LANG_LABELS, LANG_SHORT, LANG_HTML };
@@ -152,7 +153,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       setLang,
       toggle: () => setLang(lang === "pt" ? "en" : "pt"),
       t: applyBrazilOverrides(
-        applyTextOverrides(dicts[lang] ?? baseline[lang].dict, config.texts, lang),
+        applyTextOverrides(
+          applyServiceProducts(dicts[lang] ?? baseline[lang].dict, config.products, lang),
+          config.texts,
+          lang,
+        ),
         config.brazil ?? {},
         lang,
       ),

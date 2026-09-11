@@ -110,6 +110,8 @@ export type SiteConfig = {
   hero: HeroSettings;
   brazil: BrazilOverrides;
   banners: AreaBanners;
+  /** Serviços cadastrados no painel (sem preços). */
+  products: import("./services-catalog").ServiceProduct[];
 };
 
 export const EMPTY_CONFIG: SiteConfig = {
@@ -120,6 +122,7 @@ export const EMPTY_CONFIG: SiteConfig = {
   hero: {},
   brazil: {},
   banners: {},
+  products: [],
 };
 
 /** Lista todos os caminhos de texto (folhas string) do dicionário PT. */
