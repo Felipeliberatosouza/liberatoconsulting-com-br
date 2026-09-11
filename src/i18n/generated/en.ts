@@ -90,7 +90,7 @@ export const dict: Dict = {
       },
       {
         "id": "pesquisas",
-        "title": "Market Intelligence & Decisions",
+        "title": "Market Research/Market Intelligence",
         "anchor": "pesquisas-brasil",
         "items": [
           {
