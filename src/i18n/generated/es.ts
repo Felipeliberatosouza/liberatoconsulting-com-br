@@ -907,7 +907,7 @@ export const dict: Dict = {
     "info": "O escriba directamente a"
   },
   "cta": {
-    "title": "¿Listo para poner la IA al servicio de su gestión?",
+    "title": "¿Listo para hacer crecer su negocio, vender más, mejorar su margen, mejorar procesos y la capacidad de ejecución de su equipo?",
     "body": "Una conversación inicial de 45 minutos suele ser suficiente para mapear las primeras oportunidades.",
     "button": "Hablar con Liberato"
   },
