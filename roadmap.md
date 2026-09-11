@@ -21,4 +21,4 @@
 
 ## Correção do carrossel administrativo
 - [x] Mostrar novos slides no topo quando ainda não existem na configuração salva
-- [ ] Validar o painel administrativo e a compilação
+- [x] Validar a normalização dos banners e a compilação
