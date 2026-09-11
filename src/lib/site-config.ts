@@ -62,7 +62,12 @@ export type Branding = { logoUrl?: string; whatsapp?: string; segments?: string[
 
 /** Slides do carrossel da página inicial (ordem, exibição e imagem). */
 export type HeroSlideSetting = { id: string; enabled: boolean; imageUrl?: string };
-export type HeroSettings = { autoplayMs?: number; slides?: HeroSlideSetting[] };
+export type HeroSettings = {
+  autoplayMs?: number;
+  slides?: HeroSlideSetting[];
+  /** Versão do vínculo entre os textos salvos e os IDs dos banners. */
+  textSchemaVersion?: number;
+};
 
 export const HERO_SLIDE_IDS = ["consultoria", "pesquisas", "empreendedorismo", "operacoes", "estrategia"] as const;
 export const DEFAULT_AUTOPLAY_MS = 7000;
@@ -80,6 +85,44 @@ export function heroSlideOrder(hero: HeroSettings | undefined): HeroSlideSetting
     enabled: true,
   }));
   return [...missing, ...known];
+}
+
+/**
+ * Corrige configurações salvas antes da inclusão do banner "consultoria".
+ * Na estrutura antiga, Pesquisas ocupava o índice 0 e os demais textos
+ * avançavam até Estratégia no índice 3. O novo banner passou a ocupar o
+ * índice 0, portanto os quatro blocos antigos precisam avançar uma posição.
+ */
+export function normalizeHeroTextOverrides(
+  texts: TextOverrides,
+  hero: HeroSettings | undefined,
+): TextOverrides {
+  if ((hero?.textSchemaVersion ?? 0) >= 2) return texts;
+
+  const fields = ["eyebrow", "title", "body"] as const;
+  const normalized: TextOverrides = { ...texts };
+  const legacy = new Map<string, TextOverride>();
+
+  for (let oldIndex = 0; oldIndex < 4; oldIndex += 1) {
+    for (const field of fields) {
+      const oldPath = `hero.slides[${oldIndex}].${field}`;
+      const value = texts[oldPath];
+      if (value) legacy.set(`${oldIndex}:${field}`, value);
+    }
+  }
+
+  for (let index = 0; index < 5; index += 1) {
+    for (const field of fields) delete normalized[`hero.slides[${index}].${field}`];
+  }
+
+  for (let oldIndex = 0; oldIndex < 4; oldIndex += 1) {
+    for (const field of fields) {
+      const value = legacy.get(`${oldIndex}:${field}`);
+      if (value) normalized[`hero.slides[${oldIndex + 1}].${field}`] = value;
+    }
+  }
+
+  return normalized;
 }
 
 /** Conteúdo editável de cada tema da seção "Dados do Brasil". */

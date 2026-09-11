@@ -12,6 +12,7 @@ import type {
   TextOverrides,
   Theme,
 } from "./site-config";
+import { normalizeHeroTextOverrides } from "./site-config";
 
 /** Configuração pública do site (cores, textos personalizados e conteúdos). */
 export const getSiteConfig = createServerFn({ method: "GET" }).handler(
@@ -29,12 +30,14 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
     ]);
 
     const map = new Map((settings.data ?? []).map((r) => [r.key, r.value]));
+    const hero = (map.get("hero") ?? {}) as HeroSettings;
+    const texts = normalizeHeroTextOverrides((map.get("texts") ?? {}) as TextOverrides, hero);
     return {
       theme: (map.get("theme") ?? {}) as Theme,
-      texts: (map.get("texts") ?? {}) as TextOverrides,
+      texts,
       articles: (articles.data ?? []) as unknown as ArticleRecord[],
       branding: (map.get("branding") ?? {}) as Branding,
-      hero: (map.get("hero") ?? {}) as HeroSettings,
+      hero,
       brazil: (map.get("brazil") ?? {}) as BrazilOverrides,
     };
   },
@@ -571,7 +574,7 @@ export const saveHeroSettings = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { error } = await context.supabase
       .from("site_settings")
-      .upsert({ key: "hero", value: data }, { onConflict: "key" });
+      .upsert({ key: "hero", value: { ...data, textSchemaVersion: 2 } }, { onConflict: "key" });
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });
