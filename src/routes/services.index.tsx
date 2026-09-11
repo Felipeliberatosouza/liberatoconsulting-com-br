@@ -71,7 +71,9 @@ function ServicesPage() {
         families: fam.items
           .map((f) => ({
             ...f,
-            products: pages.filter((p) => p.family === f.title && p.groups.includes(group.id)),
+            products: pages.filter(
+              (p) => f.products.includes(p.id) && p.groups.includes(group.id),
+            ),
           }))
           .filter((f) => f.products.length > 0),
       })),
