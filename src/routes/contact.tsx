@@ -9,7 +9,6 @@ import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
 import { getPublicCompanyAddress } from "@/lib/company-public.functions";
 import { postalAddressSchema } from "@/lib/company-address";
-import { useFieldErrors } from "@/hooks/useFieldErrors";
 import { formatPhone, isValidEmail, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
 
