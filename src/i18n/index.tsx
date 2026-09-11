@@ -183,6 +183,7 @@ const FALLBACK_VALUE: LanguageContextValue = {
   logoUrl: "/logo.png",
   whatsapp: undefined,
   hero: {},
+  banners: {},
   segments: DEFAULT_SEGMENTS,
 };
 
