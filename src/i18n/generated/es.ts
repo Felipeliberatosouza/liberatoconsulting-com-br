@@ -433,45 +433,45 @@ export const dict: Dict = {
     "secondary": "Agendar conversación",
     "slides": [
       {
-        "id": "consultoria",
-        "eyebrow": "Liberato Consulting: resultados reales, inversión justa!",
-        "title": "Transformando la estrategia en ganancias sostenibles para negocios en Brasil",
-        "body": "Ayudamos a empresas en crecimiento a mejorar márgenes, ventas, procesos y capacidad de ejecución.",
-        "primary": "Conocer los servicios",
-        "secondary": "Agendar conversación"
-      },
+              "id": "pesquisas",
+              "eyebrow": "Investigación de mercado sobre Brasil",
+              "title": "Entienda el mercado brasileño. Decida con método e inteligencia artificial.",
+              "body": "Estudios sectoriales, datos económicos y lectura regulatoria sobre Brasil para empresas internacionales — con IA en el centro de cada entrega.",
+              "primary": "Ver datos de Brasil",
+              "secondary": "Agendar conversación"
+            },
       {
-        "id": "pesquisas",
-        "eyebrow": "Investigación de mercado sobre Brasil",
-        "title": "Entienda el mercado brasileño. Decida con método e inteligencia artificial.",
-        "body": "Estudios sectoriales, datos económicos y lectura regulatoria sobre Brasil para empresas internacionales — con IA en el centro de cada entrega.",
-        "primary": "Ver datos de Brasil",
-        "secondary": "Agendar conversación"
-      },
+              "id": "empreendedorismo",
+              "eyebrow": "Emprendimiento",
+              "title": "Del modelo de negocio a la tracción, con menos capital quemado por hipótesis.",
+              "body": "Modelado, validación de mercado, precios y materiales para inversores. Usamos IA para probar hipótesis con evidencia real antes de estructurar costos fijos.",
+              "primary": "Conocer el servicio",
+              "secondary": "Agendar conversación"
+            },
       {
-        "id": "empreendedorismo",
-        "eyebrow": "Emprendimiento",
-        "title": "Del modelo de negocio a la tracción, con menos capital quemado por hipótesis.",
-        "body": "Modelado, validación de mercado, precios y materiales para inversores. Usamos IA para probar hipótesis con evidencia real antes de estructurar costos fijos.",
-        "primary": "Conocer el servicio",
-        "secondary": "Agendar conversación"
-      },
+              "id": "operacoes",
+              "eyebrow": "Operaciones",
+              "title": "Excelencia operativa que se refleja en el margen, mes a mes.",
+              "body": "Gestión de la rutina, excelencia industrial, comercial y de procesos. La IA anticipa desviaciones, predice la demanda y mantiene el estándar de ejecución.",
+              "primary": "Conocer el servicio",
+              "secondary": "Agendar conversación"
+            },
       {
-        "id": "operacoes",
-        "eyebrow": "Operaciones",
-        "title": "Excelencia operativa que se refleja en el margen, mes a mes.",
-        "body": "Gestión de la rutina, excelencia industrial, comercial y de procesos. La IA anticipa desviaciones, predice la demanda y mantiene el estándar de ejecución.",
-        "primary": "Conocer el servicio",
-        "secondary": "Agendar conversación"
-      },
+              "id": "estrategia",
+              "eyebrow": "Estrategia",
+              "title": "De la ambición al despliegue de metas que la operación puede ejecutar.",
+              "body": "Planeación estratégica, despliegue de metas, transformación digital y gestión de proyectos de capital, con escenarios simulados por inteligencia artificial.",
+              "primary": "Conocer el servicio",
+              "secondary": "Agendar conversación"
+            },
       {
-        "id": "estrategia",
-        "eyebrow": "Estrategia",
-        "title": "De la ambición al despliegue de metas que la operación puede ejecutar.",
-        "body": "Planeación estratégica, despliegue de metas, transformación digital y gestión de proyectos de capital, con escenarios simulados por inteligencia artificial.",
-        "primary": "Conocer el servicio",
-        "secondary": "Agendar conversación"
-      }
+              "id": "consultoria",
+              "eyebrow": "Liberato Consulting: resultados reales, inversión justa!",
+              "title": "Transformando la estrategia en ganancias sostenibles para negocios en Brasil",
+              "body": "Ayudamos a empresas en crecimiento a mejorar márgenes, ventas, procesos y capacidad de ejecución.",
+              "primary": "Conocer los servicios",
+              "secondary": "Agendar conversación"
+            }
     ]
   },
   "brazilFocus": {
