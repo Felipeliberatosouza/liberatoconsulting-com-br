@@ -904,7 +904,14 @@ export const dict: Dict = {
     "message": "¿Cómo podemos ayudar?",
     "submit": "Enviar mensaje",
     "sent": "Mensaje registrado. ¡Gracias por el contacto!",
-    "info": "O escriba directamente a"
+    "info": "O escriba directamente a",
+    "serviceLabel": "Servicios de Liberato Consulting",
+    "servicePlaceholder": "Seleccione un servicio",
+    "serviceOther": "Otros servicios",
+    "messageIntro": "¡Hola! Me gustaría obtener más información sobre cómo Liberato Consulting puede ayudar con ",
+    "messageOutro": "Espero su contacto.",
+    "required": "Complete este campo.",
+    "invalidEmail": "Introduzca un correo electrónico válido."
   },
   "cta": {
     "title": "¿Listo para hacer crecer su negocio, vender más, mejorar su margen, mejorar procesos y la capacidad de ejecución de su equipo?",
