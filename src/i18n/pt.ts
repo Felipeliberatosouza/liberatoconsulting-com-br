@@ -269,15 +269,7 @@ export const pt = {
     primary: "Ver dados do Brasil",
     secondary: "Agendar conversa",
     slides: [
-      {
-        id: "consultoria",
-        eyebrow: "Liberato Consulting: resultado real, investimento justo!",
-        title: "Transformando estratégia em ganho sustentável para negócios no Brasil",
-        body: "Ajudamos empresas em crescimento a melhorar margem, vendas, processos e capacidade de execução.",
-        primary: "Conhecer os serviços",
-        secondary: "Agendar conversa",
-      },
-      {
+{
         id: "pesquisas",
         eyebrow: "Pesquisas de mercado sobre o Brasil",
         title: "Entenda o mercado brasileiro. Decida com método e inteligência artificial.",
@@ -285,7 +277,7 @@ export const pt = {
         primary: "Ver dados do Brasil",
         secondary: "Agendar conversa",
       },
-      {
+{
         id: "empreendedorismo",
         eyebrow: "Empreendedorismo",
         title: "Do modelo de negócio à tração, com menos capital queimado por hipótese.",
@@ -293,7 +285,7 @@ export const pt = {
         primary: "Conhecer o serviço",
         secondary: "Agendar conversa",
       },
-      {
+{
         id: "operacoes",
         eyebrow: "Operações",
         title: "Excelência operacional que aparece na margem, mês a mês.",
@@ -301,12 +293,20 @@ export const pt = {
         primary: "Conhecer o serviço",
         secondary: "Agendar conversa",
       },
-      {
+{
         id: "estrategia",
         eyebrow: "Estratégia",
         title: "Da ambição ao desdobramento de metas que a operação consegue executar.",
         body: "Planejamento estratégico, desdobramento de metas, transformação digital e gestão de projetos de capital, com cenários simulados por inteligência artificial.",
         primary: "Conhecer o serviço",
+        secondary: "Agendar conversa",
+      },
+{
+        id: "consultoria",
+        eyebrow: "Liberato Consulting: resultado real, investimento justo!",
+        title: "Transformando estratégia em ganho sustentável para negócios no Brasil",
+        body: "Ajudamos empresas em crescimento a melhorar margem, vendas, processos e capacidade de execução.",
+        primary: "Conhecer os serviços",
         secondary: "Agendar conversa",
       },
     ],
