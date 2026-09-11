@@ -13,3 +13,8 @@
 - [x] Exibir frente, família e produto no menu desktop e mobile
 - [x] Fechar o menu e abrir o destino ao selecionar um item
 - [x] Validar navegação, idiomas e compilação
+
+## Carrossel institucional
+- [x] Adicionar slide geral da consultoria ao carrossel inicial
+- [x] Disponibilizar seus campos na área administrativa e nos quatro idiomas
+- [x] Validar exibição e compilação

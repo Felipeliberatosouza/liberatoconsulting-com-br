@@ -81,6 +81,7 @@ export const Route = createFileRoute("/")({
 const icons = [Compass, Rocket, Globe2, Settings2];
 
 const SLIDE_IMAGES: Record<string, string> = {
+  consultoria: heroImage,
   pesquisas: heroImage,
   empreendedorismo: heroEmpreendedorismo,
   operacoes: heroOperacoes,

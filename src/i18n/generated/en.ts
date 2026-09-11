@@ -433,6 +433,14 @@ export const dict: Dict = {
     "secondary": "Schedule a call",
     "slides": [
       {
+        "id": "consultoria",
+        "eyebrow": "Liberato Consulting: real results, fair investment!",
+        "title": "Transforming strategy into sustainable gains for businesses in Brazil",
+        "body": "We help growing companies improve margins, sales, processes, and execution capacity.",
+        "primary": "Explore our services",
+        "secondary": "Schedule a call"
+      },
+      {
         "id": "pesquisas",
         "eyebrow": "Market research on Brazil",
         "title": "Understand the Brazilian market. Decide with method and artificial intelligence.",

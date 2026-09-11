@@ -64,10 +64,10 @@ export type Branding = { logoUrl?: string; whatsapp?: string; segments?: string[
 export type HeroSlideSetting = { id: string; enabled: boolean; imageUrl?: string };
 export type HeroSettings = { autoplayMs?: number; slides?: HeroSlideSetting[] };
 
-export const HERO_SLIDE_IDS = ["pesquisas", "empreendedorismo", "operacoes", "estrategia"] as const;
+export const HERO_SLIDE_IDS = ["consultoria", "pesquisas", "empreendedorismo", "operacoes", "estrategia"] as const;
 export const DEFAULT_AUTOPLAY_MS = 7000;
 
-/** Normaliza a configuração salva, garantindo os 4 slides padrão. */
+/** Normaliza a configuração salva, garantindo todos os slides padrão. */
 export function heroSlideOrder(hero: HeroSettings | undefined): HeroSlideSetting[] {
   const saved = hero?.slides ?? [];
   const known = saved.filter((s) => (HERO_SLIDE_IDS as readonly string[]).includes(s.id));
