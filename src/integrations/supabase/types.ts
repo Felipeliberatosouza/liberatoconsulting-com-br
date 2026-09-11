@@ -1066,6 +1066,96 @@ export type Database = {
         }
         Relationships: []
       }
+      service_products: {
+        Row: {
+          ai: string
+          audience: string
+          body: string
+          bullets: Json
+          code: string
+          created_at: string
+          duration: string
+          duration_corporate: string
+          family_id: string
+          family_title: string
+          group_id: string
+          groups: Json
+          id: string
+          lead: string
+          level: string
+          limits: string
+          modules: Json
+          position: number
+          price_corporate: string
+          price_sme: string
+          problem: string
+          published: boolean
+          results: Json
+          slug: string
+          title: string
+          translations: Json
+          updated_at: string
+        }
+        Insert: {
+          ai?: string
+          audience?: string
+          body?: string
+          bullets?: Json
+          code?: string
+          created_at?: string
+          duration?: string
+          duration_corporate?: string
+          family_id?: string
+          family_title?: string
+          group_id?: string
+          groups?: Json
+          id?: string
+          lead?: string
+          level?: string
+          limits?: string
+          modules?: Json
+          position?: number
+          price_corporate?: string
+          price_sme?: string
+          problem?: string
+          published?: boolean
+          results?: Json
+          slug: string
+          title?: string
+          translations?: Json
+          updated_at?: string
+        }
+        Update: {
+          ai?: string
+          audience?: string
+          body?: string
+          bullets?: Json
+          code?: string
+          created_at?: string
+          duration?: string
+          duration_corporate?: string
+          family_id?: string
+          family_title?: string
+          group_id?: string
+          groups?: Json
+          id?: string
+          lead?: string
+          level?: string
+          limits?: string
+          modules?: Json
+          position?: number
+          price_corporate?: string
+          price_sme?: string
+          problem?: string
+          published?: boolean
+          results?: Json
+          slug?: string
+          title?: string
+          translations?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           key: string

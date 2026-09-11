@@ -19,13 +19,20 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
   async (): Promise<SiteConfig> => {
     const { publicClient } = await import("./admin.server");
     const supabase = publicClient();
-    const [settings, articles] = await Promise.all([
+    const [settings, articles, products] = await Promise.all([
       supabase.from("site_settings").select("key, value"),
       // RPC leve: só os campos usados nas listagens (sem textos completos nem
       // traduções integrais dos PDFs), evitando leituras pesadas a cada página.
       (supabase as unknown as { rpc: (name: string) => Promise<{ data: unknown }> }).rpc(
         "list_site_articles",
       ),
+      supabase
+        .from("service_products")
+        .select(
+          "id, slug, group_id, groups, family_id, family_title, code, title, lead, problem, body, audience, duration, duration_corporate, level, bullets, results, modules, limits, ai, position, published, translations",
+        )
+        .eq("published", true)
+        .order("position", { ascending: true }),
     ]);
 
     const map = new Map((settings.data ?? []).map((r) => [r.key, r.value]));
@@ -37,6 +44,7 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
       hero: (map.get("hero") ?? {}) as HeroSettings,
       brazil: (map.get("brazil") ?? {}) as BrazilOverrides,
       banners: (map.get("banners") ?? {}) as AreaBanners,
+      products: (products.data ?? []) as unknown as SiteConfig["products"],
     };
   },
 );

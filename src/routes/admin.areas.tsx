@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -115,8 +115,13 @@ function humanize(path: string) {
   return { base, parent };
 }
 
+/** Campos de cada produto: editados apenas no cadastro de serviços. */
+function isProductField(path: string) {
+  return path.startsWith("serviceDetail.pages") || path.startsWith("serviceFamilies.items");
+}
+
 function AdminAreas() {
-  const all = useMemo(() => flattenTexts(pt), []);
+  const all = useMemo(() => flattenTexts(pt).filter((i) => !isProductField(i.path)), []);
 
   // Toda seção de texto aparece uma única vez: nas grandes áreas ou em "Outras áreas".
   const areas = useMemo<Area[]>(() => {
@@ -282,6 +287,24 @@ function AdminAreas() {
           <p className="text-sm text-muted-foreground">
             {query ? `Resultados para “${search}”` : area.hint} · {items.length} campo(s)
           </p>
+
+          {!query && area.id === "services" && (
+            <div className="mt-6 rounded-lg border border-primary/30 bg-primary/5 p-6">
+              <h2 className="font-display text-lg font-bold">Serviços cadastrados</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Nome, promessa, problema que resolvemos, entregas, tempo estimado, família e
+                frente de cada serviço são editados no cadastro de serviços — e aparecem no site
+                automaticamente. Aqui ficam apenas os títulos e textos gerais da área.
+              </p>
+              <Link
+                to="/admin/servicos"
+                className="mt-4 inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground"
+              >
+                Abrir cadastro de serviços
+              </Link>
+            </div>
+          )}
+
 
           {/* Banner de topo (apenas grandes áreas) */}
           {!query && bannerKey && (

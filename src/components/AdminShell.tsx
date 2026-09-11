@@ -23,6 +23,7 @@ const NAV: Array<{ to: string; label: string; exact?: boolean }> = [
   { to: "/admin/leads", label: "Leads" },
   { to: "/admin/applications", label: "Candidaturas" },
   { to: "/admin/empresa", label: "Dados da consultoria" },
+  { to: "/admin/servicos", label: "Cadastro de serviços" },
   { to: "/admin/settings", label: "Configurações" },
 ];
 
