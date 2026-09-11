@@ -18,3 +18,7 @@
 - [x] Adicionar slide geral da consultoria ao carrossel inicial
 - [x] Disponibilizar seus campos na área administrativa e nos quatro idiomas
 - [x] Validar exibição e compilação
+
+## Correção do carrossel administrativo
+- [x] Mostrar novos slides no topo quando ainda não existem na configuração salva
+- [ ] Validar o painel administrativo e a compilação
