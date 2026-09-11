@@ -95,6 +95,13 @@ export type BrazilSectionOverride = Partial<Record<Lang, BrazilSectionText>> & {
 };
 export type BrazilOverrides = Record<string, BrazilSectionOverride>;
 
+/** Banner (imagem de topo) de cada grande área do site. */
+export type AreaBanner = { imageUrl?: string };
+export type AreaBanners = Partial<Record<AreaKey, AreaBanner>>;
+
+export const AREA_KEYS = ["services", "about", "content", "brazil"] as const;
+export type AreaKey = (typeof AREA_KEYS)[number];
+
 export type SiteConfig = {
   theme: Theme;
   texts: TextOverrides;
@@ -102,6 +109,7 @@ export type SiteConfig = {
   branding: Branding;
   hero: HeroSettings;
   brazil: BrazilOverrides;
+  banners: AreaBanners;
 };
 
 export const EMPTY_CONFIG: SiteConfig = {
@@ -111,6 +119,7 @@ export const EMPTY_CONFIG: SiteConfig = {
   branding: {},
   hero: {},
   brazil: {},
+  banners: {},
 };
 
 /** Lista todos os caminhos de texto (folhas string) do dicionário PT. */
