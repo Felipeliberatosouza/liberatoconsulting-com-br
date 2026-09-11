@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -230,6 +230,17 @@ function CompanyPage() {
       requireAdmin
       description="Informações cadastrais usadas em contratos, PDFs da newsletter e documentos institucionais."
     >
+      <Link
+        to="/admin/servicos"
+        className="mb-6 block rounded-lg border border-primary/30 bg-primary/5 p-6 transition-colors hover:border-primary"
+      >
+        <h2 className="font-display text-lg font-bold">Cadastro de serviços</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Criar e editar os serviços da consultoria: família, frente, problema que resolvemos,
+          frase do produto, entregas, tempo estimado e preços internos.
+        </p>
+      </Link>
+
       <form
         noValidate
         className="rounded-lg border border-border bg-background p-6"
