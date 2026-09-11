@@ -288,6 +288,24 @@ function AdminAreas() {
             {query ? `Resultados para “${search}”` : area.hint} · {items.length} campo(s)
           </p>
 
+          {!query && area.id === "services" && (
+            <div className="mt-6 rounded-lg border border-primary/30 bg-primary/5 p-6">
+              <h2 className="font-display text-lg font-bold">Serviços cadastrados</h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Nome, promessa, problema que resolvemos, entregas, tempo estimado, família e
+                frente de cada serviço são editados no cadastro de serviços — e aparecem no site
+                automaticamente. Aqui ficam apenas os títulos e textos gerais da área.
+              </p>
+              <Link
+                to="/admin/servicos"
+                className="mt-4 inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground"
+              >
+                Abrir cadastro de serviços
+              </Link>
+            </div>
+          )}
+
+
           {/* Banner de topo (apenas grandes áreas) */}
           {!query && bannerKey && (
             <div className="mt-6 rounded-lg border border-border bg-background p-6">
