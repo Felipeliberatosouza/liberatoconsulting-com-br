@@ -432,47 +432,46 @@ export const dict: Dict = {
     "primary": "查看巴西数据",
     "secondary": "预约咨询",
     "slides": [
-      
       {
-        "id": "pesquisas",
-        "eyebrow": "巴西市场研究",
-        "title": "洞察巴西市场。依托方法论与人工智能决策。",
-        "body": "为国际公司提供巴西行业研究、经济数据及监管解读——以人工智能 (AI) 为交付核心。",
-        "primary": "查看巴西数据",
-        "secondary": "预约咨询"
-      },
+              "id": "pesquisas",
+              "eyebrow": "巴西市场研究",
+              "title": "洞察巴西市场。依托方法论与人工智能决策。",
+              "body": "为国际公司提供巴西行业研究、经济数据及监管解读——以人工智能 (AI) 为交付核心。",
+              "primary": "查看巴西数据",
+              "secondary": "预约咨询"
+            },
       {
-        "id": "empreendedorismo",
-        "eyebrow": "创业",
-        "title": "从商业模式到市场牵引，降低假设带来的资本损耗。",
-        "body": "建模、市场验证、定价及投资者资料。我们利用人工智能 (AI) 在构建固定结构前以真实证据测试假设。",
-        "primary": "了解服务",
-        "secondary": "预约咨询"
-      },
+              "id": "empreendedorismo",
+              "eyebrow": "创业",
+              "title": "从商业模式到市场牵引，降低假设带来的资本损耗。",
+              "body": "建模、市场验证、定价及投资者资料。我们利用人工智能 (AI) 在构建固定结构前以真实证据测试假设。",
+              "primary": "了解服务",
+              "secondary": "预约咨询"
+            },
       {
-        "id": "operacoes",
-        "eyebrow": "运营",
-        "title": "逐月体现在利润率上的卓越运营。",
-        "body": "日常管理，卓越工业、营销与流程。人工智能 (AI) 预见偏差、预测需求并维持工厂车间及前线的执行标准。",
-        "primary": "了解服务",
-        "secondary": "预约咨询"
-      },
+              "id": "operacoes",
+              "eyebrow": "运营",
+              "title": "逐月体现在利润率上的卓越运营。",
+              "body": "日常管理，卓越工业、营销与流程。人工智能 (AI) 预见偏差、预测需求并维持工厂车间及前线的执行标准。",
+              "primary": "了解服务",
+              "secondary": "预约咨询"
+            },
       {
-        "id": "estrategia",
-        "eyebrow": "战略",
-        "title": "从愿景到运营可执行的目标分解。",
-        "body": "战略规划、目标分解、数字化转型及资本项目管理，利用人工智能 (AI) 模拟场景。",
-        "primary": "了解服务",
-        "secondary": "预约咨询"
-      },
+              "id": "estrategia",
+              "eyebrow": "战略",
+              "title": "从愿景到运营可执行的目标分解。",
+              "body": "战略规划、目标分解、数字化转型及资本项目管理，利用人工智能 (AI) 模拟场景。",
+              "primary": "了解服务",
+              "secondary": "预约咨询"
+            },
       {
-        "id": "consultoria",
-        "eyebrow": "Liberato Consulting：真实成果，合理投入！",
-        "title": "将战略转化为巴西企业的可持续收益",
-        "body": "我们帮助成长型企业提升利润率、销售业绩、流程效率和执行能力。",
-        "primary": "了解我们的服务",
-        "secondary": "预约咨询"
-      },
+              "id": "consultoria",
+              "eyebrow": "Liberato Consulting：真实成果，合理投入！",
+              "title": "将战略转化为巴西企业的可持续收益",
+              "body": "我们帮助成长型企业提升利润率、销售业绩、流程效率和执行能力。",
+              "primary": "了解我们的服务",
+              "secondary": "预约咨询"
+            }
     ]
   },
   "brazilFocus": {

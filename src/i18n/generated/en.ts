@@ -432,47 +432,46 @@ export const dict: Dict = {
     "primary": "View Brazil Data",
     "secondary": "Schedule a call",
     "slides": [
-      
       {
-        "id": "pesquisas",
-        "eyebrow": "Market research on Brazil",
-        "title": "Understand the Brazilian market. Decide with method and artificial intelligence.",
-        "body": "Sector studies, economic data, and regulatory assessment on Brazil for international companies — with AI at the core of every delivery.",
-        "primary": "View Brazil Data",
-        "secondary": "Schedule a call"
-      },
+              "id": "pesquisas",
+              "eyebrow": "Market research on Brazil",
+              "title": "Understand the Brazilian market. Decide with method and artificial intelligence.",
+              "body": "Sector studies, economic data, and regulatory assessment on Brazil for international companies — with AI at the core of every delivery.",
+              "primary": "View Brazil Data",
+              "secondary": "Schedule a call"
+            },
       {
-        "id": "empreendedorismo",
-        "eyebrow": "Entrepreneurship",
-        "title": "From business model to traction, with less capital burned per hypothesis.",
-        "body": "Modeling, market validation, pricing, and investor materials. We use AI to test hypotheses with real evidence before committing to fixed structures.",
-        "primary": "Explore service",
-        "secondary": "Schedule a call"
-      },
+              "id": "empreendedorismo",
+              "eyebrow": "Entrepreneurship",
+              "title": "From business model to traction, with less capital burned per hypothesis.",
+              "body": "Modeling, market validation, pricing, and investor materials. We use AI to test hypotheses with real evidence before committing to fixed structures.",
+              "primary": "Explore service",
+              "secondary": "Schedule a call"
+            },
       {
-        "id": "operacoes",
-        "eyebrow": "Operations",
-        "title": "Operational excellence that impacts the margin, month after month.",
-        "body": "Routine management, industrial, commercial, and process excellence. AI anticipates deviations, forecasts demand, and maintains execution standards on the shop floor and front line.",
-        "primary": "Explore service",
-        "secondary": "Schedule a call"
-      },
+              "id": "operacoes",
+              "eyebrow": "Operations",
+              "title": "Operational excellence that impacts the margin, month after month.",
+              "body": "Routine management, industrial, commercial, and process excellence. AI anticipates deviations, forecasts demand, and maintains execution standards on the shop floor and front line.",
+              "primary": "Explore service",
+              "secondary": "Schedule a call"
+            },
       {
-        "id": "estrategia",
-        "eyebrow": "Strategy",
-        "title": "From ambition to goal cascading that operations can actually execute.",
-        "body": "Strategic planning, goal cascading, digital transformation, and capital project management, with scenarios simulated by artificial intelligence.",
-        "primary": "Explore service",
-        "secondary": "Schedule a call"
-      },
+              "id": "estrategia",
+              "eyebrow": "Strategy",
+              "title": "From ambition to goal cascading that operations can actually execute.",
+              "body": "Strategic planning, goal cascading, digital transformation, and capital project management, with scenarios simulated by artificial intelligence.",
+              "primary": "Explore service",
+              "secondary": "Schedule a call"
+            },
       {
-        "id": "consultoria",
-        "eyebrow": "Liberato Consulting: real results, fair investment!",
-        "title": "Transforming strategy into sustainable gains for businesses in Brazil",
-        "body": "We help growing companies improve margins, sales, processes, and execution capacity.",
-        "primary": "Explore our services",
-        "secondary": "Schedule a call"
-      },
+              "id": "consultoria",
+              "eyebrow": "Liberato Consulting: real results, fair investment!",
+              "title": "Transforming strategy into sustainable gains for businesses in Brazil",
+              "body": "We help growing companies improve margins, sales, processes, and execution capacity.",
+              "primary": "Explore our services",
+              "secondary": "Schedule a call"
+            }
     ]
   },
   "brazilFocus": {
