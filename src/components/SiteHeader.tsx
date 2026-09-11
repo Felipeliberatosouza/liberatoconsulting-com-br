@@ -104,6 +104,9 @@ export function SiteHeader() {
   const { t, logoUrl } = useLanguage();
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const [contentOpen, setContentOpen] = useState(false);
+  const [brasilOpen, setBrasilOpen] = useState(false);
   const groups = t.megaMenu.groups;
   const aboutItems = t.aboutMenu.items;
   const contentGroups = t.contentMenu.groups;
@@ -113,7 +116,11 @@ export function SiteHeader() {
   const closeAll = () => {
     setOpen(false);
     setServicesOpen(false);
+    setAboutOpen(false);
+    setContentOpen(false);
+    setBrasilOpen(false);
   };
+
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur">
