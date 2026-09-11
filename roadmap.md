@@ -15,6 +15,6 @@
 - [x] Validar navegação, idiomas e compilação
 
 ## Carrossel institucional
-- [ ] Adicionar slide geral da consultoria ao carrossel inicial
-- [ ] Disponibilizar seus campos na área administrativa e nos quatro idiomas
-- [ ] Validar exibição e compilação
+- [x] Adicionar slide geral da consultoria ao carrossel inicial
+- [x] Disponibilizar seus campos na área administrativa e nos quatro idiomas
+- [x] Validar exibição e compilação
