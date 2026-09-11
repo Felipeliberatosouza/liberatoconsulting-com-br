@@ -39,11 +39,10 @@ export const Route = createFileRoute("/admin/settings")({
 const LINKS = [
   {
     to: "/admin/areas",
-    title: "Áreas do site",
-    text: "Serviços, Quem somos, Conteúdo e Dados do Brasil: banners, títulos e textos.",
+    title: "Áreas e textos do site",
+    text: "Banners, títulos e textos de todas as áreas. EN, ES e ZH são traduzidos automaticamente.",
   },
   { to: "/admin/theme", title: "Cores do site", text: "Paleta principal, destaques, fundos e texto." },
-  { to: "/admin/texts", title: "Textos e títulos", text: "Edite em português; EN, ES e ZH são traduzidos automaticamente." },
   { to: "/admin/hero", title: "Carrossel da página inicial", text: "Imagens e frases dos banners." },
 ];
 
