@@ -86,7 +86,7 @@ function ServicesPage() {
           <h1 className="mt-5 max-w-4xl text-4xl font-bold leading-tight md:text-6xl">{fam.title}</h1>
           <p className="mt-6 max-w-3xl text-lg text-ink-foreground/75">{fam.body}</p>
         </div>
-      </section>
+      </AreaBannerSection>
 
       <section className="mx-auto max-w-7xl px-6 py-20">
         <div className="flex flex-col gap-20">

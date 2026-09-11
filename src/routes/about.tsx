@@ -1,3 +1,4 @@
+import { AreaBannerSection } from "@/components/AreaBannerSection";
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { ConsultantsTeam } from "@/components/ConsultantsTeam";
@@ -57,7 +58,7 @@ function AboutPage() {
 
   return (
     <div>
-      <section className="bg-ink py-24 text-ink-foreground">
+      <AreaBannerSection area="about">
         <div className="mx-auto max-w-7xl px-6">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
             {t.about.eyebrow}
@@ -66,7 +67,7 @@ function AboutPage() {
             {t.about.title}
           </h1>
         </div>
-      </section>
+      </AreaBannerSection>
 
       <section className="mx-auto grid max-w-7xl gap-12 px-6 py-24 md:grid-cols-2">
         <p className="text-xl leading-relaxed">{t.about.body}</p>

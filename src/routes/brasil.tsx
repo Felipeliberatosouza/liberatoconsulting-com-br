@@ -1,3 +1,4 @@
+import { AreaBannerSection } from "@/components/AreaBannerSection";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ExternalLink } from "lucide-react";
@@ -100,7 +101,7 @@ function BrazilPage() {
 
   return (
     <div>
-      <section className="bg-ink text-ink-foreground">
+      <AreaBannerSection area="brazil" className="">
         <div className="mx-auto max-w-7xl px-6 py-20 md:py-28">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
             {b.eyebrow}
@@ -109,7 +110,7 @@ function BrazilPage() {
           <p className="mt-6 max-w-3xl text-lg text-ink-foreground/75">{b.body}</p>
           <FilterScopeBadge className="mt-6" />
         </div>
-      </section>
+      </AreaBannerSection>
 
       <SiteFilterBar />
 
