@@ -433,7 +433,9 @@ export function SiteHeader() {
                   {g.items.map((item) => {
                     const family = t.serviceFamilies.items.find((entry) => entry.id === item.id);
                     const products = t.serviceDetail.pages.filter(
-                      (product) => product.family === family?.title && product.groups.includes(g.id),
+                      (product) =>
+                        (family?.products?.includes(product.id) ?? false) &&
+                        product.groups.includes(g.id),
                     );
                     return (
                       <div key={item.id} className="py-1.5">
