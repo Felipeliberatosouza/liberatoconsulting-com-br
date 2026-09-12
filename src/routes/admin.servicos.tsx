@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   deleteServiceProduct,
+  draftServiceProduct,
   listServiceProducts,
   saveServiceProduct,
 } from "@/lib/services.functions";
@@ -87,6 +88,65 @@ function AdminServicesPage() {
   const [draft, setDraft] = useState<ServiceProduct | null>(null);
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState("");
+  const [slugTouched, setSlugTouched] = useState(false);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiTitle, setAiTitle] = useState("");
+
+  async function fillWithAi(force = false) {
+    if (!draft) return;
+    const title = draft.title.trim();
+    if (title.length < 2) return;
+    if (!force && title === aiTitle) return;
+    setAiBusy(true);
+    try {
+      const res = await draftServiceProduct({
+        data: {
+          title,
+          family_title: draft.family_title,
+          group_title: GROUPS.find((g) => g.id === draft.group_id)?.title ?? "",
+        },
+      });
+      if (!res.ok) {
+        toast.error(res.error);
+        return;
+      }
+      const d = res.draft;
+      setAiTitle(title);
+      setDraft((cur) =>
+        cur
+          ? {
+              ...cur,
+              lead: force || !cur.lead ? d.lead || cur.lead : cur.lead,
+              problem: force || !cur.problem ? d.problem || cur.problem : cur.problem,
+              body: force || !cur.body ? d.body || cur.body : cur.body,
+              audience: force || !cur.audience ? d.audience || cur.audience : cur.audience,
+              duration: force || !cur.duration ? d.duration || cur.duration : cur.duration,
+              duration_corporate:
+                force || !cur.duration_corporate
+                  ? d.duration_corporate || cur.duration_corporate
+                  : cur.duration_corporate,
+              level: force || !cur.level ? d.level || cur.level : cur.level,
+              bullets: force || cur.bullets.length === 0 ? d.bullets : cur.bullets,
+              results: force || cur.results.length === 0 ? d.results : cur.results,
+              modules: force || cur.modules.length === 0 ? d.modules : cur.modules,
+              limits: force || !cur.limits ? d.limits || cur.limits : cur.limits,
+              ai: force || !cur.ai ? d.ai || cur.ai : cur.ai,
+              price_sme:
+                force || !cur.price_sme ? d.price_sme || cur.price_sme || "" : cur.price_sme || "",
+              price_corporate:
+                force || !cur.price_corporate
+                  ? d.price_corporate || cur.price_corporate || ""
+                  : cur.price_corporate || "",
+            }
+          : cur,
+      );
+      toast.success("Campos e preços sugeridos pela IA. Revise e ajuste o que quiser.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Falha ao consultar a IA.");
+    } finally {
+      setAiBusy(false);
+    }
+  }
 
   const list = useQuery({
     queryKey: ["admin-service-products"],
@@ -171,6 +231,8 @@ function AdminServicesPage() {
   }
 
   function openNew() {
+    setSlugTouched(false);
+    setAiTitle("");
     setDraft({
       ...EMPTY_PRODUCT,
       position: (list.data?.length ?? 0) + 1,
@@ -231,7 +293,15 @@ function AdminServicesPage() {
                       {r.price_sme ? ` · PME ${r.price_sme}` : ""}
                     </p>
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => setDraft(r)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSlugTouched(true);
+                      setAiTitle(r.title);
+                      setDraft(r);
+                    }}
+                  >
                     Editar
                   </Button>
                   <Button variant="ghost" size="sm" onClick={() => remove(r.id)}>
@@ -299,19 +369,49 @@ function AdminServicesPage() {
                   <Input
                     value={draft.title}
                     onChange={(e) => {
-                      set("title", e.target.value);
-                      if (!draft.id && !draft.slug) set("slug", "");
+                      const value = e.target.value;
+                      setDraft((d) =>
+                        d
+                          ? { ...d, title: value, ...(slugTouched ? {} : { slug: slugify(value) }) }
+                          : d,
+                      );
                     }}
+                    onBlur={() => void fillWithAi(false)}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Ao sair do campo, a IA sugere os demais textos e os preços.
+                  </p>
                 </div>
                 <div className="space-y-1.5">
                   <Label>Link (endereço da página)</Label>
                   <Input
                     value={draft.slug}
                     placeholder={slugify(draft.title)}
-                    onChange={(e) => set("slug", slugify(e.target.value))}
+                    onChange={(e) => {
+                      setSlugTouched(true);
+                      set("slug", slugify(e.target.value));
+                    }}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Preenchido a partir do nome; pode ser editado.
+                  </p>
                 </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 rounded-lg border border-dashed border-border p-3">
+                <p className="flex-1 text-sm text-muted-foreground">
+                  A IA pesquisa serviços equivalentes no mercado e preenche todos os campos e as
+                  faixas de preço por porte de empresa. Tudo continua editável.
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={aiBusy || draft.title.trim().length < 2}
+                  onClick={() => void fillWithAi(true)}
+                >
+                  {aiBusy ? "Consultando IA…" : "Preencher com IA"}
+                </Button>
               </div>
 
               <div className="space-y-1.5">
@@ -337,7 +437,7 @@ function AdminServicesPage() {
                   <Input value={draft.audience} onChange={(e) => set("audience", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Tempo estimado (exibido no site)</Label>
+                  <Label>Tempo estimado em semanas (exibido no site)</Label>
                   <Input value={draft.duration} onChange={(e) => set("duration", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
