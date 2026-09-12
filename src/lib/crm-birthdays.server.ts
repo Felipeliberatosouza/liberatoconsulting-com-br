@@ -83,9 +83,21 @@ export async function dispatchCrmBirthdays(): Promise<Result> {
       continue;
     }
 
+    const tpl = templates.get(job.type === "empresa" ? "birthday_company" : "birthday_person");
+    if (tpl && !tpl.enabled) {
+      result.skipped += 1;
+      continue;
+    }
+
     try {
       const res = await sendTemplateEmail("crm-birthday", job.email, {
-        templateData: { name: job.name, target: job.type, company: job.company, years: job.years },
+        templateData: {
+          name: job.name,
+          target: job.type,
+          company: job.company,
+          years: job.years,
+          ...(tpl ? { subject: fillVars(tpl.subject, job), body: fillVars(tpl.body, job) } : {}),
+        },
         idempotencyKey: `crm-birthday-${job.type}-${job.id}-${year}`,
       });
       await supabaseAdmin.from("crm_birthday_sends").insert({
