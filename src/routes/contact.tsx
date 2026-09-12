@@ -105,6 +105,7 @@ function ContactPage() {
     email: "",
     phone: "",
     company: "",
+    country: "",
     service: "",
     message: "",
     captcha: "",
@@ -161,6 +162,7 @@ function ContactPage() {
     if (!values.phone.trim()) e['phone'] = t.contact.required;
     else if (!isValidPhone(values.phone)) e['phone'] = PHONE_ERROR;
     if (!values.company.trim()) e['company'] = t.contact.required;
+    if (!values.country.trim()) e['country'] = t.contact.required;
     if (!values.service) e['service'] = t.contact.required;
     if (!values.message.trim()) e['message'] = t.contact.required;
     if (!values.captcha.trim()) e['captcha'] = t.contact.required;
@@ -187,7 +189,7 @@ function ContactPage() {
         data: {
           name: values.name,
           company: values.company,
-          country: "Não informado",
+          country: values.country,
           email: values.email,
           phone: values.phone,
           message: values.message,
@@ -209,7 +211,7 @@ function ContactPage() {
         trackEvent("form_submit", { form_name: "contact", service: product?.title ?? "Outros" });
         form.reset();
         setTouched(false);
-        setValues({ name: "", email: "", phone: "", company: "", service: "", message: "", captcha: "" });
+        setValues({ name: "", email: "", phone: "", company: "", country: "", service: "", message: "", captcha: "" });
         return;
       }
       setStatus("idle");
@@ -232,6 +234,7 @@ function ContactPage() {
     "mt-2 w-full rounded-md border border-input bg-card px-4 py-3 text-sm outline-none focus:border-accent";
   const cls = (key: string) =>
     show(key) ? `${field} border-destructive ring-1 ring-destructive` : field;
+  const requiredMark = <span className="text-destructive"> *</span>;
 
   return (
     <div>
@@ -260,7 +263,10 @@ function ContactPage() {
             <div className="grid gap-6 sm:grid-cols-2">
               <label className="block text-sm font-medium">
                 {t.contact.name}
+                {requiredMark}
                 <input
+                  required
+                  minLength={2}
                   maxLength={100}
                   name="name"
                   value={values.name}
@@ -273,8 +279,44 @@ function ContactPage() {
                 )}
               </label>
               <label className="block text-sm font-medium">
-                {t.contact.email}
+                {t.contact.company}
+                {requiredMark}
                 <input
+                  required
+                  minLength={2}
+                  maxLength={120}
+                  name="company"
+                  value={values.company}
+                  onChange={(e) => setValues((v) => ({ ...v, company: e.target.value }))}
+                  aria-invalid={Boolean(show("company"))}
+                  className={cls("company")}
+                />
+                {show("company") && (
+                  <span className="mt-1 block text-xs text-destructive">{show("company")}</span>
+                )}
+              </label>
+              <label className="block text-sm font-medium">
+                {F.country}
+                {requiredMark}
+                <input
+                  required
+                  minLength={2}
+                  maxLength={80}
+                  name="country"
+                  value={values.country}
+                  onChange={(e) => setValues((v) => ({ ...v, country: e.target.value }))}
+                  aria-invalid={Boolean(show("country"))}
+                  className={cls("country")}
+                />
+                {show("country") && (
+                  <span className="mt-1 block text-xs text-destructive">{show("country")}</span>
+                )}
+              </label>
+              <label className="block text-sm font-medium">
+                {t.contact.email}
+                {requiredMark}
+                <input
+                  required
                   type="email"
                   maxLength={255}
                   name="email"
@@ -287,9 +329,11 @@ function ContactPage() {
                   <span className="mt-1 block text-xs text-destructive">{show("email")}</span>
                 )}
               </label>
-              <label className="block text-sm font-medium">
+              <label className="block text-sm font-medium sm:col-span-2">
                 Telefone
+                {requiredMark}
                 <input
+                  required
                   name="phone"
                   type="tel"
                   inputMode="tel"
@@ -306,23 +350,11 @@ function ContactPage() {
                   <span className="mt-1 block text-xs text-destructive">{show("phone")}</span>
                 )}
               </label>
-              <label className="block text-sm font-medium">
-                {t.contact.company}
-                <input
-                  maxLength={120}
-                  name="company"
-                  value={values.company}
-                  onChange={(e) => setValues((v) => ({ ...v, company: e.target.value }))}
-                  aria-invalid={Boolean(show("company"))}
-                  className={cls("company")}
-                />
-                {show("company") && (
-                  <span className="mt-1 block text-xs text-destructive">{show("company")}</span>
-                )}
-              </label>
               <label className="block text-sm font-medium sm:col-span-2">
                 {t.contact.serviceLabel}
+                {requiredMark}
                 <select
+                  required
                   name="service"
                   value={values.service}
                   onChange={(e) => onService(e.target.value)}
@@ -344,7 +376,9 @@ function ContactPage() {
             </div>
             <label className="mt-6 block text-sm font-medium">
               {t.contact.message}
+              {requiredMark}
               <textarea
+                required
                 maxLength={1500}
                 name="message"
                 rows={7}
@@ -369,9 +403,10 @@ function ContactPage() {
             <label className="mt-6 block text-sm font-medium">
               <span className="inline-flex items-center gap-1.5">
                 <ShieldCheck className="size-4 text-accent" />
-                {F.captcha} {challenge.a} + {challenge.b}?
+                {F.captcha} {challenge.a} + {challenge.b}?{requiredMark}
               </span>
               <input
+                required
                 name="captcha"
                 inputMode="tel"
                 autoComplete="off"

@@ -223,7 +223,8 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
           </label>
           <label className="text-sm font-medium sm:col-span-2">
             {F.service}
-            <input name="service" value={serviceTitle} readOnly className={`${field} opacity-70`} />
+            {requiredMark}
+            <input name="service" value={serviceTitle} required readOnly className={`${field} opacity-70`} />
           </label>
           <label className="text-sm font-medium sm:col-span-2">
             {F.message}
