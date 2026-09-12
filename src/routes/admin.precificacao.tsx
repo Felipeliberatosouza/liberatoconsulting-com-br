@@ -132,6 +132,8 @@ function PricingPage() {
     [activities, settings, companyType, country, currency, startDate, remoteOnly, discountPct, fx.rate],
   );
 
+  const enabledCount = useMemo(() => activities.filter((a) => a.enabled).length, [activities]);
+
   function patch(id: string, data: Partial<PricedActivity>) {
     setActivities((list) => list.map((a) => (a.id === id ? { ...a, ...data } : a)));
   }
