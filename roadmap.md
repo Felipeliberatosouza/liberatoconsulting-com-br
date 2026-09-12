@@ -33,3 +33,9 @@
 - [x] Criar área de criação/edição de serviços em Dados da consultoria (família, grupo, problema, frase, tempo, preço interno etc.)
 - [x] Sincronizar com a seção Áreas e textos do site
 - [x] Remover campos duplicados e melhorar a apresentação de Áreas e textos
+
+## Formulário das páginas de serviço (12/09/2026)
+- [x] Replicar padrão do formulário de contato: obrigatórios com *, erro em vermelho abaixo do campo
+- [x] E-mail obrigatório com validação e mensagem própria
+- [x] Mensagem automática editável com o problema do serviço e assinatura do visitante
+- [x] Rótulos "E-mail/Mensagem" sem "(opcional)" nos quatro idiomas
