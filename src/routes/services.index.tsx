@@ -6,6 +6,7 @@ import { CtaBand } from "@/components/CtaBand";
 import { SeoKeywordLinks } from "@/components/SeoKeywordLinks";
 import { pt } from "@/i18n/pt";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { seoPageMeta } from "@/lib/seo-meta";
 import { keywordsMeta } from "@/lib/keywords";
 import { breadcrumb, itemList, jsonLd } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
