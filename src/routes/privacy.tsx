@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n";
 import { legal } from "@/i18n/legal";
-import { OG_IMAGE, headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { seoPageMeta } from "@/lib/seo-meta";
 import { EmailText } from "@/components/EmailText";
 
 export const Route = createFileRoute("/privacy")({
