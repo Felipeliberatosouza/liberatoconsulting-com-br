@@ -8,7 +8,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 const companySchema = z.object({
   id: z.string().uuid().optional(),
   name: z.string().trim().min(2).max(200),
-  trade_name: z.string().trim().max(200).default(""),
+  trade_name: z.string().trim().min(2).max(200),
   cnpj: z.string().trim().max(40).default(""),
   segment: z.string().trim().max(120).default(""),
   size: z.enum(["pme", "corporacao"]).default("pme"),
