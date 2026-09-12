@@ -11,6 +11,7 @@ import {
   Text,
 } from '@react-email/components'
 import type { TemplateEntry } from './registry'
+import { BrandFooter, BrandLogo } from './brand-shell'
 
 interface Props {
   name?: string
@@ -50,6 +51,7 @@ const Email = ({
     <Preview>{`Novo contato: ${name ?? 'sem nome'}${company ? ` — ${company}` : ''}`}</Preview>
     <Body style={main}>
       <Container style={container}>
+        <BrandLogo />
         <Heading style={heading}>Novo contato pelo site</Heading>
         <Text style={intro}>
           A equipe Liberato recebeu uma solicitação de {name ?? 'um visitante'} pelo

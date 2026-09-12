@@ -11,6 +11,7 @@ import {
   Text,
 } from '@react-email/components'
 import type { TemplateEntry } from './registry'
+import { BrandFooter, BrandLogo } from './brand-shell'
 
 interface Props {
   fullName?: string
@@ -46,6 +47,7 @@ const Email = ({
     <Preview>{`Nova candidatura: ${fullName ?? 'sem nome'}`}</Preview>
     <Body style={main}>
       <Container style={container}>
+        <BrandLogo />
         <Heading style={heading}>Nova candidatura — Trabalhe Conosco</Heading>
         <Text style={intro}>
           {fullName ?? 'Uma pessoa candidata'} enviou uma candidatura pelo site oficial
