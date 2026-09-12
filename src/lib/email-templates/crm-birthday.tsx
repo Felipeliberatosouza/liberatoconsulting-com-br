@@ -81,7 +81,8 @@ const footer = { fontSize: '12px', color: '#6b7280' }
 export const template: TemplateEntry = {
   component: Email,
   subject: (data) =>
-    data['target'] === 'empresa'
+    data['subject'] ||
+    (data['target'] === 'empresa'
       ? `Parabéns, ${data['name'] ?? 'equipe'}!`
       : `Feliz aniversário, ${data['name'] ?? ''}!`,
   displayName: 'Aniversário (CRM)',
