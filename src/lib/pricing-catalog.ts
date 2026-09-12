@@ -328,6 +328,7 @@ export function buildQuote(
     totalHours: Number(totalHours.toFixed(1)),
     totalDays: Number(totalDays.toFixed(1)),
     subtotalBrl: Math.round(subtotal),
+    travelBrl: Math.round(totalTravel),
     discountBrl: Math.round(discountBrl),
     totalBrl: Math.round(totalBrl),
     totalCurrency: Math.round(totalBrl * (options.fxRate || 1)),
