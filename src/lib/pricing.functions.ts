@@ -33,6 +33,9 @@ const settingsSchema = z.object({
   hoursPerDay: z.number().min(1).max(24),
   countryFactors: z.record(z.string(), z.number().min(0.1).max(10)),
   fxFallback: z.record(z.string(), z.number().min(0.0001).max(1000)),
+  travelCost: z
+    .object({ domestic: z.number().min(0).max(200000), international: z.number().min(0).max(500000) })
+    .default({ domestic: 850, international: 9000 }),
   aiSuggestion: z
     .object({ text: z.string().max(6000), sources: z.string().max(4000), updatedAt: z.string().max(40) })
     .optional(),
