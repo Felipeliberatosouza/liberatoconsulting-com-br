@@ -15,7 +15,7 @@ import {
 } from "@/lib/crm.functions";
 import { draftCrmCompanyProfile } from "@/lib/crm-ai.functions";
 import { quoteFileUrl } from "@/lib/pricing.functions";
-import { CRM_SEGMENTS } from "@/lib/crm-segments";
+import { CRM_SEGMENTS, CRM_DEPARTMENTS } from "@/lib/crm-segments";
 import { lookupCep } from "@/lib/cep";
 import { lookupCnpj } from "@/lib/cnpj";
 import {
@@ -1077,11 +1077,18 @@ function AdminCrm() {
               />
             </Field>
             <Field label="Área / departamento">
-              <input
+              <select
                 className={field}
                 value={contactForm['department'] ?? ""}
                 onChange={(e) => setContactField("department", e.target.value)}
-              />
+              >
+                <option value="">Selecione…</option>
+                {CRM_DEPARTMENTS.map((d) => (
+                  <option key={d} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
             </Field>
             <Field label="E-mail" required error={contactErrors['email']}>
               <input
