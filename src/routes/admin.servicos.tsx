@@ -231,6 +231,8 @@ function AdminServicesPage() {
   }
 
   function openNew() {
+    setSlugTouched(false);
+    setAiTitle("");
     setDraft({
       ...EMPTY_PRODUCT,
       position: (list.data?.length ?? 0) + 1,
