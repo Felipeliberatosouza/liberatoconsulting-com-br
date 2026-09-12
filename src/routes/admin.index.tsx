@@ -31,6 +31,11 @@ const CARDS = [
     text: "Equipe com acesso ao painel, assinantes da newsletter, candidatos e leads.",
   },
   {
+    to: "/admin/consultores",
+    title: "Consultores",
+    text: "Equipe de consultores exibida no site, com perfil e áreas de atuação.",
+  },
+  {
     to: "/admin/approvals",
     title: "Aprovações",
     text: "Alterações enviadas por consultores e autores aguardando sua liberação.",
@@ -59,6 +64,11 @@ const CARDS = [
     to: "/admin/boletim",
     title: "Boletim Semanal",
     text: "Inscritos, pré-visualização e envio por e-mail e WhatsApp, por segmento.",
+  },
+  {
+    to: "/admin/propaganda",
+    title: "Propaganda",
+    text: "Artes e textos para divulgação do serviço em redes sociais e anúncios.",
   },
   {
     to: "/admin/historico",
