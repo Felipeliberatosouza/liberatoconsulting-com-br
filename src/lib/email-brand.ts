@@ -45,7 +45,7 @@ const esc = (s: string) =>
 export function buildEmailPreviewHtml(params: {
   subject: string;
   body: string;
-  identity?: EmailBrandIdentity;
+  identity?: EmailBrandIdentity | undefined;
 }): string {
   const paragraphs = params.body
     .replace(/\\n/g, "\n")
