@@ -84,7 +84,7 @@ export const template: TemplateEntry = {
     data['subject'] ||
     (data['target'] === 'empresa'
       ? `Parabéns, ${data['name'] ?? 'equipe'}!`
-      : `Feliz aniversário, ${data['name'] ?? ''}!`,
+      : `Feliz aniversário, ${data['name'] ?? ''}!`),
   displayName: 'Aniversário (CRM)',
   previewData: { name: 'Maria Souza', target: 'pessoa', company: 'Acme S.A.' },
 }
