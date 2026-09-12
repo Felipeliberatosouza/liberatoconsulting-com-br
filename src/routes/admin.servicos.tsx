@@ -359,19 +359,49 @@ function AdminServicesPage() {
                   <Input
                     value={draft.title}
                     onChange={(e) => {
-                      set("title", e.target.value);
-                      if (!draft.id && !draft.slug) set("slug", "");
+                      const value = e.target.value;
+                      setDraft((d) =>
+                        d
+                          ? { ...d, title: value, ...(slugTouched ? {} : { slug: slugify(value) }) }
+                          : d,
+                      );
                     }}
+                    onBlur={() => void fillWithAi(false)}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Ao sair do campo, a IA sugere os demais textos e os preços.
+                  </p>
                 </div>
                 <div className="space-y-1.5">
                   <Label>Link (endereço da página)</Label>
                   <Input
                     value={draft.slug}
                     placeholder={slugify(draft.title)}
-                    onChange={(e) => set("slug", slugify(e.target.value))}
+                    onChange={(e) => {
+                      setSlugTouched(true);
+                      set("slug", slugify(e.target.value));
+                    }}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Preenchido a partir do nome; pode ser editado.
+                  </p>
                 </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 rounded-lg border border-dashed border-border p-3">
+                <p className="flex-1 text-sm text-muted-foreground">
+                  A IA pesquisa serviços equivalentes no mercado e preenche todos os campos e as
+                  faixas de preço por porte de empresa. Tudo continua editável.
+                </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={aiBusy || draft.title.trim().length < 2}
+                  onClick={() => void fillWithAi(true)}
+                >
+                  {aiBusy ? "Consultando IA…" : "Preencher com IA"}
+                </Button>
               </div>
 
               <div className="space-y-1.5">
