@@ -26,6 +26,7 @@ const companySchema = z.object({
   employees: z.number().int().min(0).max(10_000_000).nullable().default(null),
   revenue_range: z.string().trim().max(120).default(""),
   owner_name: z.string().trim().max(160).default(""),
+  owner_title: z.string().trim().max(160).default(""),
   tags: z.array(z.string().trim().max(40)).max(20).default([]),
   notes: z.string().trim().max(6000).default(""),
   birthday_email: z.boolean().default(true),
