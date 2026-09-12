@@ -259,6 +259,7 @@ export function buildQuote(
   const start = new Date(cursor);
   const phases: QuotePhase[] = [];
   let totalHours = 0;
+  let totalTravel = 0;
   let subtotal = 0;
   let totalDays = 0;
 
