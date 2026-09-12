@@ -107,6 +107,18 @@ export const getArticleFileUrl = createServerFn({ method: "POST" })
   });
 
 
+// Tipos de arquivo aceitos nos envios de visitantes, definidos no servidor
+// pela extensão — o tipo declarado pelo visitante nunca é confiável.
+const SUBMISSION_MIME: Record<string, string> = {
+  pdf: "application/pdf",
+  doc: "application/msword",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  rtf: "application/rtf",
+  odt: "application/vnd.oasis.opendocument.text",
+  txt: "text/plain",
+  md: "text/plain",
+};
+
 const submissionSchema = z.object({
   full_name: z.string().trim().min(2).max(160),
   email: z.string().trim().email().max(255),

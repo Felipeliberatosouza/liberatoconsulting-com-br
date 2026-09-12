@@ -87,7 +87,7 @@ export async function saveApplication(data: ApplicationInput, ipHash: string | n
 
   const path = `${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}.${ext}`;
   const upload = await supabaseAdmin.storage.from("resumes").upload(path, bytes, {
-    contentType: data.resumeType || "application/octet-stream",
+    contentType: RESUME_MIME[ext] ?? "application/octet-stream",
     upsert: false,
   });
   if (upload.error) {
