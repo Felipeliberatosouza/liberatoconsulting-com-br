@@ -188,6 +188,8 @@ export type QuoteItem = {
   hours: number;
   days: number;
   priceBrl: number;
+  /** Parcela de deslocamento embutida no valor (0 quando on-line). */
+  travelBrl: number;
   start: string;
   end: string;
   remoteNote: boolean;
