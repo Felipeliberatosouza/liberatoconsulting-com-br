@@ -434,7 +434,8 @@ function AdminCrm() {
   }
 
   async function removeRecord(table: string, id: string, label: string) {
-    if (!window.confirm(`Excluir ${label}?`)) return;
+    const extra = table === "crm_companies" ? "\n\nTodos os contatos, datas e interações da empresa também serão excluídos." : "";
+    if (!window.confirm(`Excluir ${label}?${extra}`)) return;
     await run(() => deleteCrmRecord({ data: { table: table as any, id } }), () => {
       if (table === "crm_companies" && selected === id) setSelected(null);
     });
