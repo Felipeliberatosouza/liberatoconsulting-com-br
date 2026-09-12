@@ -233,6 +233,47 @@ function AdminCrm() {
   const [companyErrors, setCompanyErrors] = useState<Errors>({});
   const [contactErrors, setContactErrors] = useState<Errors>({});
   const [cepBusy, setCepBusy] = useState(false);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiFor, setAiFor] = useState("");
+
+  /** Preenche faturamento e tags com pesquisa de IA a partir do nome fantasia. */
+  async function fillCompanyWithAi(force = false) {
+    const form = companyForm ?? {};
+    const tradeName = String(form['trade_name'] ?? "").trim();
+    if (tradeName.length < 2) return;
+    if (!force && aiFor === tradeName) return;
+    setAiFor(tradeName);
+    setAiBusy(true);
+    try {
+      const res = await draftCrmCompanyProfile({
+        data: {
+          tradeName,
+          legalName: String(form['name'] ?? ""),
+          segment: String(form['segment'] ?? ""),
+          city: String(form['city'] ?? ""),
+          country: String(form['country'] ?? "Brasil"),
+          website: String(form['website'] ?? ""),
+        },
+      });
+      if (res.ok) {
+        setCompanyForm((prev) => {
+          if (!prev) return prev;
+          const next = { ...prev };
+          if (force || !String(next['revenue_range'] ?? "").trim()) {
+            if (res.revenue_range) next['revenue_range'] = res.revenue_range;
+          }
+          if (force || !String(next['tags'] ?? "").trim()) {
+            if (res.tags.length) next['tags'] = res.tags.join(", ");
+          }
+          return next;
+        });
+      }
+    } catch {
+      /* sugestão opcional: falha não bloqueia o cadastro */
+    } finally {
+      setAiBusy(false);
+    }
+  }
 
   function setCompanyField(key: string, value: any) {
     setCompanyForm((prev) => ({ ...(prev ?? {}), [key]: value }));
