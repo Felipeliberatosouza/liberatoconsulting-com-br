@@ -581,7 +581,7 @@ function AdminCrm() {
                       });
                     }}
                   >
-                    Editar empresa
+                    Visualizar/Editar empresa
                   </button>
                   <button className={btnGhost} onClick={() => { setContactErrors({}); setContactForm(emptyContact()); }}>
                     Nova pessoa
@@ -609,7 +609,7 @@ function AdminCrm() {
               {d.company.notes && <p className="mt-4 whitespace-pre-line text-sm">{d.company.notes}</p>}
 
               {/* PESSOAS */}
-              <h3 className="mt-8 font-display text-base font-bold">Pessoas da empresa</h3>
+              <h3 className="mt-8 font-display text-base font-bold">Visualizar/Editar pessoa</h3>
               <div className="mt-3 grid gap-3 md:grid-cols-2">
                 {d.contacts.length === 0 && <p className="text-sm text-muted-foreground">Nenhuma pessoa cadastrada.</p>}
                 {d.contacts.map((p: any) => (
@@ -769,7 +769,7 @@ function AdminCrm() {
 
       {/* FORM EMPRESA */}
       {companyForm && (
-        <Modal title={companyForm['id'] ? "Editar empresa" : "Nova empresa"} onClose={() => setCompanyForm(null)}>
+        <Modal title={companyForm['id'] ? "Visualizar/Editar empresa" : "Nova empresa"} onClose={() => setCompanyForm(null)}>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Razão social / nome" required error={companyErrors['name']}>
               <input
@@ -1061,7 +1061,7 @@ function AdminCrm() {
 
       {/* FORM PESSOA */}
       {contactForm && selected && (
-        <Modal title={contactForm['id'] ? "Editar pessoa" : "Nova pessoa"} onClose={() => setContactForm(null)}>
+        <Modal title={contactForm['id'] ? "Visualizar/Editar pessoa" : "Nova pessoa"} onClose={() => setContactForm(null)}>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Nome completo" required error={contactErrors['full_name']}>
               <input
