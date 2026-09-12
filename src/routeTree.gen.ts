@@ -40,6 +40,7 @@ import { Route as AdminIndicadoresRouteImport } from './routes/admin.indicadores
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
+import { Route as AdminPrecificacaoRouteImport } from './routes/admin.precificacao'
 import { Route as AdminPropagandaRouteImport } from './routes/admin.propaganda'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as AdminServicosRouteImport } from './routes/admin.servicos'
@@ -217,6 +218,11 @@ const AdminNewsletterRoute = AdminNewsletterRouteImport.update({
   path: '/admin/newsletter',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPrecificacaoRoute = AdminPrecificacaoRouteImport.update({
+  id: '/admin/precificacao',
+  path: '/admin/precificacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminPropagandaRoute = AdminPropagandaRouteImport.update({
   id: '/admin/propaganda',
   path: '/admin/propaganda',
@@ -357,6 +363,7 @@ export interface FileRoutesByFullPath {
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
+  '/admin/precificacao': typeof AdminPrecificacaoRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/servicos': typeof AdminServicosRoute
@@ -411,6 +418,7 @@ export interface FileRoutesByTo {
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
+  '/admin/precificacao': typeof AdminPrecificacaoRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/servicos': typeof AdminServicosRoute
@@ -466,6 +474,7 @@ export interface FileRoutesById {
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
+  '/admin/precificacao': typeof AdminPrecificacaoRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/servicos': typeof AdminServicosRoute
@@ -522,6 +531,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
+    | '/admin/precificacao'
     | '/admin/propaganda'
     | '/admin/reset-password'
     | '/admin/servicos'
@@ -576,6 +586,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
+    | '/admin/precificacao'
     | '/admin/propaganda'
     | '/admin/reset-password'
     | '/admin/servicos'
@@ -630,6 +641,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
+    | '/admin/precificacao'
     | '/admin/propaganda'
     | '/admin/reset-password'
     | '/admin/servicos'
@@ -685,6 +697,7 @@ export interface RootRouteChildren {
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminNewsletterRoute: typeof AdminNewsletterRoute
+  AdminPrecificacaoRoute: typeof AdminPrecificacaoRoute
   AdminPropagandaRoute: typeof AdminPropagandaRoute
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
   AdminServicosRoute: typeof AdminServicosRoute
@@ -928,6 +941,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminNewsletterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/precificacao': {
+      id: '/admin/precificacao'
+      path: '/admin/precificacao'
+      fullPath: '/admin/precificacao'
+      preLoaderRoute: typeof AdminPrecificacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/propaganda': {
       id: '/admin/propaganda'
       path: '/admin/propaganda'
@@ -1109,6 +1129,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminNewsletterRoute: AdminNewsletterRoute,
+  AdminPrecificacaoRoute: AdminPrecificacaoRoute,
   AdminPropagandaRoute: AdminPropagandaRoute,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
   AdminServicosRoute: AdminServicosRoute,
