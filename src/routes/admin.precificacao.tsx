@@ -523,19 +523,42 @@ function PricingPage() {
             <div className="flex items-end gap-2">
               <Button
                 variant="outline"
-                onClick={() =>
-                  getFxRate({ data: { currency: currency as "BRL" } }).then((r) =>
-                    setFx({ rate: r.rate, source: r.source }),
-                  )
-                }
+                disabled={busy === "fx"}
+                onClick={async () => {
+                  setBusy("fx");
+                  const r = await getFxRate({ data: { currency: currency as "BRL" } });
+                  setFx({ rate: r.rate, source: r.source });
+                  if (slug) {
+                    const s = await getServicePricing({ data: { slug } });
+                    if (s.activities.length > 0) setActivities(s.activities);
+                    setNotes(s.notes);
+                  }
+                  setBusy("");
+                  toast.success("Cotação e etapas atualizadas.");
+                }}
               >
                 <RefreshCw className="size-4" />
-                Atualizar cotação
+                {busy === "fx" ? "Atualizando…" : "Atualizar cotação"}
               </Button>
             </div>
           </div>
 
-          {slug ? (
+          {slug && enabledCount === 0 ? (
+            <div className="space-y-3 rounded-xl border border-border bg-muted/40 p-4">
+              <p className="text-sm">
+                <strong>{product?.title}</strong> ainda não tem etapas cadastradas, por isso o
+                cronograma e os valores aparecem zerados. Monte as etapas para gerar o orçamento.
+              </p>
+              <Button onClick={autoStages} disabled={busy === "ai-stages" || busy === "stages"}>
+                <Sparkles className="size-4" />
+                {busy === "ai-stages"
+                  ? "Analisando…"
+                  : busy === "stages"
+                    ? "Salvando…"
+                    : "Montar etapas com IA e salvar"}
+              </Button>
+            </div>
+          ) : slug ? (
             <section className="rounded-xl border border-border">
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
                 <div>
