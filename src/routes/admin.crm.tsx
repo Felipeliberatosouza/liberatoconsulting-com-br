@@ -3,6 +3,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
 import { AdminShell } from "@/components/AdminShell";
+import { CrmProspect } from "@/components/CrmProspect";
+import { refreshCrmLead } from "@/lib/crm-prospect.functions";
 import {
   listCrmCompanies,
   getCrmCompany,
