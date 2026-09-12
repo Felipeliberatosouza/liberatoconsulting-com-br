@@ -30,3 +30,33 @@ export const CRM_SEGMENTS = [
   "Utilidades públicas (água, saneamento e resíduos)",
   "Outros",
 ] as const;
+
+/** Áreas/departamentos padrão das empresas, usados no cadastro de pessoas do CRM. */
+export const CRM_DEPARTMENTS = [
+  "Presidência / Diretoria Executiva",
+  "Administrativo",
+  "Comercial / Vendas",
+  "Marketing",
+  "Financeiro",
+  "Contabilidade",
+  "Controladoria",
+  "Compras / Suprimentos",
+  "Jurídico",
+  "Recursos Humanos / Gente e Gestão",
+  "Operações",
+  "Produção / Manufatura",
+  "Qualidade",
+  "Manutenção",
+  "Logística / Supply Chain",
+  "Engenharia",
+  "Pesquisa e Desenvolvimento / Inovação",
+  "Tecnologia da Informação",
+  "Projetos / PMO",
+  "Planejamento Estratégico",
+  "Segurança do Trabalho / SESMT",
+  "Meio Ambiente / ESG / Sustentabilidade",
+  "Atendimento ao Cliente / SAC",
+  "Comércio Exterior",
+  "Comunicação / Relações Institucionais",
+  "Outros",
+] as const;
