@@ -7,23 +7,7 @@ import { EmailText } from "@/components/EmailText";
 export const Route = createFileRoute("/privacy")({
   head: (ctx) => ({
     meta: [
-      { title: "Política de Privacidade — Liberato Consulting" },
-      {
-        name: "description",
-        content:
-          "Como a Liberato Consulting coleta, usa, compartilha e protege dados pessoais no site, conforme a LGPD.",
-      },
-      { property: "og:title", content: "Política de Privacidade — Liberato Consulting" },
-      {
-        property: "og:description",
-        content: "Tratamento de dados pessoais, cookies e direitos do titular.",
-      },
-      { property: "og:type", content: "article" },
-      { property: "og:image", content: OG_IMAGE },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Política de Privacidade — Liberato Consulting" },
-      { name: "twitter:description", content: "Tratamento de dados pessoais, cookies e direitos do titular." },
-      { name: "twitter:image", content: OG_IMAGE },
+      ...seoPageMeta("/privacy", headLang(ctx), { ogType: "article" }),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/privacy", headLang(ctx)),
