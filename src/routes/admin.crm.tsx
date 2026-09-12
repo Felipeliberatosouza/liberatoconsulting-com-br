@@ -729,14 +729,34 @@ function AdminCrm() {
                 onChange={(e) => setCompanyField("name", e.target.value)}
               />
             </Field>
-            <Field label="Nome fantasia" required error={companyErrors['trade_name']}>
-              <input
-                className={fieldOf(companyErrors['trade_name'])}
-                value={companyForm['trade_name'] ?? ""}
-                onChange={(e) => setCompanyField("trade_name", e.target.value)}
-                onBlur={() => void fillCompanyWithAi()}
-              />
+            <Field
+              label="Nome fantasia"
+              required
+              error={companyErrors['trade_name']}
+              hint={
+                aiBusy
+                  ? "Pesquisando os dados da empresa com IA…"
+                  : "Ao sair do campo, a IA preenche todo o cadastro; tudo continua editável."
+              }
+            >
+              <div className="flex gap-2">
+                <input
+                  className={fieldOf(companyErrors['trade_name'])}
+                  value={companyForm['trade_name'] ?? ""}
+                  onChange={(e) => setCompanyField("trade_name", e.target.value)}
+                  onBlur={() => void fillCompanyWithAi()}
+                />
+                <button
+                  type="button"
+                  className={btnGhost}
+                  disabled={aiBusy}
+                  onClick={() => void fillCompanyWithAi(true)}
+                >
+                  {aiBusy ? "IA…" : "IA"}
+                </button>
+              </div>
             </Field>
+
             <Field label="CNPJ" error={companyErrors['cnpj']} hint="00.000.000/0000-00">
               <input
                 inputMode="numeric"
