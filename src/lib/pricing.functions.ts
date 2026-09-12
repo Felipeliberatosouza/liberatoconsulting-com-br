@@ -409,6 +409,6 @@ export const quoteFileUrl = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: signed } = await supabaseAdmin.storage
       .from("content")
-      .createSignedUrl(data.path, 3600, { download: data.name || undefined });
+      .createSignedUrl(data.path, 3600, { download: data.name || true });
     return { ok: true as const, url: signed?.signedUrl ?? "" };
   });
