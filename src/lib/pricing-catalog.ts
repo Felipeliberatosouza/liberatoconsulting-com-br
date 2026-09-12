@@ -248,6 +248,9 @@ export function buildQuote(
   const rates = settings.rates[options.companyType];
   const factor = settings.countryFactors[options.country] ?? 1;
   const hoursPerDay = settings.hoursPerDay || 8;
+  const travelTable = settings.travelCost ?? DEFAULT_PRICING.travelCost;
+  const tripCost =
+    options.country === "BR" ? travelTable.domestic || 0 : travelTable.international || 0;
 
   let cursor = new Date(`${options.startDate}T12:00:00`);
   if (Number.isNaN(cursor.getTime())) cursor = new Date();
