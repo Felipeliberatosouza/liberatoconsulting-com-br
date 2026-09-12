@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { Sparkles, FileDown, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
@@ -552,8 +552,8 @@ function PricingPage() {
                   </thead>
                   <tbody>
                     {quote.phases.map((p) => (
-                      <>
-                        <tr key={p.id} className="border-t border-border bg-muted/40 font-medium">
+                      <Fragment key={p.id}>
+                        <tr className="border-t border-border bg-muted/40 font-medium">
                           <td className="px-4 py-2">{p.title}</td>
                           <td className="px-4 py-2">{new Date(`${p.start}T12:00:00`).toLocaleDateString("pt-BR")}</td>
                           <td className="px-4 py-2">{p.days.toFixed(1)}</td>
@@ -572,7 +572,7 @@ function PricingPage() {
                             <td className="px-4 py-2 text-right">{money(i.priceBrl)}</td>
                           </tr>
                         ))}
-                      </>
+                      </Fragment>
                     ))}
                   </tbody>
                 </table>
