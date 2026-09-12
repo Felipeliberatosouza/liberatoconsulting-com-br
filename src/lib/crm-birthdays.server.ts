@@ -20,7 +20,7 @@ export async function dispatchCrmBirthdays(): Promise<Result> {
   const result: Result = { ok: true, sent: 0, skipped: 0, failed: 0, errors: [] };
 
   const [{ data: companies }, { data: contacts }] = await Promise.all([
-    supabaseAdmin.from("crm_companies").select("id, name, email, founded_on, birthday_email"),
+    supabaseAdmin.from("crm_companies").select("id, name, trade_name, email, founded_on, birthday_email"),
     supabaseAdmin
       .from("crm_contacts")
       .select("id, full_name, email, birth_date, birthday_email, email_opt_in, active, company_id"),
