@@ -1066,6 +1066,119 @@ export type Database = {
         }
         Relationships: []
       }
+      quotes: {
+        Row: {
+          client_name: string
+          company_type: string
+          country: string
+          created_at: string
+          created_by: string | null
+          currency: string
+          discount_pct: number
+          end_date: string | null
+          file_name: string
+          file_path: string
+          fx_rate: number
+          id: string
+          language: string
+          payload: Json
+          remote_only: boolean
+          service_title: string
+          slug: string
+          start_date: string | null
+          total_brl: number
+          total_currency: number
+          updated_at: string
+        }
+        Insert: {
+          client_name?: string
+          company_type?: string
+          country?: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          discount_pct?: number
+          end_date?: string | null
+          file_name?: string
+          file_path?: string
+          fx_rate?: number
+          id?: string
+          language?: string
+          payload?: Json
+          remote_only?: boolean
+          service_title?: string
+          slug: string
+          start_date?: string | null
+          total_brl?: number
+          total_currency?: number
+          updated_at?: string
+        }
+        Update: {
+          client_name?: string
+          company_type?: string
+          country?: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          discount_pct?: number
+          end_date?: string | null
+          file_name?: string
+          file_path?: string
+          fx_rate?: number
+          id?: string
+          language?: string
+          payload?: Json
+          remote_only?: boolean
+          service_title?: string
+          slug?: string
+          start_date?: string | null
+          total_brl?: number
+          total_currency?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      service_pricing: {
+        Row: {
+          activities: Json
+          ai_rationale: string
+          created_at: string
+          id: string
+          notes: string
+          product_id: string | null
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          activities?: Json
+          ai_rationale?: string
+          created_at?: string
+          id?: string
+          notes?: string
+          product_id?: string | null
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          activities?: Json
+          ai_rationale?: string
+          created_at?: string
+          id?: string
+          notes?: string
+          product_id?: string | null
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_pricing_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "service_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_products: {
         Row: {
           ai: string
