@@ -13,6 +13,7 @@ import { compareIndicator, resolvePolarity } from "@/lib/indicator-compare";
 
 import { pt } from "@/i18n/pt";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { seoPageMeta } from "@/lib/seo-meta";
 import { keywordsMeta } from "@/lib/keywords";
 import { breadcrumb, itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { getScopedBrazilSections } from "@/lib/brazil-scope.functions";
