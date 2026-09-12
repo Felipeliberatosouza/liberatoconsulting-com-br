@@ -154,7 +154,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 { "@type": "Place", name: "Global" },
               ],
               knowsLanguage: ["pt-BR", "en", "es", "zh-Hans"],
-              knowsAbout: ALL_KEYWORDS,
+              knowsAbout: ALL_KEYWORDS_MULTILINGUAL,
               contactPoint: [
                 {
                   "@type": "ContactPoint",
