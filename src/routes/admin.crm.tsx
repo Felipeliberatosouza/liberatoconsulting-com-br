@@ -897,42 +897,78 @@ function AdminCrm() {
       {contactForm && selected && (
         <Modal title={contactForm['id'] ? "Editar pessoa" : "Nova pessoa"} onClose={() => setContactForm(null)}>
           <div className="grid gap-3 sm:grid-cols-2">
-            {([
-              ["full_name", "Nome completo *"],
-              ["role_title", "Função / cargo"],
-              ["department", "Área / departamento"],
-              ["email", "E-mail"],
-              ["phone", "Telefone"],
-              ["whatsapp", "WhatsApp"],
-              ["linkedin_url", "LinkedIn"],
-            ] as [string, string][]).map(([key, label]) => (
-              <label key={key} className="text-sm">
-                <span className="mb-1 block text-muted-foreground">{label}</span>
-                <input
-                  className={field}
-                  value={contactForm[key] ?? ""}
-                  onChange={(e) => setContactForm({ ...contactForm, [key]: e.target.value })}
-                />
-              </label>
-            ))}
-            <label className="text-sm">
-              <span className="mb-1 block text-muted-foreground">Data de nascimento</span>
+            <Field label="Nome completo" required error={contactErrors['full_name']}>
+              <input
+                className={fieldOf(contactErrors['full_name'])}
+                value={contactForm['full_name'] ?? ""}
+                onChange={(e) => setContactField("full_name", e.target.value)}
+              />
+            </Field>
+            <Field label="Função / cargo">
+              <input
+                className={field}
+                value={contactForm['role_title'] ?? ""}
+                onChange={(e) => setContactField("role_title", e.target.value)}
+              />
+            </Field>
+            <Field label="Área / departamento">
+              <input
+                className={field}
+                value={contactForm['department'] ?? ""}
+                onChange={(e) => setContactField("department", e.target.value)}
+              />
+            </Field>
+            <Field label="E-mail" required error={contactErrors['email']}>
+              <input
+                type="email"
+                placeholder="nome@empresa.com.br"
+                className={fieldOf(contactErrors['email'])}
+                value={contactForm['email'] ?? ""}
+                onChange={(e) => setContactField("email", e.target.value)}
+              />
+            </Field>
+            <Field label="Telefone" error={contactErrors['phone']} hint={PHONE_PLACEHOLDER}>
+              <input
+                inputMode="tel"
+                placeholder={PHONE_PLACEHOLDER}
+                className={fieldOf(contactErrors['phone'])}
+                value={contactForm['phone'] ?? ""}
+                onChange={(e) => setContactField("phone", formatPhone(e.target.value))}
+              />
+            </Field>
+            <Field label="WhatsApp" error={contactErrors['whatsapp']} hint={PHONE_PLACEHOLDER}>
+              <input
+                inputMode="tel"
+                placeholder={PHONE_PLACEHOLDER}
+                className={fieldOf(contactErrors['whatsapp'])}
+                value={contactForm['whatsapp'] ?? ""}
+                onChange={(e) => setContactField("whatsapp", formatPhone(e.target.value))}
+              />
+            </Field>
+            <Field label="LinkedIn" error={contactErrors['linkedin_url']} hint="linkedin.com/in/nome">
+              <input
+                className={fieldOf(contactErrors['linkedin_url'])}
+                value={contactForm['linkedin_url'] ?? ""}
+                onChange={(e) => setContactField("linkedin_url", e.target.value)}
+              />
+            </Field>
+            <Field label="Data de nascimento" error={contactErrors['birth_date']}>
               <input
                 type="date"
-                className={field}
+                max={new Date().toISOString().slice(0, 10)}
+                className={fieldOf(contactErrors['birth_date'])}
                 value={contactForm['birth_date'] ?? ""}
-                onChange={(e) => setContactForm({ ...contactForm, birth_date: e.target.value })}
+                onChange={(e) => setContactField("birth_date", e.target.value)}
               />
-            </label>
-            <label className="sm:col-span-2 text-sm">
-              <span className="mb-1 block text-muted-foreground">Observações</span>
+            </Field>
+            <Field label="Observações" className="sm:col-span-2">
               <textarea
                 rows={3}
                 className={field}
                 value={contactForm['notes'] ?? ""}
-                onChange={(e) => setContactForm({ ...contactForm, notes: e.target.value })}
+                onChange={(e) => setContactField("notes", e.target.value)}
               />
-            </label>
+            </Field>
             {([
               ["decision_maker", "É decisor na empresa"],
               ["email_opt_in", "Aceita receber e-mails"],
@@ -943,7 +979,7 @@ function AdminCrm() {
                 <input
                   type="checkbox"
                   checked={Boolean(contactForm[key])}
-                  onChange={(e) => setContactForm({ ...contactForm, [key]: e.target.checked })}
+                  onChange={(e) => setContactField(key, e.target.checked)}
                 />
                 {label}
               </label>
