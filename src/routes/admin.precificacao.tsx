@@ -648,6 +648,9 @@ function PricingPage() {
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-3">
                 <p className="text-sm text-muted-foreground">
                   Subtotal {money(quote.subtotalBrl)}
+                  {quote.travelBrl > 0
+                    ? ` · inclui deslocamentos ${money(quote.travelBrl)}`
+                    : " · sem custos de deslocamento (on-line)"}
                   {quote.discountBrl > 0 ? ` · desconto -${money(quote.discountBrl)}` : ""}
                 </p>
                 <Button onClick={generatePdf} disabled={busy === "pdf"}>
