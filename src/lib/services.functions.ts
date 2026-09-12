@@ -157,6 +157,83 @@ export const saveServiceProduct = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+/** Sugere, com IA, todos os campos e preços de um serviço a partir do nome. */
+export const draftServiceProduct = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        title: z.string().trim().min(2).max(160),
+        family_title: z.string().trim().max(160).default(""),
+        group_title: z.string().trim().max(160).default(""),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { askJson } = await import("./ai.server");
+
+    const system =
+      "Você é consultor sênior de estratégia e operações no Brasil. Com base em serviços equivalentes praticados no mercado de consultoria (Falconi, FGV, big four, boutiques), descreva um serviço comercial pronto para venda. " +
+      "Se o nome exato não existir no mercado, use o serviço correlato mais próximo. Escreva em português do Brasil, direto e comercial, sem jargão vazio.";
+
+    const prompt = `Serviço: "${data.title}"
+Família: ${data.family_title || "não informada"}
+Frente: ${data.group_title || "não informada"}
+
+Devolva JSON com exatamente estas chaves:
+{
+ "lead": "1 frase de promessa de valor",
+ "problem": "1-2 frases sobre o problema que resolve",
+ "body": "2 parágrafos curtos sobre o que fazemos",
+ "audience": "para quem é (perfil de empresa/área)",
+ "duration": "prazo de venda em SEMANAS, ex.: '6–8 semanas'",
+ "duration_corporate": "prazo corporativo em SEMANAS, ex.: '10–14 semanas'",
+ "level": "formato de contratação recomendado (ex.: projeto fechado, sprint, retainer mensal)",
+ "bullets": ["4 a 6 entregas concretas"],
+ "results": ["3 a 5 indicadores de sucesso mensuráveis"],
+ "modules": ["3 a 6 capacidades/competências envolvidas"],
+ "limits": "premissas e limites de escopo",
+ "ai": "onde a inteligência artificial entra neste serviço",
+ "price_sme": "faixa de preço para PME/startup em reais, ex.: 'R$ 18.000'",
+ "price_corporate": "faixa de preço corporativo em reais, ex.: 'R$ 65.000'"
+}
+Os campos de prazo devem SEMPRE estar expressos em semanas.`;
+
+    try {
+      const out = await askJson<Record<string, unknown>>(system, prompt);
+      const str = (k: string) => (typeof out[k] === "string" ? (out[k] as string).trim() : "");
+      const arr = (k: string) =>
+        Array.isArray(out[k])
+          ? (out[k] as unknown[]).map((v) => String(v).trim()).filter(Boolean)
+          : [];
+      return {
+        ok: true as const,
+        draft: {
+          lead: str("lead"),
+          problem: str("problem"),
+          body: str("body"),
+          audience: str("audience"),
+          duration: str("duration"),
+          duration_corporate: str("duration_corporate"),
+          level: str("level"),
+          bullets: arr("bullets"),
+          results: arr("results"),
+          modules: arr("modules"),
+          limits: str("limits"),
+          ai: str("ai"),
+          price_sme: str("price_sme"),
+          price_corporate: str("price_corporate"),
+        },
+      };
+    } catch (err) {
+      return {
+        ok: false as const,
+        error: err instanceof Error ? err.message : "Falha ao consultar a IA.",
+      };
+    }
+  });
+
 /** Remove um serviço do cadastro. */
 export const deleteServiceProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
