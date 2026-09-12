@@ -33,6 +33,7 @@ import { Route as AdminBrasilRouteImport } from './routes/admin.brasil'
 import { Route as AdminConsultoresRouteImport } from './routes/admin.consultores'
 import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminContratoRouteImport } from './routes/admin.contrato'
+import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 import { Route as AdminEmpresaRouteImport } from './routes/admin.empresa'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
 import { Route as AdminHistoricoRouteImport } from './routes/admin.historico'
@@ -57,6 +58,7 @@ import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.u
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as ApiPublicBulletinWeeklyRouteImport } from './routes/api/public/bulletin-weekly'
+import { Route as ApiPublicCrmBirthdaysRouteImport } from './routes/api/public/crm-birthdays'
 import { Route as ApiPublicNewsletterWeeklyRouteImport } from './routes/api/public/newsletter-weekly'
 import { Route as BrasilSlugTopicRouteImport } from './routes/brasil_.$slug_.$topic'
 import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
@@ -183,6 +185,11 @@ const AdminContratoRoute = AdminContratoRouteImport.update({
   path: '/admin/contrato',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminCrmRoute = AdminCrmRouteImport.update({
+  id: '/admin/crm',
+  path: '/admin/crm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminEmpresaRoute = AdminEmpresaRouteImport.update({
   id: '/admin/empresa',
   path: '/admin/empresa',
@@ -303,6 +310,11 @@ const ApiPublicBulletinWeeklyRoute = ApiPublicBulletinWeeklyRouteImport.update({
   path: '/api/public/bulletin-weekly',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCrmBirthdaysRoute = ApiPublicCrmBirthdaysRouteImport.update({
+  id: '/api/public/crm-birthdays',
+  path: '/api/public/crm-birthdays',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicNewsletterWeeklyRoute =
   ApiPublicNewsletterWeeklyRouteImport.update({
     id: '/api/public/newsletter-weekly',
@@ -356,6 +368,7 @@ export interface FileRoutesByFullPath {
   '/admin/consultores': typeof AdminConsultoresRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
+  '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
@@ -381,6 +394,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
+  '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
   '/brasil/$slug/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
@@ -411,6 +425,7 @@ export interface FileRoutesByTo {
   '/admin/consultores': typeof AdminConsultoresRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
+  '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
@@ -436,6 +451,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
+  '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
   '/brasil/$slug/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
@@ -467,6 +483,7 @@ export interface FileRoutesById {
   '/admin/consultores': typeof AdminConsultoresRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
+  '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
@@ -492,6 +509,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
+  '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
   '/brasil_/$slug_/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
@@ -524,6 +542,7 @@ export interface FileRouteTypes {
     | '/admin/consultores'
     | '/admin/content'
     | '/admin/contrato'
+    | '/admin/crm'
     | '/admin/empresa'
     | '/admin/hero'
     | '/admin/historico'
@@ -549,6 +568,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/services/'
     | '/api/public/bulletin-weekly'
+    | '/api/public/crm-birthdays'
     | '/api/public/newsletter-weekly'
     | '/brasil/$slug/$topic'
     | '/lovable/email/events'
@@ -579,6 +599,7 @@ export interface FileRouteTypes {
     | '/admin/consultores'
     | '/admin/content'
     | '/admin/contrato'
+    | '/admin/crm'
     | '/admin/empresa'
     | '/admin/hero'
     | '/admin/historico'
@@ -604,6 +625,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/services'
     | '/api/public/bulletin-weekly'
+    | '/api/public/crm-birthdays'
     | '/api/public/newsletter-weekly'
     | '/brasil/$slug/$topic'
     | '/lovable/email/events'
@@ -634,6 +656,7 @@ export interface FileRouteTypes {
     | '/admin/consultores'
     | '/admin/content'
     | '/admin/contrato'
+    | '/admin/crm'
     | '/admin/empresa'
     | '/admin/hero'
     | '/admin/historico'
@@ -659,6 +682,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/services/'
     | '/api/public/bulletin-weekly'
+    | '/api/public/crm-birthdays'
     | '/api/public/newsletter-weekly'
     | '/brasil_/$slug_/$topic'
     | '/lovable/email/events'
@@ -690,6 +714,7 @@ export interface RootRouteChildren {
   AdminConsultoresRoute: typeof AdminConsultoresRoute
   AdminContentRoute: typeof AdminContentRoute
   AdminContratoRoute: typeof AdminContratoRoute
+  AdminCrmRoute: typeof AdminCrmRoute
   AdminEmpresaRoute: typeof AdminEmpresaRoute
   AdminHeroRoute: typeof AdminHeroRoute
   AdminHistoricoRoute: typeof AdminHistoricoRoute
@@ -715,6 +740,7 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
   ApiPublicBulletinWeeklyRoute: typeof ApiPublicBulletinWeeklyRoute
+  ApiPublicCrmBirthdaysRoute: typeof ApiPublicCrmBirthdaysRoute
   ApiPublicNewsletterWeeklyRoute: typeof ApiPublicNewsletterWeeklyRoute
   BrasilSlugTopicRoute: typeof BrasilSlugTopicRoute
   LovableEmailEventsRoute: typeof LovableEmailEventsRoute
@@ -892,6 +918,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminContratoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/crm': {
+      id: '/admin/crm'
+      path: '/admin/crm'
+      fullPath: '/admin/crm'
+      preLoaderRoute: typeof AdminCrmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/empresa': {
       id: '/admin/empresa'
       path: '/admin/empresa'
@@ -1060,6 +1093,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBulletinWeeklyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/crm-birthdays': {
+      id: '/api/public/crm-birthdays'
+      path: '/api/public/crm-birthdays'
+      fullPath: '/api/public/crm-birthdays'
+      preLoaderRoute: typeof ApiPublicCrmBirthdaysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/newsletter-weekly': {
       id: '/api/public/newsletter-weekly'
       path: '/api/public/newsletter-weekly'
@@ -1122,6 +1162,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminConsultoresRoute: AdminConsultoresRoute,
   AdminContentRoute: AdminContentRoute,
   AdminContratoRoute: AdminContratoRoute,
+  AdminCrmRoute: AdminCrmRoute,
   AdminEmpresaRoute: AdminEmpresaRoute,
   AdminHeroRoute: AdminHeroRoute,
   AdminHistoricoRoute: AdminHistoricoRoute,
@@ -1147,6 +1188,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
   ApiPublicBulletinWeeklyRoute: ApiPublicBulletinWeeklyRoute,
+  ApiPublicCrmBirthdaysRoute: ApiPublicCrmBirthdaysRoute,
   ApiPublicNewsletterWeeklyRoute: ApiPublicNewsletterWeeklyRoute,
   BrasilSlugTopicRoute: BrasilSlugTopicRoute,
   LovableEmailEventsRoute: LovableEmailEventsRoute,

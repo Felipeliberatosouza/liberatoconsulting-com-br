@@ -631,6 +631,335 @@ export type Database = {
         }
         Relationships: []
       }
+      crm_birthday_sends: {
+        Row: {
+          created_at: string
+          error: string
+          id: string
+          recipient: string
+          status: string
+          target_id: string
+          target_type: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          error?: string
+          id?: string
+          recipient: string
+          status?: string
+          target_id: string
+          target_type: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          error?: string
+          id?: string
+          recipient?: string
+          status?: string
+          target_id?: string
+          target_type?: string
+          year?: number
+        }
+        Relationships: []
+      }
+      crm_companies: {
+        Row: {
+          address: string
+          birthday_email: boolean
+          city: string
+          cnpj: string
+          country: string
+          created_at: string
+          email: string
+          employees: number | null
+          founded_on: string | null
+          id: string
+          name: string
+          notes: string
+          owner_name: string
+          phone: string
+          revenue_range: string
+          segment: string
+          size: string
+          state: string
+          status: string
+          tags: Json
+          trade_name: string
+          updated_at: string
+          website: string
+        }
+        Insert: {
+          address?: string
+          birthday_email?: boolean
+          city?: string
+          cnpj?: string
+          country?: string
+          created_at?: string
+          email?: string
+          employees?: number | null
+          founded_on?: string | null
+          id?: string
+          name: string
+          notes?: string
+          owner_name?: string
+          phone?: string
+          revenue_range?: string
+          segment?: string
+          size?: string
+          state?: string
+          status?: string
+          tags?: Json
+          trade_name?: string
+          updated_at?: string
+          website?: string
+        }
+        Update: {
+          address?: string
+          birthday_email?: boolean
+          city?: string
+          cnpj?: string
+          country?: string
+          created_at?: string
+          email?: string
+          employees?: number | null
+          founded_on?: string | null
+          id?: string
+          name?: string
+          notes?: string
+          owner_name?: string
+          phone?: string
+          revenue_range?: string
+          segment?: string
+          size?: string
+          state?: string
+          status?: string
+          tags?: Json
+          trade_name?: string
+          updated_at?: string
+          website?: string
+        }
+        Relationships: []
+      }
+      crm_contacts: {
+        Row: {
+          active: boolean
+          birth_date: string | null
+          birthday_email: boolean
+          company_id: string | null
+          created_at: string
+          decision_maker: boolean
+          department: string
+          email: string
+          email_opt_in: boolean
+          full_name: string
+          id: string
+          language: string
+          linkedin_url: string
+          notes: string
+          phone: string
+          role_title: string
+          updated_at: string
+          whatsapp: string
+        }
+        Insert: {
+          active?: boolean
+          birth_date?: string | null
+          birthday_email?: boolean
+          company_id?: string | null
+          created_at?: string
+          decision_maker?: boolean
+          department?: string
+          email?: string
+          email_opt_in?: boolean
+          full_name: string
+          id?: string
+          language?: string
+          linkedin_url?: string
+          notes?: string
+          phone?: string
+          role_title?: string
+          updated_at?: string
+          whatsapp?: string
+        }
+        Update: {
+          active?: boolean
+          birth_date?: string | null
+          birthday_email?: boolean
+          company_id?: string | null
+          created_at?: string
+          decision_maker?: boolean
+          department?: string
+          email?: string
+          email_opt_in?: boolean
+          full_name?: string
+          id?: string
+          language?: string
+          linkedin_url?: string
+          notes?: string
+          phone?: string
+          role_title?: string
+          updated_at?: string
+          whatsapp?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_contacts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "crm_companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_dates: {
+        Row: {
+          company_id: string | null
+          contact_id: string | null
+          created_at: string
+          event_date: string
+          id: string
+          label: string
+          notes: string
+          notify_email: boolean
+          recurring: boolean
+          updated_at: string
+        }
+        Insert: {
+          company_id?: string | null
+          contact_id?: string | null
+          created_at?: string
+          event_date: string
+          id?: string
+          label: string
+          notes?: string
+          notify_email?: boolean
+          recurring?: boolean
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string | null
+          contact_id?: string | null
+          created_at?: string
+          event_date?: string
+          id?: string
+          label?: string
+          notes?: string
+          notify_email?: boolean
+          recurring?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_dates_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "crm_companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_dates_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_interactions: {
+        Row: {
+          author_name: string
+          body: string
+          company_id: string | null
+          contact_id: string | null
+          created_at: string
+          id: string
+          kind: string
+          occurred_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_name?: string
+          body?: string
+          company_id?: string | null
+          contact_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          occurred_at?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_name?: string
+          body?: string
+          company_id?: string | null
+          contact_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          occurred_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_interactions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "crm_companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_interactions_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_site_events: {
+        Row: {
+          country: string
+          created_at: string
+          email: string | null
+          id: string
+          kind: string
+          label: string
+          lang: string
+          path: string
+          referrer: string
+          visitor_id: string
+        }
+        Insert: {
+          country?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          kind?: string
+          label?: string
+          lang?: string
+          path: string
+          referrer?: string
+          visitor_id: string
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          kind?: string
+          label?: string
+          lang?: string
+          path?: string
+          referrer?: string
+          visitor_id?: string
+        }
+        Relationships: []
+      }
       economic_indicators: {
         Row: {
           created_at: string

@@ -5,6 +5,8 @@ import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/i18n";
 import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
+import { identifyVisitor } from "@/lib/crm-track.functions";
+import { visitorId } from "@/components/CrmTracker";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
 import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
@@ -69,6 +71,11 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
       });
 
       if (result.ok) {
+        const vid = visitorId();
+        const mail = String(fd.get("email") ?? "");
+        if (vid && mail) {
+          void identifyVisitor({ data: { visitorId: vid, email: mail } }).catch(() => {});
+        }
         setStatus("done");
         trackEvent("form_submit", { form_name: "service_lead", service: serviceTitle });
         form.reset();
