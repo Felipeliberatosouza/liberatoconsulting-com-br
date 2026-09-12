@@ -511,7 +511,7 @@ function AdminCrm() {
       {companyForm && (
         <Modal title={companyForm['id'] ? "Editar empresa" : "Nova empresa"} onClose={() => setCompanyForm(null)}>
           <div className="grid gap-3 sm:grid-cols-2">
-            {[
+            {([
               ["name", "Razão social / nome *"],
               ["trade_name", "Nome fantasia"],
               ["cnpj", "CNPJ"],
@@ -649,7 +649,7 @@ function AdminCrm() {
       {contactForm && selected && (
         <Modal title={contactForm['id'] ? "Editar pessoa" : "Nova pessoa"} onClose={() => setContactForm(null)}>
           <div className="grid gap-3 sm:grid-cols-2">
-            {[
+            {([
               ["full_name", "Nome completo *"],
               ["role_title", "Função / cargo"],
               ["department", "Área / departamento"],
@@ -685,7 +685,7 @@ function AdminCrm() {
                 onChange={(e) => setContactForm({ ...contactForm, notes: e.target.value })}
               />
             </label>
-            {[
+            {([
               ["decision_maker", "É decisor na empresa"],
               ["email_opt_in", "Aceita receber e-mails"],
               ["birthday_email", "Enviar e-mail de aniversário"],
