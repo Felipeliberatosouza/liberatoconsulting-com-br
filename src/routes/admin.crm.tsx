@@ -526,7 +526,7 @@ function AdminCrm() {
               ["revenue_range", "Faixa de faturamento"],
               ["owner_name", "Responsável interno"],
               ["tags", "Tags (separadas por vírgula)"],
-            ].map(([key, label]) => (
+            ] as [string, string][]).map(([key, label]) => (
               <label key={key} className="text-sm">
                 <span className="mb-1 block text-muted-foreground">{label}</span>
                 <input
@@ -657,7 +657,7 @@ function AdminCrm() {
               ["phone", "Telefone"],
               ["whatsapp", "WhatsApp"],
               ["linkedin_url", "LinkedIn"],
-            ].map(([key, label]) => (
+            ] as [string, string][]).map(([key, label]) => (
               <label key={key} className="text-sm">
                 <span className="mb-1 block text-muted-foreground">{label}</span>
                 <input
@@ -690,7 +690,7 @@ function AdminCrm() {
               ["email_opt_in", "Aceita receber e-mails"],
               ["birthday_email", "Enviar e-mail de aniversário"],
               ["active", "Contato ativo"],
-            ].map(([key, label]) => (
+            ] as [string, string][]).map(([key, label]) => (
               <label key={key} className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
