@@ -36,7 +36,9 @@ export async function dispatchCrmBirthdays(): Promise<Result> {
   for (const c of (companies ?? []) as any[]) {
     const info = monthDay(c.founded_on);
     if (!c.birthday_email || !c.email || !info || info.md !== today) continue;
-    jobs.push({ type: "empresa", id: c.id, name: c.name, email: c.email, company: c.name, years: year - info.year });
+    // O e-mail de aniversário usa o nome fantasia da empresa.
+    const label = (c.trade_name || c.name) as string;
+    jobs.push({ type: "empresa", id: c.id, name: label, email: c.email, company: label, years: year - info.year });
   }
   for (const p of (contacts ?? []) as any[]) {
     const info = monthDay(p.birth_date);
