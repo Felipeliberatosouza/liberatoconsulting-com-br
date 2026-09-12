@@ -766,21 +766,36 @@ function AdminCrm() {
                 onChange={(e) => setCompanyField("phone", formatPhone(e.target.value))}
               />
             </Field>
-            <Field label="Faixa de faturamento">
+            <Field
+              label="Faixa de faturamento mensal (média dos últimos 12 meses)"
+              hint={aiBusy ? "Pesquisando com IA…" : "Preenchido por IA a partir do nome fantasia; pode editar."}
+            >
               <input
                 className={field}
+                placeholder="Ex.: R$ 500 mil a R$ 1 milhão/mês"
                 value={companyForm['revenue_range'] ?? ""}
                 onChange={(e) => setCompanyField("revenue_range", e.target.value)}
               />
             </Field>
-            <Field label="Responsável interno">
+            <Field label="Nome do principal executivo">
               <input
                 className={field}
                 value={companyForm['owner_name'] ?? ""}
                 onChange={(e) => setCompanyField("owner_name", e.target.value)}
               />
             </Field>
-            <Field label="Tags (separadas por vírgula)">
+            <Field label="Cargo do principal executivo">
+              <input
+                className={field}
+                placeholder="Ex.: CEO, Diretor-presidente"
+                value={companyForm['owner_title'] ?? ""}
+                onChange={(e) => setCompanyField("owner_title", e.target.value)}
+              />
+            </Field>
+            <Field
+              label="Tags (separadas por vírgula)"
+              hint={aiBusy ? "Pesquisando com IA…" : "Preenchidas por IA a partir do nome fantasia; pode editar."}
+            >
               <input
                 className={field}
                 value={companyForm['tags'] ?? ""}
