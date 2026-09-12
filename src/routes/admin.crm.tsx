@@ -369,7 +369,7 @@ function AdminCrm() {
             placeholder="Buscar por nome, segmento, cidade…"
             className={`${field} ml-auto max-w-xs`}
           />
-          <button className={btn} onClick={() => setCompanyForm(emptyCompany())}>
+          <button className={btn} onClick={() => { setCompanyErrors({}); setCompanyForm(emptyCompany()); }}>
             Nova empresa
           </button>
         </div>
@@ -455,6 +455,7 @@ function AdminCrm() {
                   <button
                     className={btnGhost}
                     onClick={() =>
+                      setCompanyErrors({}) ||
                       setCompanyForm({
                         ...d.company,
                         founded_on: d.company.founded_on ?? "",
@@ -465,7 +466,7 @@ function AdminCrm() {
                   >
                     Editar empresa
                   </button>
-                  <button className={btnGhost} onClick={() => setContactForm(emptyContact())}>
+                  <button className={btnGhost} onClick={() => { setContactErrors({}); setContactForm(emptyContact()); }}>
                     Nova pessoa
                   </button>
                   <button
@@ -506,7 +507,7 @@ function AdminCrm() {
                       <div className="flex gap-2 text-xs">
                         <button
                           className="text-accent hover:underline"
-                          onClick={() => setContactForm({ ...p, birth_date: p.birth_date ?? "" })}
+                          onClick={() => { setContactErrors({}); setContactForm({ ...p, birth_date: p.birth_date ?? "" }); }}
                         >
                           Editar
                         </button>
@@ -849,8 +850,11 @@ function AdminCrm() {
             <button
               className={btn}
               disabled={busy}
-              onClick={() =>
-                run(
+              onClick={() => {
+                const v = validateCompany(companyForm);
+                setCompanyErrors(v);
+                if (Object.keys(v).length > 0) return;
+                void run(
                   () =>
                     saveCrmCompany({
                       data: {
@@ -864,6 +868,8 @@ function AdminCrm() {
                         country: companyForm['country'] ?? "",
                         state: companyForm['state'] ?? "",
                         city: companyForm['city'] ?? "",
+                        district: companyForm['district'] ?? "",
+                        zip: companyForm['zip'] ?? "",
                         address: companyForm['address'] ?? "",
                         website: companyForm['website'] ?? "",
                         email: companyForm['email'] ?? "",
@@ -881,8 +887,8 @@ function AdminCrm() {
                       } as any,
                     }),
                   () => setCompanyForm(null),
-                )
-              }
+                );
+              }}
             >
               {busy ? "Salvando…" : "Salvar empresa"}
             </button>
@@ -989,8 +995,11 @@ function AdminCrm() {
             <button
               className={btn}
               disabled={busy}
-              onClick={() =>
-                run(
+              onClick={() => {
+                const v = validateContact(contactForm);
+                setContactErrors(v);
+                if (Object.keys(v).length > 0) return;
+                void run(
                   () =>
                     saveCrmContact({
                       data: {
@@ -1013,8 +1022,8 @@ function AdminCrm() {
                       } as any,
                     }),
                   () => setContactForm(null),
-                )
-              }
+                );
+              }}
             >
               {busy ? "Salvando…" : "Salvar pessoa"}
             </button>
