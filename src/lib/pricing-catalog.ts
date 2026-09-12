@@ -279,7 +279,8 @@ export function buildQuote(
           a.freelancer * rates.freelancer) *
         reps;
       const third = a.thirdParty * reps * (1 + settings.thirdPartyMarkup);
-      const price = (labor + third) * factor;
+      const travel = !options.remoteOnly && a.onsite ? tripCost * reps : 0;
+      const price = (labor + third) * factor + travel;
       const days = Math.max(0.2, Math.round(((hours / hoursPerDay) * 10) / 10) / 1 || 0.2);
       const itemStart = new Date(cursor);
       const itemEnd = addBusinessDays(itemStart, days);
