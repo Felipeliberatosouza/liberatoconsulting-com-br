@@ -14,7 +14,7 @@ export const BrandLogo = () => (
 )
 
 /** Rodapé institucional (razão social, CNPJ, endereço e contatos). */
-export const BrandFooter = ({ text }: { text?: string }) => (
+export const BrandFooter = ({ text }: { text?: string | undefined }) => (
   <>
     <Hr style={{ borderColor: '#e5e7eb', margin: '24px 0' }} />
     <Text style={{ fontSize: '12px', lineHeight: '18px', color: '#6b7280', margin: '0' }}>

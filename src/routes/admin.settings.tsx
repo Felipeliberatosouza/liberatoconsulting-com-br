@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { AdminShell } from "@/components/AdminShell";
 import { ScheduleSettings } from "@/components/ScheduleSettings";
 import { listEmailTemplates, saveEmailTemplate } from "@/lib/company.functions";
+import { getPublicCompanyIdentity } from "@/lib/company-public.functions";
+import { buildEmailPreviewHtml } from "@/lib/email-brand";
 import {
   getAlertEmail,
   getSiteConfig,
