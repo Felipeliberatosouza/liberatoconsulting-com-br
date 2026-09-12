@@ -18,13 +18,19 @@ interface Props {
   target?: 'pessoa' | 'empresa'
   company?: string
   years?: number | null
+  /** Assunto vindo do modelo editável no painel. */
+  subject?: string
+  /** Texto vindo do modelo editável no painel. */
+  body?: string
 }
 
-const Email = ({ name, target = 'pessoa', company, years }: Props) => {
+const Email = ({ name, target = 'pessoa', company, years, subject, body }: Props) => {
   const isCompany = target === 'empresa'
-  const title = isCompany
-    ? `Parabéns pelos ${years ? `${years} anos da ` : ''}${name ?? 'sua empresa'}!`
-    : `Feliz aniversário, ${name ?? ''}!`
+  const title =
+    subject ||
+    (isCompany
+      ? `Parabéns pelos ${years ? `${years} anos da ` : ''}${name ?? 'sua empresa'}!`
+      : `Feliz aniversário, ${name ?? ''}!`)
 
   return (
     <Html lang="pt-BR" dir="ltr">
@@ -33,7 +39,15 @@ const Email = ({ name, target = 'pessoa', company, years }: Props) => {
       <Body style={main}>
         <Container style={container}>
           <Heading style={heading}>{title}</Heading>
-          {isCompany ? (
+          {body ? (
+            body
+              .split(/\n{2,}/)
+              .map((p, i) => (
+                <Text key={i} style={text}>
+                  {p}
+                </Text>
+              ))
+          ) : isCompany ? (
             <Text style={text}>
               A equipe da Liberato Consulting parabeniza a {name} por mais um ano de
               história. Que o próximo ciclo traga crescimento, boas decisões e
@@ -67,9 +81,10 @@ const footer = { fontSize: '12px', color: '#6b7280' }
 export const template: TemplateEntry = {
   component: Email,
   subject: (data) =>
-    data['target'] === 'empresa'
+    data['subject'] ||
+    (data['target'] === 'empresa'
       ? `Parabéns, ${data['name'] ?? 'equipe'}!`
-      : `Feliz aniversário, ${data['name'] ?? ''}!`,
+      : `Feliz aniversário, ${data['name'] ?? ''}!`),
   displayName: 'Aniversário (CRM)',
   previewData: { name: 'Maria Souza', target: 'pessoa', company: 'Acme S.A.' },
 }
