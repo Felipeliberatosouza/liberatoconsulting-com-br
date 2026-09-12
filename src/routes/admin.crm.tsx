@@ -454,15 +454,15 @@ function AdminCrm() {
                 <div className="ml-auto flex flex-wrap gap-2">
                   <button
                     className={btnGhost}
-                    onClick={() =>
-                      setCompanyErrors({}) ||
+                    onClick={() => {
+                      setCompanyErrors({});
                       setCompanyForm({
                         ...d.company,
                         founded_on: d.company.founded_on ?? "",
                         employees: d.company.employees ?? "",
                         tags: (d.company.tags ?? []).join(", "),
-                      })
-                    }
+                      });
+                    }}
                   >
                     Editar empresa
                   </button>
