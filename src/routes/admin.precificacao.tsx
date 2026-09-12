@@ -132,6 +132,8 @@ function PricingPage() {
     [activities, settings, companyType, country, currency, startDate, remoteOnly, discountPct, fx.rate],
   );
 
+  const enabledCount = useMemo(() => activities.filter((a) => a.enabled).length, [activities]);
+
   function patch(id: string, data: Partial<PricedActivity>) {
     setActivities((list) => list.map((a) => (a.id === id ? { ...a, ...data } : a)));
   }
@@ -161,10 +163,10 @@ function PricingPage() {
     toast.success("Sugestão da IA aplicada. Revise e salve.");
   }
 
-  async function aiStages() {
+  async function aiStages(): Promise<PricedActivity[] | null> {
     if (!product) {
       toast.error("Escolha um serviço primeiro.");
-      return;
+      return null;
     }
     setBusy("ai-stages");
     const res = await suggestServiceStages({
@@ -180,18 +182,19 @@ function PricingPage() {
     setBusy("");
     if (!res.ok) {
       toast.error(res.error);
-      return;
+      return null;
     }
     setActivities(res.activities);
     setRationale(res.rationale);
     toast.success("A IA montou as etapas. Revise as horas e salve.");
+    return res.activities;
   }
 
-  async function saveStages() {
+  async function saveStages(list: PricedActivity[] = activities) {
     if (!slug) return;
     setBusy("stages");
     const res = await saveServicePricing({
-      data: { slug, activities, notes, aiRationale: rationale, updateCatalogPrices: true },
+      data: { slug, activities: list, notes, aiRationale: rationale, updateCatalogPrices: true },
     });
     setBusy("");
     if (!res.ok) {
@@ -203,6 +206,12 @@ function PricingPage() {
         ? `Etapas salvas. Preços do cadastro: PME ${res.prices.sme} · corporativo ${res.prices.corporate}.`
         : "Etapas salvas.",
     );
+  }
+
+  /** Monta as etapas com IA e já salva, para o orçamento sair preenchido. */
+  async function autoStages() {
+    const list = await aiStages();
+    if (list) await saveStages(list);
   }
 
   async function generatePdf() {
@@ -358,11 +367,11 @@ function PricingPage() {
                 ))}
               </select>
             </div>
-            <Button variant="outline" onClick={aiStages} disabled={!slug || busy === "ai-stages"}>
+            <Button variant="outline" onClick={() => aiStages()} disabled={!slug || busy === "ai-stages"}>
               <Sparkles className="size-4" />
               {busy === "ai-stages" ? "Analisando…" : "Sugerir etapas com IA"}
             </Button>
-            <Button onClick={saveStages} disabled={!slug || busy === "stages"}>
+            <Button onClick={() => saveStages()} disabled={!slug || busy === "stages"}>
               {busy === "stages" ? "Salvando…" : "Salvar etapas e preço"}
             </Button>
           </div>
@@ -514,19 +523,42 @@ function PricingPage() {
             <div className="flex items-end gap-2">
               <Button
                 variant="outline"
-                onClick={() =>
-                  getFxRate({ data: { currency: currency as "BRL" } }).then((r) =>
-                    setFx({ rate: r.rate, source: r.source }),
-                  )
-                }
+                disabled={busy === "fx"}
+                onClick={async () => {
+                  setBusy("fx");
+                  const r = await getFxRate({ data: { currency: currency as "BRL" } });
+                  setFx({ rate: r.rate, source: r.source });
+                  if (slug) {
+                    const s = await getServicePricing({ data: { slug } });
+                    if (s.activities.length > 0) setActivities(s.activities);
+                    setNotes(s.notes);
+                  }
+                  setBusy("");
+                  toast.success("Cotação e etapas atualizadas.");
+                }}
               >
                 <RefreshCw className="size-4" />
-                Atualizar cotação
+                {busy === "fx" ? "Atualizando…" : "Atualizar cotação"}
               </Button>
             </div>
           </div>
 
-          {slug ? (
+          {slug && enabledCount === 0 ? (
+            <div className="space-y-3 rounded-xl border border-border bg-muted/40 p-4">
+              <p className="text-sm">
+                <strong>{product?.title}</strong> ainda não tem etapas cadastradas, por isso o
+                cronograma e os valores aparecem zerados. Monte as etapas para gerar o orçamento.
+              </p>
+              <Button onClick={autoStages} disabled={busy === "ai-stages" || busy === "stages"}>
+                <Sparkles className="size-4" />
+                {busy === "ai-stages"
+                  ? "Analisando…"
+                  : busy === "stages"
+                    ? "Salvando…"
+                    : "Montar etapas com IA e salvar"}
+              </Button>
+            </div>
+          ) : slug ? (
             <section className="rounded-xl border border-border">
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
                 <div>
