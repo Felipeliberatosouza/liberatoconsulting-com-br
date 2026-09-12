@@ -24,6 +24,8 @@ interface Props {
   message?: string
   language?: string
   sourcePath?: string
+  /** Rodapé institucional montado no envio. */
+  brandFooter?: string
 }
 
 const Row = ({ label, value }: { label: string; value?: string | undefined }) =>
@@ -45,6 +47,7 @@ const Email = ({
   message,
   language,
   sourcePath,
+  brandFooter,
 }: Props) => (
   <Html lang="pt-BR" dir="ltr">
     <Head />
@@ -76,12 +79,7 @@ const Email = ({
             <Text style={messageStyle}>{message}</Text>
           </>
         ) : null}
-        <Hr style={hr} />
-        <Text style={footer}>
-          Liberato Consulting · liberatoconsulting.com.br ·
-          contato@liberatoconsulting.com.br. Este aviso individual foi gerado após o
-          envio do formulário no site oficial.
-        </Text>
+        <BrandFooter text={brandFooter} />
       </Container>
     </Body>
   </Html>
@@ -120,4 +118,3 @@ const messageStyle = {
   whiteSpace: 'pre-wrap' as const,
   margin: '0',
 }
-const footer = { fontSize: '12px', color: '#888888', margin: '0' }
