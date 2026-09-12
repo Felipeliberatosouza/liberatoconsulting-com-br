@@ -293,7 +293,15 @@ function AdminServicesPage() {
                       {r.price_sme ? ` · PME ${r.price_sme}` : ""}
                     </p>
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => setDraft(r)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSlugTouched(true);
+                      setAiTitle(r.title);
+                      setDraft(r);
+                    }}
+                  >
                     Editar
                   </Button>
                   <Button variant="ghost" size="sm" onClick={() => remove(r.id)}>
