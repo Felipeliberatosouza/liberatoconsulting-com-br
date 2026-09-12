@@ -55,6 +55,16 @@ export function checkAntiSpam(data: ApplicationInput): SpamCheck {
 
 const ALLOWED_EXT = ["pdf", "doc", "docx", "rtf", "odt"];
 
+// O tipo do arquivo é definido pelo servidor a partir da extensão — nunca pelo
+// valor enviado pelo visitante, que poderia servir HTML/SVG malicioso.
+const RESUME_MIME: Record<string, string> = {
+  pdf: "application/pdf",
+  doc: "application/msword",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  rtf: "application/rtf",
+  odt: "application/vnd.oasis.opendocument.text",
+};
+
 export async function saveApplication(data: ApplicationInput, ipHash: string | null) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 

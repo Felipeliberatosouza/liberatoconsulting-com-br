@@ -145,11 +145,16 @@ export const submitArticle = createServerFn({ method: "POST" })
       if (!match) return { ok: false as const, error: "Arquivo inválido." };
       const bytes = Buffer.from(match[2]!, "base64");
       if (bytes.byteLength > 4_000_000) return { ok: false as const, error: "Arquivo acima de 4 MB." };
+      // O tipo do arquivo nunca vem do visitante: é definido pelo servidor a
+      // partir da extensão, evitando que HTML/SVG malicioso seja servido.
+      const ext = (data.file.name.split(".").pop() ?? "").toLowerCase();
+      const contentType = SUBMISSION_MIME[ext];
+      if (!contentType) return { ok: false as const, error: "Tipo de arquivo não permitido." };
       const safe = data.file.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-80);
       const path = `submissions/${crypto.randomUUID()}-${safe}`;
       const { error } = await supabaseAdmin.storage
         .from("content")
-        .upload(path, bytes, { contentType: match[1]!, upsert: false });
+        .upload(path, bytes, { contentType, upsert: false });
       if (error) return { ok: false as const, error: "Falha ao enviar o arquivo." };
       file_path = path;
       file_name = data.file.name;
