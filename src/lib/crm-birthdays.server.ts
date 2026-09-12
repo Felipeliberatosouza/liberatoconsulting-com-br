@@ -27,7 +27,7 @@ export async function dispatchCrmBirthdays(): Promise<Result> {
   ]);
 
   const companyName = new Map<string, string>(
-    ((companies ?? []) as any[]).map((c) => [c.id as string, c.name as string]),
+    ((companies ?? []) as any[]).map((c) => [c.id as string, (c.trade_name || c.name) as string]),
   );
 
   type Job = { type: "empresa" | "pessoa"; id: string; name: string; email: string; company: string; years: number | null };
