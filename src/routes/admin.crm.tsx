@@ -3,6 +3,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
 import { AdminShell } from "@/components/AdminShell";
+import { CrmProspect } from "@/components/CrmProspect";
+import { refreshCrmLead } from "@/lib/crm-prospect.functions";
 import {
   listCrmCompanies,
   getCrmCompany,
@@ -475,6 +477,9 @@ function AdminCrm() {
         </div>
       </section>
 
+      {/* PROSPECÇÃO COM IA */}
+      <CrmProspect onImported={refresh} />
+
       {/* LISTA */}
       <section className="mt-8">
         <div className="flex flex-wrap items-center gap-3">
@@ -582,6 +587,21 @@ function AdminCrm() {
                     }}
                   >
                     Visualizar/Editar empresa
+                  </button>
+                  <button
+                    className={btnGhost}
+                    disabled={busy}
+                    onClick={() =>
+                      run(
+                        async () => {
+                          const res = await refreshCrmLead({ data: { id: d.company.id } });
+                          return res;
+                        },
+                        () => {},
+                      )
+                    }
+                  >
+                    {busy ? "Atualizando…" : "Atualizar dados com IA"}
                   </button>
                   <button className={btnGhost} onClick={() => { setContactErrors({}); setContactForm(emptyContact()); }}>
                     Nova pessoa
