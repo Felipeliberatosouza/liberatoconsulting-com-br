@@ -936,6 +936,7 @@ function AdminCrm() {
                         employees: companyForm['employees'] === "" || companyForm['employees'] == null ? null : Number(companyForm['employees']),
                         revenue_range: companyForm['revenue_range'] ?? "",
                         owner_name: companyForm['owner_name'] ?? "",
+                        owner_title: companyForm['owner_title'] ?? "",
                         tags: String(companyForm['tags'] ?? "")
                           .split(",")
                           .map((t) => t.trim())
