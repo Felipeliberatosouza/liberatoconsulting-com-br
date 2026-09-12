@@ -88,6 +88,64 @@ function AdminServicesPage() {
   const [draft, setDraft] = useState<ServiceProduct | null>(null);
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState("");
+  const [slugTouched, setSlugTouched] = useState(false);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiTitle, setAiTitle] = useState("");
+
+  async function fillWithAi(force = false) {
+    if (!draft) return;
+    const title = draft.title.trim();
+    if (title.length < 2) return;
+    if (!force && title === aiTitle) return;
+    setAiBusy(true);
+    try {
+      const res = await draftServiceProduct({
+        data: {
+          title,
+          family_title: draft.family_title,
+          group_title: GROUPS.find((g) => g.id === draft.group_id)?.title ?? "",
+        },
+      });
+      if (!res.ok) {
+        toast.error(res.error);
+        return;
+      }
+      const d = res.draft;
+      setAiTitle(title);
+      setDraft((cur) =>
+        cur
+          ? {
+              ...cur,
+              lead: force || !cur.lead ? d.lead || cur.lead : cur.lead,
+              problem: force || !cur.problem ? d.problem || cur.problem : cur.problem,
+              body: force || !cur.body ? d.body || cur.body : cur.body,
+              audience: force || !cur.audience ? d.audience || cur.audience : cur.audience,
+              duration: force || !cur.duration ? d.duration || cur.duration : cur.duration,
+              duration_corporate:
+                force || !cur.duration_corporate
+                  ? d.duration_corporate || cur.duration_corporate
+                  : cur.duration_corporate,
+              level: force || !cur.level ? d.level || cur.level : cur.level,
+              bullets: force || cur.bullets.length === 0 ? d.bullets : cur.bullets,
+              results: force || cur.results.length === 0 ? d.results : cur.results,
+              modules: force || cur.modules.length === 0 ? d.modules : cur.modules,
+              limits: force || !cur.limits ? d.limits || cur.limits : cur.limits,
+              ai: force || !cur.ai ? d.ai || cur.ai : cur.ai,
+              price_sme: force || !cur.price_sme ? d.price_sme || cur.price_sme : cur.price_sme,
+              price_corporate:
+                force || !cur.price_corporate
+                  ? d.price_corporate || cur.price_corporate
+                  : cur.price_corporate,
+            }
+          : cur,
+      );
+      toast.success("Campos e preços sugeridos pela IA. Revise e ajuste o que quiser.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Falha ao consultar a IA.");
+    } finally {
+      setAiBusy(false);
+    }
+  }
 
   const list = useQuery({
     queryKey: ["admin-service-products"],
