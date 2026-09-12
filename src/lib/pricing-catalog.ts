@@ -125,6 +125,8 @@ export type PricingSettings = {
   countryFactors: Record<string, number>;
   /** Cotações de reserva (1 BRL = X) usadas se a busca automática falhar. */
   fxFallback: Record<string, number>;
+  /** Custo de deslocamento por atividade presencial (em reais). */
+  travelCost: { domestic: number; international: number };
   aiSuggestion?: { text: string; sources: string; updatedAt: string };
 };
 
@@ -137,6 +139,7 @@ export const DEFAULT_PRICING: PricingSettings = {
   hoursPerDay: 8,
   countryFactors: { BR: 1, PT: 1.6, US: 2.4, ES: 1.8, MX: 1.3, CL: 1.4, CN: 1.7, AE: 2.2 },
   fxFallback: { BRL: 1, USD: 0.185, CNY: 1.32, EUR: 0.17 },
+  travelCost: { domestic: 850, international: 9000 },
 };
 
 export const COUNTRIES = [
@@ -185,6 +188,8 @@ export type QuoteItem = {
   hours: number;
   days: number;
   priceBrl: number;
+  /** Parcela de deslocamento embutida no valor (0 quando on-line). */
+  travelBrl: number;
   start: string;
   end: string;
   remoteNote: boolean;
@@ -205,6 +210,8 @@ export type QuoteResult = {
   totalHours: number;
   totalDays: number;
   subtotalBrl: number;
+  /** Total de deslocamentos incluído no subtotal (0 em projetos on-line). */
+  travelBrl: number;
   discountBrl: number;
   totalBrl: number;
   totalCurrency: number;
@@ -241,6 +248,9 @@ export function buildQuote(
   const rates = settings.rates[options.companyType];
   const factor = settings.countryFactors[options.country] ?? 1;
   const hoursPerDay = settings.hoursPerDay || 8;
+  const travelTable = settings.travelCost ?? DEFAULT_PRICING.travelCost;
+  const tripCost =
+    options.country === "BR" ? travelTable.domestic || 0 : travelTable.international || 0;
 
   let cursor = new Date(`${options.startDate}T12:00:00`);
   if (Number.isNaN(cursor.getTime())) cursor = new Date();
@@ -249,6 +259,7 @@ export function buildQuote(
   const start = new Date(cursor);
   const phases: QuotePhase[] = [];
   let totalHours = 0;
+  let totalTravel = 0;
   let subtotal = 0;
   let totalDays = 0;
 
@@ -269,7 +280,8 @@ export function buildQuote(
           a.freelancer * rates.freelancer) *
         reps;
       const third = a.thirdParty * reps * (1 + settings.thirdPartyMarkup);
-      const price = (labor + third) * factor;
+      const travel = !options.remoteOnly && a.onsite ? tripCost * reps : 0;
+      const price = (labor + third) * factor + travel;
       const days = Math.max(0.2, Math.round(((hours / hoursPerDay) * 10) / 10) / 1 || 0.2);
       const itemStart = new Date(cursor);
       const itemEnd = addBusinessDays(itemStart, days);
@@ -282,12 +294,14 @@ export function buildQuote(
         hours,
         days: Number(days.toFixed(1)),
         priceBrl: price,
+        travelBrl: travel,
         start: iso(itemStart),
         end: iso(itemEnd),
         remoteNote: options.remoteOnly && a.onsite,
       });
       phaseDays += days;
       phasePrice += price;
+      totalTravel += travel;
       totalHours += hours;
     }
 
@@ -314,6 +328,7 @@ export function buildQuote(
     totalHours: Number(totalHours.toFixed(1)),
     totalDays: Number(totalDays.toFixed(1)),
     subtotalBrl: Math.round(subtotal),
+    travelBrl: Math.round(totalTravel),
     discountBrl: Math.round(discountBrl),
     totalBrl: Math.round(totalBrl),
     totalCurrency: Math.round(totalBrl * (options.fxRate || 1)),

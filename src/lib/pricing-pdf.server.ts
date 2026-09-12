@@ -52,8 +52,8 @@ export async function renderQuotePdf(input: QuotePdfInput) {
       `- Início previsto: ${br(quote.start)} · Conclusão prevista: ${br(quote.end)}`,
       `- Prazo total: ${quote.totalDays.toFixed(0)} dias úteis`,
       options.remoteOnly
-        ? "- Formato: encontros e workshops realizados on-line, sem deslocamento da equipe."
-        : "- Formato: encontros-chave presenciais, demais atividades remotas.",
+        ? "- Formato: encontros e workshops realizados on-line, sem custos de deslocamento da equipe."
+        : "- Formato: encontros-chave presenciais, demais atividades remotas (custos de deslocamento incluídos).",
     ]
       .filter(Boolean)
       .join("\n"),
@@ -80,6 +80,9 @@ export async function renderQuotePdf(input: QuotePdfInput) {
   lines.push("| Descrição | Valor |");
   lines.push("|---|---|");
   lines.push(`| Subtotal | ${money(quote.subtotalBrl)} |`);
+  if (quote.travelBrl > 0) {
+    lines.push(`| Inclui custos de deslocamento | ${money(quote.travelBrl)} |`);
+  }
   if (quote.discountBrl > 0) {
     lines.push(`| Desconto comercial (${options.discountPct}%) | -${money(quote.discountBrl)} |`);
   }
@@ -102,7 +105,9 @@ export async function renderQuotePdf(input: QuotePdfInput) {
   lines.push(
     "- Proposta válida por 30 dias a contar da data de emissão.\n" +
       "- O cronograma considera dias úteis e depende da disponibilidade de dados e agendas do cliente.\n" +
-      "- Despesas de viagem e hospedagem, quando houver atividades presenciais fora da sede do cliente, são cobradas à parte.\n" +
+      (options.remoteOnly
+        ? "- Não há custos de deslocamento nesta proposta: todos os encontros são realizados on-line.\n"
+        : "- Os custos de deslocamento das atividades presenciais já estão incluídos nos valores apresentados.\n") +
       "- Serviços de terceiros (pesquisas de campo, cliente oculto, registros) já estão incluídos nas etapas em que aparecem.",
   );
 
