@@ -305,6 +305,49 @@ function AdminCrm() {
     }
   }
 
+  /** Rechecagem completa a partir do CNPJ: dados oficiais + nova pesquisa de IA. */
+  async function recheckCompanyByCnpj() {
+    const form = companyForm ?? {};
+    const cnpj = String(form['cnpj'] ?? "").trim();
+    if (!cnpj || !isValidCnpj(cnpj)) return;
+    setAiBusy(true);
+    try {
+      const official = await lookupCnpj(cnpj);
+      if (official) {
+        setCompanyForm((prev) => {
+          if (!prev) return prev;
+          const next = { ...prev };
+          const put = (key: string, value: string) => {
+            if (value) next[key] = value;
+          };
+          put("name", official.legalName);
+          put("trade_name", official.tradeName || official.legalName);
+          put("address", official.street);
+          put("district", official.district);
+          put("city", official.city);
+          put("state", official.state);
+          put("zip", official.zip ? formatCep(official.zip) : "");
+          put("country", official.country);
+          put("email", official.email);
+          put("phone", official.phone ? formatPhone(official.phone) : "");
+          put("founded_on", official.foundedOn);
+          if (official.segment && !String(next['notes'] ?? "").includes(official.segment)) {
+            next['notes'] = [String(next['notes'] ?? "").trim(), `Atividade principal (Receita Federal): ${official.segment}`]
+              .filter(Boolean)
+              .join("\n");
+          }
+          return next;
+        });
+        setCompanyErrors({});
+      }
+      await fillCompanyWithAi(true);
+    } catch {
+      /* rechecagem opcional */
+    } finally {
+      setAiBusy(false);
+    }
+  }
+
 
   function setCompanyField(key: string, value: any) {
     setCompanyForm((prev) => ({ ...(prev ?? {}), [key]: value }));
