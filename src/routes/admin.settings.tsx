@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { AdminShell } from "@/components/AdminShell";
 import { ScheduleSettings } from "@/components/ScheduleSettings";
 import { listEmailTemplates, saveEmailTemplate } from "@/lib/company.functions";
+import { getPublicCompanyIdentity } from "@/lib/company-public.functions";
+import { buildEmailPreviewHtml } from "@/lib/email-brand";
 import {
   getAlertEmail,
   getSiteConfig,
@@ -254,6 +256,12 @@ function EmailTemplatesBlock() {
     queryFn: () => listEmailTemplates(),
     retry: false,
   });
+  const identityQ = useQuery({
+    queryKey: ["company-identity"],
+    queryFn: () => getPublicCompanyIdentity(),
+    retry: false,
+  });
+  const [preview, setPreview] = useState<string | null>(null);
   const [open, setOpen] = useState<string | null>(null);
   const [draft, setDraft] = useState<{ subject: string; body: string; enabled: boolean }>({
     subject: "",
@@ -278,15 +286,39 @@ function EmailTemplatesBlock() {
                 {t.enabled ? "ativo" : "desativado"}
               </span>
               <button
+                onClick={() => setPreview(preview === t.id ? null : t.id)}
+                className="ml-auto text-xs text-accent hover:underline"
+              >
+                {preview === t.id ? "ocultar visualização" : "visualizar e-mail"}
+              </button>
+              <button
                 onClick={() => {
                   setOpen(open === t.id ? null : t.id);
                   setDraft({ subject: t.subject, body: t.body, enabled: t.enabled });
                 }}
-                className="ml-auto text-xs text-accent hover:underline"
+                className="text-xs text-accent hover:underline"
               >
                 {open === t.id ? "fechar" : "editar"}
               </button>
             </div>
+            {preview === t.id && (
+              <div className="mt-3">
+                <iframe
+                  title={`Pré-visualização: ${t.label}`}
+                  className="h-[520px] w-full rounded-md border border-border bg-white"
+                  srcDoc={buildEmailPreviewHtml({
+                    subject: open === t.id ? draft.subject : t.subject,
+                    body: open === t.id ? draft.body : t.body,
+                    identity: identityQ.data ?? undefined,
+                  })}
+                />
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Assim o cliente recebe: logomarca no topo, dados da Liberato Consulting no
+                  rodapé e o link para cancelar o recebimento, incluído automaticamente em
+                  todos os envios.
+                </p>
+              </div>
+            )}
             {open === t.id && (
               <div className="mt-3 space-y-3">
                 <input

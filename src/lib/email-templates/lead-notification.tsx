@@ -11,6 +11,7 @@ import {
   Text,
 } from '@react-email/components'
 import type { TemplateEntry } from './registry'
+import { BrandFooter, BrandLogo } from './brand-shell'
 
 interface Props {
   name?: string
@@ -23,6 +24,8 @@ interface Props {
   message?: string
   language?: string
   sourcePath?: string
+  /** Rodapé institucional montado no envio. */
+  brandFooter?: string
 }
 
 const Row = ({ label, value }: { label: string; value?: string | undefined }) =>
@@ -44,12 +47,14 @@ const Email = ({
   message,
   language,
   sourcePath,
+  brandFooter,
 }: Props) => (
   <Html lang="pt-BR" dir="ltr">
     <Head />
     <Preview>{`Novo contato: ${name ?? 'sem nome'}${company ? ` — ${company}` : ''}`}</Preview>
     <Body style={main}>
       <Container style={container}>
+        <BrandLogo />
         <Heading style={heading}>Novo contato pelo site</Heading>
         <Text style={intro}>
           A equipe Liberato recebeu uma solicitação de {name ?? 'um visitante'} pelo
@@ -74,12 +79,7 @@ const Email = ({
             <Text style={messageStyle}>{message}</Text>
           </>
         ) : null}
-        <Hr style={hr} />
-        <Text style={footer}>
-          Liberato Consulting · liberatoconsulting.com.br ·
-          contato@liberatoconsulting.com.br. Este aviso individual foi gerado após o
-          envio do formulário no site oficial.
-        </Text>
+        <BrandFooter text={brandFooter} />
       </Container>
     </Body>
   </Html>
@@ -118,4 +118,3 @@ const messageStyle = {
   whiteSpace: 'pre-wrap' as const,
   margin: '0',
 }
-const footer = { fontSize: '12px', color: '#888888', margin: '0' }

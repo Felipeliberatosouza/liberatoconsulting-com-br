@@ -11,6 +11,7 @@ import {
   Text,
 } from '@react-email/components'
 import type { TemplateEntry } from './registry'
+import { BrandFooter, BrandLogo } from './brand-shell'
 
 interface Props {
   fullName?: string
@@ -21,6 +22,8 @@ interface Props {
   resumeName?: string
   language?: string
   sourcePath?: string
+  /** Rodapé institucional montado no envio. */
+  brandFooter?: string
 }
 
 const Row = ({ label, value }: { label: string; value?: string | undefined }) =>
@@ -40,12 +43,14 @@ const Email = ({
   resumeName,
   language,
   sourcePath,
+  brandFooter,
 }: Props) => (
   <Html lang="pt-BR" dir="ltr">
     <Head />
     <Preview>{`Nova candidatura: ${fullName ?? 'sem nome'}`}</Preview>
     <Body style={main}>
       <Container style={container}>
+        <BrandLogo />
         <Heading style={heading}>Nova candidatura — Trabalhe Conosco</Heading>
         <Text style={intro}>
           {fullName ?? 'Uma pessoa candidata'} enviou uma candidatura pelo site oficial
@@ -63,12 +68,7 @@ const Email = ({
           <Row label="Idioma" value={language} />
           <Row label="Origem" value={sourcePath} />
         </Section>
-        <Hr style={hr} />
-        <Text style={footer}>
-          Liberato Consulting · liberatoconsulting.com.br ·
-          contato@liberatoconsulting.com.br. Este aviso individual foi gerado após o
-          envio do formulário Trabalhe Conosco.
-        </Text>
+        <BrandFooter text={brandFooter} />
       </Container>
     </Body>
   </Html>
@@ -99,4 +99,3 @@ const intro = { fontSize: '14px', color: '#555555', margin: '0' }
 const hr = { borderColor: '#eeeeee', margin: '16px 0' }
 const row = { fontSize: '14px', color: '#111111', margin: '0 0 6px' }
 const rowLabel = { fontWeight: 'bold' as const, color: '#E8630A' }
-const footer = { fontSize: '12px', color: '#888888', margin: '0' }

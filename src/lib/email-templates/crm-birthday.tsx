@@ -10,6 +10,7 @@ import {
   Text,
 } from '@react-email/components'
 import type { TemplateEntry } from './registry'
+import { BrandFooter, BrandLogo } from './brand-shell'
 
 interface Props {
   /** Nome da pessoa ou da empresa homenageada. */
@@ -22,9 +23,11 @@ interface Props {
   subject?: string
   /** Texto vindo do modelo editável no painel. */
   body?: string
+  /** Rodapé institucional montado no envio. */
+  brandFooter?: string
 }
 
-const Email = ({ name, target = 'pessoa', company, years, subject, body }: Props) => {
+const Email = ({ name, target = 'pessoa', company, years, subject, body, brandFooter }: Props) => {
   const isCompany = target === 'empresa'
   const title =
     subject ||
@@ -38,6 +41,7 @@ const Email = ({ name, target = 'pessoa', company, years, subject, body }: Props
       <Preview>{title}</Preview>
       <Body style={main}>
         <Container style={container}>
+          <BrandLogo />
           <Heading style={heading}>{title}</Heading>
           {body ? (
             body
@@ -60,11 +64,7 @@ const Email = ({ name, target = 'pessoa', company, years, subject, body }: Props
               ano pessoal e profissional seja repleto de conquistas.
             </Text>
           )}
-          <Hr style={hr} />
-          <Text style={footer}>
-            Liberato Consulting — gestão estratégica, empreendedorismo e pesquisas de
-            mercado sobre o Brasil. liberatoconsulting.com.br
-          </Text>
+          <BrandFooter text={brandFooter} />
         </Container>
       </Body>
     </Html>

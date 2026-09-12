@@ -58,7 +58,8 @@ export async function sendTemplateEmail(
     throw new Error('Recipient is required (the template defines no fixed recipient)')
   }
 
-  const templateData = options.templateData ?? {}
+  const { getEmailBrandFooter } = await import('@/lib/email-brand.server')
+  const templateData = { brandFooter: await getEmailBrandFooter(), ...(options.templateData ?? {}) }
   const element = React.createElement(template.component, templateData)
   const html = await render(element)
   const text = await render(element, { plainText: true })
