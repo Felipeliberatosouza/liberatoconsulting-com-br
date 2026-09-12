@@ -13,7 +13,7 @@ export const ORG_ID = `${SITE_URL}/#organization`;
 export const orgRef = { "@id": ORG_ID };
 
 /** Imagem padrão usada quando a página não tem capa própria. */
-export const DEFAULT_IMAGE = `${SITE_URL}/og-default.png`;
+export const DEFAULT_IMAGE = `${SITE_URL}/og-default.jpg`;
 
 /**
  * Organização explícita (nome + logo). O Rich Results Test exige `name` e

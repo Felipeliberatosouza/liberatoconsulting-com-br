@@ -60,7 +60,7 @@ export const Route = createFileRoute("/content_/$slug")({
     const pageTitle = `${title} — Liberato Consulting`.slice(0, 70);
     const image = loaderData?.coverUrl?.startsWith("http")
       ? loaderData.coverUrl
-      : "https://liberatoconsulting.com.br/og-default.png";
+      : "https://liberatoconsulting.com.br/og-default.jpg";
     return {
       meta: [
         { title: pageTitle },
