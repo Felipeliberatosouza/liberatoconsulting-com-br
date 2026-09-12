@@ -80,6 +80,9 @@ export async function renderQuotePdf(input: QuotePdfInput) {
   lines.push("| Descrição | Valor |");
   lines.push("|---|---|");
   lines.push(`| Subtotal | ${money(quote.subtotalBrl)} |`);
+  if (quote.travelBrl > 0) {
+    lines.push(`| Inclui custos de deslocamento | ${money(quote.travelBrl)} |`);
+  }
   if (quote.discountBrl > 0) {
     lines.push(`| Desconto comercial (${options.discountPct}%) | -${money(quote.discountBrl)} |`);
   }
