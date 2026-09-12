@@ -76,6 +76,11 @@ const CARDS = [
     text: "Newsletters enviadas, boletins semanais disparados e conteúdos publicados.",
   },
   {
+    to: "/admin/crm",
+    title: "CRM de clientes",
+    text: "Empresas e contatos, datas importantes, interações e orçamentos enviados.",
+  },
+  {
     to: "/admin/leads",
     title: "Leads recebidos",
     text: "Contatos enviados pelos formulários das páginas de serviço.",
@@ -89,6 +94,16 @@ const CARDS = [
     to: "/admin/empresa",
     title: "Dados da consultoria",
     text: "Razão social, CNPJ, sócios, logomarca e contratos de vínculo.",
+  },
+  {
+    to: "/admin/servicos",
+    title: "Cadastro de serviços",
+    text: "Serviços do site com textos sugeridos por IA e sincronização com Áreas e textos.",
+  },
+  {
+    to: "/admin/precificacao",
+    title: "Precificação e orçamentos",
+    text: "Homem-hora, etapas por serviço e orçamentos em PDF com cronograma.",
   },
   {
     to: "/admin/settings",
