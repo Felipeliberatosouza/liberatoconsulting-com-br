@@ -6,6 +6,7 @@ import { CtaBand } from "@/components/CtaBand";
 
 import { ResultBanner } from "@/components/ResultBanner";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { seoPageMeta } from "@/lib/seo-meta";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
