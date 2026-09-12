@@ -5,6 +5,7 @@ import { ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { keywordsMeta } from "@/lib/keywords";
 import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
 import { getPublicCompanyAddress } from "@/lib/company-public.functions";
@@ -33,6 +34,7 @@ export const Route = createFileRoute("/contact")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Contato — Liberato Consulting" },
       { name: "twitter:description", content: "Conte o desafio da sua empresa. Respondemos em até dois dias úteis." },
+      keywordsMeta(),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/contact", headLang(ctx)),

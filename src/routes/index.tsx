@@ -15,10 +15,12 @@ import heroEmpreendedorismo from "@/assets/hero-empreendedorismo.webp";
 import heroOperacoes from "@/assets/hero-operacoes.webp";
 import heroEstrategia from "@/assets/hero-estrategia.webp";
 import { CtaBand } from "@/components/CtaBand";
+import { SeoKeywordLinks } from "@/components/SeoKeywordLinks";
 import { FilterScopeBadge } from "@/components/SiteFilterBar";
 import { useAudienceFilters } from "@/lib/audience-filters";
 import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { keywordsMeta } from "@/lib/keywords";
 import { itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { DEFAULT_AUTOPLAY_MS, heroSlideOrder } from "@/lib/site-config";
 
@@ -49,6 +51,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Pesquisas de mercado sobre o Brasil — Liberato Consulting" },
       { name: "twitter:description", content: "Inteligência sobre setores da economia brasileira para empresas internacionais, com gestão estratégica e IA no centro." },
+      keywordsMeta(),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/", headLang(ctx)),
@@ -429,6 +432,11 @@ function Index() {
           ))}
         </div>
       </section>
+
+      <SeoKeywordLinks
+        themeIds={["gestao", "operacoes", "ia", "pesquisas", "brasil", "financas"]}
+        title="Consultoria empresarial: temas mais procurados"
+      />
 
       <CtaBand />
     </div>

@@ -3,8 +3,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { ArrowRight, Clock } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
+import { SeoKeywordLinks } from "@/components/SeoKeywordLinks";
 import { pt } from "@/i18n/pt";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { keywordsMeta } from "@/lib/keywords";
 import { breadcrumb, itemList, jsonLd } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
@@ -33,6 +35,7 @@ export const Route = createFileRoute("/services/")({
         content:
           "Produtos de consultoria com escopo, prazo e indicadores definidos, com inteligência artificial aplicada ao método.",
       },
+      keywordsMeta(),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/services", headLang(ctx)),
@@ -144,6 +147,8 @@ function ServicesPage() {
 
         <p className="mt-16 text-sm text-muted-foreground">{t.content.emptyNote}</p>
       </section>
+
+      <SeoKeywordLinks />
 
       <CtaBand />
     </div>
