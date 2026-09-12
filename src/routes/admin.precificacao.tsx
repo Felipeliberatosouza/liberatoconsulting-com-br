@@ -307,6 +307,42 @@ function PricingPage() {
                 />
               </div>
             </div>
+            <h4 className="mb-3 mt-6 text-sm font-semibold">Custos de deslocamento</h4>
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="space-y-1.5">
+                <Label>Deslocamento no Brasil (R$ por encontro)</Label>
+                <Num
+                  value={settings.travelCost?.domestic ?? 0}
+                  onChange={(v) =>
+                    setSettings((s) => ({
+                      ...s,
+                      travelCost: { ...(s.travelCost ?? { domestic: 0, international: 0 }), domestic: v },
+                    }))
+                  }
+                  className="w-full"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Deslocamento internacional (R$ por encontro)</Label>
+                <Num
+                  value={settings.travelCost?.international ?? 0}
+                  onChange={(v) =>
+                    setSettings((s) => ({
+                      ...s,
+                      travelCost: {
+                        ...(s.travelCost ?? { domestic: 0, international: 0 }),
+                        international: v,
+                      },
+                    }))
+                  }
+                  className="w-full"
+                />
+              </div>
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Inclui passagens, hospedagem e diárias por atividade presencial. Ao marcar “encontros
+              presenciais realizados on-line” no orçamento, esses custos deixam de ser cobrados.
+            </p>
             <h4 className="mb-3 mt-6 text-sm font-semibold">Ajuste de preço por país do cliente</h4>
             <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {COUNTRIES.map((c) => (
