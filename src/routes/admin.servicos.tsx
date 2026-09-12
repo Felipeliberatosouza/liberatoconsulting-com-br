@@ -131,11 +131,12 @@ function AdminServicesPage() {
               modules: force || cur.modules.length === 0 ? d.modules : cur.modules,
               limits: force || !cur.limits ? d.limits || cur.limits : cur.limits,
               ai: force || !cur.ai ? d.ai || cur.ai : cur.ai,
-              price_sme: force || !cur.price_sme ? d.price_sme || cur.price_sme : cur.price_sme,
+              price_sme:
+                force || !cur.price_sme ? d.price_sme || cur.price_sme || "" : cur.price_sme || "",
               price_corporate:
                 force || !cur.price_corporate
-                  ? d.price_corporate || cur.price_corporate
-                  : cur.price_corporate,
+                  ? d.price_corporate || cur.price_corporate || ""
+                  : cur.price_corporate || "",
             }
           : cur,
       );
