@@ -5,6 +5,7 @@ import { ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { seoPageMeta } from "@/lib/seo-meta";
 import { keywordsMeta } from "@/lib/keywords";
 import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
@@ -17,24 +18,8 @@ export const Route = createFileRoute("/contact")({
   loader: () => getPublicCompanyAddress(),
   head: (ctx) => ({
     meta: [
-      { title: "Contato — Liberato Consulting" },
-      {
-        name: "description",
-        content:
-          "Fale com a Liberato Consulting sobre gestão estratégica, empreendedorismo, pesquisas de mercado no Brasil e uso de inteligência artificial.",
-      },
-      { property: "og:title", content: "Contato — Liberato Consulting" },
-      {
-        property: "og:description",
-        content: "Conte o desafio da sua empresa. Respondemos em até dois dias úteis.",
-      },
-      { property: "og:url", content: "https://liberatoconsulting.com.br/contact" },
-      { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-      { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Contato — Liberato Consulting" },
-      { name: "twitter:description", content: "Conte o desafio da sua empresa. Respondemos em até dois dias úteis." },
-      keywordsMeta(),
+      ...seoPageMeta("/contact", headLang(ctx)),
+      keywordsMeta(undefined, headLang(ctx) as never),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/contact", headLang(ctx)),
@@ -52,7 +37,7 @@ export const Route = createFileRoute("/contact")({
           email: "contato@liberatoconsulting.com.br",
           telephone: "+5511913258668",
           priceRange: "$$",
-          image: ["https://liberatoconsulting.com.br/og-default.png"],
+          image: ["https://liberatoconsulting.com.br/og-default.jpg"],
           logo: "https://liberatoconsulting.com.br/logo.png",
           address: postalAddressSchema(ctx.loaderData),
 

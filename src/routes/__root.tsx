@@ -23,7 +23,7 @@ import { CopyProtection } from "@/components/CopyProtection";
 import { normalizeLang } from "@/lib/seo";
 import { trackPageView } from "@/lib/gtag";
 import { getPublicCompanyAddress } from "@/lib/company-public.functions";
-import { ALL_KEYWORDS } from "@/lib/keywords";
+import { ALL_KEYWORDS_MULTILINGUAL } from "@/lib/keywords";
 import { postalAddressSchema } from "@/lib/company-address";
 
 
@@ -154,7 +154,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 { "@type": "Place", name: "Global" },
               ],
               knowsLanguage: ["pt-BR", "en", "es", "zh-Hans"],
-              knowsAbout: ALL_KEYWORDS,
+              knowsAbout: ALL_KEYWORDS_MULTILINGUAL,
               contactPoint: [
                 {
                   "@type": "ContactPoint",

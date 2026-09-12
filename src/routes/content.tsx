@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { CtaBand } from "@/components/CtaBand";
 import { BulletinSignup } from "@/components/BulletinSignup";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { seoPageMeta } from "@/lib/seo-meta";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 import { READ_COUNT_BASE } from "@/lib/site-config";
@@ -20,23 +21,7 @@ export const Route = createFileRoute("/content")({
   }),
   head: (ctx) => ({
     meta: [
-      { title: "Conteúdo | Insights — Liberato Consulting" },
-      {
-        name: "description",
-        content:
-          "Artigos, guias e estudos sobre gestão estratégica, operações, empreendedorismo, pesquisas de mercado no Brasil e inteligência artificial aplicada.",
-      },
-      { property: "og:title", content: "Conteúdo — Liberato Consulting" },
-      {
-        property: "og:description",
-        content: "Conhecimento aplicado em gestão empresarial e inteligência artificial.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-      { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Conteúdo — Liberato Consulting" },
-      { name: "twitter:description", content: "Conhecimento aplicado em gestão empresarial e inteligência artificial." },
+      ...seoPageMeta("/content", headLang(ctx)),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/content", headLang(ctx)),

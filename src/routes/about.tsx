@@ -6,28 +6,14 @@ import { CtaBand } from "@/components/CtaBand";
 
 import { ResultBanner } from "@/components/ResultBanner";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { seoPageMeta } from "@/lib/seo-meta";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
 export const Route = createFileRoute("/about")({
   head: (ctx) => ({
     meta: [
-      { title: "Quem somos | About — Liberato Consulting" },
-      {
-        name: "description",
-        content:
-          "Consultoria brasileira com leitura global: método de gestão, resultado medido e transferência de conhecimento, com IA como propósito central.",
-      },
-      { property: "og:title", content: "Quem somos — Liberato Consulting" },
-      {
-        property: "og:description",
-        content: "Método de gestão, resultado medido e inteligência artificial como propósito.",
-      },
-      { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-      { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Quem somos — Liberato Consulting" },
-      { name: "twitter:description", content: "Método de gestão, resultado medido e inteligência artificial como propósito." },
+      ...seoPageMeta("/about", headLang(ctx)),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/about", headLang(ctx)),

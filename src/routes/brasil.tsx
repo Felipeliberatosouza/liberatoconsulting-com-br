@@ -13,6 +13,7 @@ import { compareIndicator, resolvePolarity } from "@/lib/indicator-compare";
 
 import { pt } from "@/i18n/pt";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { seoPageMeta } from "@/lib/seo-meta";
 import { keywordsMeta } from "@/lib/keywords";
 import { breadcrumb, itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { getScopedBrazilSections } from "@/lib/brazil-scope.functions";
@@ -21,32 +22,8 @@ import { topicSlug } from "@/lib/brazil-topic";
 export const Route = createFileRoute("/brasil")({
   head: (ctx) => ({
     meta: [
-      { title: "Dados do Brasil para investidores — Liberato Consulting" },
-      {
-        name: "description",
-        content:
-          "Economia brasileira: PIB, inflação, Selic, setores estratégicos, investimento estrangeiro, tributos e infraestrutura em um só lugar.",
-      },
-      {
-        property: "og:title",
-        content: "Dados do Brasil para investidores internacionais",
-      },
-      {
-        property: "og:description",
-        content:
-          "Panorama econômico, setores estratégicos, IED, tributos, Mercosul, mercado consumidor e infraestrutura do Brasil.",
-      },
-      { property: "og:url", content: "https://liberatoconsulting.com.br/brasil" },
-      { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-      { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Dados do Brasil para investidores internacionais" },
-      {
-        name: "twitter:description",
-        content:
-          "Panorama econômico, setores estratégicos, IED, tributos, Mercosul, mercado consumidor e infraestrutura do Brasil.",
-      },
-      keywordsMeta(["pesquisas", "brasil", "ia"]),
+      ...seoPageMeta("/brasil", headLang(ctx)),
+      keywordsMeta(["pesquisas", "brasil", "ia"], headLang(ctx) as never),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/brasil", headLang(ctx)),

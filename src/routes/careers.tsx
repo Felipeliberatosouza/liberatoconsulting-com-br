@@ -7,6 +7,7 @@ import { pt } from "@/i18n/pt";
 import { EmailText } from "@/components/EmailText";
 import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { seoPageMeta } from "@/lib/seo-meta";
 import { trackEvent } from "@/lib/gtag";
 import { breadcrumb, jobBoardSchema, jsonLd } from "@/lib/schema";
 import { submitApplication } from "@/lib/careers.functions";
@@ -19,16 +20,7 @@ export const Route = createFileRoute("/careers")({
     const title = "Trabalhe Conosco — Liberato Consulting";
     return {
       meta: [
-        { title },
-        { name: "description", content: pt.careers.metaDescription },
-        { property: "og:title", content: title },
-        { property: "og:description", content: pt.careers.metaDescription },
-        { property: "og:type", content: "website" },
-        { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-        { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: title },
-        { name: "twitter:description", content: pt.careers.metaDescription },
+        ...seoPageMeta("/careers", headLang(ctx)),
         ...seoLocaleMeta(headLang(ctx)),
       ],
       links: seoLinks("/careers", headLang(ctx)),
