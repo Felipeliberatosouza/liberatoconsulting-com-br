@@ -60,7 +60,7 @@ export function SeoKeywordLinks({ themeIds, title, intro, className = "" }: Prop
                   <li key={`${theme.id}-${k.term}`}>
                     <Link
                       to={k.path as never}
-                      search={(prev: Record<string, unknown>) => prev}
+                      search={((prev: Record<string, unknown>) => prev) as never}
                       className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-accent hover:underline"
                     >
                       {keywordTerm(k, l)}
