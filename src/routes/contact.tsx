@@ -5,6 +5,7 @@ import { ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { seoPageMeta } from "@/lib/seo-meta";
 import { keywordsMeta } from "@/lib/keywords";
 import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
