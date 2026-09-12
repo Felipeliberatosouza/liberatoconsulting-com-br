@@ -38,6 +38,7 @@ export const draftCrmCompanyProfile = createServerFn({ method: "POST" })
       .object({
         tradeName: z.string().trim().min(2).max(200),
         legalName: z.string().trim().max(200).default(""),
+        cnpj: z.string().trim().max(40).default(""),
         segment: z.string().trim().max(160).default(""),
         city: z.string().trim().max(120).default(""),
         country: z.string().trim().max(80).default("Brasil"),
@@ -56,6 +57,7 @@ export const draftCrmCompanyProfile = createServerFn({ method: "POST" })
           "Pesquise dados públicos de empresas e complete o cadastro. Nunca invente CNPJ ou CEP: " +
           "deixe em branco quando não tiver confiança razoável.",
         `Empresa (nome fantasia): ${data.tradeName}${data.legalName ? ` | razão social informada: ${data.legalName}` : ""}.
+${data.cnpj ? `CNPJ informado: ${data.cnpj}. Este CNPJ é a fonte da verdade: reconfira TODOS os dados para a empresa titular deste CNPJ e corrija o que estiver divergente.` : ""}
 Segmento informado: ${data.segment || "não informado"}. Local informado: ${[data.city, data.country].filter(Boolean).join(", ") || "não informado"}. Site informado: ${data.website || "não informado"}.
 
 Responda com JSON exatamente neste formato (strings vazias quando não souber):
