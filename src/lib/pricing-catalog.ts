@@ -139,6 +139,7 @@ export const DEFAULT_PRICING: PricingSettings = {
   hoursPerDay: 8,
   countryFactors: { BR: 1, PT: 1.6, US: 2.4, ES: 1.8, MX: 1.3, CL: 1.4, CN: 1.7, AE: 2.2 },
   fxFallback: { BRL: 1, USD: 0.185, CNY: 1.32, EUR: 0.17 },
+  travelCost: { domestic: 850, international: 9000 },
 };
 
 export const COUNTRIES = [
