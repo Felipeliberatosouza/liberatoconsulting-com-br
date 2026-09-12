@@ -14,6 +14,20 @@ import {
   upcomingCrmDates,
 } from "@/lib/crm.functions";
 import { quoteFileUrl } from "@/lib/pricing.functions";
+import { CRM_SEGMENTS } from "@/lib/crm-segments";
+import { lookupCep } from "@/lib/cep";
+import {
+  formatCep,
+  formatCnpj,
+  formatPhone,
+  isValidCep,
+  isValidCnpj,
+  isValidEmail,
+  isValidPhone,
+  isValidWebsite,
+  PHONE_ERROR,
+  PHONE_PLACEHOLDER,
+} from "@/lib/validation";
 
 export const Route = createFileRoute("/admin/crm")({
   head: () => ({
@@ -30,8 +44,91 @@ export const Route = createFileRoute("/admin/crm")({
   component: AdminCrm,
 });
 
-const field =
-  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
+const baseField = "w-full rounded-md bg-background px-3 py-2 text-sm outline-none";
+const field = `${baseField} border border-input focus:border-accent`;
+const fieldOf = (err?: string) =>
+  err ? `${baseField} border border-destructive ring-1 ring-destructive` : field;
+
+type Errors = Record<string, string>;
+
+function Field({
+  label,
+  required,
+  error,
+  hint,
+  className = "",
+  children,
+}: {
+  label: string;
+  required?: boolean | undefined;
+  error?: string | undefined;
+  hint?: string | undefined;
+  className?: string | undefined;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className={`text-sm ${className}`}>
+      <span className="mb-1 block text-muted-foreground">
+        {label}
+        {required && <span className="text-destructive"> *</span>}
+      </span>
+      {children}
+      {error ? (
+        <span className="mt-1 block text-xs font-medium text-destructive">{error}</span>
+      ) : hint ? (
+        <span className="mt-1 block text-xs text-muted-foreground">{hint}</span>
+      ) : null}
+    </label>
+  );
+}
+
+function validDate(v: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+  const d = new Date(`${v}T00:00:00`);
+  return !Number.isNaN(d.getTime());
+}
+function inPast(v: string) {
+  return new Date(`${v}T00:00:00`).getTime() <= Date.now();
+}
+
+function validateCompany(f: Record<string, any>): Errors {
+  const e: Errors = {};
+  const get = (k: string) => String(f[k] ?? "").trim();
+  if (!get("name")) e['name'] = "Informe a razão social ou o nome da empresa.";
+  if (!get("segment")) e['segment'] = "Escolha um segmento.";
+  if (!get("country")) e['country'] = "Informe o país.";
+  if (get("cnpj") && !isValidCnpj(get("cnpj"))) e['cnpj'] = "CNPJ incompleto: são 14 dígitos.";
+  if (get("email") && !isValidEmail(get("email")))
+    e['email'] = "E-mail inválido. Exemplo: contato@empresa.com.br";
+  const phone = get("phone");
+  if (phone && phone !== "+55" && !isValidPhone(phone)) e['phone'] = PHONE_ERROR;
+  if (get("zip") && !isValidCep(get("zip"))) e['zip'] = "CEP inválido: informe os 8 dígitos.";
+  if (!isValidWebsite(get("website"))) e['website'] = "Site inválido. Exemplo: empresa.com.br";
+  const founded = get("founded_on");
+  if (founded && (!validDate(founded) || !inPast(founded)))
+    e['founded_on'] = "Data inválida ou no futuro.";
+  const emp = get("employees");
+  if (emp && !/^\d{1,7}$/.test(emp)) e['employees'] = "Use apenas números inteiros.";
+  return e;
+}
+
+function validateContact(f: Record<string, any>): Errors {
+  const e: Errors = {};
+  const get = (k: string) => String(f[k] ?? "").trim();
+  if (get("full_name").length < 2) e['full_name'] = "Informe o nome completo.";
+  if (!get("email")) e['email'] = "Informe o e-mail.";
+  else if (!isValidEmail(get("email"))) e['email'] = "E-mail inválido. Exemplo: nome@empresa.com.br";
+  for (const k of ["phone", "whatsapp"]) {
+    const v = get(k);
+    if (v && v !== "+55" && !isValidPhone(v)) e[k] = PHONE_ERROR;
+  }
+  const url = get("linkedin_url");
+  if (url && !/^(https?:\/\/)?([a-z]{2,3}\.)?linkedin\.com\/.+/i.test(url))
+    e['linkedin_url'] = "Informe um endereço do LinkedIn. Exemplo: linkedin.com/in/nome";
+  const birth = get("birth_date");
+  if (birth && (!validDate(birth) || !inPast(birth))) e['birth_date'] = "Data inválida ou no futuro.";
+  return e;
+}
 const btn = "rounded-full bg-ink px-4 py-2 text-sm font-semibold text-ink-foreground";
 const btnGhost = "rounded-full border border-border px-4 py-2 text-sm font-medium hover:border-accent";
 
@@ -72,10 +169,12 @@ function emptyCompany() {
     country: "Brasil",
     state: "",
     city: "",
+    district: "",
+    zip: "",
     address: "",
     website: "",
     email: "",
-    phone: "",
+    phone: "+55 ",
     founded_on: "",
     employees: "",
     revenue_range: "",
@@ -92,8 +191,8 @@ function emptyContact() {
     role_title: "",
     department: "",
     email: "",
-    phone: "",
-    whatsapp: "",
+    phone: "+55 ",
+    whatsapp: "+55 ",
     linkedin_url: "",
     birth_date: "",
     decision_maker: false,
@@ -131,6 +230,49 @@ function AdminCrm() {
   const [noteForm, setNoteForm] = useState<Record<string, any> | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [companyErrors, setCompanyErrors] = useState<Errors>({});
+  const [contactErrors, setContactErrors] = useState<Errors>({});
+  const [cepBusy, setCepBusy] = useState(false);
+
+  function setCompanyField(key: string, value: any) {
+    setCompanyForm((prev) => ({ ...(prev ?? {}), [key]: value }));
+    setCompanyErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  }
+  function setContactField(key: string, value: any) {
+    setContactForm((prev) => ({ ...(prev ?? {}), [key]: value }));
+    setContactErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  }
+  async function fillFromCep(raw: string) {
+    const masked = formatCep(raw);
+    setCompanyField("zip", masked);
+    if (!isValidCep(masked)) return;
+    setCepBusy(true);
+    const found = await lookupCep(masked);
+    setCepBusy(false);
+    if (!found) {
+      setCompanyErrors((prev) => ({ ...prev, zip: "CEP não encontrado." }));
+      return;
+    }
+    setCompanyForm((prev) => ({
+      ...(prev ?? {}),
+      zip: masked,
+      address: found.street || prev?.['address'] || "",
+      district: found.district || prev?.['district'] || "",
+      city: found.city,
+      state: found.state,
+      country: "Brasil",
+    }));
+  }
 
   const companies = useQuery({ queryKey: ["crm-companies"], queryFn: () => listCrmCompanies(), retry: false });
   const agenda = useQuery({ queryKey: ["crm-agenda"], queryFn: () => upcomingCrmDates(), retry: false });
@@ -227,7 +369,7 @@ function AdminCrm() {
             placeholder="Buscar por nome, segmento, cidade…"
             className={`${field} ml-auto max-w-xs`}
           />
-          <button className={btn} onClick={() => setCompanyForm(emptyCompany())}>
+          <button className={btn} onClick={() => { setCompanyErrors({}); setCompanyForm(emptyCompany()); }}>
             Nova empresa
           </button>
         </div>
@@ -312,18 +454,19 @@ function AdminCrm() {
                 <div className="ml-auto flex flex-wrap gap-2">
                   <button
                     className={btnGhost}
-                    onClick={() =>
+                    onClick={() => {
+                      setCompanyErrors({});
                       setCompanyForm({
                         ...d.company,
                         founded_on: d.company.founded_on ?? "",
                         employees: d.company.employees ?? "",
                         tags: (d.company.tags ?? []).join(", "),
-                      })
-                    }
+                      });
+                    }}
                   >
                     Editar empresa
                   </button>
-                  <button className={btnGhost} onClick={() => setContactForm(emptyContact())}>
+                  <button className={btnGhost} onClick={() => { setContactErrors({}); setContactForm(emptyContact()); }}>
                     Nova pessoa
                   </button>
                   <button
@@ -364,7 +507,7 @@ function AdminCrm() {
                       <div className="flex gap-2 text-xs">
                         <button
                           className="text-accent hover:underline"
-                          onClick={() => setContactForm({ ...p, birth_date: p.birth_date ?? "" })}
+                          onClick={() => { setContactErrors({}); setContactForm({ ...p, birth_date: p.birth_date ?? "" }); }}
                         >
                           Editar
                         </button>
@@ -511,66 +654,173 @@ function AdminCrm() {
       {companyForm && (
         <Modal title={companyForm['id'] ? "Editar empresa" : "Nova empresa"} onClose={() => setCompanyForm(null)}>
           <div className="grid gap-3 sm:grid-cols-2">
-            {([
-              ["name", "Razão social / nome *"],
-              ["trade_name", "Nome fantasia"],
-              ["cnpj", "CNPJ"],
-              ["segment", "Segmento"],
-              ["country", "País"],
-              ["state", "Estado"],
-              ["city", "Cidade"],
-              ["address", "Endereço"],
-              ["website", "Site"],
-              ["email", "E-mail principal"],
-              ["phone", "Telefone / WhatsApp"],
-              ["revenue_range", "Faixa de faturamento"],
-              ["owner_name", "Responsável interno"],
-              ["tags", "Tags (separadas por vírgula)"],
-            ] as [string, string][]).map(([key, label]) => (
-              <label key={key} className="text-sm">
-                <span className="mb-1 block text-muted-foreground">{label}</span>
-                <input
-                  className={field}
-                  value={companyForm[key] ?? ""}
-                  onChange={(e) => setCompanyForm({ ...companyForm, [key]: e.target.value })}
-                />
-              </label>
-            ))}
-            <label className="text-sm">
-              <span className="mb-1 block text-muted-foreground">Data de fundação (aniversário)</span>
+            <Field label="Razão social / nome" required error={companyErrors['name']}>
+              <input
+                className={fieldOf(companyErrors['name'])}
+                value={companyForm['name'] ?? ""}
+                onChange={(e) => setCompanyField("name", e.target.value)}
+              />
+            </Field>
+            <Field label="Nome fantasia">
+              <input
+                className={field}
+                value={companyForm['trade_name'] ?? ""}
+                onChange={(e) => setCompanyField("trade_name", e.target.value)}
+              />
+            </Field>
+            <Field label="CNPJ" error={companyErrors['cnpj']} hint="00.000.000/0000-00">
+              <input
+                inputMode="numeric"
+                placeholder="00.000.000/0000-00"
+                className={fieldOf(companyErrors['cnpj'])}
+                value={companyForm['cnpj'] ?? ""}
+                onChange={(e) => setCompanyField("cnpj", formatCnpj(e.target.value))}
+              />
+            </Field>
+            <Field label="Segmento" required error={companyErrors['segment']}>
+              <select
+                className={fieldOf(companyErrors['segment'])}
+                value={companyForm['segment'] ?? ""}
+                onChange={(e) => setCompanyField("segment", e.target.value)}
+              >
+                <option value="">Selecione…</option>
+                {CRM_SEGMENTS.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </Field>
+
+            <Field
+              label="CEP"
+              error={companyErrors['zip']}
+              hint={cepBusy ? "Buscando endereço…" : "Digite o CEP para preencher o endereço automaticamente."}
+            >
+              <input
+                inputMode="numeric"
+                placeholder="00000-000"
+                className={fieldOf(companyErrors['zip'])}
+                value={companyForm['zip'] ?? ""}
+                onChange={(e) => void fillFromCep(e.target.value)}
+              />
+            </Field>
+            <Field label="País" required error={companyErrors['country']}>
+              <input
+                className={fieldOf(companyErrors['country'])}
+                value={companyForm['country'] ?? ""}
+                onChange={(e) => setCompanyField("country", e.target.value)}
+              />
+            </Field>
+            <Field label="Endereço (rua e número)">
+              <input
+                className={field}
+                value={companyForm['address'] ?? ""}
+                onChange={(e) => setCompanyField("address", e.target.value)}
+              />
+            </Field>
+            <Field label="Bairro">
+              <input
+                className={field}
+                value={companyForm['district'] ?? ""}
+                onChange={(e) => setCompanyField("district", e.target.value)}
+              />
+            </Field>
+            <Field label="Cidade">
+              <input
+                className={field}
+                value={companyForm['city'] ?? ""}
+                onChange={(e) => setCompanyField("city", e.target.value)}
+              />
+            </Field>
+            <Field label="Estado">
+              <input
+                className={field}
+                value={companyForm['state'] ?? ""}
+                onChange={(e) => setCompanyField("state", e.target.value)}
+              />
+            </Field>
+
+            <Field label="Site" error={companyErrors['website']} hint="empresa.com.br">
+              <input
+                className={fieldOf(companyErrors['website'])}
+                value={companyForm['website'] ?? ""}
+                onChange={(e) => setCompanyField("website", e.target.value)}
+              />
+            </Field>
+            <Field label="E-mail principal" error={companyErrors['email']}>
+              <input
+                type="email"
+                placeholder="contato@empresa.com.br"
+                className={fieldOf(companyErrors['email'])}
+                value={companyForm['email'] ?? ""}
+                onChange={(e) => setCompanyField("email", e.target.value)}
+              />
+            </Field>
+            <Field label="Telefone / WhatsApp" error={companyErrors['phone']} hint={PHONE_PLACEHOLDER}>
+              <input
+                inputMode="tel"
+                placeholder={PHONE_PLACEHOLDER}
+                className={fieldOf(companyErrors['phone'])}
+                value={companyForm['phone'] ?? ""}
+                onChange={(e) => setCompanyField("phone", formatPhone(e.target.value))}
+              />
+            </Field>
+            <Field label="Faixa de faturamento">
+              <input
+                className={field}
+                value={companyForm['revenue_range'] ?? ""}
+                onChange={(e) => setCompanyField("revenue_range", e.target.value)}
+              />
+            </Field>
+            <Field label="Responsável interno">
+              <input
+                className={field}
+                value={companyForm['owner_name'] ?? ""}
+                onChange={(e) => setCompanyField("owner_name", e.target.value)}
+              />
+            </Field>
+            <Field label="Tags (separadas por vírgula)">
+              <input
+                className={field}
+                value={companyForm['tags'] ?? ""}
+                onChange={(e) => setCompanyField("tags", e.target.value)}
+              />
+            </Field>
+
+            <Field label="Data de fundação (aniversário)" error={companyErrors['founded_on']}>
               <input
                 type="date"
-                className={field}
+                max={new Date().toISOString().slice(0, 10)}
+                className={fieldOf(companyErrors['founded_on'])}
                 value={companyForm['founded_on'] ?? ""}
-                onChange={(e) => setCompanyForm({ ...companyForm, founded_on: e.target.value })}
+                onChange={(e) => setCompanyField("founded_on", e.target.value)}
               />
-            </label>
-            <label className="text-sm">
-              <span className="mb-1 block text-muted-foreground">Nº de funcionários</span>
+            </Field>
+            <Field label="Nº de funcionários" error={companyErrors['employees']}>
               <input
                 type="number"
-                className={field}
+                min={0}
+                className={fieldOf(companyErrors['employees'])}
                 value={companyForm['employees'] ?? ""}
-                onChange={(e) => setCompanyForm({ ...companyForm, employees: e.target.value })}
+                onChange={(e) => setCompanyField("employees", e.target.value)}
               />
-            </label>
-            <label className="text-sm">
-              <span className="mb-1 block text-muted-foreground">Porte</span>
+            </Field>
+            <Field label="Porte" required>
               <select
                 className={field}
                 value={companyForm['size']}
-                onChange={(e) => setCompanyForm({ ...companyForm, size: e.target.value })}
+                onChange={(e) => setCompanyField("size", e.target.value)}
               >
                 <option value="pme">Pequena ou média empresa</option>
                 <option value="corporacao">Corporação</option>
               </select>
-            </label>
-            <label className="text-sm">
-              <span className="mb-1 block text-muted-foreground">Status</span>
+            </Field>
+            <Field label="Status" required>
               <select
                 className={field}
                 value={companyForm['status']}
-                onChange={(e) => setCompanyForm({ ...companyForm, status: e.target.value })}
+                onChange={(e) => setCompanyField("status", e.target.value)}
               >
                 {STATUS.map((s) => (
                   <option key={s.value} value={s.value}>
@@ -578,21 +828,20 @@ function AdminCrm() {
                   </option>
                 ))}
               </select>
-            </label>
-            <label className="sm:col-span-2 text-sm">
-              <span className="mb-1 block text-muted-foreground">Observações</span>
+            </Field>
+            <Field label="Observações" className="sm:col-span-2">
               <textarea
                 rows={4}
                 className={field}
                 value={companyForm['notes'] ?? ""}
-                onChange={(e) => setCompanyForm({ ...companyForm, notes: e.target.value })}
+                onChange={(e) => setCompanyField("notes", e.target.value)}
               />
-            </label>
+            </Field>
             <label className="sm:col-span-2 flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
                 checked={Boolean(companyForm['birthday_email'])}
-                onChange={(e) => setCompanyForm({ ...companyForm, birthday_email: e.target.checked })}
+                onChange={(e) => setCompanyField("birthday_email", e.target.checked)}
               />
               Enviar e-mail automático no aniversário da empresa
             </label>
@@ -601,8 +850,11 @@ function AdminCrm() {
             <button
               className={btn}
               disabled={busy}
-              onClick={() =>
-                run(
+              onClick={() => {
+                const v = validateCompany(companyForm);
+                setCompanyErrors(v);
+                if (Object.keys(v).length > 0) return;
+                void run(
                   () =>
                     saveCrmCompany({
                       data: {
@@ -616,6 +868,8 @@ function AdminCrm() {
                         country: companyForm['country'] ?? "",
                         state: companyForm['state'] ?? "",
                         city: companyForm['city'] ?? "",
+                        district: companyForm['district'] ?? "",
+                        zip: companyForm['zip'] ?? "",
                         address: companyForm['address'] ?? "",
                         website: companyForm['website'] ?? "",
                         email: companyForm['email'] ?? "",
@@ -633,8 +887,8 @@ function AdminCrm() {
                       } as any,
                     }),
                   () => setCompanyForm(null),
-                )
-              }
+                );
+              }}
             >
               {busy ? "Salvando…" : "Salvar empresa"}
             </button>
@@ -649,42 +903,78 @@ function AdminCrm() {
       {contactForm && selected && (
         <Modal title={contactForm['id'] ? "Editar pessoa" : "Nova pessoa"} onClose={() => setContactForm(null)}>
           <div className="grid gap-3 sm:grid-cols-2">
-            {([
-              ["full_name", "Nome completo *"],
-              ["role_title", "Função / cargo"],
-              ["department", "Área / departamento"],
-              ["email", "E-mail"],
-              ["phone", "Telefone"],
-              ["whatsapp", "WhatsApp"],
-              ["linkedin_url", "LinkedIn"],
-            ] as [string, string][]).map(([key, label]) => (
-              <label key={key} className="text-sm">
-                <span className="mb-1 block text-muted-foreground">{label}</span>
-                <input
-                  className={field}
-                  value={contactForm[key] ?? ""}
-                  onChange={(e) => setContactForm({ ...contactForm, [key]: e.target.value })}
-                />
-              </label>
-            ))}
-            <label className="text-sm">
-              <span className="mb-1 block text-muted-foreground">Data de nascimento</span>
+            <Field label="Nome completo" required error={contactErrors['full_name']}>
+              <input
+                className={fieldOf(contactErrors['full_name'])}
+                value={contactForm['full_name'] ?? ""}
+                onChange={(e) => setContactField("full_name", e.target.value)}
+              />
+            </Field>
+            <Field label="Função / cargo">
+              <input
+                className={field}
+                value={contactForm['role_title'] ?? ""}
+                onChange={(e) => setContactField("role_title", e.target.value)}
+              />
+            </Field>
+            <Field label="Área / departamento">
+              <input
+                className={field}
+                value={contactForm['department'] ?? ""}
+                onChange={(e) => setContactField("department", e.target.value)}
+              />
+            </Field>
+            <Field label="E-mail" required error={contactErrors['email']}>
+              <input
+                type="email"
+                placeholder="nome@empresa.com.br"
+                className={fieldOf(contactErrors['email'])}
+                value={contactForm['email'] ?? ""}
+                onChange={(e) => setContactField("email", e.target.value)}
+              />
+            </Field>
+            <Field label="Telefone" error={contactErrors['phone']} hint={PHONE_PLACEHOLDER}>
+              <input
+                inputMode="tel"
+                placeholder={PHONE_PLACEHOLDER}
+                className={fieldOf(contactErrors['phone'])}
+                value={contactForm['phone'] ?? ""}
+                onChange={(e) => setContactField("phone", formatPhone(e.target.value))}
+              />
+            </Field>
+            <Field label="WhatsApp" error={contactErrors['whatsapp']} hint={PHONE_PLACEHOLDER}>
+              <input
+                inputMode="tel"
+                placeholder={PHONE_PLACEHOLDER}
+                className={fieldOf(contactErrors['whatsapp'])}
+                value={contactForm['whatsapp'] ?? ""}
+                onChange={(e) => setContactField("whatsapp", formatPhone(e.target.value))}
+              />
+            </Field>
+            <Field label="LinkedIn" error={contactErrors['linkedin_url']} hint="linkedin.com/in/nome">
+              <input
+                className={fieldOf(contactErrors['linkedin_url'])}
+                value={contactForm['linkedin_url'] ?? ""}
+                onChange={(e) => setContactField("linkedin_url", e.target.value)}
+              />
+            </Field>
+            <Field label="Data de nascimento" error={contactErrors['birth_date']}>
               <input
                 type="date"
-                className={field}
+                max={new Date().toISOString().slice(0, 10)}
+                className={fieldOf(contactErrors['birth_date'])}
                 value={contactForm['birth_date'] ?? ""}
-                onChange={(e) => setContactForm({ ...contactForm, birth_date: e.target.value })}
+                onChange={(e) => setContactField("birth_date", e.target.value)}
               />
-            </label>
-            <label className="sm:col-span-2 text-sm">
-              <span className="mb-1 block text-muted-foreground">Observações</span>
+            </Field>
+            <Field label="Observações" className="sm:col-span-2">
               <textarea
                 rows={3}
                 className={field}
                 value={contactForm['notes'] ?? ""}
-                onChange={(e) => setContactForm({ ...contactForm, notes: e.target.value })}
+                onChange={(e) => setContactField("notes", e.target.value)}
               />
-            </label>
+            </Field>
             {([
               ["decision_maker", "É decisor na empresa"],
               ["email_opt_in", "Aceita receber e-mails"],
@@ -695,7 +985,7 @@ function AdminCrm() {
                 <input
                   type="checkbox"
                   checked={Boolean(contactForm[key])}
-                  onChange={(e) => setContactForm({ ...contactForm, [key]: e.target.checked })}
+                  onChange={(e) => setContactField(key, e.target.checked)}
                 />
                 {label}
               </label>
@@ -705,8 +995,11 @@ function AdminCrm() {
             <button
               className={btn}
               disabled={busy}
-              onClick={() =>
-                run(
+              onClick={() => {
+                const v = validateContact(contactForm);
+                setContactErrors(v);
+                if (Object.keys(v).length > 0) return;
+                void run(
                   () =>
                     saveCrmContact({
                       data: {
@@ -729,8 +1022,8 @@ function AdminCrm() {
                       } as any,
                     }),
                   () => setContactForm(null),
-                )
-              }
+                );
+              }}
             >
               {busy ? "Salvando…" : "Salvar pessoa"}
             </button>

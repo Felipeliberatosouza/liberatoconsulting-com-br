@@ -1,0 +1,3 @@
+ALTER TABLE public.crm_companies
+  ADD COLUMN IF NOT EXISTS zip text NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS district text NOT NULL DEFAULT '';
