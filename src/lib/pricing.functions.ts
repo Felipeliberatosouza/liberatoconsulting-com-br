@@ -327,6 +327,13 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
+    if (!data.activities.some((a) => a.enabled)) {
+      return {
+        ok: false as const,
+        error:
+          "Este serviço ainda não tem etapas cadastradas. Monte as etapas antes de gerar o orçamento.",
+      };
+    }
     try {
       const { data: cfg } = await context.supabase
         .from("site_settings")
