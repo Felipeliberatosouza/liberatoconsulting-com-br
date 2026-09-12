@@ -19,6 +19,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsent } from "@/components/CookieConsent";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
+import { CrmTracker } from "@/components/CrmTracker";
 import { CopyProtection } from "@/components/CopyProtection";
 import { normalizeLang } from "@/lib/seo";
 import { trackPageView } from "@/lib/gtag";
@@ -260,6 +261,7 @@ function RootComponent() {
       <LanguageProvider>
         <AudienceFilterProvider>
         <RouteTracker />
+        <CrmTracker />
         <div className="flex min-h-screen flex-col">
           <SiteHeader />
           <main className="flex-1">

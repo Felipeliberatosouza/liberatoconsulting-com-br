@@ -20,6 +20,7 @@ const NAV: Array<{ to: string; label: string; exact?: boolean }> = [
   { to: "/admin/boletim", label: "Boletim Semanal" },
   { to: "/admin/propaganda", label: "Propaganda" },
   { to: "/admin/historico", label: "Histórico" },
+  { to: "/admin/crm", label: "CRM de clientes" },
   { to: "/admin/leads", label: "Leads" },
   { to: "/admin/applications", label: "Candidaturas" },
   { to: "/admin/empresa", label: "Dados da consultoria" },
