@@ -805,14 +805,20 @@ function AdminCrm() {
               </div>
             </Field>
 
-            <Field label="CNPJ" error={companyErrors['cnpj']} hint="00.000.000/0000-00">
+            <Field
+              label="CNPJ"
+              error={companyErrors['cnpj']}
+              hint={aiBusy ? "Rechecando dados pelo CNPJ…" : "Ao informar o CNPJ, os dados são rechecados automaticamente."}
+            >
               <input
                 inputMode="numeric"
                 placeholder="00.000.000/0000-00"
                 className={fieldOf(companyErrors['cnpj'])}
                 value={companyForm['cnpj'] ?? ""}
                 onChange={(e) => setCompanyField("cnpj", formatCnpj(e.target.value))}
+                onBlur={() => void recheckCompanyByCnpj()}
               />
+
             </Field>
             <Field label="Segmento" required error={companyErrors['segment']}>
               <select
