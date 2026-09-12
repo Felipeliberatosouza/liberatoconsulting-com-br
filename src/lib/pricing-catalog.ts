@@ -125,6 +125,8 @@ export type PricingSettings = {
   countryFactors: Record<string, number>;
   /** Cotações de reserva (1 BRL = X) usadas se a busca automática falhar. */
   fxFallback: Record<string, number>;
+  /** Custo de deslocamento por atividade presencial (em reais). */
+  travelCost: { domestic: number; international: number };
   aiSuggestion?: { text: string; sources: string; updatedAt: string };
 };
 
