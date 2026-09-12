@@ -45,15 +45,15 @@ export async function renderQuotePdf(input: QuotePdfInput) {
   lines.push("");
   lines.push(
     [
-      input.clientName ? `Cliente: ${input.clientName}` : "",
-      `Serviço: ${input.serviceTitle}`,
-      `Porte: ${options.companyType === "sme" ? "Pequena empresa / startup" : "Corporação"}`,
-      `Localização: ${country?.label ?? options.country}`,
-      `Início previsto: ${br(quote.start)} — Conclusão prevista: ${br(quote.end)}`,
-      `Prazo total: ${quote.totalDays.toFixed(0)} dias úteis`,
+      input.clientName ? `- Cliente: ${input.clientName}` : "",
+      `- Serviço: ${input.serviceTitle}`,
+      `- Porte: ${options.companyType === "sme" ? "Pequena empresa / startup" : "Corporação"}`,
+      `- Localização: ${country?.label ?? options.country}`,
+      `- Início previsto: ${br(quote.start)} · Conclusão prevista: ${br(quote.end)}`,
+      `- Prazo total: ${quote.totalDays.toFixed(0)} dias úteis`,
       options.remoteOnly
-        ? "Formato: encontros e workshops realizados on-line, sem deslocamento da equipe."
-        : "Formato: encontros-chave presenciais, demais atividades remotas.",
+        ? "- Formato: encontros e workshops realizados on-line, sem deslocamento da equipe."
+        : "- Formato: encontros-chave presenciais, demais atividades remotas.",
     ]
       .filter(Boolean)
       .join("\n"),
@@ -124,7 +124,7 @@ export async function renderQuotePdf(input: QuotePdfInput) {
   const bytes = await buildBrandedPdf({
     title: input.serviceTitle,
     subtitle: input.clientName ? `Proposta para ${input.clientName}` : "Proposta comercial",
-    referenceDate: new Date().toISOString(),
+    referenceDate: new Date().toLocaleDateString("pt-BR"),
     body: lines.join("\n"),
     logoDataUrl: logoUrl,
     contact: {
