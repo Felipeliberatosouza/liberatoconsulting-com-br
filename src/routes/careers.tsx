@@ -7,6 +7,7 @@ import { pt } from "@/i18n/pt";
 import { EmailText } from "@/components/EmailText";
 import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { seoPageMeta } from "@/lib/seo-meta";
 import { trackEvent } from "@/lib/gtag";
 import { breadcrumb, jobBoardSchema, jsonLd } from "@/lib/schema";
 import { submitApplication } from "@/lib/careers.functions";
