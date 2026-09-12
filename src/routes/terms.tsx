@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "./privacy";
-import { OG_IMAGE, headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { seoPageMeta } from "@/lib/seo-meta";
 
 export const Route = createFileRoute("/terms")({
   head: (ctx) => ({
