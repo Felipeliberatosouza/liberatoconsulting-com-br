@@ -101,7 +101,7 @@ export const getArticleFileUrl = createServerFn({ method: "POST" })
 
     const { data: signed, error } = await supabaseAdmin.storage
       .from("content")
-      .createSignedUrl(file.path, 300, file.name ? { download: file.name } : undefined);
+      .createSignedUrl(file.path, 300, { download: file.name || true });
     if (error || !signed) return { ok: false as const, error: "Falha ao gerar link." };
     return { ok: true as const, url: signed.signedUrl };
   });
