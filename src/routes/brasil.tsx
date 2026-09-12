@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
+import { SeoKeywordLinks } from "@/components/SeoKeywordLinks";
 import { BulletinSignup } from "@/components/BulletinSignup";
 import { useLanguage } from "@/i18n";
 import { FilterScopeBadge, SiteFilterBar } from "@/components/SiteFilterBar";
@@ -12,6 +13,7 @@ import { compareIndicator, resolvePolarity } from "@/lib/indicator-compare";
 
 import { pt } from "@/i18n/pt";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { keywordsMeta } from "@/lib/keywords";
 import { breadcrumb, itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { getScopedBrazilSections } from "@/lib/brazil-scope.functions";
 import { topicSlug } from "@/lib/brazil-topic";
@@ -44,6 +46,7 @@ export const Route = createFileRoute("/brasil")({
         content:
           "Panorama econômico, setores estratégicos, IED, tributos, Mercosul, mercado consumidor e infraestrutura do Brasil.",
       },
+      keywordsMeta(["pesquisas", "brasil", "ia"]),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/brasil", headLang(ctx)),
@@ -241,6 +244,11 @@ function BrazilPage() {
       <section className="mx-auto w-full max-w-6xl px-6 pb-20">
         <BulletinSignup />
       </section>
+
+      <SeoKeywordLinks
+        themeIds={["pesquisas", "brasil"]}
+        title="Pesquisa e inteligência de mercado sobre o Brasil"
+      />
 
       <CtaBand />
     </div>
