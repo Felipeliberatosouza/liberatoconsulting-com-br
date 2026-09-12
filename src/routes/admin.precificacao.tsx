@@ -13,6 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { listServiceProducts } from "@/lib/services.functions";
+import { listCrmCompanies } from "@/lib/crm.functions";
 import {
   buildQuotePdf,
   getFxRate,
@@ -86,11 +87,13 @@ function PricingPage() {
   const [remoteOnly, setRemoteOnly] = useState(false);
   const [discountPct, setDiscountPct] = useState(0);
   const [clientName, setClientName] = useState("");
+  const [clientId, setClientId] = useState("");
   const [fx, setFx] = useState({ rate: 1, source: "—" });
 
   const products = useQuery({ queryKey: ["admin-service-products"], queryFn: () => listServiceProducts() });
   const stored = useQuery({ queryKey: ["pricing-settings"], queryFn: () => getPricingSettings() });
   const history = useQuery({ queryKey: ["quotes"], queryFn: () => listQuotes() });
+  const crmCompanies = useQuery({ queryKey: ["crm-companies"], queryFn: () => listCrmCompanies() });
 
   useEffect(() => {
     if (stored.data) setSettings(stored.data);
@@ -492,8 +495,54 @@ function PricingPage() {
               </select>
             </div>
             <div className="space-y-1.5">
-              <Label>Cliente</Label>
-              <Input value={clientName} onChange={(e) => setClientName(e.target.value)} />
+              <Label>Cliente (CRM)</Label>
+              <select
+                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                value={clientId}
+                onChange={(e) => {
+                  const id = e.target.value;
+                  setClientId(id);
+                  if (id === "manual") {
+                    setClientName("");
+                    return;
+                  }
+                  const c = (crmCompanies.data ?? []).find((x: any) => x.id === id);
+                  if (!c) {
+                    setClientName("");
+                    return;
+                  }
+                  setClientName(c.trade_name || c.name);
+                  if (c.size === "corporacao" || c.size === "pme") {
+                    setCompanyType(c.size === "corporacao" ? "corporate" : "sme");
+                  }
+                  const match = COUNTRIES.find(
+                    (x) =>
+                      x.id === String(c.country ?? "").toUpperCase() ||
+                      x.label.toLowerCase() === String(c.country ?? "").trim().toLowerCase(),
+                  );
+                  if (match) {
+                    setCountry(match.id);
+                    setCurrency(match.currency);
+                    if (match.id !== "BR") setRemoteOnly(true);
+                  }
+                }}
+              >
+                <option value="">Escolha um cliente do CRM…</option>
+                {(crmCompanies.data ?? []).map((c: any) => (
+                  <option key={c.id} value={c.id}>
+                    {c.trade_name || c.name}
+                  </option>
+                ))}
+                <option value="manual">Outro (digitar nome)</option>
+              </select>
+              {clientId === "manual" && (
+                <Input
+                  className="mt-2"
+                  placeholder="Nome do cliente"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                />
+              )}
             </div>
             <div className="space-y-1.5">
               <Label>Tipo de empresa</Label>
