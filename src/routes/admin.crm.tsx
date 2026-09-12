@@ -17,6 +17,7 @@ import { draftCrmCompanyProfile } from "@/lib/crm-ai.functions";
 import { quoteFileUrl } from "@/lib/pricing.functions";
 import { CRM_SEGMENTS } from "@/lib/crm-segments";
 import { lookupCep } from "@/lib/cep";
+import { lookupCnpj } from "@/lib/cnpj";
 import {
   formatCep,
   formatCnpj,
