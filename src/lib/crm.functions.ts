@@ -16,6 +16,8 @@ const companySchema = z.object({
   country: z.string().trim().max(80).default("Brasil"),
   state: z.string().trim().max(80).default(""),
   city: z.string().trim().max(120).default(""),
+  district: z.string().trim().max(160).default(""),
+  zip: z.string().trim().max(20).default(""),
   address: z.string().trim().max(300).default(""),
   website: z.string().trim().max(200).default(""),
   email: z.string().trim().max(255).default(""),
