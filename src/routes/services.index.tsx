@@ -13,29 +13,8 @@ import { useLanguage } from "@/i18n";
 export const Route = createFileRoute("/services/")({
   head: (ctx) => ({
     meta: [
-      { title: "Serviços de consultoria empresarial | Liberato Consulting" },
-      {
-        name: "description",
-        content:
-          "Consultoria em gestão empresarial no Brasil: eficiência operacional, crescimento, digital e IA, finanças, vendas, ESG, pessoas e inteligência de mercado.",
-      },
-      { property: "og:title", content: "Serviços de consultoria empresarial — Liberato Consulting" },
-      {
-        property: "og:description",
-        content:
-          "Produtos de consultoria com escopo, prazo e indicadores definidos, com inteligência artificial aplicada ao método.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-      { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Serviços de consultoria empresarial — Liberato Consulting" },
-      {
-        name: "twitter:description",
-        content:
-          "Produtos de consultoria com escopo, prazo e indicadores definidos, com inteligência artificial aplicada ao método.",
-      },
-      keywordsMeta(),
+      ...seoPageMeta("/services", headLang(ctx)),
+      keywordsMeta(undefined, headLang(ctx) as never),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/services", headLang(ctx)),
