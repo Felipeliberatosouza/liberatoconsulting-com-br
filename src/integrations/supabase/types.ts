@@ -672,6 +672,7 @@ export type Database = {
           cnpj: string
           country: string
           created_at: string
+          district: string
           email: string
           employees: number | null
           founded_on: string | null
@@ -689,6 +690,7 @@ export type Database = {
           trade_name: string
           updated_at: string
           website: string
+          zip: string
         }
         Insert: {
           address?: string
@@ -697,6 +699,7 @@ export type Database = {
           cnpj?: string
           country?: string
           created_at?: string
+          district?: string
           email?: string
           employees?: number | null
           founded_on?: string | null
@@ -714,6 +717,7 @@ export type Database = {
           trade_name?: string
           updated_at?: string
           website?: string
+          zip?: string
         }
         Update: {
           address?: string
@@ -722,6 +726,7 @@ export type Database = {
           cnpj?: string
           country?: string
           created_at?: string
+          district?: string
           email?: string
           employees?: number | null
           founded_on?: string | null
@@ -739,6 +744,7 @@ export type Database = {
           trade_name?: string
           updated_at?: string
           website?: string
+          zip?: string
         }
         Relationships: []
       }
