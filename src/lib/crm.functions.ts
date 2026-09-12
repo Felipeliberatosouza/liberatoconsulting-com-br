@@ -235,7 +235,24 @@ export const deleteCrmRecord = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     await admin(context);
-    const { error } = await context.supabase.from(data.table).delete().eq("id", data.id);
+    const db = context.supabase;
+    // Exclusão em cascata: remove vínculos antes do registro principal.
+    if (data.table === "crm_companies") {
+      const { data: contactRows } = await db.from("crm_contacts").select("id").eq("company_id", data.id);
+      const contactIds = (contactRows ?? []).map((r: any) => r.id);
+      if (contactIds.length > 0) {
+        await db.from("crm_dates").delete().in("contact_id", contactIds);
+        await db.from("crm_interactions").delete().in("contact_id", contactIds);
+      }
+      await db.from("crm_dates").delete().eq("company_id", data.id);
+      await db.from("crm_interactions").delete().eq("company_id", data.id);
+      await db.from("crm_contacts").delete().eq("company_id", data.id);
+    }
+    if (data.table === "crm_contacts") {
+      await db.from("crm_dates").delete().eq("contact_id", data.id);
+      await db.from("crm_interactions").delete().eq("contact_id", data.id);
+    }
+    const { error } = await db.from(data.table).delete().eq("id", data.id);
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });
