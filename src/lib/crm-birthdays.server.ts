@@ -19,6 +19,23 @@ export async function dispatchCrmBirthdays(): Promise<Result> {
 
   const result: Result = { ok: true, sent: 0, skipped: 0, failed: 0, errors: [] };
 
+  // Modelos editáveis no painel (Configurações → E-mails automáticos).
+  const { data: templateRows } = await supabaseAdmin
+    .from("email_templates")
+    .select("slug, subject, body, enabled")
+    .in("slug", ["birthday_company", "birthday_person"]);
+  const templates = new Map<string, { subject: string; body: string; enabled: boolean }>(
+    ((templateRows ?? []) as any[]).map((t) => [
+      t.slug as string,
+      { subject: t.subject as string, body: t.body as string, enabled: Boolean(t.enabled) },
+    ]),
+  );
+  const fillVars = (text: string, job: { name: string; company: string; years: number | null }) =>
+    text
+      .replaceAll("{{nome}}", job.name)
+      .replaceAll("{{empresa}}", job.company || job.name)
+      .replaceAll("{{anos}}", job.years != null ? String(job.years) : "");
+
   const [{ data: companies }, { data: contacts }] = await Promise.all([
     supabaseAdmin.from("crm_companies").select("id, name, trade_name, email, founded_on, birthday_email"),
     supabaseAdmin
