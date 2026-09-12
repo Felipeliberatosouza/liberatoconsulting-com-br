@@ -41,7 +41,7 @@ export function SeoKeywordLinks({
                 {theme.terms.map((k) => (
                   <li key={`${theme.id}-${k.term}`}>
                     <Link
-                      to={k.path}
+                      to={k.path as never}
                       className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-accent hover:underline"
                     >
                       {k.term}
