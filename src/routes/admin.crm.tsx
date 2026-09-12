@@ -14,6 +14,20 @@ import {
   upcomingCrmDates,
 } from "@/lib/crm.functions";
 import { quoteFileUrl } from "@/lib/pricing.functions";
+import { CRM_SEGMENTS } from "@/lib/crm-segments";
+import { lookupCep } from "@/lib/cep";
+import {
+  formatCep,
+  formatCnpj,
+  formatPhone,
+  isValidCep,
+  isValidCnpj,
+  isValidEmail,
+  isValidPhone,
+  isValidWebsite,
+  PHONE_ERROR,
+  PHONE_PLACEHOLDER,
+} from "@/lib/validation";
 
 export const Route = createFileRoute("/admin/crm")({
   head: () => ({
@@ -30,8 +44,91 @@ export const Route = createFileRoute("/admin/crm")({
   component: AdminCrm,
 });
 
-const field =
-  "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
+const baseField = "w-full rounded-md bg-background px-3 py-2 text-sm outline-none";
+const field = `${baseField} border border-input focus:border-accent`;
+const fieldOf = (err?: string) =>
+  err ? `${baseField} border border-destructive ring-1 ring-destructive` : field;
+
+type Errors = Record<string, string>;
+
+function Field({
+  label,
+  required,
+  error,
+  hint,
+  className = "",
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  error?: string;
+  hint?: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className={`text-sm ${className}`}>
+      <span className="mb-1 block text-muted-foreground">
+        {label}
+        {required && <span className="text-destructive"> *</span>}
+      </span>
+      {children}
+      {error ? (
+        <span className="mt-1 block text-xs font-medium text-destructive">{error}</span>
+      ) : hint ? (
+        <span className="mt-1 block text-xs text-muted-foreground">{hint}</span>
+      ) : null}
+    </label>
+  );
+}
+
+function validDate(v: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return false;
+  const d = new Date(`${v}T00:00:00`);
+  return !Number.isNaN(d.getTime());
+}
+function inPast(v: string) {
+  return new Date(`${v}T00:00:00`).getTime() <= Date.now();
+}
+
+function validateCompany(f: Record<string, any>): Errors {
+  const e: Errors = {};
+  const get = (k: string) => String(f[k] ?? "").trim();
+  if (!get("name")) e['name'] = "Informe a razão social ou o nome da empresa.";
+  if (!get("segment")) e['segment'] = "Escolha um segmento.";
+  if (!get("country")) e['country'] = "Informe o país.";
+  if (get("cnpj") && !isValidCnpj(get("cnpj"))) e['cnpj'] = "CNPJ incompleto: são 14 dígitos.";
+  if (get("email") && !isValidEmail(get("email")))
+    e['email'] = "E-mail inválido. Exemplo: contato@empresa.com.br";
+  const phone = get("phone");
+  if (phone && phone !== "+55" && !isValidPhone(phone)) e['phone'] = PHONE_ERROR;
+  if (get("zip") && !isValidCep(get("zip"))) e['zip'] = "CEP inválido: informe os 8 dígitos.";
+  if (!isValidWebsite(get("website"))) e['website'] = "Site inválido. Exemplo: empresa.com.br";
+  const founded = get("founded_on");
+  if (founded && (!validDate(founded) || !inPast(founded)))
+    e['founded_on'] = "Data inválida ou no futuro.";
+  const emp = get("employees");
+  if (emp && !/^\d{1,7}$/.test(emp)) e['employees'] = "Use apenas números inteiros.";
+  return e;
+}
+
+function validateContact(f: Record<string, any>): Errors {
+  const e: Errors = {};
+  const get = (k: string) => String(f[k] ?? "").trim();
+  if (get("full_name").length < 2) e['full_name'] = "Informe o nome completo.";
+  if (!get("email")) e['email'] = "Informe o e-mail.";
+  else if (!isValidEmail(get("email"))) e['email'] = "E-mail inválido. Exemplo: nome@empresa.com.br";
+  for (const k of ["phone", "whatsapp"]) {
+    const v = get(k);
+    if (v && v !== "+55" && !isValidPhone(v)) e[k] = PHONE_ERROR;
+  }
+  const url = get("linkedin_url");
+  if (url && !/^(https?:\/\/)?([a-z]{2,3}\.)?linkedin\.com\/.+/i.test(url))
+    e['linkedin_url'] = "Informe um endereço do LinkedIn. Exemplo: linkedin.com/in/nome";
+  const birth = get("birth_date");
+  if (birth && (!validDate(birth) || !inPast(birth))) e['birth_date'] = "Data inválida ou no futuro.";
+  return e;
+}
 const btn = "rounded-full bg-ink px-4 py-2 text-sm font-semibold text-ink-foreground";
 const btnGhost = "rounded-full border border-border px-4 py-2 text-sm font-medium hover:border-accent";
 
@@ -72,10 +169,12 @@ function emptyCompany() {
     country: "Brasil",
     state: "",
     city: "",
+    district: "",
+    zip: "",
     address: "",
     website: "",
     email: "",
-    phone: "",
+    phone: "+55 ",
     founded_on: "",
     employees: "",
     revenue_range: "",
@@ -92,8 +191,8 @@ function emptyContact() {
     role_title: "",
     department: "",
     email: "",
-    phone: "",
-    whatsapp: "",
+    phone: "+55 ",
+    whatsapp: "+55 ",
     linkedin_url: "",
     birth_date: "",
     decision_maker: false,
@@ -131,6 +230,49 @@ function AdminCrm() {
   const [noteForm, setNoteForm] = useState<Record<string, any> | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [companyErrors, setCompanyErrors] = useState<Errors>({});
+  const [contactErrors, setContactErrors] = useState<Errors>({});
+  const [cepBusy, setCepBusy] = useState(false);
+
+  function setCompanyField(key: string, value: any) {
+    setCompanyForm((prev) => ({ ...(prev ?? {}), [key]: value }));
+    setCompanyErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  }
+  function setContactField(key: string, value: any) {
+    setContactForm((prev) => ({ ...(prev ?? {}), [key]: value }));
+    setContactErrors((prev) => {
+      if (!prev[key]) return prev;
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  }
+  async function fillFromCep(raw: string) {
+    const masked = formatCep(raw);
+    setCompanyField("zip", masked);
+    if (!isValidCep(masked)) return;
+    setCepBusy(true);
+    const found = await lookupCep(masked);
+    setCepBusy(false);
+    if (!found) {
+      setCompanyErrors((prev) => ({ ...prev, zip: "CEP não encontrado." }));
+      return;
+    }
+    setCompanyForm((prev) => ({
+      ...(prev ?? {}),
+      zip: masked,
+      address: found.street || prev?.['address'] || "",
+      district: found.district || prev?.['district'] || "",
+      city: found.city,
+      state: found.state,
+      country: "Brasil",
+    }));
+  }
 
   const companies = useQuery({ queryKey: ["crm-companies"], queryFn: () => listCrmCompanies(), retry: false });
   const agenda = useQuery({ queryKey: ["crm-agenda"], queryFn: () => upcomingCrmDates(), retry: false });
