@@ -386,6 +386,23 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
         created_by: context.userId,
       });
 
+      // Empresa do CRM com orçamento emitido passa automaticamente a "cliente".
+      const clientName = data.clientName.trim();
+      if (clientName) {
+        const { data: match } = await context.supabase
+          .from("crm_companies")
+          .select("id, status")
+          .or(`name.eq.${clientName},trade_name.eq.${clientName}`)
+          .limit(1)
+          .maybeSingle();
+        if (match && (match as any).status !== "cliente") {
+          await context.supabase
+            .from("crm_companies")
+            .update({ status: "cliente" })
+            .eq("id", (match as any).id);
+        }
+      }
+
       return { ok: true as const, url: signed?.signedUrl ?? "", name: fileName };
     } catch (err) {
       console.error("buildQuotePdf failed", err);
