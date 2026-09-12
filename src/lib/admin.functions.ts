@@ -351,7 +351,9 @@ export const getContentFileUrl = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: signed, error } = await supabaseAdmin.storage
       .from("content")
-      .createSignedUrl(data.path, 300);
+      // Força download em vez de abrir no navegador, evitando execução de
+      // conteúdo malicioso enviado por visitantes.
+      .createSignedUrl(data.path, 300, { download: true });
     if (error || !signed) return { ok: false as const, error: "Falha ao gerar link." };
     return { ok: true as const, url: signed.signedUrl };
   });
@@ -406,7 +408,9 @@ export const getResumeUrl = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: signed, error } = await supabaseAdmin.storage
       .from("resumes")
-      .createSignedUrl(data.path, 300);
+      // Força download em vez de abrir no navegador, evitando execução de
+      // conteúdo malicioso enviado por visitantes.
+      .createSignedUrl(data.path, 300, { download: true });
     if (error || !signed) return { ok: false as const, error: error?.message ?? "Falha ao gerar link." };
     return { ok: true as const, url: signed.signedUrl };
   });
