@@ -28,30 +28,8 @@ import { DEFAULT_AUTOPLAY_MS, heroSlideOrder } from "@/lib/site-config";
 export const Route = createFileRoute("/")({
   head: (ctx) => ({
     meta: [
-      {
-        title: "Pesquisas de mercado e gestão com IA — Liberato Consulting",
-      },
-      {
-        name: "description",
-        content:
-          "Estudos e dados sobre o mercado brasileiro para investidores internacionais, abrangendo agronegócio, energia e indústria com gestão estratégica e IA.",
-      },
-      {
-        property: "og:title",
-        content: "Pesquisas de mercado sobre o Brasil — Liberato Consulting",
-      },
-      {
-        property: "og:description",
-        content:
-          "Inteligência sobre setores da economia brasileira para empresas internacionais, com gestão estratégica e IA no centro.",
-      },
-      { property: "og:url", content: "https://liberatoconsulting.com.br/" },
-      { property: "og:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-      { name: "twitter:image", content: "https://liberatoconsulting.com.br/og-default.png" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Pesquisas de mercado sobre o Brasil — Liberato Consulting" },
-      { name: "twitter:description", content: "Inteligência sobre setores da economia brasileira para empresas internacionais, com gestão estratégica e IA no centro." },
-      keywordsMeta(),
+      ...seoPageMeta("/", headLang(ctx)),
+      keywordsMeta(undefined, headLang(ctx) as never),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/", headLang(ctx)),
