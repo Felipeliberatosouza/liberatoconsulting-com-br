@@ -54,6 +54,18 @@ export const listPublicServiceProducts = createServerFn({ method: "GET" }).handl
   },
 );
 
+/** Endereços dos serviços publicados — usado para validar páginas de serviço. */
+export const listPublicServiceSlugs = createServerFn({ method: "GET" }).handler(
+  async (): Promise<string[]> => {
+    const { publicClient } = await import("./admin.server");
+    const { data } = await publicClient()
+      .from("service_products")
+      .select("slug")
+      .eq("published", true);
+    return ((data ?? []) as { slug: string }[]).map((r) => r.slug);
+  },
+);
+
 async function assertAdmin(context: { supabase: any; userId: string }) {
   const { data } = await context.supabase
     .from("user_roles")

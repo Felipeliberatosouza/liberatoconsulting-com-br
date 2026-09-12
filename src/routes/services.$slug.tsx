@@ -6,15 +6,19 @@ import { OG_IMAGE, headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, serviceSchema } from "@/lib/schema";
 import { ServiceLeadForm } from "@/components/ServiceLeadForm";
 import { LEGACY_SERVICE_REDIRECTS } from "@/lib/service-redirects";
+import { listPublicServiceSlugs } from "@/lib/services.functions";
 
 const PRODUCT_SLUGS = pt.serviceDetail.pages.map((p) => p.id);
 const FAMILY_SLUGS = pt.serviceFamilies.items.map((f) => f.id);
 
 export const Route = createFileRoute("/services/$slug")({
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
     const target = LEGACY_SERVICE_REDIRECTS[params.slug];
     if (target) throw redirect({ to: "/services/$slug", params: { slug: target } });
-    if (!PRODUCT_SLUGS.includes(params.slug) && !FAMILY_SLUGS.includes(params.slug)) throw notFound();
+    if (PRODUCT_SLUGS.includes(params.slug) || FAMILY_SLUGS.includes(params.slug)) return null;
+    // Serviços cadastrados no painel ainda não estão no dicionário estático.
+    const slugs = await listPublicServiceSlugs().catch(() => [] as string[]);
+    if (!slugs.includes(params.slug)) throw notFound();
     return null;
   },
   head: ({ params, ...ctx }) => {
