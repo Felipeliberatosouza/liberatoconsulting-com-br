@@ -653,66 +653,173 @@ function AdminCrm() {
       {companyForm && (
         <Modal title={companyForm['id'] ? "Editar empresa" : "Nova empresa"} onClose={() => setCompanyForm(null)}>
           <div className="grid gap-3 sm:grid-cols-2">
-            {([
-              ["name", "Razão social / nome *"],
-              ["trade_name", "Nome fantasia"],
-              ["cnpj", "CNPJ"],
-              ["segment", "Segmento"],
-              ["country", "País"],
-              ["state", "Estado"],
-              ["city", "Cidade"],
-              ["address", "Endereço"],
-              ["website", "Site"],
-              ["email", "E-mail principal"],
-              ["phone", "Telefone / WhatsApp"],
-              ["revenue_range", "Faixa de faturamento"],
-              ["owner_name", "Responsável interno"],
-              ["tags", "Tags (separadas por vírgula)"],
-            ] as [string, string][]).map(([key, label]) => (
-              <label key={key} className="text-sm">
-                <span className="mb-1 block text-muted-foreground">{label}</span>
-                <input
-                  className={field}
-                  value={companyForm[key] ?? ""}
-                  onChange={(e) => setCompanyForm({ ...companyForm, [key]: e.target.value })}
-                />
-              </label>
-            ))}
-            <label className="text-sm">
-              <span className="mb-1 block text-muted-foreground">Data de fundação (aniversário)</span>
+            <Field label="Razão social / nome" required error={companyErrors['name']}>
+              <input
+                className={fieldOf(companyErrors['name'])}
+                value={companyForm['name'] ?? ""}
+                onChange={(e) => setCompanyField("name", e.target.value)}
+              />
+            </Field>
+            <Field label="Nome fantasia">
+              <input
+                className={field}
+                value={companyForm['trade_name'] ?? ""}
+                onChange={(e) => setCompanyField("trade_name", e.target.value)}
+              />
+            </Field>
+            <Field label="CNPJ" error={companyErrors['cnpj']} hint="00.000.000/0000-00">
+              <input
+                inputMode="numeric"
+                placeholder="00.000.000/0000-00"
+                className={fieldOf(companyErrors['cnpj'])}
+                value={companyForm['cnpj'] ?? ""}
+                onChange={(e) => setCompanyField("cnpj", formatCnpj(e.target.value))}
+              />
+            </Field>
+            <Field label="Segmento" required error={companyErrors['segment']}>
+              <select
+                className={fieldOf(companyErrors['segment'])}
+                value={companyForm['segment'] ?? ""}
+                onChange={(e) => setCompanyField("segment", e.target.value)}
+              >
+                <option value="">Selecione…</option>
+                {CRM_SEGMENTS.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            </Field>
+
+            <Field
+              label="CEP"
+              error={companyErrors['zip']}
+              hint={cepBusy ? "Buscando endereço…" : "Digite o CEP para preencher o endereço automaticamente."}
+            >
+              <input
+                inputMode="numeric"
+                placeholder="00000-000"
+                className={fieldOf(companyErrors['zip'])}
+                value={companyForm['zip'] ?? ""}
+                onChange={(e) => void fillFromCep(e.target.value)}
+              />
+            </Field>
+            <Field label="País" required error={companyErrors['country']}>
+              <input
+                className={fieldOf(companyErrors['country'])}
+                value={companyForm['country'] ?? ""}
+                onChange={(e) => setCompanyField("country", e.target.value)}
+              />
+            </Field>
+            <Field label="Endereço (rua e número)">
+              <input
+                className={field}
+                value={companyForm['address'] ?? ""}
+                onChange={(e) => setCompanyField("address", e.target.value)}
+              />
+            </Field>
+            <Field label="Bairro">
+              <input
+                className={field}
+                value={companyForm['district'] ?? ""}
+                onChange={(e) => setCompanyField("district", e.target.value)}
+              />
+            </Field>
+            <Field label="Cidade">
+              <input
+                className={field}
+                value={companyForm['city'] ?? ""}
+                onChange={(e) => setCompanyField("city", e.target.value)}
+              />
+            </Field>
+            <Field label="Estado">
+              <input
+                className={field}
+                value={companyForm['state'] ?? ""}
+                onChange={(e) => setCompanyField("state", e.target.value)}
+              />
+            </Field>
+
+            <Field label="Site" error={companyErrors['website']} hint="empresa.com.br">
+              <input
+                className={fieldOf(companyErrors['website'])}
+                value={companyForm['website'] ?? ""}
+                onChange={(e) => setCompanyField("website", e.target.value)}
+              />
+            </Field>
+            <Field label="E-mail principal" error={companyErrors['email']}>
+              <input
+                type="email"
+                placeholder="contato@empresa.com.br"
+                className={fieldOf(companyErrors['email'])}
+                value={companyForm['email'] ?? ""}
+                onChange={(e) => setCompanyField("email", e.target.value)}
+              />
+            </Field>
+            <Field label="Telefone / WhatsApp" error={companyErrors['phone']} hint={PHONE_PLACEHOLDER}>
+              <input
+                inputMode="tel"
+                placeholder={PHONE_PLACEHOLDER}
+                className={fieldOf(companyErrors['phone'])}
+                value={companyForm['phone'] ?? ""}
+                onChange={(e) => setCompanyField("phone", formatPhone(e.target.value))}
+              />
+            </Field>
+            <Field label="Faixa de faturamento">
+              <input
+                className={field}
+                value={companyForm['revenue_range'] ?? ""}
+                onChange={(e) => setCompanyField("revenue_range", e.target.value)}
+              />
+            </Field>
+            <Field label="Responsável interno">
+              <input
+                className={field}
+                value={companyForm['owner_name'] ?? ""}
+                onChange={(e) => setCompanyField("owner_name", e.target.value)}
+              />
+            </Field>
+            <Field label="Tags (separadas por vírgula)">
+              <input
+                className={field}
+                value={companyForm['tags'] ?? ""}
+                onChange={(e) => setCompanyField("tags", e.target.value)}
+              />
+            </Field>
+
+            <Field label="Data de fundação (aniversário)" error={companyErrors['founded_on']}>
               <input
                 type="date"
-                className={field}
+                max={new Date().toISOString().slice(0, 10)}
+                className={fieldOf(companyErrors['founded_on'])}
                 value={companyForm['founded_on'] ?? ""}
-                onChange={(e) => setCompanyForm({ ...companyForm, founded_on: e.target.value })}
+                onChange={(e) => setCompanyField("founded_on", e.target.value)}
               />
-            </label>
-            <label className="text-sm">
-              <span className="mb-1 block text-muted-foreground">Nº de funcionários</span>
+            </Field>
+            <Field label="Nº de funcionários" error={companyErrors['employees']}>
               <input
                 type="number"
-                className={field}
+                min={0}
+                className={fieldOf(companyErrors['employees'])}
                 value={companyForm['employees'] ?? ""}
-                onChange={(e) => setCompanyForm({ ...companyForm, employees: e.target.value })}
+                onChange={(e) => setCompanyField("employees", e.target.value)}
               />
-            </label>
-            <label className="text-sm">
-              <span className="mb-1 block text-muted-foreground">Porte</span>
+            </Field>
+            <Field label="Porte" required>
               <select
                 className={field}
                 value={companyForm['size']}
-                onChange={(e) => setCompanyForm({ ...companyForm, size: e.target.value })}
+                onChange={(e) => setCompanyField("size", e.target.value)}
               >
                 <option value="pme">Pequena ou média empresa</option>
                 <option value="corporacao">Corporação</option>
               </select>
-            </label>
-            <label className="text-sm">
-              <span className="mb-1 block text-muted-foreground">Status</span>
+            </Field>
+            <Field label="Status" required>
               <select
                 className={field}
                 value={companyForm['status']}
-                onChange={(e) => setCompanyForm({ ...companyForm, status: e.target.value })}
+                onChange={(e) => setCompanyField("status", e.target.value)}
               >
                 {STATUS.map((s) => (
                   <option key={s.value} value={s.value}>
@@ -720,21 +827,20 @@ function AdminCrm() {
                   </option>
                 ))}
               </select>
-            </label>
-            <label className="sm:col-span-2 text-sm">
-              <span className="mb-1 block text-muted-foreground">Observações</span>
+            </Field>
+            <Field label="Observações" className="sm:col-span-2">
               <textarea
                 rows={4}
                 className={field}
                 value={companyForm['notes'] ?? ""}
-                onChange={(e) => setCompanyForm({ ...companyForm, notes: e.target.value })}
+                onChange={(e) => setCompanyField("notes", e.target.value)}
               />
-            </label>
+            </Field>
             <label className="sm:col-span-2 flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
                 checked={Boolean(companyForm['birthday_email'])}
-                onChange={(e) => setCompanyForm({ ...companyForm, birthday_email: e.target.checked })}
+                onChange={(e) => setCompanyField("birthday_email", e.target.checked)}
               />
               Enviar e-mail automático no aniversário da empresa
             </label>
