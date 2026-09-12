@@ -588,6 +588,21 @@ function AdminCrm() {
                   >
                     Visualizar/Editar empresa
                   </button>
+                  <button
+                    className={btnGhost}
+                    disabled={busy}
+                    onClick={() =>
+                      run(
+                        async () => {
+                          const res = await refreshCrmLead({ data: { id: d.company.id } });
+                          return res;
+                        },
+                        () => {},
+                      )
+                    }
+                  >
+                    {busy ? "Atualizando…" : "Atualizar dados com IA"}
+                  </button>
                   <button className={btnGhost} onClick={() => { setContactErrors({}); setContactForm(emptyContact()); }}>
                     Nova pessoa
                   </button>
