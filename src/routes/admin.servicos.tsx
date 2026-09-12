@@ -11,6 +11,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   deleteServiceProduct,
   listServiceProducts,
   saveServiceProduct,
@@ -162,6 +170,18 @@ function AdminServicesPage() {
     }
   }
 
+  function openNew() {
+    setDraft({
+      ...EMPTY_PRODUCT,
+      position: (list.data?.length ?? 0) + 1,
+      family_id: FAMILIES[0]?.id ?? "",
+      family_title: FAMILIES[0]?.title ?? "",
+      code: FAMILIES[0]?.code ?? "",
+      group_id: GROUPS[0]?.id ?? "",
+      groups: GROUPS[0] ? [GROUPS[0].id] : [],
+    });
+  }
+
   return (
     <AdminShell
       title="Cadastro de serviços"
@@ -176,19 +196,7 @@ function AdminServicesPage() {
           className="max-w-xs"
         />
         <div className="flex-1" />
-        <Button
-          onClick={() =>
-            setDraft({
-              ...EMPTY_PRODUCT,
-              position: (list.data?.length ?? 0) + 1,
-              family_id: FAMILIES[0]?.id ?? "",
-              family_title: FAMILIES[0]?.title ?? "",
-              code: FAMILIES[0]?.code ?? "",
-              group_id: GROUPS[0]?.id ?? "",
-              groups: GROUPS[0] ? [GROUPS[0].id] : [],
-            })
-          }
-        >
+        <Button onClick={openNew}>
           <Plus className="size-4" />
           Novo serviço
         </Button>
@@ -197,11 +205,18 @@ function AdminServicesPage() {
       {list.isLoading && <p className="text-sm text-muted-foreground">Carregando…</p>}
 
       <div className="space-y-8">
+        <div>
+          <h2 className="mb-1 text-lg font-semibold">Serviços já cadastrados</h2>
+          <p className="text-sm text-muted-foreground">
+            {list.data?.length ?? 0} serviço(s) publicado(s) ou oculto(s) no site.
+          </p>
+        </div>
+
         {grouped.map(({ family, rows }) => (
           <section key={family.id}>
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
               {family.code} · {family.title}
-            </h2>
+            </h3>
             <div className="grid gap-3">
               {rows.map((r) => (
                 <div
@@ -229,187 +244,194 @@ function AdminServicesPage() {
         ))}
       </div>
 
-      {draft && (
-        <div className="mt-8 space-y-5 rounded-xl border border-border p-6">
-          <h2 className="text-lg font-semibold">
-            {draft.id ? "Editar serviço" : "Novo serviço"}
-          </h2>
+      <Dialog open={!!draft} onOpenChange={(open) => !open && setDraft(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+          <DialogHeader className="sticky top-0 z-10 border-b bg-background px-6 py-4">
+            <DialogTitle>{draft?.id ? "Editar serviço" : "Novo serviço"}</DialogTitle>
+            <DialogDescription>
+              Preencha os campos abaixo. Os preços são internos e não aparecem no site.
+            </DialogDescription>
+          </DialogHeader>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label>Frente (grupo de produtos)</Label>
-              <select
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                value={draft.group_id}
-                onChange={(e) => {
-                  set("group_id", e.target.value);
-                  set("groups", [e.target.value]);
-                }}
-              >
-                {GROUPS.map((g) => (
-                  <option key={g.id} value={g.id}>
-                    {g.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Família do produto</Label>
-              <select
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                value={draft.family_id}
-                onChange={(e) => {
-                  const f = FAMILIES.find((x) => x.id === e.target.value);
-                  set("family_id", e.target.value);
-                  if (f) {
-                    set("family_title", f.title);
-                    set("code", f.code);
-                  }
-                }}
-              >
-                {FAMILIES.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.code} · {f.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-1.5">
-              <Label>Nome do serviço</Label>
-              <Input
-                value={draft.title}
-                onChange={(e) => {
-                  set("title", e.target.value);
-                  if (!draft.id && !draft.slug) set("slug", "");
-                }}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Link (endereço da página)</Label>
-              <Input
-                value={draft.slug}
-                placeholder={slugify(draft.title)}
-                onChange={(e) => set("slug", slugify(e.target.value))}
-              />
-            </div>
-          </div>
+          {draft && (
+            <div className="space-y-5 px-6 py-4">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label>Frente (grupo de produtos)</Label>
+                  <select
+                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    value={draft.group_id}
+                    onChange={(e) => {
+                      set("group_id", e.target.value);
+                      set("groups", [e.target.value]);
+                    }}
+                  >
+                    {GROUPS.map((g) => (
+                      <option key={g.id} value={g.id}>
+                        {g.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Família do produto</Label>
+                  <select
+                    className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    value={draft.family_id}
+                    onChange={(e) => {
+                      const f = FAMILIES.find((x) => x.id === e.target.value);
+                      set("family_id", e.target.value);
+                      if (f) {
+                        set("family_title", f.title);
+                        set("code", f.code);
+                      }
+                    }}
+                  >
+                    {FAMILIES.map((f) => (
+                      <option key={f.id} value={f.id}>
+                        {f.code} · {f.title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Nome do serviço</Label>
+                  <Input
+                    value={draft.title}
+                    onChange={(e) => {
+                      set("title", e.target.value);
+                      if (!draft.id && !draft.slug) set("slug", "");
+                    }}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Link (endereço da página)</Label>
+                  <Input
+                    value={draft.slug}
+                    placeholder={slugify(draft.title)}
+                    onChange={(e) => set("slug", slugify(e.target.value))}
+                  />
+                </div>
+              </div>
 
-          <div className="space-y-1.5">
-            <Label>Frase abaixo do título (promessa de valor)</Label>
-            <Textarea rows={2} value={draft.lead} onChange={(e) => set("lead", e.target.value)} />
-          </div>
-          <div className="space-y-1.5">
-            <Label>Problema que resolvemos</Label>
-            <Textarea
-              rows={2}
-              value={draft.problem}
-              onChange={(e) => set("problem", e.target.value)}
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label>Descrição do que fazemos</Label>
-            <Textarea rows={4} value={draft.body} onChange={(e) => set("body", e.target.value)} />
-          </div>
+              <div className="space-y-1.5">
+                <Label>Frase abaixo do título (promessa de valor)</Label>
+                <Textarea rows={2} value={draft.lead} onChange={(e) => set("lead", e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Problema que resolvemos</Label>
+                <Textarea
+                  rows={2}
+                  value={draft.problem}
+                  onChange={(e) => set("problem", e.target.value)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Descrição do que fazemos</Label>
+                <Textarea rows={4} value={draft.body} onChange={(e) => set("body", e.target.value)} />
+              </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label>Para quem é</Label>
-              <Input value={draft.audience} onChange={(e) => set("audience", e.target.value)} />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Tempo estimado (exibido no site)</Label>
-              <Input value={draft.duration} onChange={(e) => set("duration", e.target.value)} />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Duração corporativa (interno)</Label>
-              <Input
-                value={draft.duration_corporate}
-                onChange={(e) => set("duration_corporate", e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Formato de contratação recomendado</Label>
-              <Input value={draft.level} onChange={(e) => set("level", e.target.value)} />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Preço PME / startup (interno)</Label>
-              <Input
-                value={draft.price_sme ?? ""}
-                onChange={(e) => set("price_sme", e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label>Preço corporativo (interno)</Label>
-              <Input
-                value={draft.price_corporate ?? ""}
-                onChange={(e) => set("price_corporate", e.target.value)}
-              />
-            </div>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Os preços ficam somente no painel: nenhuma página pública exibe esses valores.
-          </p>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label>Para quem é</Label>
+                  <Input value={draft.audience} onChange={(e) => set("audience", e.target.value)} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Tempo estimado (exibido no site)</Label>
+                  <Input value={draft.duration} onChange={(e) => set("duration", e.target.value)} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Duração corporativa (interno)</Label>
+                  <Input
+                    value={draft.duration_corporate}
+                    onChange={(e) => set("duration_corporate", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Formato de contratação recomendado</Label>
+                  <Input value={draft.level} onChange={(e) => set("level", e.target.value)} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Preço PME / startup (interno)</Label>
+                  <Input
+                    value={draft.price_sme ?? ""}
+                    onChange={(e) => set("price_sme", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Preço corporativo (interno)</Label>
+                  <Input
+                    value={draft.price_corporate ?? ""}
+                    onChange={(e) => set("price_corporate", e.target.value)}
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Os preços ficam somente no painel: nenhuma página pública exibe esses valores.
+              </p>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <ListField
-              label="O que fazemos (entregas)"
-              value={draft.bullets}
-              onChange={(v) => set("bullets", v)}
-            />
-            <ListField
-              label="Indicadores de sucesso"
-              value={draft.results}
-              onChange={(v) => set("results", v)}
-            />
-            <ListField
-              label="Capacidades envolvidas"
-              value={draft.modules}
-              onChange={(v) => set("modules", v)}
-            />
-          </div>
+              <div className="grid gap-4 md:grid-cols-3">
+                <ListField
+                  label="O que fazemos (entregas)"
+                  value={draft.bullets}
+                  onChange={(v) => set("bullets", v)}
+                />
+                <ListField
+                  label="Indicadores de sucesso"
+                  value={draft.results}
+                  onChange={(v) => set("results", v)}
+                />
+                <ListField
+                  label="Capacidades envolvidas"
+                  value={draft.modules}
+                  onChange={(v) => set("modules", v)}
+                />
+              </div>
 
-          <div className="space-y-1.5">
-            <Label>Onde a inteligência artificial entra</Label>
-            <Textarea rows={2} value={draft.ai} onChange={(e) => set("ai", e.target.value)} />
-          </div>
-          <div className="space-y-1.5">
-            <Label>Premissas e limites de escopo</Label>
-            <Textarea
-              rows={2}
-              value={draft.limits}
-              onChange={(e) => set("limits", e.target.value)}
-            />
-          </div>
+              <div className="space-y-1.5">
+                <Label>Onde a inteligência artificial entra</Label>
+                <Textarea rows={2} value={draft.ai} onChange={(e) => set("ai", e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Premissas e limites de escopo</Label>
+                <Textarea
+                  rows={2}
+                  value={draft.limits}
+                  onChange={(e) => set("limits", e.target.value)}
+                />
+              </div>
 
-          <div className="flex flex-wrap items-center gap-6">
-            <div className="space-y-1.5">
-              <Label>Ordem</Label>
-              <Input
-                type="number"
-                className="w-24"
-                value={draft.position}
-                onChange={(e) => set("position", Number(e.target.value))}
-              />
+              <div className="flex flex-wrap items-center gap-6">
+                <div className="space-y-1.5">
+                  <Label>Ordem</Label>
+                  <Input
+                    type="number"
+                    className="w-24"
+                    value={draft.position}
+                    onChange={(e) => set("position", Number(e.target.value))}
+                  />
+                </div>
+                <label className="flex items-center gap-2 text-sm">
+                  <Switch
+                    checked={draft.published}
+                    onCheckedChange={(v) => set("published", Boolean(v))}
+                  />
+                  Publicado no site
+                </label>
+              </div>
             </div>
-            <label className="flex items-center gap-2 text-sm">
-              <Switch
-                checked={draft.published}
-                onCheckedChange={(v) => set("published", Boolean(v))}
-              />
-              Publicado no site
-            </label>
-          </div>
+          )}
 
-          <div className="flex gap-3">
-            <Button onClick={save} disabled={saving}>
-              {saving ? "Salvando e traduzindo…" : "Salvar"}
-            </Button>
+          <DialogFooter className="sticky bottom-0 z-10 border-t bg-background px-6 py-4">
             <Button variant="outline" onClick={() => setDraft(null)} disabled={saving}>
               Cancelar
             </Button>
-          </div>
-        </div>
-      )}
+            <Button onClick={save} disabled={saving}>
+              {saving ? "Salvando e traduzindo…" : "Salvar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminShell>
   );
 }
