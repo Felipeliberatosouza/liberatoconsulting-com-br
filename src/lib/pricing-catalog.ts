@@ -293,12 +293,14 @@ export function buildQuote(
         hours,
         days: Number(days.toFixed(1)),
         priceBrl: price,
+        travelBrl: travel,
         start: iso(itemStart),
         end: iso(itemEnd),
         remoteNote: options.remoteOnly && a.onsite,
       });
       phaseDays += days;
       phasePrice += price;
+      totalTravel += travel;
       totalHours += hours;
     }
 
