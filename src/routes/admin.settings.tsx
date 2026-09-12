@@ -254,6 +254,12 @@ function EmailTemplatesBlock() {
     queryFn: () => listEmailTemplates(),
     retry: false,
   });
+  const identityQ = useQuery({
+    queryKey: ["company-identity"],
+    queryFn: () => getPublicCompanyIdentity(),
+    retry: false,
+  });
+  const [preview, setPreview] = useState<string | null>(null);
   const [open, setOpen] = useState<string | null>(null);
   const [draft, setDraft] = useState<{ subject: string; body: string; enabled: boolean }>({
     subject: "",
