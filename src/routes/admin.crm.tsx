@@ -703,11 +703,12 @@ function AdminCrm() {
                 onChange={(e) => setCompanyField("name", e.target.value)}
               />
             </Field>
-            <Field label="Nome fantasia">
+            <Field label="Nome fantasia" required error={companyErrors['trade_name']}>
               <input
-                className={field}
+                className={fieldOf(companyErrors['trade_name'])}
                 value={companyForm['trade_name'] ?? ""}
                 onChange={(e) => setCompanyField("trade_name", e.target.value)}
+                onBlur={() => void fillCompanyWithAi()}
               />
             </Field>
             <Field label="CNPJ" error={companyErrors['cnpj']} hint="00.000.000/0000-00">
