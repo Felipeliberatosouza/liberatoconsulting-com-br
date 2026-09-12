@@ -310,7 +310,7 @@ Atualize os dados para hoje e responda com JSON:
           .slice(0, 6000);
       }
 
-      const { error } = await context.supabase.from("crm_companies").update(patch).eq("id", data.id);
+      const { error } = await context.supabase.from("crm_companies").update(patch as any).eq("id", data.id);
       if (error) return { ok: false as const, error: error.message };
 
       // Acrescenta apenas pessoas ainda não cadastradas.
