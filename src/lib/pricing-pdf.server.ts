@@ -105,7 +105,9 @@ export async function renderQuotePdf(input: QuotePdfInput) {
   lines.push(
     "- Proposta válida por 30 dias a contar da data de emissão.\n" +
       "- O cronograma considera dias úteis e depende da disponibilidade de dados e agendas do cliente.\n" +
-      "- Despesas de viagem e hospedagem, quando houver atividades presenciais fora da sede do cliente, são cobradas à parte.\n" +
+      (options.remoteOnly
+        ? "- Não há custos de deslocamento nesta proposta: todos os encontros são realizados on-line.\n"
+        : "- Os custos de deslocamento das atividades presenciais já estão incluídos nos valores apresentados.\n") +
       "- Serviços de terceiros (pesquisas de campo, cliente oculto, registros) já estão incluídos nas etapas em que aparecem.",
   );
 
