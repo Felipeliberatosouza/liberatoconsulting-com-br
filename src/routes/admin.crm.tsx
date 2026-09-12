@@ -475,6 +475,9 @@ function AdminCrm() {
         </div>
       </section>
 
+      {/* PROSPECÇÃO COM IA */}
+      <CrmProspect onImported={refresh} />
+
       {/* LISTA */}
       <section className="mt-8">
         <div className="flex flex-wrap items-center gap-3">
