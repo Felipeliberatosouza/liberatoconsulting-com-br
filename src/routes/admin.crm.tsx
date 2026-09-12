@@ -239,7 +239,7 @@ function AdminCrm() {
   const [aiBusy, setAiBusy] = useState(false);
   const [aiFor, setAiFor] = useState("");
 
-  /** Preenche faturamento e tags com pesquisa de IA a partir do nome fantasia. */
+  /** Preenche todo o cadastro com pesquisa de IA a partir do nome fantasia. */
   async function fillCompanyWithAi(force = false) {
     const form = companyForm ?? {};
     const tradeName = String(form['trade_name'] ?? "").trim();
@@ -262,14 +262,37 @@ function AdminCrm() {
         setCompanyForm((prev) => {
           if (!prev) return prev;
           const next = { ...prev };
-          if (force || !String(next['revenue_range'] ?? "").trim()) {
-            if (res.revenue_range) next['revenue_range'] = res.revenue_range;
-          }
-          if (force || !String(next['tags'] ?? "").trim()) {
-            if (res.tags.length) next['tags'] = res.tags.join(", ");
-          }
+          const put = (key: string, value: string) => {
+            if (!value) return;
+            const current = String(next[key] ?? "").trim();
+            const blank = !current || current === "+55" || current === "+55 " || current === "Brasil";
+            if (force || blank) next[key] = value;
+          };
+          put("name", res.legal_name);
+          put("cnpj", res.cnpj);
+          put("segment", res.segment);
+          put("country", res.country);
+          put("state", res.state);
+          put("city", res.city);
+          put("district", res.district);
+          put("zip", res.zip);
+          put("address", res.address);
+          put("website", res.website);
+          put("email", res.email);
+          put("phone", res.phone);
+          put("founded_on", res.founded_on);
+          put("revenue_range", res.revenue_range);
+          put("owner_name", res.owner_name);
+          put("owner_title", res.owner_title);
+          put("notes", res.notes);
+          if (res.employees && (force || !String(next['employees'] ?? "").trim()))
+            next['employees'] = String(res.employees);
+          if (res.size && (force || !String(next['size'] ?? "").trim())) next['size'] = res.size;
+          if (res.tags.length && (force || !String(next['tags'] ?? "").trim()))
+            next['tags'] = res.tags.join(", ");
           return next;
         });
+        setCompanyErrors({});
       }
     } catch {
       /* sugestão opcional: falha não bloqueia o cadastro */
@@ -277,6 +300,7 @@ function AdminCrm() {
       setAiBusy(false);
     }
   }
+
 
   function setCompanyField(key: string, value: any) {
     setCompanyForm((prev) => ({ ...(prev ?? {}), [key]: value }));
@@ -705,14 +729,34 @@ function AdminCrm() {
                 onChange={(e) => setCompanyField("name", e.target.value)}
               />
             </Field>
-            <Field label="Nome fantasia" required error={companyErrors['trade_name']}>
-              <input
-                className={fieldOf(companyErrors['trade_name'])}
-                value={companyForm['trade_name'] ?? ""}
-                onChange={(e) => setCompanyField("trade_name", e.target.value)}
-                onBlur={() => void fillCompanyWithAi()}
-              />
+            <Field
+              label="Nome fantasia"
+              required
+              error={companyErrors['trade_name']}
+              hint={
+                aiBusy
+                  ? "Pesquisando os dados da empresa com IA…"
+                  : "Ao sair do campo, a IA preenche todo o cadastro; tudo continua editável."
+              }
+            >
+              <div className="flex gap-2">
+                <input
+                  className={fieldOf(companyErrors['trade_name'])}
+                  value={companyForm['trade_name'] ?? ""}
+                  onChange={(e) => setCompanyField("trade_name", e.target.value)}
+                  onBlur={() => void fillCompanyWithAi()}
+                />
+                <button
+                  type="button"
+                  className={btnGhost}
+                  disabled={aiBusy}
+                  onClick={() => void fillCompanyWithAi(true)}
+                >
+                  {aiBusy ? "IA…" : "IA"}
+                </button>
+              </div>
             </Field>
+
             <Field label="CNPJ" error={companyErrors['cnpj']} hint="00.000.000/0000-00">
               <input
                 inputMode="numeric"
