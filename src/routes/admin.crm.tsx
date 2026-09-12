@@ -96,6 +96,7 @@ function validateCompany(f: Record<string, any>): Errors {
   const e: Errors = {};
   const get = (k: string) => String(f[k] ?? "").trim();
   if (!get("name")) e['name'] = "Informe a razão social ou o nome da empresa.";
+  if (get("trade_name").length < 2) e['trade_name'] = "Informe o nome fantasia da empresa.";
   if (!get("segment")) e['segment'] = "Escolha um segmento.";
   if (!get("country")) e['country'] = "Informe o país.";
   if (get("cnpj") && !isValidCnpj(get("cnpj"))) e['cnpj'] = "CNPJ incompleto: são 14 dígitos.";
@@ -180,6 +181,7 @@ function emptyCompany() {
     employees: "",
     revenue_range: "",
     owner_name: "",
+    owner_title: "",
     tags: "",
     notes: "",
     birthday_email: true,
