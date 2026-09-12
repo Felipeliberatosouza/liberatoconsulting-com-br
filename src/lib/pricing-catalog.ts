@@ -210,6 +210,8 @@ export type QuoteResult = {
   totalHours: number;
   totalDays: number;
   subtotalBrl: number;
+  /** Total de deslocamentos incluído no subtotal (0 em projetos on-line). */
+  travelBrl: number;
   discountBrl: number;
   totalBrl: number;
   totalCurrency: number;
