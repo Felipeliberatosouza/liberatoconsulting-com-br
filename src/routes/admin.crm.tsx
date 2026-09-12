@@ -13,6 +13,7 @@ import {
   deleteCrmRecord,
   upcomingCrmDates,
 } from "@/lib/crm.functions";
+import { draftCrmCompanyProfile } from "@/lib/crm-ai.functions";
 import { quoteFileUrl } from "@/lib/pricing.functions";
 import { CRM_SEGMENTS } from "@/lib/crm-segments";
 import { lookupCep } from "@/lib/cep";
@@ -95,6 +96,7 @@ function validateCompany(f: Record<string, any>): Errors {
   const e: Errors = {};
   const get = (k: string) => String(f[k] ?? "").trim();
   if (!get("name")) e['name'] = "Informe a razão social ou o nome da empresa.";
+  if (get("trade_name").length < 2) e['trade_name'] = "Informe o nome fantasia da empresa.";
   if (!get("segment")) e['segment'] = "Escolha um segmento.";
   if (!get("country")) e['country'] = "Informe o país.";
   if (get("cnpj") && !isValidCnpj(get("cnpj"))) e['cnpj'] = "CNPJ incompleto: são 14 dígitos.";
@@ -179,6 +181,7 @@ function emptyCompany() {
     employees: "",
     revenue_range: "",
     owner_name: "",
+    owner_title: "",
     tags: "",
     notes: "",
     birthday_email: true,
@@ -233,6 +236,47 @@ function AdminCrm() {
   const [companyErrors, setCompanyErrors] = useState<Errors>({});
   const [contactErrors, setContactErrors] = useState<Errors>({});
   const [cepBusy, setCepBusy] = useState(false);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiFor, setAiFor] = useState("");
+
+  /** Preenche faturamento e tags com pesquisa de IA a partir do nome fantasia. */
+  async function fillCompanyWithAi(force = false) {
+    const form = companyForm ?? {};
+    const tradeName = String(form['trade_name'] ?? "").trim();
+    if (tradeName.length < 2) return;
+    if (!force && aiFor === tradeName) return;
+    setAiFor(tradeName);
+    setAiBusy(true);
+    try {
+      const res = await draftCrmCompanyProfile({
+        data: {
+          tradeName,
+          legalName: String(form['name'] ?? ""),
+          segment: String(form['segment'] ?? ""),
+          city: String(form['city'] ?? ""),
+          country: String(form['country'] ?? "Brasil"),
+          website: String(form['website'] ?? ""),
+        },
+      });
+      if (res.ok) {
+        setCompanyForm((prev) => {
+          if (!prev) return prev;
+          const next = { ...prev };
+          if (force || !String(next['revenue_range'] ?? "").trim()) {
+            if (res.revenue_range) next['revenue_range'] = res.revenue_range;
+          }
+          if (force || !String(next['tags'] ?? "").trim()) {
+            if (res.tags.length) next['tags'] = res.tags.join(", ");
+          }
+          return next;
+        });
+      }
+    } catch {
+      /* sugestão opcional: falha não bloqueia o cadastro */
+    } finally {
+      setAiBusy(false);
+    }
+  }
 
   function setCompanyField(key: string, value: any) {
     setCompanyForm((prev) => ({ ...(prev ?? {}), [key]: value }));
@@ -661,11 +705,12 @@ function AdminCrm() {
                 onChange={(e) => setCompanyField("name", e.target.value)}
               />
             </Field>
-            <Field label="Nome fantasia">
+            <Field label="Nome fantasia" required error={companyErrors['trade_name']}>
               <input
-                className={field}
+                className={fieldOf(companyErrors['trade_name'])}
                 value={companyForm['trade_name'] ?? ""}
                 onChange={(e) => setCompanyField("trade_name", e.target.value)}
+                onBlur={() => void fillCompanyWithAi()}
               />
             </Field>
             <Field label="CNPJ" error={companyErrors['cnpj']} hint="00.000.000/0000-00">
@@ -766,21 +811,36 @@ function AdminCrm() {
                 onChange={(e) => setCompanyField("phone", formatPhone(e.target.value))}
               />
             </Field>
-            <Field label="Faixa de faturamento">
+            <Field
+              label="Faixa de faturamento mensal (média dos últimos 12 meses)"
+              hint={aiBusy ? "Pesquisando com IA…" : "Preenchido por IA a partir do nome fantasia; pode editar."}
+            >
               <input
                 className={field}
+                placeholder="Ex.: R$ 500 mil a R$ 1 milhão/mês"
                 value={companyForm['revenue_range'] ?? ""}
                 onChange={(e) => setCompanyField("revenue_range", e.target.value)}
               />
             </Field>
-            <Field label="Responsável interno">
+            <Field label="Nome do principal executivo">
               <input
                 className={field}
                 value={companyForm['owner_name'] ?? ""}
                 onChange={(e) => setCompanyField("owner_name", e.target.value)}
               />
             </Field>
-            <Field label="Tags (separadas por vírgula)">
+            <Field label="Cargo do principal executivo">
+              <input
+                className={field}
+                placeholder="Ex.: CEO, Diretor-presidente"
+                value={companyForm['owner_title'] ?? ""}
+                onChange={(e) => setCompanyField("owner_title", e.target.value)}
+              />
+            </Field>
+            <Field
+              label="Tags (separadas por vírgula)"
+              hint={aiBusy ? "Pesquisando com IA…" : "Preenchidas por IA a partir do nome fantasia; pode editar."}
+            >
               <input
                 className={field}
                 value={companyForm['tags'] ?? ""}
@@ -878,6 +938,7 @@ function AdminCrm() {
                         employees: companyForm['employees'] === "" || companyForm['employees'] == null ? null : Number(companyForm['employees']),
                         revenue_range: companyForm['revenue_range'] ?? "",
                         owner_name: companyForm['owner_name'] ?? "",
+                        owner_title: companyForm['owner_title'] ?? "",
                         tags: String(companyForm['tags'] ?? "")
                           .split(",")
                           .map((t) => t.trim())

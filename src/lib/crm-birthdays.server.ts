@@ -20,14 +20,14 @@ export async function dispatchCrmBirthdays(): Promise<Result> {
   const result: Result = { ok: true, sent: 0, skipped: 0, failed: 0, errors: [] };
 
   const [{ data: companies }, { data: contacts }] = await Promise.all([
-    supabaseAdmin.from("crm_companies").select("id, name, email, founded_on, birthday_email"),
+    supabaseAdmin.from("crm_companies").select("id, name, trade_name, email, founded_on, birthday_email"),
     supabaseAdmin
       .from("crm_contacts")
       .select("id, full_name, email, birth_date, birthday_email, email_opt_in, active, company_id"),
   ]);
 
   const companyName = new Map<string, string>(
-    ((companies ?? []) as any[]).map((c) => [c.id as string, c.name as string]),
+    ((companies ?? []) as any[]).map((c) => [c.id as string, (c.trade_name || c.name) as string]),
   );
 
   type Job = { type: "empresa" | "pessoa"; id: string; name: string; email: string; company: string; years: number | null };
@@ -36,7 +36,9 @@ export async function dispatchCrmBirthdays(): Promise<Result> {
   for (const c of (companies ?? []) as any[]) {
     const info = monthDay(c.founded_on);
     if (!c.birthday_email || !c.email || !info || info.md !== today) continue;
-    jobs.push({ type: "empresa", id: c.id, name: c.name, email: c.email, company: c.name, years: year - info.year });
+    // O e-mail de aniversário usa o nome fantasia da empresa.
+    const label = (c.trade_name || c.name) as string;
+    jobs.push({ type: "empresa", id: c.id, name: label, email: c.email, company: label, years: year - info.year });
   }
   for (const p of (contacts ?? []) as any[]) {
     const info = monthDay(p.birth_date);

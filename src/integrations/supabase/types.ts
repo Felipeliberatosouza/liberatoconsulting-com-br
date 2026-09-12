@@ -680,6 +680,7 @@ export type Database = {
           name: string
           notes: string
           owner_name: string
+          owner_title: string
           phone: string
           revenue_range: string
           segment: string
@@ -707,6 +708,7 @@ export type Database = {
           name: string
           notes?: string
           owner_name?: string
+          owner_title?: string
           phone?: string
           revenue_range?: string
           segment?: string
@@ -734,6 +736,7 @@ export type Database = {
           name?: string
           notes?: string
           owner_name?: string
+          owner_title?: string
           phone?: string
           revenue_range?: string
           segment?: string
