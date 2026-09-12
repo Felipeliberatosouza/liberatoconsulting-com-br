@@ -437,7 +437,7 @@ function AdminServicesPage() {
                   <Input value={draft.audience} onChange={(e) => set("audience", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Tempo estimado (exibido no site)</Label>
+                  <Label>Tempo estimado em semanas (exibido no site)</Label>
                   <Input value={draft.duration} onChange={(e) => set("duration", e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
