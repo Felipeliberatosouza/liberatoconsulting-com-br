@@ -365,11 +365,11 @@ function PricingPage() {
                 ))}
               </select>
             </div>
-            <Button variant="outline" onClick={aiStages} disabled={!slug || busy === "ai-stages"}>
+            <Button variant="outline" onClick={() => aiStages()} disabled={!slug || busy === "ai-stages"}>
               <Sparkles className="size-4" />
               {busy === "ai-stages" ? "Analisando…" : "Sugerir etapas com IA"}
             </Button>
-            <Button onClick={saveStages} disabled={!slug || busy === "stages"}>
+            <Button onClick={() => saveStages()} disabled={!slug || busy === "stages"}>
               {busy === "stages" ? "Salvando…" : "Salvar etapas e preço"}
             </Button>
           </div>
