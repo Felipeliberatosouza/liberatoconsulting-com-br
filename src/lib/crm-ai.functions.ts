@@ -49,12 +49,12 @@ export const draftCrmCompanyProfile = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
-    const { askJson } = await import("./ai.server");
+    const { askJsonGrounded } = await import("./ai.server");
 
     try {
-      const draft = await askJson<Draft>(
+      const draft = await askJsonGrounded<Draft>(
         "Você é analista de inteligência de mercado de uma consultoria brasileira. " +
-          "Pesquise dados públicos de empresas e complete o cadastro. Nunca invente CNPJ ou CEP: " +
+          "Pesquise na web dados públicos e ATUAIS das empresas e complete o cadastro. Nunca invente CNPJ ou CEP: " +
           "deixe em branco quando não tiver confiança razoável.",
         `Empresa (nome fantasia): ${data.tradeName}${data.legalName ? ` | razão social informada: ${data.legalName}` : ""}.
 ${data.cnpj ? `CNPJ informado: ${data.cnpj}. Este CNPJ é a fonte da verdade: reconfira TODOS os dados para a empresa titular deste CNPJ e corrija o que estiver divergente.` : ""}
@@ -78,7 +78,7 @@ Responda com JSON exatamente neste formato (strings vazias quando não souber):
  "founded_on":"AAAA-MM-DD da fundação",
  "employees": 0,
  "revenue_range":"faixa de FATURAMENTO MENSAL em reais, média estimada dos últimos 12 meses, ex.: 'R$ 500 mil a R$ 1 milhão/mês'",
- "owner_name":"nome do principal executivo",
+ "owner_name":"nome do principal executivo EM EXERCÍCIO hoje (confirme trocas recentes de comando)",
  "owner_title":"cargo do principal executivo",
  "tags":["até 8 tags curtas em português sobre atuação, produtos, mercado e porte"],
  "notes":"resumo executivo de até 600 caracteres sobre a empresa"

@@ -48,6 +48,32 @@ export async function askJson<T>(system: string, prompt: string): Promise<T> {
   return JSON.parse(stripFences(content)) as T;
 }
 
+/**
+ * Igual ao askJson, mas com busca na web ativada para dados que mudam com o tempo
+ * (executivos, faturamento, endereço). Cai para o modo normal se a busca falhar.
+ */
+export async function askJsonGrounded<T>(system: string, prompt: string): Promise<T> {
+  const today = new Date().toISOString().slice(0, 10);
+  const sys =
+    `${system}\nData de hoje: ${today}. Use a busca na web para confirmar TODOS os dados que mudam com o tempo ` +
+    `(executivos, cargos, sede, faturamento, número de funcionários) e considere apenas as informações mais recentes ` +
+    `disponíveis nesta data. Se houver troca recente de executivo, informe o ocupante atual, nunca o anterior.\n` +
+    `Responda APENAS com JSON válido, sem markdown.`;
+  const messages = [
+    { role: "system", content: sys },
+    { role: "user", content: prompt },
+  ];
+  let content = "";
+  try {
+    const json = await chat({ model: TEXT_MODEL, messages, tools: [{ type: "google_search" }] });
+    content = json.choices?.[0]?.message?.content ?? "";
+    return JSON.parse(stripFences(content)) as T;
+  } catch {
+    const json = await chat({ model: TEXT_MODEL, messages });
+    return JSON.parse(stripFences(json.choices?.[0]?.message?.content ?? "")) as T;
+  }
+}
+
 /** Pede um JSON ao modelo a partir de um arquivo (PDF) enviado como anexo. */
 export async function askJsonWithFile<T>(
   system: string,
