@@ -52,8 +52,8 @@ export async function renderQuotePdf(input: QuotePdfInput) {
       `- Início previsto: ${br(quote.start)} · Conclusão prevista: ${br(quote.end)}`,
       `- Prazo total: ${quote.totalDays.toFixed(0)} dias úteis`,
       options.remoteOnly
-        ? "- Formato: encontros e workshops realizados on-line, sem deslocamento da equipe."
-        : "- Formato: encontros-chave presenciais, demais atividades remotas.",
+        ? "- Formato: encontros e workshops realizados on-line, sem custos de deslocamento da equipe."
+        : "- Formato: encontros-chave presenciais, demais atividades remotas (custos de deslocamento incluídos).",
     ]
       .filter(Boolean)
       .join("\n"),
