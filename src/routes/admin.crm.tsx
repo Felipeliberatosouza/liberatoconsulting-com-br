@@ -244,20 +244,24 @@ function AdminCrm() {
     const form = companyForm ?? {};
     const tradeName = String(form['trade_name'] ?? "").trim();
     if (tradeName.length < 2) return;
-    if (!force && aiFor === tradeName) return;
-    setAiFor(tradeName);
+    const cnpj = String(form['cnpj'] ?? "").trim();
+    const key = `${tradeName}|${cnpj}`;
+    if (!force && aiFor === key) return;
+    setAiFor(key);
     setAiBusy(true);
     try {
       const res = await draftCrmCompanyProfile({
         data: {
           tradeName,
           legalName: String(form['name'] ?? ""),
+          cnpj,
           segment: String(form['segment'] ?? ""),
           city: String(form['city'] ?? ""),
           country: String(form['country'] ?? "Brasil"),
           website: String(form['website'] ?? ""),
         },
       });
+
       if (res.ok) {
         setCompanyForm((prev) => {
           if (!prev) return prev;
