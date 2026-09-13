@@ -169,6 +169,8 @@ Responda com JSON exatamente neste formato (strings vazias quando não souber):
  "segment":"escolha EXATAMENTE um item desta lista: ${CRM_SEGMENTS.join(" | ")}",
  "size":"pme ou corporacao",
  "country":"país da sede","state":"UF","city":"cidade",
+ "district":"bairro da sede","zip":"CEP da sede","address":"rua e número da sede",
+ "founded_on":"AAAA-MM-DD da fundação",
  "website":"site oficial","email":"e-mail público","phone":"+55 11 3000-0000",
  "employees": 0,
  "revenue_range":"faixa de faturamento MENSAL estimada em reais",
