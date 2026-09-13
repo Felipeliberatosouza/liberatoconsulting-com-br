@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
 import { AdminShell } from "@/components/AdminShell";
+import { CrmProspect } from "@/components/CrmProspect";
 import { listLeads } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin/leads")({
@@ -25,6 +26,7 @@ function fmt(date: string) {
 }
 
 function AdminLeads() {
+  const queryClient = useQueryClient();
   const [q, setQ] = useState("");
   const leads = useQuery({ queryKey: ["admin-leads"], queryFn: () => listLeads(), retry: false });
 
@@ -41,10 +43,23 @@ function AdminLeads() {
 
   return (
     <AdminShell
-      title="Leads recebidos"
-      description="Contatos enviados pelos formulários das páginas de serviço, do mais recente para o mais antigo."
+      title="Leads"
+      description="Pesquise novos contatos com IA e consulte os contatos recebidos pelos formulários do site."
     >
-      <div className="flex flex-wrap items-center gap-3">
+      <CrmProspect
+        onImported={() => {
+          void queryClient.invalidateQueries({ queryKey: ["crm-companies"] });
+          void queryClient.invalidateQueries({ queryKey: ["crm-agenda"] });
+        }}
+      />
+
+      <section className="mt-8">
+        <h2 className="font-display text-base font-bold">Leads recebidos pelos formulários</h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Contatos enviados pelas páginas de serviço, do mais recente para o mais antigo.
+        </p>
+
+      <div className="mt-4 flex flex-wrap items-center gap-3">
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
@@ -99,6 +114,7 @@ function AdminLeads() {
           </table>
         </div>
       )}
+      </section>
     </AdminShell>
   );
 }

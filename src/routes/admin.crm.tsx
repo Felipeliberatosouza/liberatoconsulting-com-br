@@ -3,7 +3,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
 import { AdminShell } from "@/components/AdminShell";
-import { CrmProspect } from "@/components/CrmProspect";
 import { refreshCrmLead } from "@/lib/crm-prospect.functions";
 import {
   listCrmCompanies,
@@ -476,9 +475,6 @@ function AdminCrm() {
           ))}
         </div>
       </section>
-
-      {/* PROSPECÇÃO COM IA */}
-      <CrmProspect onImported={refresh} />
 
       {/* LISTA */}
       <section className="mt-8">
