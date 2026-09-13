@@ -215,10 +215,47 @@ export const importCrmLeads = createServerFn({ method: "POST" })
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
 
+    const { enrichCompanyProfile } = await import("./crm-enrich.server");
+
     let created = 0;
     let people = 0;
     for (const lead of data.leads) {
       const { contacts, sources, ...company } = lead;
+
+      // Completa o cadastro com a mesma pesquisa do botão "IA" do CRM,
+      // para o lead entrar com todos os dados atualizados na data da geração.
+      const extra = await enrichCompanyProfile({
+        tradeName: company.trade_name || company.name,
+        legalName: company.name,
+        cnpj: company.cnpj,
+        segment: company.segment,
+        city: company.city,
+        country: company.country,
+        website: company.website,
+      });
+      const pick = (current: string, fresh?: string) => (current ? current : (fresh ?? "")).trim();
+      if (extra) {
+        company.name = company.name || extra.legal_name;
+        company.cnpj = pick(company.cnpj, extra.cnpj);
+        company.segment = company.segment || extra.segment;
+        company.country = pick(company.country, extra.country);
+        company.state = pick(company.state, extra.state);
+        company.city = pick(company.city, extra.city);
+        company.district = pick(company.district, extra.district);
+        company.zip = pick(company.zip, extra.zip);
+        company.address = pick(company.address, extra.address);
+        company.website = pick(company.website, extra.website);
+        company.email = pick(company.email, extra.email);
+        company.phone = pick(company.phone, extra.phone);
+        company.founded_on = pick(company.founded_on, extra.founded_on);
+        company.employees = company.employees ?? extra.employees;
+        company.revenue_range = pick(company.revenue_range, extra.revenue_range);
+        company.owner_name = pick(company.owner_name, extra.owner_name);
+        company.owner_title = pick(company.owner_title, extra.owner_title);
+        if (company.tags.length === 0) company.tags = extra.tags;
+        if (!company.notes) company.notes = extra.notes;
+      }
+
       const notes = [company.notes, sources.length ? `Fontes: ${sources.join(" | ")}` : ""]
         .filter(Boolean)
         .join("\n\n")
@@ -230,7 +267,7 @@ export const importCrmLeads = createServerFn({ method: "POST" })
           trade_name: company.trade_name || company.name,
           status: "lead",
           notes,
-          founded_on: null,
+          founded_on: company.founded_on || null,
           birthday_email: true,
         })
         .select("id")
