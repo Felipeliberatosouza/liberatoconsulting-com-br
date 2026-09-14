@@ -25,7 +25,15 @@ export type PublicConsultant = {
   highlights: string[];
   academic_logos: ConsultantLogo[];
   client_logos: ConsultantLogo[];
+  publications: ConsultantPublication[];
   sort_order: number;
+};
+
+/** Artigo publicado no site e assinado pelo consultor. */
+export type ConsultantPublication = {
+  slug: string;
+  title: string;
+  date: string;
 };
 
 export type ConsultantRecord = Omit<PublicConsultant, "sort_order"> & {
