@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { Mail, GraduationCap, Briefcase, Users, Award, Loader2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
@@ -286,6 +287,27 @@ export function ConsultantsTeam() {
                 </div>
               )}
 
+              {c.publications.length > 0 && (
+                <div className="border-t border-border pt-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                    {tt.publicationsTitle}
+                  </p>
+                  <ul className="mt-2 space-y-1.5">
+                    {c.publications.slice(0, 3).map((p) => (
+                      <li key={p.slug}>
+                        <Link
+                          to="/content/$slug"
+                          params={{ slug: p.slug }}
+                          className="line-clamp-2 text-sm leading-snug text-accent underline-offset-4 hover:underline"
+                        >
+                          {p.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <div className="flex gap-2">
                 <Button className="flex-1 rounded-none" onClick={() => setOpenId(c.id)}>
                   {tt.viewProfile}
@@ -369,6 +391,33 @@ export function ConsultantsTeam() {
                         </span>
                       ))}
                     </div>
+                  </section>
+                )}
+
+                {selected.publications.length > 0 && (
+                  <section>
+                    <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
+                      {tt.publicationsAll}
+                    </p>
+                    <ul className="divide-y divide-border border-y border-border">
+                      {selected.publications.map((p) => (
+                        <li key={p.slug}>
+                          <Link
+                            to="/content/$slug"
+                            params={{ slug: p.slug }}
+                            onClick={() => setOpenId(null)}
+                            className="group flex items-center justify-between gap-4 py-3"
+                          >
+                            <span className="text-sm leading-snug group-hover:text-accent">
+                              {p.title}
+                            </span>
+                            <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                              {p.date}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
                   </section>
                 )}
 

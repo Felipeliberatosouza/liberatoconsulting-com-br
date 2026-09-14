@@ -1693,6 +1693,9 @@ export const pt = {
     institutionsTitle: "Formação acadêmica",
     clientLogosTitle: "Principais clientes",
     coursesTitle: "Cursos e certificações",
+    publicationsTitle: "Publicações",
+    publicationsAll: "Todas as publicações",
+    publicationsRead: "Ler",
   },
   bulletin: {
     eyebrow: "Boletim Semanal",

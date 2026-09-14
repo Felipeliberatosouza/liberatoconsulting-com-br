@@ -25,10 +25,18 @@ export type PublicConsultant = {
   highlights: string[];
   academic_logos: ConsultantLogo[];
   client_logos: ConsultantLogo[];
+  publications: ConsultantPublication[];
   sort_order: number;
 };
 
-export type ConsultantRecord = Omit<PublicConsultant, "sort_order"> & {
+/** Artigo publicado no site e assinado pelo consultor. */
+export type ConsultantPublication = {
+  slug: string;
+  title: string;
+  date: string;
+};
+
+export type ConsultantRecord = Omit<PublicConsultant, "sort_order" | "publications"> & {
   contact_email: string;
   position: number;
   published: boolean;
@@ -57,14 +65,28 @@ export const listPublicConsultants = createServerFn({ method: "GET" })
       orcid_url: c.orcid_url ?? "",
       lattes_url: c.lattes_url ?? "",
       website_url: c.website_url ?? "",
+      publications: [] as ConsultantPublication[],
     }));
-    if (data.lang === "pt") return list;
+
+    const localized =
+      data.lang === "pt"
+        ? list
+        : await (async () => {
+            try {
+              const { localizeConsultants } = await import("./consultants-i18n.server");
+              return await localizeConsultants(list, data.lang);
+            } catch (err) {
+              console.error("[consultants] i18n failed", err);
+              return list;
+            }
+          })();
+
     try {
-      const { localizeConsultants } = await import("./consultants-i18n.server");
-      return await localizeConsultants(list, data.lang);
+      const { attachConsultantPublications } = await import("./consultant-publications.server");
+      return await attachConsultantPublications(localized, data.lang);
     } catch (err) {
-      console.error("[consultants] i18n failed", err);
-      return list;
+      console.error("[consultants] publications failed", err);
+      return localized;
     }
   });
 

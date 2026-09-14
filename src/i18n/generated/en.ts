@@ -2580,7 +2580,10 @@ export const dict: Dict = {
     "highlightsTitle": "Career highlights",
     "institutionsTitle": "Academic background",
     "clientLogosTitle": "Key clients",
-    "coursesTitle": "Courses and certifications"
+    "coursesTitle": "Courses and certifications",
+    "publicationsTitle": "Publications",
+    "publicationsAll": "All publications",
+    "publicationsRead": "Read"
   },
   "bulletin": {
     "eyebrow": "Weekly Bulletin",
