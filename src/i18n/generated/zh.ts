@@ -1100,9 +1100,9 @@ export const dict: Dict = {
         "problem": "成本高企、流程缓慢、返工多且生产力低下。",
         "audience": "成长中的中小企业、工业、服务业及企业运营部门。",
         "products": [
-          "效率 90",
-          "生产力冲刺",
-          "卓越运营计划"
+          "eficiencia-90",
+          "sprint-de-produtividade",
+          "programa-de-excelencia-operacional"
         ]
       },
       {
@@ -1117,10 +1117,10 @@ export const dict: Dict = {
         "problem": "增长缺乏焦点、进入新市场或定位不明。",
         "audience": "现有企业、初创公司及国际企业。",
         "products": [
-          "增长与定位计划",
-          "验证与可行性",
-          "增长战略办公室",
-          "巴西准入导航员"
+          "plano-de-crescimento-e-posicionamento",
+          "validacao-e-viabilidade",
+          "growth-strategy-office",
+          "brazil-entry-navigator"
         ]
       },
       {
@@ -1134,9 +1134,9 @@ export const dict: Dict = {
         "problem": "系统孤立、流程手动、数据利用不足且人工智能缺乏优先级。",
         "audience": "数字化转型中的中小企业及大型机构。",
         "products": [
-          "数字化与实战人工智能地图",
-          "优先流程自动化",
-          "企业数字化与人工智能转型"
+          "mapa-digital-e-ia-pratica",
+          "automacao-de-processo-prioritario",
+          "enterprise-digital-and-ai-transformation"
         ]
       },
       {
@@ -1150,9 +1150,9 @@ export const dict: Dict = {
         "problem": "面临安全事件风险、第三方风险、LGPD 合规及人工智能治理。",
         "audience": "处理敏感数据的企业、受监管行业及大型机构。",
         "products": [
-          "中小企业网络安全要项",
-          "月度信任评审",
-          "网络韧性与数字信任"
+          "cyber-essentials-pme",
+          "trust-review-mensal",
+          "cyber-resilience-and-digital-trust"
         ]
       },
       {
@@ -1166,9 +1166,9 @@ export const dict: Dict = {
         "problem": "缺乏现金流、利润、营运资金及控制的可见性。",
         "audience": "中小企业、规模化企业 (Scale-ups) 及企业事业部。",
         "products": [
-          "财务可控",
-          "财务顾问",
-          "绩效财务与控制"
+          "financeiro-sob-controle",
+          "advisory-financeiro",
+          "performance-finance-and-controls"
         ]
       },
       {
@@ -1183,9 +1183,9 @@ export const dict: Dict = {
         "problem": "转化率低、定价不当、客户流失、CRM 薄弱且缺乏预见性。",
         "audience": "B2B/B2C 企业、零售、服务及数字业务。",
         "products": [
-          "留存客户",
-          "销售冲刺",
-          "客户增长与体验转型"
+          "cliente-que-retem",
+          "sprint-comercial",
+          "customer-growth-and-experience-transformation"
         ]
       },
       {
@@ -1200,9 +1200,9 @@ export const dict: Dict = {
         "problem": "客户、投资者及监管要求，以及环境与声誉风险。",
         "audience": "出口商、工业、能源、农业综合企业及大型机构。",
         "products": [
-          "ESG 核心",
-          "碳足迹与供应链",
-          "可持续发展与气候战略"
+          "esg-essencial",
+          "carbono-e-cadeia",
+          "sustainability-and-climate-strategy"
         ]
       },
       {
@@ -1217,9 +1217,9 @@ export const dict: Dict = {
         "problem": "采纳率低、职责模糊、缺乏能力且转型无法持续。",
         "audience": "成长、数字化、重组或整合中的企业。",
         "products": [
-          "支撑增长的组织与人员",
-          "日常管理",
-          "人员与转型办公室"
+          "organizacao-e-pessoas-para-crescer",
+          "rotina-de-gestao",
+          "people-and-transformation-office"
         ]
       },
       {
@@ -1232,16 +1232,16 @@ export const dict: Dict = {
         "problem": "减少不确定性，支持准入、增长、客户、定价、竞争及投资决策。",
         "audience": "中小企业、初创公司、机构、投资者及国际企业。",
         "products": [
-          "市场机会决策",
-          "客户洞察冲刺",
-          "概念与主张测试",
-          "价格与价值情报",
-          "竞争响应雷达",
-          "市场信号监测",
-          "决策室",
-          "商业建模",
-          "商业计划书",
-          "细分市场信息"
+          "market-opportunity-decision",
+          "customer-insight-sprint",
+          "concept-and-proposition-test",
+          "price-and-value-intelligence",
+          "competitive-response-radar",
+          "market-signal-monitor",
+          "decision-room",
+          "modelagem-de-negocio",
+          "plano-de-negocios",
+          "informacoes-de-segmentos-de-mercado"
         ]
       },
       {
@@ -1254,9 +1254,9 @@ export const dict: Dict = {
         "problem": "不合格项、返工、流程波动及缺乏质量认证准备。",
         "audience": "工业、供应商、服务企业及企业事业部。",
         "products": [
-          "质量 90 诊断",
-          "卓越成果精益六西格玛冲刺",
-          "质量与精益认证学院"
+          "diagnostico-de-qualidade-90",
+          "sprint-lean-six-sigma-de-resultado",
+          "academia-de-qualidade-e-lean-para-certificacoes"
         ]
       }
     ]

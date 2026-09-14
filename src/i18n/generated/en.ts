@@ -1100,9 +1100,9 @@ export const dict: Dict = {
         "problem": "High costs, slow processes, rework, and low productivity.",
         "audience": "Growing SMEs, industry, services, and corporate operations.",
         "products": [
-          "Efficiency 90",
-          "Productivity Sprint",
-          "Operational Excellence Program"
+          "eficiencia-90",
+          "sprint-de-produtividade",
+          "programa-de-excelencia-operacional"
         ]
       },
       {
@@ -1117,10 +1117,10 @@ export const dict: Dict = {
         "problem": "Unfocused growth, entry into new markets, or unclear positioning.",
         "audience": "Established firms, startups, and international companies.",
         "products": [
-          "Growth & Positioning Plan",
-          "Validation & Feasibility",
-          "Growth Strategy Office",
-          "Brazil Entry Navigator"
+          "plano-de-crescimento-e-posicionamento",
+          "validacao-e-viabilidade",
+          "growth-strategy-office",
+          "brazil-entry-navigator"
         ]
       },
       {
@@ -1134,9 +1134,9 @@ export const dict: Dict = {
         "problem": "Disconnected systems, manual processes, underused data, and lack of AI priority.",
         "audience": "Digitizing SMEs and corporations in transformation.",
         "products": [
-          "Digital Map & Practical AI",
-          "Priority Process Automation",
-          "Enterprise Digital & AI Transformation"
+          "mapa-digital-e-ia-pratica",
+          "automacao-de-processo-prioritario",
+          "enterprise-digital-and-ai-transformation"
         ]
       },
       {
@@ -1150,9 +1150,9 @@ export const dict: Dict = {
         "problem": "Exposure to incidents, third-party risks, GDPR/LGPD compliance, and AI governance.",
         "audience": "Companies with sensitive data, regulated sectors, and corporations.",
         "products": [
-          "Cyber Essentials PME",
-          "Monthly Trust Review",
-          "Cyber Resilience & Digital Trust"
+          "cyber-essentials-pme",
+          "trust-review-mensal",
+          "cyber-resilience-and-digital-trust"
         ]
       },
       {
@@ -1166,9 +1166,9 @@ export const dict: Dict = {
         "problem": "Lack of visibility on cash flow, margin, working capital, and controls.",
         "audience": "SMEs, scale-ups, and corporate units.",
         "products": [
-          "Finance Under Control",
-          "Financial Advisory",
-          "Performance Finance & Controls"
+          "financeiro-sob-controle",
+          "advisory-financeiro",
+          "performance-finance-and-controls"
         ]
       },
       {
@@ -1183,9 +1183,9 @@ export const dict: Dict = {
         "problem": "Low conversion, improper pricing, churn, weak CRM, and low predictability.",
         "audience": "B2B/B2C firms, retail, services, and digital businesses.",
         "products": [
-          "Retaining Customer",
-          "Commercial Sprint",
-          "Customer Growth & Experience Transformation"
+          "cliente-que-retem",
+          "sprint-comercial",
+          "customer-growth-and-experience-transformation"
         ]
       },
       {
@@ -1200,9 +1200,9 @@ export const dict: Dict = {
         "problem": "Requirements from clients, investors, and regulators, plus environmental and reputational risks.",
         "audience": "Exporters, industry, energy, agribusiness, and corporations.",
         "products": [
-          "Essential ESG",
-          "Carbon & Supply Chain",
-          "Sustainability & Climate Strategy"
+          "esg-essencial",
+          "carbono-e-cadeia",
+          "sustainability-and-climate-strategy"
         ]
       },
       {
@@ -1217,9 +1217,9 @@ export const dict: Dict = {
         "problem": "Low adoption, confusing roles, skill gaps, and unsustainable transformations.",
         "audience": "Companies growing, digitizing, reorganizing, or integrating.",
         "products": [
-          "Organization & People for Growth",
-          "Management Routine",
-          "People & Transformation Office"
+          "organizacao-e-pessoas-para-crescer",
+          "rotina-de-gestao",
+          "people-and-transformation-office"
         ]
       },
       {
@@ -1232,16 +1232,16 @@ export const dict: Dict = {
         "problem": "Reducing uncertainty and supporting entry, growth, customer, pricing, competitive, and investment decisions.",
         "audience": "SMEs, startups, corporations, investors, and international firms.",
         "products": [
-          "Market Opportunity Decision",
-          "Customer Insight Sprint",
-          "Concept & Proposition Test",
-          "Price & Value Intelligence",
-          "Competitive Response Radar",
-          "Market Signal Monitor",
-          "Decision Room",
-          "Business Modeling",
-          "Business Plan",
-          "Market Segment Insights"
+          "market-opportunity-decision",
+          "customer-insight-sprint",
+          "concept-and-proposition-test",
+          "price-and-value-intelligence",
+          "competitive-response-radar",
+          "market-signal-monitor",
+          "decision-room",
+          "modelagem-de-negocio",
+          "plano-de-negocios",
+          "informacoes-de-segmentos-de-mercado"
         ]
       },
       {
@@ -1254,9 +1254,9 @@ export const dict: Dict = {
         "problem": "Non-compliance, rework, process variation, and lack of preparation for quality certifications.",
         "audience": "Industries, suppliers, service firms, and corporate units.",
         "products": [
-          "Quality 90 Diagnosis",
-          "Results-driven Lean Six Sigma Sprint",
-          "Quality & Lean Academy for Certifications"
+          "diagnostico-de-qualidade-90",
+          "sprint-lean-six-sigma-de-resultado",
+          "academia-de-qualidade-e-lean-para-certificacoes"
         ]
       }
     ]
