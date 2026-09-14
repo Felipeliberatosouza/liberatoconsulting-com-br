@@ -113,7 +113,15 @@ export const listConsultants = createServerFn({ method: "GET" })
 const consultantSchema = z.object({
   id: z.string().uuid().optional(),
   full_name: z.string().trim().min(2).max(160),
+  slug: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .max(60)
+    .regex(/^[a-z0-9-]*$/, "Use apenas letras minúsculas, números e hífen.")
+    .default(""),
   photo_url: z.string().max(3_000_000).default(""),
+
   headline: z.string().trim().max(300).default(""),
   education: z.string().trim().max(4000).default(""),
   experience: z.string().trim().max(6000).default(""),
