@@ -122,7 +122,7 @@ function CertificationEditor({
       <div className="mt-3 space-y-3">
         {records.map((record, index) => (
           <div
-            key={`${index}-${record.name}`}
+            key={index}
             className="grid gap-3 border border-border p-4 sm:grid-cols-2 lg:grid-cols-[2fr_1.5fr_1fr_7rem_auto]"
           >
             <div>
