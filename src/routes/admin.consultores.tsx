@@ -449,7 +449,7 @@ function AdminConsultantsPage() {
               onChange={(e) =>
                 setDraft({
                   ...draft,
-                  highlights: e.target.value.split("\n").map((v) => v.trim()).filter(Boolean),
+                  highlights: e.target.value.split("\n"),
                 })
               }
             />
