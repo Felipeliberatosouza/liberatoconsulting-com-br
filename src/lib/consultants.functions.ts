@@ -4,6 +4,8 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { isValidPhone, PHONE_ERROR } from "./validation";
 
+export type ConsultantLogo = { name: string; url: string };
+
 export type PublicConsultant = {
   id: string;
   full_name: string;
@@ -18,6 +20,11 @@ export type PublicConsultant = {
   orcid_url: string;
   lattes_url: string;
   website_url: string;
+  years_experience: number;
+  certifications: string[];
+  highlights: string[];
+  academic_logos: ConsultantLogo[];
+  client_logos: ConsultantLogo[];
   sort_order: number;
 };
 
@@ -42,6 +49,11 @@ export const listPublicConsultants = createServerFn({ method: "GET" })
       ...c,
       specialties: Array.isArray(c.specialties) ? c.specialties : [],
       segments: Array.isArray(c.segments) ? c.segments : [],
+      certifications: Array.isArray(c.certifications) ? c.certifications : [],
+      highlights: Array.isArray(c.highlights) ? c.highlights : [],
+      academic_logos: Array.isArray(c.academic_logos) ? c.academic_logos : [],
+      client_logos: Array.isArray(c.client_logos) ? c.client_logos : [],
+      years_experience: Number(c.years_experience ?? 0) || 0,
       orcid_url: c.orcid_url ?? "",
       lattes_url: c.lattes_url ?? "",
       website_url: c.website_url ?? "",
@@ -82,6 +94,17 @@ const consultantSchema = z.object({
   works: z.string().trim().max(6000).default(""),
   specialties: z.array(z.string().trim().max(160)).max(60).default([]),
   segments: z.array(z.string().trim().max(120)).max(40).default([]),
+  years_experience: z.number().int().min(0).max(80).default(0),
+  certifications: z.array(z.string().trim().max(200)).max(40).default([]),
+  highlights: z.array(z.string().trim().max(400)).max(12).default([]),
+  academic_logos: z
+    .array(z.object({ name: z.string().trim().max(160).default(""), url: z.string().max(3_000_000) }))
+    .max(12)
+    .default([]),
+  client_logos: z
+    .array(z.object({ name: z.string().trim().max(160).default(""), url: z.string().max(3_000_000) }))
+    .max(24)
+    .default([]),
   orcid_url: z.string().trim().max(300).default(""),
   lattes_url: z.string().trim().max(300).default(""),
   website_url: z.string().trim().max(300).default(""),

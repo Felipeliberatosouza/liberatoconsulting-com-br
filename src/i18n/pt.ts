@@ -1686,6 +1686,13 @@ export const pt = {
     submit: "Enviar mensagem",
     sent: "Mensagem enviada para",
     error: "Não foi possível enviar agora.",
+    yearsLabel: "Experiência",
+    yearsValue: "anos",
+    certificationsLabel: "Certificações",
+    highlightsTitle: "Destaques de carreira",
+    institutionsTitle: "Formação acadêmica",
+    clientLogosTitle: "Principais clientes",
+    coursesTitle: "Cursos e certificações",
   },
   bulletin: {
     eyebrow: "Boletim Semanal",

@@ -2573,7 +2573,14 @@ export const dict: Dict = {
     "messagePlaceholder": "How can we help?",
     "submit": "Send message",
     "sent": "Message sent to",
-    "error": "Could not send at this time."
+    "error": "Could not send at this time.",
+    "yearsLabel": "Experience",
+    "yearsValue": "years",
+    "certificationsLabel": "Certifications",
+    "highlightsTitle": "Career highlights",
+    "institutionsTitle": "Academic background",
+    "clientLogosTitle": "Key clients",
+    "coursesTitle": "Courses and certifications"
   },
   "bulletin": {
     "eyebrow": "Weekly Bulletin",

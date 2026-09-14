@@ -13,12 +13,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { contactConsultant, listPublicConsultants, type PublicConsultant } from "@/lib/consultants.functions";
+import {
+  contactConsultant,
+  listPublicConsultants,
+  type ConsultantLogo,
+  type PublicConsultant,
+} from "@/lib/consultants.functions";
 import { useLanguage } from "@/i18n";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
 import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
-function Initials({ name }: { name: string }) {
+function Initials({ name, className = "" }: { name: string; className?: string }) {
   const initials = name
     .split(/\s+/)
     .slice(0, 2)
@@ -26,7 +31,9 @@ function Initials({ name }: { name: string }) {
     .join("")
     .toUpperCase();
   return (
-    <div className="flex size-20 shrink-0 items-center justify-center rounded-full bg-ink text-lg font-bold text-ink-foreground">
+    <div
+      className={`flex items-center justify-center bg-ink text-3xl font-bold text-ink-foreground ${className}`}
+    >
       {initials}
     </div>
   );
@@ -44,14 +51,40 @@ function Block({
   if (!text.trim()) return null;
   return (
     <div>
-      <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+      <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
         <Icon className="size-4" />
         {title}
       </p>
-      <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
+      <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">
         {text}
       </p>
     </div>
+  );
+}
+
+function LogoRow({ title, logos }: { title: string; logos: ConsultantLogo[] }) {
+  if (logos.length === 0) return null;
+  return (
+    <section>
+      <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
+        {title}
+      </p>
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+        {logos.map((logo, i) => (
+          <div
+            key={`${logo.url}-${i}`}
+            className="flex h-14 items-center justify-center border border-border bg-secondary/40 px-3"
+          >
+            <img
+              src={logo.url}
+              alt={logo.name}
+              loading="lazy"
+              className="max-h-8 w-full object-contain opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
+            />
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -77,7 +110,7 @@ function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onD
           consultantId: consultant.id,
           name: form.name,
           email: form.email,
-           phone: form.phone,
+          phone: form.phone,
           company: form.company,
           message: form.message,
           website: form.website,
@@ -173,79 +206,180 @@ export function ConsultantsTeam() {
   const contactTarget = consultants.find((c) => c.id === contactId) ?? null;
 
   if (isLoading) {
-    return (
-      <p className="mt-6 text-sm text-muted-foreground">{tt.loading}</p>
-    );
+    return <p className="mt-6 text-sm text-muted-foreground">{tt.loading}</p>;
   }
   if (consultants.length === 0) return null;
 
   return (
     <div className="mt-10">
       <h3 className="text-xl font-bold">{tt.heading}</h3>
-      <div className="mt-6 grid gap-6 sm:grid-cols-2">
+
+      <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {consultants.map((c) => (
-          <div key={c.id} className="rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-start gap-4">
+          <article
+            key={c.id}
+            className="group overflow-hidden border border-border bg-card shadow-sm transition-shadow duration-300 hover:shadow-xl"
+          >
+            <div className="relative aspect-[4/5] overflow-hidden bg-ink">
               {c.photo_url ? (
                 <img
                   src={c.photo_url}
                   alt={`${tt.photoAlt} ${c.full_name}`}
                   loading="lazy"
-                  className="size-20 shrink-0 rounded-full object-cover"
+                  className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               ) : (
-                <Initials name={c.full_name} />
+                <Initials name={c.full_name} className="size-full" />
               )}
-              <div className="min-w-0">
-                <h4 className="font-semibold">{c.full_name}</h4>
+              <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent opacity-80" />
+              <div className="absolute inset-x-6 bottom-6">
+                <h4 className="text-2xl font-bold leading-none tracking-tight text-ink-foreground">
+                  {c.full_name}
+                </h4>
                 {c.headline && (
-                  <p className="mt-1 text-sm text-muted-foreground">{c.headline}</p>
-                )}
-                {c.specialties.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {c.specialties.slice(0, 4).map((s) => (
-                      <span
-                        key={s}
-                        className="rounded-full bg-secondary px-2.5 py-1 text-xs text-muted-foreground"
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
+                  <p className="mt-2 text-sm font-medium uppercase tracking-[0.14em] text-accent">
+                    {c.headline}
+                  </p>
                 )}
               </div>
             </div>
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" onClick={() => setOpenId(c.id)}>
-                {tt.viewProfile}
-              </Button>
-              <Button size="sm" onClick={() => setContactId(c.id)}>
-                <Mail className="size-4" />
-                {tt.sendEmail}
-              </Button>
+
+            <div className="space-y-4 p-6">
+              {(c.years_experience > 0 || c.certifications.length > 0) && (
+                <div className="flex items-center gap-4 border-b border-border pb-4">
+                  {c.years_experience > 0 && (
+                    <div className="flex-1">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                        {tt.yearsLabel}
+                      </p>
+                      <p className="text-lg font-bold">
+                        {c.years_experience}+ {tt.yearsValue}
+                      </p>
+                    </div>
+                  )}
+                  {c.certifications.length > 0 && (
+                    <>
+                      {c.years_experience > 0 && <div className="h-8 w-px bg-border" />}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                          {tt.certificationsLabel}
+                        </p>
+                        <p className="truncate text-lg font-bold">
+                          {c.certifications.slice(0, 2).join(", ")}
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+
+              {c.specialties.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {c.specialties.slice(0, 3).map((s) => (
+                    <span
+                      key={s}
+                      className="border border-border px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                <Button className="flex-1 rounded-none" onClick={() => setOpenId(c.id)}>
+                  {tt.viewProfile}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="rounded-none"
+                  aria-label={tt.sendEmail}
+                  onClick={() => setContactId(c.id)}
+                >
+                  <Mail className="size-4" />
+                </Button>
+              </div>
             </div>
-          </div>
+          </article>
         ))}
       </div>
 
       <Dialog open={Boolean(selected)} onOpenChange={(o) => !o && setOpenId(null)}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
+        <DialogContent className="max-h-[90vh] gap-0 overflow-hidden p-0 sm:max-w-4xl">
           {selected && (
-            <>
-              <DialogHeader>
-                <DialogTitle>{selected.full_name}</DialogTitle>
-                {selected.headline && (
-                  <DialogDescription>{selected.headline}</DialogDescription>
+            <div className="flex max-h-[90vh] flex-col md:flex-row">
+              <div className="relative shrink-0 bg-ink md:w-2/5">
+                {selected.photo_url ? (
+                  <img
+                    src={selected.photo_url}
+                    alt={`${tt.photoAlt} ${selected.full_name}`}
+                    className="h-64 w-full object-cover opacity-90 md:h-full"
+                  />
+                ) : (
+                  <Initials name={selected.full_name} className="h-64 w-full md:h-full" />
                 )}
-              </DialogHeader>
-              <div className="space-y-5">
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-ink/40 to-ink" />
+                <div className="absolute inset-x-8 bottom-8">
+                  <DialogTitle className="text-3xl font-bold leading-tight text-ink-foreground">
+                    {selected.full_name}
+                  </DialogTitle>
+                  <div className="mt-4 h-1 w-12 bg-accent" />
+                  {selected.headline && (
+                    <DialogDescription className="mt-4 text-sm text-ink-foreground/70">
+                      {selected.headline}
+                    </DialogDescription>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-10 overflow-y-auto p-8 md:w-3/5 md:p-12">
+                {selected.highlights.length > 0 && (
+                  <section>
+                    <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
+                      {tt.highlightsTitle}
+                    </p>
+                    <ul className="space-y-4">
+                      {selected.highlights.map((h, i) => (
+                        <li key={i} className="flex gap-4">
+                          <span className="font-bold text-accent">
+                            {String(i + 1).padStart(2, "0")}.
+                          </span>
+                          <p className="text-sm leading-relaxed">{h}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+
+                <LogoRow title={tt.institutionsTitle} logos={selected.academic_logos} />
+                <LogoRow title={tt.clientLogosTitle} logos={selected.client_logos} />
+
+                {selected.certifications.length > 0 && (
+                  <section>
+                    <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
+                      {tt.coursesTitle}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {selected.certifications.map((c) => (
+                        <span
+                          key={c}
+                          className="border border-border bg-secondary/50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider"
+                        >
+                          {c}
+                        </span>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
                 <Block icon={GraduationCap} title={tt.education} text={selected.education} />
                 <Block icon={Briefcase} title={tt.experience} text={selected.experience} />
                 <Block icon={Users} title={tt.clients} text={selected.clients} />
                 <Block icon={Award} title={tt.works} text={selected.works} />
+
                 {selected.specialties.length > 0 && (
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
                       {tt.specialties}
                     </p>
                     <p className="mt-2 text-sm text-muted-foreground">
@@ -255,7 +389,7 @@ export function ConsultantsTeam() {
                 )}
                 {selected.segments.length > 0 && (
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
                       {tt.segments}
                     </p>
                     <p className="mt-2 text-sm text-muted-foreground">
@@ -265,7 +399,7 @@ export function ConsultantsTeam() {
                 )}
                 {(selected.orcid_url || selected.lattes_url || selected.website_url) && (
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
                       {tt.links}
                     </p>
                     <div className="mt-2 flex flex-wrap gap-4 text-sm">
@@ -307,6 +441,7 @@ export function ConsultantsTeam() {
                 )}
 
                 <Button
+                  className="w-full rounded-none"
                   onClick={() => {
                     setContactId(selected.id);
                     setOpenId(null);
@@ -316,7 +451,7 @@ export function ConsultantsTeam() {
                   {tt.sendEmail}
                 </Button>
               </div>
-            </>
+            </div>
           )}
         </DialogContent>
       </Dialog>
@@ -327,9 +462,7 @@ export function ConsultantsTeam() {
             <>
               <DialogHeader>
                 <DialogTitle>{tt.contactTitle} {contactTarget.full_name}</DialogTitle>
-                <DialogDescription>
-                  {tt.contactDescription}
-                </DialogDescription>
+                <DialogDescription>{tt.contactDescription}</DialogDescription>
               </DialogHeader>
               <ContactForm consultant={contactTarget} onDone={() => setContactId(null)} />
             </>

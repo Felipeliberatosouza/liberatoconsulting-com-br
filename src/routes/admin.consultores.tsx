@@ -14,6 +14,7 @@ import {
   deleteConsultant,
   listConsultants,
   saveConsultant,
+  type ConsultantLogo,
   type ConsultantRecord,
 } from "@/lib/consultants.functions";
 import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
@@ -48,9 +49,101 @@ const EMPTY: ConsultantRecord = {
   lattes_url: "",
   website_url: "",
   contact_email: "",
+  years_experience: 0,
+  certifications: [],
+  highlights: [],
+  academic_logos: [],
+  client_logos: [],
   position: 0,
   published: true,
 };
+
+/** Converte uma imagem em JPEG/PNG leve para uso como logomarca. */
+async function fileToLogo(file: File): Promise<string> {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error("read"));
+    reader.readAsDataURL(file);
+  });
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const el = new Image();
+    el.onload = () => resolve(el);
+    el.onerror = () => reject(new Error("decode"));
+    el.src = dataUrl;
+  });
+  const max = 320;
+  const scale = Math.min(1, max / Math.max(img.width, img.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(img.width * scale));
+  canvas.height = Math.max(1, Math.round(img.height * scale));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("canvas");
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL("image/png");
+}
+
+/** Lista de logomarcas (nome + imagem) usada no perfil público. */
+function LogoEditor({
+  label,
+  logos,
+  onChange,
+}: {
+  label: string;
+  logos: ConsultantLogo[];
+  onChange: (logos: ConsultantLogo[]) => void;
+}) {
+  async function add(file: File | undefined) {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione um arquivo de imagem.");
+      return;
+    }
+    try {
+      const url = await fileToLogo(file);
+      onChange([...logos, { name: file.name.replace(/\.[^.]+$/, ""), url }]);
+    } catch {
+      toast.error("Não foi possível processar a imagem.");
+    }
+  }
+
+  return (
+    <div>
+      <Label>{label}</Label>
+      <div className="mt-2 grid gap-3 sm:grid-cols-2">
+        {logos.map((logo, i) => (
+          <div key={i} className="flex items-center gap-3 rounded-lg border border-border p-3">
+            <img src={logo.url} alt="" className="h-8 w-20 object-contain" />
+            <Input
+              className="h-8"
+              placeholder="Nome"
+              value={logo.name}
+              onChange={(e) =>
+                onChange(logos.map((l, j) => (j === i ? { ...l, name: e.target.value } : l)))
+              }
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onChange(logos.filter((_, j) => j !== i))}
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
+        ))}
+      </div>
+      <Input
+        className="mt-2"
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          add(e.target.files?.[0]);
+          e.target.value = "";
+        }}
+      />
+    </div>
+  );
+}
 
 function AdminConsultantsPage() {
   const qc = useQueryClient();
@@ -311,6 +404,61 @@ function AdminConsultantsPage() {
               onChange={(e) => setDraft({ ...draft, works: e.target.value })}
             />
           </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <Label>Anos de experiência</Label>
+              <Input
+                type="number"
+                min={0}
+                max={80}
+                value={draft.years_experience}
+                onChange={(e) =>
+                  setDraft({ ...draft, years_experience: Number(e.target.value) || 0 })
+                }
+              />
+            </div>
+            <div>
+              <Label>Cursos e certificações (um por linha)</Label>
+              <Textarea
+                rows={4}
+                placeholder={"MBA FGV\nPMP®\nLean Six Sigma"}
+                value={draft.certifications.join("\n")}
+                onChange={(e) =>
+                  setDraft({
+                    ...draft,
+                    certifications: e.target.value.split("\n").map((v) => v.trim()).filter(Boolean),
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label>Destaques de carreira (um por linha)</Label>
+            <Textarea
+              rows={4}
+              placeholder="Liderança de projetos com orçamento acima de R$ 500 milhões"
+              value={draft.highlights.join("\n")}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  highlights: e.target.value.split("\n").map((v) => v.trim()).filter(Boolean),
+                })
+              }
+            />
+          </div>
+
+          <LogoEditor
+            label="Logomarcas de instituições acadêmicas"
+            logos={draft.academic_logos}
+            onChange={(academic_logos) => setDraft({ ...draft, academic_logos })}
+          />
+          <LogoEditor
+            label="Logomarcas de clientes"
+            logos={draft.client_logos}
+            onChange={(client_logos) => setDraft({ ...draft, client_logos })}
+          />
 
           <div>
             <Label>Especializações (serviços da consultoria)</Label>

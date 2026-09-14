@@ -6,7 +6,7 @@
 import { contentHash, type Lang } from "@/i18n/config";
 
 const TEXT_FIELDS = ["headline", "education", "experience", "clients", "works"] as const;
-const LIST_FIELDS = ["specialties", "segments"] as const;
+const LIST_FIELDS = ["specialties", "segments", "certifications", "highlights"] as const;
 
 type Row = Record<string, unknown> & { id: string };
 
