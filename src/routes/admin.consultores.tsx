@@ -211,7 +211,13 @@ function AdminConsultantsPage() {
     if (!draft) return;
     setSaving(true);
     try {
-      const { id, ...rest } = draft;
+      const cleanLines = (lines: string[]) => lines.map((v) => v.trim()).filter(Boolean);
+      const { id, ...base } = draft;
+      const rest = {
+        ...base,
+        certifications: cleanLines(base.certifications),
+        highlights: cleanLines(base.highlights),
+      };
       const res = await saveConsultant({ data: id ? { id, ...rest } : rest });
       if (res.ok) {
         toast.success("Consultor salvo.");
@@ -427,7 +433,7 @@ function AdminConsultantsPage() {
                 onChange={(e) =>
                   setDraft({
                     ...draft,
-                    certifications: e.target.value.split("\n").map((v) => v.trim()).filter(Boolean),
+                    certifications: e.target.value.split("\n"),
                   })
                 }
               />
@@ -443,7 +449,7 @@ function AdminConsultantsPage() {
               onChange={(e) =>
                 setDraft({
                   ...draft,
-                  highlights: e.target.value.split("\n").map((v) => v.trim()).filter(Boolean),
+                  highlights: e.target.value.split("\n"),
                 })
               }
             />
