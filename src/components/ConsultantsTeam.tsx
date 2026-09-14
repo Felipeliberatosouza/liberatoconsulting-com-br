@@ -199,7 +199,7 @@ export function ConsultantsTeam() {
   const { data, isLoading } = useQuery({
     queryKey: ["public-consultants", lang],
     queryFn: () => listPublicConsultants({ data: { lang } }),
-    staleTime: 60_000,
+    staleTime: 0,
   });
 
   const consultants = useMemo(() => data ?? [], [data]);
