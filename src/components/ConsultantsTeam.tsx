@@ -24,7 +24,7 @@ import { useLanguage } from "@/i18n";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
 import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
-function Initials({ name, className = "" }: { name: string; className?: string }) {
+export function Initials({ name, className = "" }: { name: string; className?: string }) {
   const initials = name
     .split(/\s+/)
     .slice(0, 2)
@@ -40,7 +40,7 @@ function Initials({ name, className = "" }: { name: string; className?: string }
   );
 }
 
-function Block({
+export function Block({
   icon: Icon,
   title,
   text,
@@ -63,7 +63,7 @@ function Block({
   );
 }
 
-function LogoRow({ title, logos }: { title: string; logos: ConsultantLogo[] }) {
+export function LogoRow({ title, logos }: { title: string; logos: ConsultantLogo[] }) {
   if (logos.length === 0) return null;
   return (
     <section>
@@ -89,7 +89,7 @@ function LogoRow({ title, logos }: { title: string; logos: ConsultantLogo[] }) {
   );
 }
 
-function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onDone: () => void }) {
+export function ContactForm({ consultant, onDone }: { consultant: PublicConsultant; onDone: () => void }) {
   const { t } = useLanguage();
   const tt = t.team;
   const startedAt = useRef(Date.now());
@@ -326,9 +326,18 @@ export function ConsultantsTeam() {
 
 
               <div className="flex gap-2">
-                <Button className="flex-1 rounded-none" onClick={() => setOpenId(c.id)}>
-                  {tt.viewProfile}
-                </Button>
+                {c.slug ? (
+                  <Button asChild className="flex-1 rounded-none">
+                    <Link to="/$slug" params={{ slug: c.slug }} target="_blank">
+                      {tt.viewProfile}
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button className="flex-1 rounded-none" onClick={() => setOpenId(c.id)}>
+                    {tt.viewProfile}
+                  </Button>
+                )}
+
                 <Button
                   variant="outline"
                   className="rounded-none"

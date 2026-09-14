@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as BrasilRouteImport } from './routes/brasil'
 import { Route as CareersRouteImport } from './routes/careers'
@@ -68,6 +69,11 @@ import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/l
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SlugRoute = SlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -346,6 +352,7 @@ const LovableEmailTransactionalPreviewRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
   '/about': typeof AboutRoute
   '/brasil': typeof BrasilRoute
   '/careers': typeof CareersRoute
@@ -403,6 +410,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
   '/about': typeof AboutRoute
   '/brasil': typeof BrasilRoute
   '/careers': typeof CareersRoute
@@ -461,6 +469,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$slug': typeof SlugRoute
   '/about': typeof AboutRoute
   '/brasil': typeof BrasilRoute
   '/careers': typeof CareersRoute
@@ -520,6 +529,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$slug'
     | '/about'
     | '/brasil'
     | '/careers'
@@ -577,6 +587,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$slug'
     | '/about'
     | '/brasil'
     | '/careers'
@@ -634,6 +645,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/$slug'
     | '/about'
     | '/brasil'
     | '/careers'
@@ -692,6 +704,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SlugRoute: typeof SlugRoute
   AboutRoute: typeof AboutRoute
   BrasilRoute: typeof BrasilRoute
   CareersRoute: typeof CareersRoute
@@ -755,6 +768,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$slug': {
+      id: '/$slug'
+      path: '/$slug'
+      fullPath: '/$slug'
+      preLoaderRoute: typeof SlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -1140,6 +1160,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SlugRoute: SlugRoute,
   AboutRoute: AboutRoute,
   BrasilRoute: BrasilRoute,
   CareersRoute: CareersRoute,

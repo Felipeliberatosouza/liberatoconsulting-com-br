@@ -37,6 +37,8 @@ const SERVICES: string[] = pt.megaMenu.groups.flatMap((g) =>
 const EMPTY: ConsultantRecord = {
   id: "",
   full_name: "",
+  slug: "",
+
   photo_url: "",
   headline: "",
   education: "",
@@ -318,6 +320,31 @@ function AdminConsultantsPage() {
               />
             </div>
           </div>
+
+          <div>
+            <Label>Endereço da página do consultor</Label>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">liberatoconsulting.com.br/</span>
+              <Input
+                placeholder="felipeliberato"
+                value={draft.slug}
+                onChange={(e) =>
+                  setDraft({
+                    ...draft,
+                    slug: e.target.value
+                      .toLowerCase()
+                      .normalize("NFD")
+                      .replace(/[\u0300-\u036f]/g, "")
+                      .replace(/[^a-z0-9-]/g, ""),
+                  })
+                }
+              />
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Deixe em branco para não publicar uma página própria do consultor.
+            </p>
+          </div>
+
 
           <div>
             <Label>Resumo / cargo</Label>

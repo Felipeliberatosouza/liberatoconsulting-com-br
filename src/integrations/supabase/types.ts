@@ -418,6 +418,7 @@ export type Database = {
           position: number
           published: boolean
           segments: Json
+          slug: string
           specialties: Json
           translations: Json
           updated_at: string
@@ -444,6 +445,7 @@ export type Database = {
           position?: number
           published?: boolean
           segments?: Json
+          slug?: string
           specialties?: Json
           translations?: Json
           updated_at?: string
@@ -470,6 +472,7 @@ export type Database = {
           position?: number
           published?: boolean
           segments?: Json
+          slug?: string
           specialties?: Json
           translations?: Json
           updated_at?: string
@@ -1690,6 +1693,7 @@ export type Database = {
           orcid_url: string
           photo_url: string
           segments: Json
+          slug: string
           sort_order: number
           specialties: Json
           website_url: string
