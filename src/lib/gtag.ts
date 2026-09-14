@@ -44,8 +44,8 @@ export function trackGoogleAdsConversion(
 ) {
   const sendTo = `${GOOGLE_ADS_ID}/${conversionLabel}`;
   const clean: Record<string, string | number> = { send_to: sendTo };
-  if (params?.value !== undefined) clean.value = params.value;
-  if (params?.currency) clean.currency = params.currency;
-  if (params?.transactionId) clean.transaction_id = params.transactionId;
+  if (params?.value !== undefined) clean["value"] = params.value;
+  if (params?.currency) clean["currency"] = params.currency;
+  if (params?.transactionId) clean["transaction_id"] = params.transactionId;
   gtag("event", "conversion", clean);
 }
