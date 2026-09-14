@@ -287,6 +287,27 @@ export function ConsultantsTeam() {
                 </div>
               )}
 
+              {c.publications.length > 0 && (
+                <div className="border-t border-border pt-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                    {tt.publicationsTitle}
+                  </p>
+                  <ul className="mt-2 space-y-1.5">
+                    {c.publications.slice(0, 3).map((p) => (
+                      <li key={p.slug}>
+                        <Link
+                          to="/content/$slug"
+                          params={{ slug: p.slug }}
+                          className="line-clamp-2 text-sm leading-snug text-accent underline-offset-4 hover:underline"
+                        >
+                          {p.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               <div className="flex gap-2">
                 <Button className="flex-1 rounded-none" onClick={() => setOpenId(c.id)}>
                   {tt.viewProfile}
