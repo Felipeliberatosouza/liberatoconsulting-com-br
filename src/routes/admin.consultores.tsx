@@ -14,6 +14,7 @@ import {
   deleteConsultant,
   listConsultants,
   saveConsultant,
+  type ConsultantLogo,
   type ConsultantRecord,
 } from "@/lib/consultants.functions";
 import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
