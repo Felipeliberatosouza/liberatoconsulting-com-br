@@ -950,6 +950,15 @@ export const pt = {
         audience: "PMEs, startups, corporações, investidores e empresas internacionais.",
         products: ["market-opportunity-decision", "customer-insight-sprint", "concept-and-proposition-test", "price-and-value-intelligence", "competitive-response-radar", "market-signal-monitor", "decision-room", "modelagem-de-negocio", "plano-de-negocios", "informacoes-de-segmentos-de-mercado"],
       },
+      {
+        id: "qualidade-lean-e-certificacoes",
+        code: "P10",
+        title: "Qualidade, Lean e Certificações",
+        groups: ["operacoes"],
+        problem: "Não conformidades, retrabalho, variação de processo e falta de preparo para certificações de qualidade.",
+        audience: "Indústrias, fornecedores, empresas de serviços e unidades corporativas.",
+        products: ["diagnostico-de-qualidade-90", "sprint-lean-six-sigma-de-resultado", "academia-de-qualidade-e-lean-para-certificacoes"],
+      },
     ],
   },
   serviceDetail: {
