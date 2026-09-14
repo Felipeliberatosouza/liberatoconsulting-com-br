@@ -211,7 +211,13 @@ function AdminConsultantsPage() {
     if (!draft) return;
     setSaving(true);
     try {
-      const { id, ...rest } = draft;
+      const cleanLines = (lines: string[]) => lines.map((v) => v.trim()).filter(Boolean);
+      const { id, ...base } = draft;
+      const rest = {
+        ...base,
+        certifications: cleanLines(base.certifications),
+        highlights: cleanLines(base.highlights),
+      };
       const res = await saveConsultant({ data: id ? { id, ...rest } : rest });
       if (res.ok) {
         toast.success("Consultor salvo.");
