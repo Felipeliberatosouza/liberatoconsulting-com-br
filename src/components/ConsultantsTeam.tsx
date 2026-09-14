@@ -326,8 +326,16 @@ export function ConsultantsTeam() {
 
 
               <div className="flex gap-2">
-                <Button className="flex-1 rounded-none" onClick={() => setOpenId(c.id)}>
-                  {tt.viewProfile}
+                {c.slug ? (
+                  <Button asChild className="flex-1 rounded-none">
+                    <Link to="/$slug" params={{ slug: c.slug }} target="_blank">
+                      {tt.viewProfile}
+                    </Link>
+                  </Button>
+                ) : (
+                  <Button className="flex-1 rounded-none" onClick={() => setOpenId(c.id)}>
+                    {tt.viewProfile}
+
                 </Button>
                 <Button
                   variant="outline"
