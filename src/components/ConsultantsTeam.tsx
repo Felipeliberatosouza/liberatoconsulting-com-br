@@ -394,6 +394,33 @@ export function ConsultantsTeam() {
                   </section>
                 )}
 
+                {selected.publications.length > 0 && (
+                  <section>
+                    <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
+                      {tt.publicationsAll}
+                    </p>
+                    <ul className="divide-y divide-border border-y border-border">
+                      {selected.publications.map((p) => (
+                        <li key={p.slug}>
+                          <Link
+                            to="/content/$slug"
+                            params={{ slug: p.slug }}
+                            onClick={() => setOpenId(null)}
+                            className="group flex items-center justify-between gap-4 py-3"
+                          >
+                            <span className="text-sm leading-snug group-hover:text-accent">
+                              {p.title}
+                            </span>
+                            <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                              {p.date}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+
                 <Block icon={GraduationCap} title={tt.education} text={selected.education} />
                 <Block icon={Briefcase} title={tt.experience} text={selected.experience} />
                 <Block icon={Users} title={tt.clients} text={selected.clients} />
