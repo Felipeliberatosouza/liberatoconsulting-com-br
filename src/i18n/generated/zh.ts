@@ -2572,7 +2572,14 @@ export const dict: Dict = {
     "messagePlaceholder": "我们能如何提供帮助？",
     "submit": "发送信息",
     "sent": "信息已发送至",
-    "error": "目前无法发送。"
+    "error": "目前无法发送。",
+    "yearsLabel": "从业经验",
+    "yearsValue": "年",
+    "certificationsLabel": "资格认证",
+    "highlightsTitle": "职业亮点",
+    "institutionsTitle": "教育背景",
+    "clientLogosTitle": "主要客户",
+    "coursesTitle": "课程与认证"
   },
   "bulletin": {
     "eyebrow": "每周简报",
