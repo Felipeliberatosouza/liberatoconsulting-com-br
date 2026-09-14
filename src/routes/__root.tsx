@@ -214,6 +214,13 @@ function RootShell({ children }: { children: ReactNode }) {
             __html: `window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\n\ngtag('config', 'G-44WQ42SD3T');`,
           }}
         />
+        {/* Google Ads tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18442844041"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\n\ngtag('config', 'AW-18442844041');`,
+          }}
+        />
         <HeadContent />
       </head>
       <body>

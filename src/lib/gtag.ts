@@ -35,3 +35,17 @@ export function trackPageView(path: string) {
     send_to: GA_MEASUREMENT_ID,
   });
 }
+
+export const GOOGLE_ADS_ID = "AW-18442844041";
+
+export function trackGoogleAdsConversion(
+  conversionLabel: string,
+  params?: { value?: number; currency?: string; transactionId?: string },
+) {
+  const sendTo = `${GOOGLE_ADS_ID}/${conversionLabel}`;
+  const clean: Record<string, string | number> = { send_to: sendTo };
+  if (params?.value !== undefined) clean["value"] = params.value;
+  if (params?.currency) clean["currency"] = params.currency;
+  if (params?.transactionId) clean["transaction_id"] = params.transactionId;
+  gtag("event", "conversion", clean);
+}
