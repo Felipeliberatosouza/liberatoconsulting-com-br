@@ -82,6 +82,68 @@ async function fileToLogo(file: File): Promise<string> {
   return canvas.toDataURL("image/png");
 }
 
+/** Lista de logomarcas (nome + imagem) usada no perfil público. */
+function LogoEditor({
+  label,
+  logos,
+  onChange,
+}: {
+  label: string;
+  logos: ConsultantLogo[];
+  onChange: (logos: ConsultantLogo[]) => void;
+}) {
+  async function add(file: File | undefined) {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione um arquivo de imagem.");
+      return;
+    }
+    try {
+      const url = await fileToLogo(file);
+      onChange([...logos, { name: file.name.replace(/\.[^.]+$/, ""), url }]);
+    } catch {
+      toast.error("Não foi possível processar a imagem.");
+    }
+  }
+
+  return (
+    <div>
+      <Label>{label}</Label>
+      <div className="mt-2 grid gap-3 sm:grid-cols-2">
+        {logos.map((logo, i) => (
+          <div key={i} className="flex items-center gap-3 rounded-lg border border-border p-3">
+            <img src={logo.url} alt="" className="h-8 w-20 object-contain" />
+            <Input
+              className="h-8"
+              placeholder="Nome"
+              value={logo.name}
+              onChange={(e) =>
+                onChange(logos.map((l, j) => (j === i ? { ...l, name: e.target.value } : l)))
+              }
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onChange(logos.filter((_, j) => j !== i))}
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
+        ))}
+      </div>
+      <Input
+        className="mt-2"
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          add(e.target.files?.[0]);
+          e.target.value = "";
+        }}
+      />
+    </div>
+  );
+}
+
 function AdminConsultantsPage() {
   const qc = useQueryClient();
   const [draft, setDraft] = useState<ConsultantRecord | null>(null);
