@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { Mail, GraduationCap, Briefcase, Users, Award, Loader2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
