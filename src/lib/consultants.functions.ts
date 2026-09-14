@@ -4,6 +4,8 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { isValidPhone, PHONE_ERROR } from "./validation";
 
+export type ConsultantLogo = { name: string; url: string };
+
 export type PublicConsultant = {
   id: string;
   full_name: string;
@@ -18,6 +20,11 @@ export type PublicConsultant = {
   orcid_url: string;
   lattes_url: string;
   website_url: string;
+  years_experience: number;
+  certifications: string[];
+  highlights: string[];
+  academic_logos: ConsultantLogo[];
+  client_logos: ConsultantLogo[];
   sort_order: number;
 };
 
