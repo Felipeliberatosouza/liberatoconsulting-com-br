@@ -48,9 +48,39 @@ const EMPTY: ConsultantRecord = {
   lattes_url: "",
   website_url: "",
   contact_email: "",
+  years_experience: 0,
+  certifications: [],
+  highlights: [],
+  academic_logos: [],
+  client_logos: [],
   position: 0,
   published: true,
 };
+
+/** Converte uma imagem em JPEG/PNG leve para uso como logomarca. */
+async function fileToLogo(file: File): Promise<string> {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error("read"));
+    reader.readAsDataURL(file);
+  });
+  const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const el = new Image();
+    el.onload = () => resolve(el);
+    el.onerror = () => reject(new Error("decode"));
+    el.src = dataUrl;
+  });
+  const max = 320;
+  const scale = Math.min(1, max / Math.max(img.width, img.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(img.width * scale));
+  canvas.height = Math.max(1, Math.round(img.height * scale));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("canvas");
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL("image/png");
+}
 
 function AdminConsultantsPage() {
   const qc = useQueryClient();
