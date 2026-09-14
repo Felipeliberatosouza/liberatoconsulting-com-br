@@ -2380,7 +2380,10 @@ export const dict: Dict = {
     "highlightsTitle": "Destacados de carrera",
     "institutionsTitle": "Formación académica",
     "clientLogosTitle": "Principales clientes",
-    "coursesTitle": "Cursos y certificaciones"
+    "coursesTitle": "Cursos y certificaciones",
+    "publicationsTitle": "Publicaciones",
+    "publicationsAll": "Todas las publicaciones",
+    "publicationsRead": "Leer"
   },
   "bulletin": {
     "eyebrow": "Boletín Semanal",
