@@ -433,7 +433,7 @@ function AdminConsultantsPage() {
                 onChange={(e) =>
                   setDraft({
                     ...draft,
-                    certifications: e.target.value.split("\n").map((v) => v.trim()).filter(Boolean),
+                    certifications: e.target.value.split("\n"),
                   })
                 }
               />
