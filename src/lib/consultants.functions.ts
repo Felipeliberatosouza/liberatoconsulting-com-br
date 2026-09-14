@@ -94,6 +94,17 @@ const consultantSchema = z.object({
   works: z.string().trim().max(6000).default(""),
   specialties: z.array(z.string().trim().max(160)).max(60).default([]),
   segments: z.array(z.string().trim().max(120)).max(40).default([]),
+  years_experience: z.number().int().min(0).max(80).default(0),
+  certifications: z.array(z.string().trim().max(200)).max(40).default([]),
+  highlights: z.array(z.string().trim().max(400)).max(12).default([]),
+  academic_logos: z
+    .array(z.object({ name: z.string().trim().max(160).default(""), url: z.string().max(3_000_000) }))
+    .max(12)
+    .default([]),
+  client_logos: z
+    .array(z.object({ name: z.string().trim().max(160).default(""), url: z.string().max(3_000_000) }))
+    .max(24)
+    .default([]),
   orcid_url: z.string().trim().max(300).default(""),
   lattes_url: z.string().trim().max(300).default(""),
   website_url: z.string().trim().max(300).default(""),
