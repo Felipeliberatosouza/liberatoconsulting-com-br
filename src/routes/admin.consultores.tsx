@@ -47,12 +47,19 @@ const EMPTY_CERTIFICATION: CertificationDraft = {
   country: "",
   year: "",
 };
+const CERTIFICATION_DRAFT_SEPARATOR = "\u001f";
 
 function splitCertifications(values: string[]): string[] {
   return values.flatMap((value) => value.split(/;\s*/)).map((value) => value.trim()).filter(Boolean);
 }
 
 function parseCertification(value: string): CertificationDraft {
+  if (value.includes(CERTIFICATION_DRAFT_SEPARATOR)) {
+    const [name = "", institution = "", country = "", year = ""] = value.split(
+      CERTIFICATION_DRAFT_SEPARATOR,
+    );
+    return { name, institution, country, year };
+  }
   const normalized = value.trim().replace(/[.;]+$/, "");
   const modern = normalized.split(/\s+[—–]\s+/);
   if (modern.length >= 2) {
@@ -89,6 +96,15 @@ function formatCertification(certification: CertificationDraft): string {
     .join(" — ");
 }
 
+function serializeCertificationDraft(certification: CertificationDraft): string {
+  return [
+    certification.name,
+    certification.institution,
+    certification.country,
+    certification.year,
+  ].join(CERTIFICATION_DRAFT_SEPARATOR);
+}
+
 function CertificationEditor({
   certifications,
   onChange,
@@ -102,7 +118,7 @@ function CertificationEditor({
     const next = records.map((record, currentIndex) =>
       currentIndex === index ? { ...record, [field]: value } : record,
     );
-    onChange(next.map(formatCertification));
+    onChange(next.map(serializeCertificationDraft));
   }
 
   return (
@@ -113,7 +129,9 @@ function CertificationEditor({
           type="button"
           variant="outline"
           size="sm"
-          onClick={() => onChange([...records.map(formatCertification), ""])}
+          onClick={() =>
+            onChange([...records.map(serializeCertificationDraft), serializeCertificationDraft(EMPTY_CERTIFICATION)])
+          }
         >
           <Plus className="size-4" />
           Adicionar
@@ -161,7 +179,13 @@ function CertificationEditor({
               size="icon"
               className="self-end"
               aria-label="Excluir certificação"
-              onClick={() => onChange(records.filter((_, currentIndex) => currentIndex !== index).map(formatCertification))}
+              onClick={() =>
+                onChange(
+                  records
+                    .filter((_, currentIndex) => currentIndex !== index)
+                    .map(serializeCertificationDraft),
+                )
+              }
             >
               <Trash2 className="size-4" />
             </Button>

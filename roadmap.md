@@ -45,4 +45,4 @@
 - [x] Estruturar certificações por nome, instituição, país e ano no painel
 - [x] Padronizar subtítulos públicos em laranja
 - [x] Aumentar e simplificar a apresentação das logomarcas
-- [ ] Validar cadastro e perfil público em desktop e celular
+- [x] Validar cadastro e perfil público em desktop e celular
