@@ -96,7 +96,7 @@ function CertificationEditor({
   certifications: string[];
   onChange: (certifications: string[]) => void;
 }) {
-  const records = splitCertifications(certifications).map(parseCertification);
+  const records = certifications.map(parseCertification);
 
   function update(index: number, field: keyof CertificationDraft, value: string) {
     const next = records.map((record, currentIndex) =>
@@ -429,7 +429,13 @@ function AdminConsultantsPage() {
                 {c.contact_email ? ` · ${c.contact_email}` : " · sem e-mail"}
               </p>
             </div>
-            <Button variant="outline" size="sm" onClick={() => setDraft(c)}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setDraft({ ...c, certifications: splitCertifications(c.certifications) })
+              }
+            >
               Editar
             </Button>
             <Button variant="ghost" size="sm" onClick={() => remove(c.id)}>
