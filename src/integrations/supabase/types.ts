@@ -400,6 +400,9 @@ export type Database = {
       }
       consultants: {
         Row: {
+          academic_logos: Json
+          certifications: Json
+          client_logos: Json
           clients: string
           contact_email: string
           created_at: string
@@ -407,6 +410,7 @@ export type Database = {
           experience: string
           full_name: string
           headline: string
+          highlights: Json
           id: string
           lattes_url: string
           orcid_url: string
@@ -419,8 +423,12 @@ export type Database = {
           updated_at: string
           website_url: string
           works: string
+          years_experience: number
         }
         Insert: {
+          academic_logos?: Json
+          certifications?: Json
+          client_logos?: Json
           clients?: string
           contact_email?: string
           created_at?: string
@@ -428,6 +436,7 @@ export type Database = {
           experience?: string
           full_name: string
           headline?: string
+          highlights?: Json
           id?: string
           lattes_url?: string
           orcid_url?: string
@@ -440,8 +449,12 @@ export type Database = {
           updated_at?: string
           website_url?: string
           works?: string
+          years_experience?: number
         }
         Update: {
+          academic_logos?: Json
+          certifications?: Json
+          client_logos?: Json
           clients?: string
           contact_email?: string
           created_at?: string
@@ -449,6 +462,7 @@ export type Database = {
           experience?: string
           full_name?: string
           headline?: string
+          highlights?: Json
           id?: string
           lattes_url?: string
           orcid_url?: string
@@ -461,6 +475,7 @@ export type Database = {
           updated_at?: string
           website_url?: string
           works?: string
+          years_experience?: number
         }
         Relationships: []
       }
@@ -1661,11 +1676,15 @@ export type Database = {
       list_public_consultants: {
         Args: never
         Returns: {
+          academic_logos: Json
+          certifications: Json
+          client_logos: Json
           clients: string
           education: string
           experience: string
           full_name: string
           headline: string
+          highlights: Json
           id: string
           lattes_url: string
           orcid_url: string
@@ -1675,6 +1694,7 @@ export type Database = {
           specialties: Json
           website_url: string
           works: string
+          years_experience: number
         }[]
       }
       list_site_articles: {
