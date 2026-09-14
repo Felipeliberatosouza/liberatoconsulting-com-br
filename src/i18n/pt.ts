@@ -862,7 +862,7 @@ export const pt = {
 
   serviceFamilies: {
     eyebrow: "Famílias de produto",
-    title: "Nove famílias de produto para decisões e resultados",
+    title: "Dez famílias de produto para decisões e resultados",
     body: "Cada família reúne produtos de consultoria com escopo, prazo e indicadores definidos — do diagnóstico rápido ao programa corporativo, sempre com inteligência artificial aplicada ao método.",
     labels: {
       problem: "Problema que resolvemos",
