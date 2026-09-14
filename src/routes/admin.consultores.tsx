@@ -342,6 +342,61 @@ function AdminConsultantsPage() {
             />
           </div>
 
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <Label>Anos de experiência</Label>
+              <Input
+                type="number"
+                min={0}
+                max={80}
+                value={draft.years_experience}
+                onChange={(e) =>
+                  setDraft({ ...draft, years_experience: Number(e.target.value) || 0 })
+                }
+              />
+            </div>
+            <div>
+              <Label>Cursos e certificações (um por linha)</Label>
+              <Textarea
+                rows={4}
+                placeholder={"MBA FGV\nPMP®\nLean Six Sigma"}
+                value={draft.certifications.join("\n")}
+                onChange={(e) =>
+                  setDraft({
+                    ...draft,
+                    certifications: e.target.value.split("\n").map((v) => v.trim()).filter(Boolean),
+                  })
+                }
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label>Destaques de carreira (um por linha)</Label>
+            <Textarea
+              rows={4}
+              placeholder="Liderança de projetos com orçamento acima de R$ 500 milhões"
+              value={draft.highlights.join("\n")}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  highlights: e.target.value.split("\n").map((v) => v.trim()).filter(Boolean),
+                })
+              }
+            />
+          </div>
+
+          <LogoEditor
+            label="Logomarcas de instituições acadêmicas"
+            logos={draft.academic_logos}
+            onChange={(academic_logos) => setDraft({ ...draft, academic_logos })}
+          />
+          <LogoEditor
+            label="Logomarcas de clientes"
+            logos={draft.client_logos}
+            onChange={(client_logos) => setDraft({ ...draft, client_logos })}
+          />
+
           <div>
             <Label>Especializações (serviços da consultoria)</Label>
             <div className="mt-2 grid gap-2 sm:grid-cols-2">
