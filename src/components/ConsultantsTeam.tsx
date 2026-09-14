@@ -246,44 +246,60 @@ export function ConsultantsTeam() {
             </div>
 
             <div className="space-y-4 p-6">
-              {(c.years_experience > 0 || c.certifications.length > 0) && (
-                <div className="flex items-center gap-4 border-b border-border pb-4">
-                  {c.years_experience > 0 && (
-                    <div className="flex-1">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-                        {tt.yearsLabel}
-                      </p>
-                      <p className="text-lg font-bold">
-                        {c.years_experience}+ {tt.yearsValue}
-                      </p>
-                    </div>
-                  )}
-                  {c.certifications.length > 0 && (
-                    <>
-                      {c.years_experience > 0 && <div className="h-8 w-px bg-border" />}
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-                          {tt.certificationsLabel}
-                        </p>
-                        <p className="truncate text-lg font-bold">
-                          {c.certifications.slice(0, 2).join(", ")}
-                        </p>
-                      </div>
-                    </>
-                  )}
+              {c.years_experience > 0 && (
+                <div className="border-b border-border pb-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                    {tt.yearsLabel}
+                  </p>
+                  <p className="text-lg font-bold">
+                    {c.years_experience}+ {tt.yearsValue}
+                  </p>
                 </div>
               )}
 
+              {c.certifications.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                    {tt.certificationsLabel}
+                  </p>
+                  <ul className="mt-2 space-y-1.5">
+                    {c.certifications.map((cert) => (
+                      <li key={cert} className="flex gap-2 text-sm leading-snug">
+                        <span className="text-accent">—</span>
+                        <span>{cert}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <LogoRow title={tt.institutionsTitle} logos={c.academic_logos} />
+              <LogoRow title={tt.clientLogosTitle} logos={c.client_logos} />
+
               {c.specialties.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
-                  {c.specialties.slice(0, 3).map((s) => (
-                    <span
-                      key={s}
-                      className="border border-border px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
-                    >
-                      {s}
-                    </span>
-                  ))}
+                <div className="border-t border-border pt-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                    {tt.specialties}
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {c.specialties.map((s) => (
+                      <span
+                        key={s}
+                        className="border border-border px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
+                      >
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {c.segments.length > 0 && (
+                <div className="border-t border-border pt-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                    {tt.segments}
+                  </p>
+                  <p className="mt-2 text-sm text-muted-foreground">{c.segments.join(" · ")}</p>
                 </div>
               )}
 
@@ -307,6 +323,7 @@ export function ConsultantsTeam() {
                   </ul>
                 </div>
               )}
+
 
               <div className="flex gap-2">
                 <Button className="flex-1 rounded-none" onClick={() => setOpenId(c.id)}>
