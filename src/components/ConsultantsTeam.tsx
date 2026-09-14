@@ -70,17 +70,17 @@ export function LogoRow({ title, logos }: { title: string; logos: ConsultantLogo
       <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
         {title}
       </p>
-      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {logos.map((logo, i) => (
           <div
             key={`${logo.url}-${i}`}
-            className="flex h-14 items-center justify-center border border-border bg-secondary/40 px-3"
+            className="flex aspect-[3/2] items-center justify-center overflow-hidden bg-secondary/40 px-1"
           >
             <img
               src={logo.url}
               alt={logo.name}
               loading="lazy"
-              className="max-h-8 w-full object-contain opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
+              className="max-h-full w-full object-contain transition-transform duration-300 hover:scale-[1.03]"
             />
           </div>
         ))}
@@ -248,7 +248,7 @@ export function ConsultantsTeam() {
             <div className="space-y-4 p-6">
               {c.years_experience > 0 && (
                 <div className="border-b border-border pb-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
                     {tt.yearsLabel}
                   </p>
                   <p className="text-lg font-bold">
@@ -259,7 +259,7 @@ export function ConsultantsTeam() {
 
               {c.certifications.length > 0 && (
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
                     {tt.certificationsLabel}
                   </p>
                   <ul className="mt-2 space-y-1.5">
@@ -278,7 +278,7 @@ export function ConsultantsTeam() {
 
               {c.specialties.length > 0 && (
                 <div className="border-t border-border pt-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
                     {tt.specialties}
                   </p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
@@ -296,7 +296,7 @@ export function ConsultantsTeam() {
 
               {c.segments.length > 0 && (
                 <div className="border-t border-border pt-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
                     {tt.segments}
                   </p>
                   <p className="mt-2 text-sm text-muted-foreground">{c.segments.join(" · ")}</p>
@@ -305,7 +305,7 @@ export function ConsultantsTeam() {
 
               {c.publications.length > 0 && (
                 <div className="border-t border-border pt-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
                     {tt.publicationsTitle}
                   </p>
                   <ul className="mt-2 space-y-1.5">
