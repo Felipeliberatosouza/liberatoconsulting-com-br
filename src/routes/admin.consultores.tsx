@@ -37,6 +37,8 @@ const SERVICES: string[] = pt.megaMenu.groups.flatMap((g) =>
 const EMPTY: ConsultantRecord = {
   id: "",
   full_name: "",
+  slug: "",
+
   photo_url: "",
   headline: "",
   education: "",
