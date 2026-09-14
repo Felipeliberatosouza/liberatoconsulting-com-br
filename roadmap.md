@@ -39,3 +39,10 @@
 - [x] E-mail obrigatório com validação e mensagem própria
 - [x] Mensagem automática editável com o problema do serviço e assinatura do visitante
 - [x] Rótulos "E-mail/Mensagem" sem "(opcional)" nos quatro idiomas
+
+## Apresentação dos consultores (14/09/2026)
+- [x] Limitar especializações às opções marcadas no cadastro atual
+- [x] Estruturar certificações por nome, instituição, país e ano no painel
+- [x] Padronizar subtítulos públicos em laranja
+- [x] Aumentar e simplificar a apresentação das logomarcas
+- [x] Validar cadastro e perfil público em desktop e celular

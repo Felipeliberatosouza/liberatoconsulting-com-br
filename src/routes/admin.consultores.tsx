@@ -34,6 +34,171 @@ const SERVICES: string[] = pt.megaMenu.groups.flatMap((g) =>
   g.items.map((i) => `${g.title} · ${i.label}`),
 );
 
+type CertificationDraft = {
+  name: string;
+  institution: string;
+  country: string;
+  year: string;
+};
+
+const EMPTY_CERTIFICATION: CertificationDraft = {
+  name: "",
+  institution: "",
+  country: "",
+  year: "",
+};
+const CERTIFICATION_DRAFT_SEPARATOR = "\u001f";
+
+function splitCertifications(values: string[]): string[] {
+  return values.flatMap((value) => value.split(/;\s*/)).map((value) => value.trim()).filter(Boolean);
+}
+
+function parseCertification(value: string): CertificationDraft {
+  if (value.includes(CERTIFICATION_DRAFT_SEPARATOR)) {
+    const [name = "", institution = "", country = "", year = ""] = value.split(
+      CERTIFICATION_DRAFT_SEPARATOR,
+    );
+    return { name, institution, country, year };
+  }
+  const normalized = value.trim().replace(/[.;]+$/, "");
+  const modern = normalized.split(/\s+[—–]\s+/);
+  if (modern.length >= 2) {
+    const possibleYear = modern.at(-1) ?? "";
+    const hasYear = /^\d{4}$/.test(possibleYear);
+    return {
+      name: modern[0] ?? "",
+      institution: modern[1] ?? "",
+      country: modern.slice(2, hasYear ? -1 : undefined).join(" — "),
+      year: hasYear ? possibleYear : "",
+    };
+  }
+
+  const legacy = normalized.match(/^(.*?)\s+-\s+([^()]*)\s*(?:\(([^)]*)\))?$/);
+  if (legacy) {
+    return {
+      name: legacy[1]?.trim() ?? "",
+      institution: legacy[2]?.trim() ?? "",
+      country: legacy[3]?.trim() ?? "",
+      year: "",
+    };
+  }
+  return { ...EMPTY_CERTIFICATION, name: normalized };
+}
+
+function formatCertification(certification: CertificationDraft): string {
+  return [
+    certification.name.trim(),
+    certification.institution.trim(),
+    certification.country.trim(),
+    certification.year.trim(),
+  ]
+    .filter(Boolean)
+    .join(" — ");
+}
+
+function serializeCertificationDraft(certification: CertificationDraft): string {
+  return [
+    certification.name,
+    certification.institution,
+    certification.country,
+    certification.year,
+  ].join(CERTIFICATION_DRAFT_SEPARATOR);
+}
+
+function CertificationEditor({
+  certifications,
+  onChange,
+}: {
+  certifications: string[];
+  onChange: (certifications: string[]) => void;
+}) {
+  const records = certifications.map(parseCertification);
+
+  function update(index: number, field: keyof CertificationDraft, value: string) {
+    const next = records.map((record, currentIndex) =>
+      currentIndex === index ? { ...record, [field]: value } : record,
+    );
+    onChange(next.map(serializeCertificationDraft));
+  }
+
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-3">
+        <Label>Cursos e certificações</Label>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            onChange([...records.map(serializeCertificationDraft), serializeCertificationDraft(EMPTY_CERTIFICATION)])
+          }
+        >
+          <Plus className="size-4" />
+          Adicionar
+        </Button>
+      </div>
+      <div className="mt-3 space-y-3">
+        {records.map((record, index) => (
+          <div
+            key={index}
+            className="grid gap-3 border border-border p-4 sm:grid-cols-2 lg:grid-cols-[2fr_1.5fr_1fr_7rem_auto]"
+          >
+            <div>
+              <Label>Nome da certificação</Label>
+              <Input
+                value={record.name}
+                onChange={(event) => update(index, "name", event.target.value)}
+              />
+            </div>
+            <div>
+              <Label>Instituição</Label>
+              <Input
+                value={record.institution}
+                onChange={(event) => update(index, "institution", event.target.value)}
+              />
+            </div>
+            <div>
+              <Label>Local (país)</Label>
+              <Input
+                value={record.country}
+                onChange={(event) => update(index, "country", event.target.value)}
+              />
+            </div>
+            <div>
+              <Label>Ano</Label>
+              <Input
+                inputMode="numeric"
+                maxLength={4}
+                value={record.year}
+                onChange={(event) => update(index, "year", event.target.value.replace(/\D/g, "").slice(0, 4))}
+              />
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="self-end"
+              aria-label="Excluir certificação"
+              onClick={() =>
+                onChange(
+                  records
+                    .filter((_, currentIndex) => currentIndex !== index)
+                    .map(serializeCertificationDraft),
+                )
+              }
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
+        ))}
+        {records.length === 0 && (
+          <p className="text-sm text-muted-foreground">Nenhuma certificação cadastrada.</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 const EMPTY: ConsultantRecord = {
   id: "",
   full_name: "",
@@ -217,8 +382,12 @@ function AdminConsultantsPage() {
       const { id, ...base } = draft;
       const rest = {
         ...base,
-        certifications: cleanLines(base.certifications),
+        certifications: splitCertifications(cleanLines(base.certifications))
+          .map(parseCertification)
+          .map(formatCertification)
+          .filter(Boolean),
         highlights: cleanLines(base.highlights),
+        specialties: base.specialties.filter((specialty) => SERVICES.includes(specialty)),
       };
       const res = await saveConsultant({ data: id ? { id, ...rest } : rest });
       if (res.ok) {
@@ -284,7 +453,13 @@ function AdminConsultantsPage() {
                 {c.contact_email ? ` · ${c.contact_email}` : " · sem e-mail"}
               </p>
             </div>
-            <Button variant="outline" size="sm" onClick={() => setDraft(c)}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setDraft({ ...c, certifications: splitCertifications(c.certifications) })
+              }
+            >
               Editar
             </Button>
             <Button variant="ghost" size="sm" onClick={() => remove(c.id)}>
@@ -438,34 +613,23 @@ function AdminConsultantsPage() {
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <Label>Anos de experiência</Label>
-              <Input
-                type="number"
-                min={0}
-                max={80}
-                value={draft.years_experience}
-                onChange={(e) =>
-                  setDraft({ ...draft, years_experience: Number(e.target.value) || 0 })
-                }
-              />
-            </div>
-            <div>
-              <Label>Cursos e certificações (um por linha)</Label>
-              <Textarea
-                rows={4}
-                placeholder={"MBA FGV\nPMP®\nLean Six Sigma"}
-                value={draft.certifications.join("\n")}
-                onChange={(e) =>
-                  setDraft({
-                    ...draft,
-                    certifications: e.target.value.split("\n"),
-                  })
-                }
-              />
-            </div>
+          <div className="max-w-xs">
+            <Label>Anos de experiência</Label>
+            <Input
+              type="number"
+              min={0}
+              max={80}
+              value={draft.years_experience}
+              onChange={(e) =>
+                setDraft({ ...draft, years_experience: Number(e.target.value) || 0 })
+              }
+            />
           </div>
+
+          <CertificationEditor
+            certifications={draft.certifications}
+            onChange={(certifications) => setDraft({ ...draft, certifications })}
+          />
 
           <div>
             <Label>Destaques de carreira (um por linha)</Label>
