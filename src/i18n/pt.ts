@@ -36,6 +36,7 @@ export const pt = {
           { id: "digital-dados-e-ia-aplicada", label: "Digital, Dados e IA Aplicada" },
           { id: "cliente-vendas-e-experiencia", label: "Cliente, Vendas e Experiência" },
           { id: "pessoas-lideranca-e-gestao-da-mudanca", label: "Pessoas, Liderança e Gestão da Mudança" },
+          { id: "qualidade-lean-e-certificacoes", label: "Qualidade, Lean e Certificações" },
         ],
       },
       {
