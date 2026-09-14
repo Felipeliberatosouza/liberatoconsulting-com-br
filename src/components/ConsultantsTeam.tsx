@@ -335,8 +335,9 @@ export function ConsultantsTeam() {
                 ) : (
                   <Button className="flex-1 rounded-none" onClick={() => setOpenId(c.id)}>
                     {tt.viewProfile}
+                  </Button>
+                )}
 
-                </Button>
                 <Button
                   variant="outline"
                   className="rounded-none"
