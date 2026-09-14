@@ -2579,7 +2579,10 @@ export const dict: Dict = {
     "highlightsTitle": "职业亮点",
     "institutionsTitle": "教育背景",
     "clientLogosTitle": "主要客户",
-    "coursesTitle": "课程与认证"
+    "coursesTitle": "课程与认证",
+    "publicationsTitle": "已发表内容",
+    "publicationsAll": "全部发表内容",
+    "publicationsRead": "阅读"
   },
   "bulletin": {
     "eyebrow": "每周简报",
