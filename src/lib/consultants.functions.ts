@@ -58,7 +58,9 @@ export const listPublicConsultants = createServerFn({ method: "GET" })
     if (error) return [];
     const list = ((rows ?? []) as PublicConsultant[]).map((c) => ({
       ...c,
+      slug: String(c.slug ?? ""),
       specialties: Array.isArray(c.specialties) ? c.specialties : [],
+
       segments: Array.isArray(c.segments) ? c.segments : [],
       certifications: Array.isArray(c.certifications) ? c.certifications : [],
       highlights: Array.isArray(c.highlights) ? c.highlights : [],
