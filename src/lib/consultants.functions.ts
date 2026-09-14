@@ -8,8 +8,11 @@ export type ConsultantLogo = { name: string; url: string };
 
 export type PublicConsultant = {
   id: string;
+  /** Endereço próprio do consultor: liberatoconsulting.com.br/<slug> */
+  slug: string;
   full_name: string;
   photo_url: string;
+
   headline: string;
   education: string;
   experience: string;
