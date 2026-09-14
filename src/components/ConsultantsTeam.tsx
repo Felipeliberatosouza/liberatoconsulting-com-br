@@ -390,26 +390,36 @@ export function ConsultantsTeam() {
                   </section>
                 )}
 
-                <LogoRow title={tt.institutionsTitle} logos={selected.academic_logos} />
-                <LogoRow title={tt.clientLogosTitle} logos={selected.client_logos} />
+                {selected.years_experience > 0 && (
+                  <section>
+                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
+                      {tt.yearsLabel}
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {selected.years_experience}+ {tt.yearsValue}
+                    </p>
+                  </section>
+                )}
 
                 {selected.certifications.length > 0 && (
                   <section>
                     <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-accent">
                       {tt.coursesTitle}
                     </p>
-                    <div className="flex flex-wrap gap-2">
+                    <ul className="space-y-2">
                       {selected.certifications.map((c) => (
-                        <span
-                          key={c}
-                          className="border border-border bg-secondary/50 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider"
-                        >
-                          {c}
-                        </span>
+                        <li key={c} className="flex gap-3 text-sm leading-relaxed">
+                          <span className="text-accent">—</span>
+                          <span>{c}</span>
+                        </li>
                       ))}
-                    </div>
+                    </ul>
                   </section>
                 )}
+
+                <LogoRow title={tt.institutionsTitle} logos={selected.academic_logos} />
+                <LogoRow title={tt.clientLogosTitle} logos={selected.client_logos} />
+
 
                 {selected.publications.length > 0 && (
                   <section>
