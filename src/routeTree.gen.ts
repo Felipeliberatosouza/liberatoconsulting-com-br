@@ -60,6 +60,7 @@ import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as ApiPublicBulletinWeeklyRouteImport } from './routes/api/public/bulletin-weekly'
 import { Route as ApiPublicCrmBirthdaysRouteImport } from './routes/api/public/crm-birthdays'
+import { Route as ApiPublicIndicatorsRefreshRouteImport } from './routes/api/public/indicators-refresh'
 import { Route as ApiPublicNewsletterWeeklyRouteImport } from './routes/api/public/newsletter-weekly'
 import { Route as BrasilSlugTopicRouteImport } from './routes/brasil_.$slug_.$topic'
 import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
@@ -321,6 +322,12 @@ const ApiPublicCrmBirthdaysRoute = ApiPublicCrmBirthdaysRouteImport.update({
   path: '/api/public/crm-birthdays',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicIndicatorsRefreshRoute =
+  ApiPublicIndicatorsRefreshRouteImport.update({
+    id: '/api/public/indicators-refresh',
+    path: '/api/public/indicators-refresh',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicNewsletterWeeklyRoute =
   ApiPublicNewsletterWeeklyRouteImport.update({
     id: '/api/public/newsletter-weekly',
@@ -402,6 +409,7 @@ export interface FileRoutesByFullPath {
   '/services/': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
+  '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
   '/brasil/$slug/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
@@ -460,6 +468,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
+  '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
   '/brasil/$slug/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
@@ -519,6 +528,7 @@ export interface FileRoutesById {
   '/services/': typeof ServicesIndexRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
+  '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
   '/brasil_/$slug_/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
@@ -579,6 +589,7 @@ export interface FileRouteTypes {
     | '/services/'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
+    | '/api/public/indicators-refresh'
     | '/api/public/newsletter-weekly'
     | '/brasil/$slug/$topic'
     | '/lovable/email/events'
@@ -637,6 +648,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
+    | '/api/public/indicators-refresh'
     | '/api/public/newsletter-weekly'
     | '/brasil/$slug/$topic'
     | '/lovable/email/events'
@@ -695,6 +707,7 @@ export interface FileRouteTypes {
     | '/services/'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
+    | '/api/public/indicators-refresh'
     | '/api/public/newsletter-weekly'
     | '/brasil_/$slug_/$topic'
     | '/lovable/email/events'
@@ -754,6 +767,7 @@ export interface RootRouteChildren {
   ServicesIndexRoute: typeof ServicesIndexRoute
   ApiPublicBulletinWeeklyRoute: typeof ApiPublicBulletinWeeklyRoute
   ApiPublicCrmBirthdaysRoute: typeof ApiPublicCrmBirthdaysRoute
+  ApiPublicIndicatorsRefreshRoute: typeof ApiPublicIndicatorsRefreshRoute
   ApiPublicNewsletterWeeklyRoute: typeof ApiPublicNewsletterWeeklyRoute
   BrasilSlugTopicRoute: typeof BrasilSlugTopicRoute
   LovableEmailEventsRoute: typeof LovableEmailEventsRoute
@@ -1120,6 +1134,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicCrmBirthdaysRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/indicators-refresh': {
+      id: '/api/public/indicators-refresh'
+      path: '/api/public/indicators-refresh'
+      fullPath: '/api/public/indicators-refresh'
+      preLoaderRoute: typeof ApiPublicIndicatorsRefreshRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/newsletter-weekly': {
       id: '/api/public/newsletter-weekly'
       path: '/api/public/newsletter-weekly'
@@ -1210,6 +1231,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesIndexRoute: ServicesIndexRoute,
   ApiPublicBulletinWeeklyRoute: ApiPublicBulletinWeeklyRoute,
   ApiPublicCrmBirthdaysRoute: ApiPublicCrmBirthdaysRoute,
+  ApiPublicIndicatorsRefreshRoute: ApiPublicIndicatorsRefreshRoute,
   ApiPublicNewsletterWeeklyRoute: ApiPublicNewsletterWeeklyRoute,
   BrasilSlugTopicRoute: BrasilSlugTopicRoute,
   LovableEmailEventsRoute: LovableEmailEventsRoute,
