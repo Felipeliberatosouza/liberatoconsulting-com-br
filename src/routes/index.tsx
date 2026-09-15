@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
-  BrainCircuit,
+  Compass,
   ChevronLeft,
   ChevronRight,
   Compass,
@@ -375,7 +375,7 @@ function Index() {
             </h2>
           </div>
           <div>
-            <BrainCircuit className="size-8 text-accent" />
+            <Compass className="size-8 text-accent" strokeWidth={1.5} />
             <p className="mt-5 text-lg leading-relaxed text-muted-foreground">{t.purpose.body}</p>
             <ul className="mt-8 space-y-4 border-t border-border pt-6">
               {t.purpose.points.map((p) => (
