@@ -14,6 +14,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [website, setWebsite] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
@@ -43,7 +44,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
           setBusy(true);
           try {
             const r = await subscribeNewsletter({
-              data: { email, name, language: lang, sourcePath: pathname, website },
+              data: { email, name, whatsapp, language: lang, sourcePath: pathname, website },
             });
             if (!r.ok) {
               setDone(false);
@@ -52,6 +53,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
               setDone(true);
               setEmail("");
               setName("");
+              setWhatsapp("");
               setWebsite("");
               toast.success(tn.success);
               trackEvent("form_submit", { form_name: "newsletter", location: pathname });
@@ -84,6 +86,15 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
           placeholder={tn.emailPlaceholder}
           className={`${inputBase} ${inputVariant}${errorClass("email", email)}`}
         />
+        <input
+          type="tel"
+          value={whatsapp}
+          onChange={(e) => setWhatsapp(e.target.value)}
+          placeholder={tn.whatsappPlaceholder}
+          aria-label={tn.whatsappPlaceholder}
+          className={`${inputBase} ${inputVariant}`}
+        />
+
         <button
           type="submit"
           disabled={busy}

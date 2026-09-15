@@ -1295,6 +1295,8 @@ export type Database = {
           status: string
           unsubscribe_token: string
           updated_at: string
+          via_whatsapp: boolean
+          whatsapp: string
         }
         Insert: {
           created_at?: string
@@ -1306,6 +1308,8 @@ export type Database = {
           status?: string
           unsubscribe_token?: string
           updated_at?: string
+          via_whatsapp?: boolean
+          whatsapp?: string
         }
         Update: {
           created_at?: string
@@ -1317,6 +1321,8 @@ export type Database = {
           status?: string
           unsubscribe_token?: string
           updated_at?: string
+          via_whatsapp?: boolean
+          whatsapp?: string
         }
         Relationships: []
       }

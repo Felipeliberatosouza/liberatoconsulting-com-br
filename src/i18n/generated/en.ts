@@ -2758,6 +2758,7 @@ export const dict: Dict = {
   "newsletterForm": {
     "done": "Subscription confirmed. Thank you!",
     "emailPlaceholder": "your@email.com",
+    "whatsappPlaceholder": "WhatsApp (optional)",
     "submit": "Subscribe",
     "sending": "Sending…",
     "success": "Subscription successful.",

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { newsletterSlug, uniqueNewsletterSlug } from "./newsletter-slug";
+import { isValidPhone, PHONE_ERROR } from "./validation";
 
 async function assertAdmin(context: { supabase: any; userId: string }) {
   const { assertAdmin: check } = await import("./access.server");
@@ -16,6 +17,14 @@ async function assertAdmin(context: { supabase: any; userId: string }) {
 const subscribeInput = z.object({
   email: z.string().trim().email().max(255),
   name: z.string().trim().max(120).optional().default(""),
+  // WhatsApp é opcional: quando informado, o inscrito também recebe por lá.
+  whatsapp: z
+    .string()
+    .trim()
+    .max(30)
+    .optional()
+    .default("")
+    .refine((v) => !v || isValidPhone(v), PHONE_ERROR),
   language: z.string().trim().max(8).optional().default("pt"),
   sourcePath: z.string().trim().max(300).optional().default(""),
   website: z.string().max(200).optional().default(""), // honeypot
@@ -45,6 +54,8 @@ export const subscribeNewsletter = createServerFn({ method: "POST" })
       {
         email,
         name: data.name ?? "",
+        whatsapp: data.whatsapp ?? "",
+        via_whatsapp: Boolean(data.whatsapp),
         language: data.language ?? "pt",
         source_path: data.sourcePath ?? "",
         status: "active",
@@ -82,7 +93,7 @@ export const listSubscribers = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("newsletter_subscribers")
-      .select("id, email, name, language, source_path, status, created_at")
+      .select("id, email, name, whatsapp, via_whatsapp, language, source_path, status, created_at")
       .order("created_at", { ascending: false })
       .limit(1000);
     if (error) throw new Error(error.message);

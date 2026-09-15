@@ -1799,6 +1799,7 @@ export const pt = {
 
     done: "Inscrição confirmada. Obrigado!",
     emailPlaceholder: "seu@email.com",
+    whatsappPlaceholder: "WhatsApp (opcional)",
     submit: "Inscrever",
     sending: "Enviando…",
     success: "Inscrição realizada com sucesso.",

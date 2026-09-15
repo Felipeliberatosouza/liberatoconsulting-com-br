@@ -185,14 +185,21 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
   const { company, logoUrl } = await loadEmailBrand(origin);
 
 
-  type Recipient = { email: string; unsubscribe_token: string; language?: string | null };
+  type Recipient = {
+    email: string;
+    unsubscribe_token: string;
+    language?: string | null;
+    name?: string | null;
+    whatsapp?: string | null;
+    via_whatsapp?: boolean | null;
+  };
   let recipients: Recipient[];
   if (testEmail) {
     recipients = [{ email: testEmail, unsubscribe_token: "00000000-0000-0000-0000-000000000000" }];
   } else {
     const { data: subs } = await supabaseAdmin
       .from("newsletter_subscribers")
-      .select("email, unsubscribe_token, language")
+      .select("email, unsubscribe_token, language, name, whatsapp, via_whatsapp")
       .eq("status", "active")
       .limit(5000);
     recipients = (subs ?? []) as Recipient[];
@@ -255,6 +262,23 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
       failed += 1;
       lastError = err instanceof Error ? err.message : String(err);
 
+    }
+
+    // Quando o inscrito pediu para receber por WhatsApp, envia também por lá.
+    if (r.via_whatsapp && r.whatsapp) {
+      try {
+        const v = await variantFor(lang);
+        const { sendWhatsAppMessage } = await import("./bulletin.server");
+        const caption = `*${v.subject}*\n\n${v.body}\n\nCancelar: ${unsubscribeUrl}`;
+        await sendWhatsAppMessage({
+          to: r.whatsapp,
+          caption,
+          templateName: "boletim_semanal",
+          templateParams: [(r.name || "").split(" ")[0] || "assinante", caption],
+        });
+      } catch (err) {
+        lastError = err instanceof Error ? err.message : String(err);
+      }
     }
   }
 
