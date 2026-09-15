@@ -516,16 +516,13 @@ export const dict: Dict = {
   },
   "stats": [
     {
-      "value": "AI",
-      "label": "at the core of all projects"
+      "title": "Increase your profit margin"
     },
     {
-      "value": "4",
-      "label": "integrated business fronts"
+      "title": "Increase your sales"
     },
     {
-      "value": "BR",
-      "label": "local intelligence for global firms"
+      "title": "Improve your processes and execution capability"
     }
   ],
   "purpose": {
