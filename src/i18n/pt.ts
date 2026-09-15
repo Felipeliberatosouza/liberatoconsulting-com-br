@@ -342,9 +342,9 @@ export const pt = {
     secondary: "Solicitar um estudo setorial",
   },
   stats: [
-    { value: "IA", label: "no núcleo de todos os projetos" },
-    { value: "4", label: "frentes de atuação integradas" },
-    { value: "BR", label: "inteligência local para empresas globais" },
+    { title: "Aumente sua margem de lucro" },
+    { title: "Aumente suas vendas" },
+    { title: "Melhore seus processos e sua capacidade de execução" },
   ],
   purpose: {
     eyebrow: "Nosso propósito",

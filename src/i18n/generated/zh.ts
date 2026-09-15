@@ -516,16 +516,13 @@ export const dict: Dict = {
   },
   "stats": [
     {
-      "value": "IA",
-      "label": "贯穿所有项目的核心"
+      "title": "提高您的利润率"
     },
     {
-      "value": "4",
-      "label": "大集成业务领域"
+      "title": "增加您的销售额"
     },
     {
-      "value": "BR",
-      "label": "服务全球企业的本地智慧"
+      "title": "改进您的流程与执行能力"
     }
   ],
   "purpose": {
