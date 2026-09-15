@@ -276,29 +276,25 @@ function Index() {
       <HeroCarousel />
 
 
-      <section className="border-b border-border bg-ink">
-        <div className="mx-auto grid max-w-7xl gap-px sm:grid-cols-3">
+      <section className="border-b border-border bg-background">
+        <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 sm:grid-cols-3">
           {t.stats.map((s, i) => (
             <Link
               key={s.title}
               to="/services"
-              className="group relative overflow-hidden bg-ink"
+              className="group bg-background"
             >
               <img
                 src={[valueMargem, valueVendas, valueProcessos][i]}
                 alt={s.title}
                 width={1200}
-                height={900}
+                height={675}
                 loading="lazy"
-                className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105 sm:aspect-[3/4]"
+                className="aspect-[16/9] w-full rounded-lg object-cover transition-transform duration-700 group-hover:scale-[1.03]"
               />
-              <div
-                aria-hidden
-                className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent"
-              />
-              <h2 className="absolute inset-x-0 bottom-0 p-6 font-display text-xl font-bold uppercase leading-tight text-ink-foreground md:text-2xl">
+              <h2 className="mt-4 font-display text-lg font-bold uppercase leading-tight text-ink md:text-xl">
                 {s.title}
-                <span className="mt-3 block h-0.5 w-10 bg-accent transition-all duration-500 group-hover:w-16" />
+                <span className="mt-2 block h-0.5 w-10 bg-accent transition-all duration-500 group-hover:w-16" />
               </h2>
             </Link>
           ))}
