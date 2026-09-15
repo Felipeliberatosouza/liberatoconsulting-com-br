@@ -6,6 +6,7 @@ import { useLanguage } from "@/i18n";
 import { trackEvent } from "@/lib/gtag";
 import { subscribeNewsletter } from "@/lib/newsletter.functions";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
+import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
 
 export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | "page" }) {
@@ -41,6 +42,10 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
         onSubmit={async (e) => {
           e.preventDefault();
           if (!validate({ email })) return;
+          if (whatsapp && !isValidPhone(whatsapp)) {
+            toast.error(PHONE_ERROR);
+            return;
+          }
           setBusy(true);
           try {
             const r = await subscribeNewsletter({
