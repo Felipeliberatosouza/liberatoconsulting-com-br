@@ -343,18 +343,21 @@ function Index() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-10 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-                {t.brazilFocus.sectorsLabel}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {t.brazilFocus.sectors.map((s) => (
-                  <span
-                    key={s}
-                    className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground"
-                  >
-                    {s}
-                  </span>
-                ))}
+              {/* Bloco oculto visualmente (sr-only), mantido no HTML para SEO */}
+              <div className="sr-only">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+                  {t.brazilFocus.sectorsLabel}
+                </p>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {t.brazilFocus.sectors.map((s) => (
+                    <li
+                      key={s}
+                      className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground"
+                    >
+                      {s}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
