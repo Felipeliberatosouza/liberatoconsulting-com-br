@@ -53,6 +53,10 @@ export function ScheduleSettings() {
         Defina o dia da semana e o horário (horário de Brasília) em que cada envio é disparado
         automaticamente para os inscritos ativos.
       </p>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Os indicadores econômicos (página Dados do Brasil e Boletim Semanal) são atualizados
+        automaticamente toda segunda-feira às 10h, independentemente do dia de envio escolhido.
+      </p>
 
       {q.isLoading ? (
         <p className="mt-4 text-sm text-muted-foreground">Carregando agendamentos…</p>
