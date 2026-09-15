@@ -53,6 +53,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
               setDone(true);
               setEmail("");
               setName("");
+              setWhatsapp("");
               setWebsite("");
               toast.success(tn.success);
               trackEvent("form_submit", { form_name: "newsletter", location: pathname });
