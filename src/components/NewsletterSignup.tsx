@@ -84,6 +84,15 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
           placeholder={tn.emailPlaceholder}
           className={`${inputBase} ${inputVariant}${errorClass("email", email)}`}
         />
+        <input
+          type="tel"
+          value={whatsapp}
+          onChange={(e) => setWhatsapp(e.target.value)}
+          placeholder={tn.whatsappPlaceholder}
+          aria-label={tn.whatsappPlaceholder}
+          className={`${inputBase} ${inputVariant}`}
+        />
+
         <button
           type="submit"
           disabled={busy}
