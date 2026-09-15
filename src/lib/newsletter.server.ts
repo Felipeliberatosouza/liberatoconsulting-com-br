@@ -263,6 +263,23 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
       lastError = err instanceof Error ? err.message : String(err);
 
     }
+
+    // Quando o inscrito pediu para receber por WhatsApp, envia também por lá.
+    if (r.via_whatsapp && r.whatsapp) {
+      try {
+        const v = await variantFor(lang);
+        const { sendWhatsAppMessage } = await import("./bulletin.server");
+        const caption = `*${v.subject}*\n\n${v.body}\n\nCancelar: ${unsubscribeUrl}`;
+        await sendWhatsAppMessage({
+          to: r.whatsapp,
+          caption,
+          templateName: "boletim_semanal",
+          templateParams: [(r.name || "").split(" ")[0] || "assinante", caption],
+        });
+      } catch (err) {
+        lastError = err instanceof Error ? err.message : String(err);
+      }
+    }
   }
 
   if (!testEmail) {
