@@ -47,8 +47,8 @@ type Indicator = {
 
 type Article = { slug: string; title: string; summary: string; kind: string };
 
-/** Desativa envios pelo WhatsApp enquanto a integração não é reativada. */
-export const WHATSAPP_SENDING_ENABLED = false;
+/** Envios pelo WhatsApp ativos via conector WhatsApp Business (Meta). */
+export const WHATSAPP_SENDING_ENABLED = true;
 
 export type BulletinContent = {
   segment: string;
