@@ -485,7 +485,22 @@ export async function sendWhatsAppMessage(params: {
 
   const templateName = params.templateName ?? "boletim_semanal";
   const templateParams = params.templateParams ?? [params.caption];
-  const body = {
+
+  const post = async (body: unknown) => {
+    const res = await fetch("https://connector-gateway.lovable.dev/whatsapp/messages", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${lovableKey}`,
+        "X-Connection-Api-Key": connectionKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    return { ok: res.ok, status: res.status, detail: await res.text() };
+  };
+
+  // 1) Mensagem iniciada pela empresa: usa o modelo aprovado pela Meta.
+  const templated = await post({
     messaging_product: "whatsapp",
     to,
     type: "template",
@@ -499,22 +514,22 @@ export async function sendWhatsAppMessage(params: {
         },
       ],
     },
-  };
-
-  const res = await fetch("https://connector-gateway.lovable.dev/whatsapp/messages", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${lovableKey}`,
-      "X-Connection-Api-Key": connectionKey,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
   });
-  const detail = await res.text();
-  if (!res.ok) {
-    throw new Error(`Falha no envio por WhatsApp [${res.status}]: ${detail.slice(0, 200)}`);
-  }
-  return { ok: true as const };
+  if (templated.ok) return { ok: true as const };
+
+  // 2) Enquanto o modelo não estiver aprovado, tenta texto livre
+  // (funciona na janela de 24h após o contato do assinante).
+  const plain = await post({
+    messaging_product: "whatsapp",
+    to,
+    type: "text",
+    text: { body: params.caption, preview_url: true },
+  });
+  if (plain.ok) return { ok: true as const };
+
+  throw new Error(
+    `Falha no envio por WhatsApp [${templated.status}]: ${templated.detail.slice(0, 200)}`,
+  );
 }
 
 /** Dispara o boletim para os inscritos ativos (ou para um destinatário de teste). */
