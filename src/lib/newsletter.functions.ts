@@ -54,6 +54,8 @@ export const subscribeNewsletter = createServerFn({ method: "POST" })
       {
         email,
         name: data.name ?? "",
+        whatsapp: data.whatsapp ?? "",
+        via_whatsapp: Boolean(data.whatsapp),
         language: data.language ?? "pt",
         source_path: data.sourcePath ?? "",
         status: "active",
