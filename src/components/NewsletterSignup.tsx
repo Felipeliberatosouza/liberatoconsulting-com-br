@@ -14,6 +14,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [website, setWebsite] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
