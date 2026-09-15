@@ -91,14 +91,24 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
           placeholder={tn.emailPlaceholder}
           className={`${inputBase} ${inputVariant}${errorClass("email", email)}`}
         />
-        <input
-          type="tel"
-          value={whatsapp}
-          onChange={(e) => setWhatsapp(e.target.value)}
-          placeholder={tn.whatsappPlaceholder}
-          aria-label={tn.whatsappPlaceholder}
-          className={`${inputBase} ${inputVariant}`}
-        />
+        <div className="flex w-full flex-col">
+          <input
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            maxLength={25}
+            value={whatsapp}
+            onFocus={() => !whatsapp && setWhatsapp("+55")}
+            onChange={(e) => setWhatsapp(formatPhone(e.target.value))}
+            placeholder={tn.whatsappPlaceholder || PHONE_PLACEHOLDER}
+            aria-label={tn.whatsappPlaceholder}
+            aria-invalid={Boolean(whatsapp) && !isValidPhone(whatsapp)}
+            className={`${inputBase} ${inputVariant}${whatsapp && !isValidPhone(whatsapp) ? " border-destructive ring-1 ring-destructive" : ""}`}
+          />
+          {whatsapp && !isValidPhone(whatsapp) && (
+            <span className="mt-1 block text-xs text-destructive">{PHONE_ERROR}</span>
+          )}
+        </div>
 
         <button
           type="submit"
