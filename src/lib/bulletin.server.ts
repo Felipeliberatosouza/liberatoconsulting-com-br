@@ -639,7 +639,11 @@ export async function dispatchBulletin(options?: {
         await sendWhatsAppMessage({
           to: r.whatsapp,
           caption: renderBulletinWhatsApp(content, unsubscribeUrl, lang),
-          imageUrl: content.logoUrl,
+          templateName: "boletim_semanal",
+          templateParams: [
+            (r.full_name || "").split(" ")[0] || "assinante",
+            renderBulletinWhatsApp(content, unsubscribeUrl, lang),
+          ],
         });
         sentWhatsApp += 1;
       } catch (err) {
