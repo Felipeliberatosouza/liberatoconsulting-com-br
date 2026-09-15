@@ -139,3 +139,21 @@ async function notifyNewApplication(data: ApplicationInput, applicationId: strin
     console.error("application notification email failed", err);
   }
 }
+
+/** Confirma o recebimento do currículo pelo WhatsApp. */
+async function confirmApplicationByWhatsApp(data: ApplicationInput) {
+  if (!data.phone) return;
+  try {
+    const { sendWhatsAppMessage } = await import("./bulletin.server");
+    const first = (data.fullName || "").split(" ")[0] || "";
+    const text = `Olá ${first}! Recebemos o seu currículo na Liberato Consulting. Vamos avaliar o seu perfil e entramos em contato.`;
+    await sendWhatsAppMessage({
+      to: data.phone,
+      caption: text,
+      templateName: "curriculo_confirmacao",
+      templateParams: [first || "candidato"],
+    });
+  } catch (err) {
+    console.error("application whatsapp confirmation failed", err);
+  }
+}

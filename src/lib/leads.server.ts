@@ -104,3 +104,24 @@ async function notifyNewLead(data: LeadInput, leadId: string | null) {
     console.error("lead notification email failed", err);
   }
 }
+
+/** Confirma o contato pelo WhatsApp quando o telefone informado permite. */
+async function confirmByWhatsApp(data: LeadInput) {
+  if (!data.phone) return;
+  try {
+    const { sendWhatsAppMessage } = await import("./bulletin.server");
+    const first = (data.name || "").split(" ")[0] || "";
+    const text =
+      `Olá ${first}! Recebemos o seu contato na Liberato Consulting` +
+      `${data.serviceTitle ? ` sobre ${data.serviceTitle}` : ""}. ` +
+      `Nossa equipe responde em breve.`;
+    await sendWhatsAppMessage({
+      to: data.phone,
+      caption: text,
+      templateName: "contato_confirmacao",
+      templateParams: [first || "cliente", data.serviceTitle || "sua solicitação"],
+    });
+  } catch (err) {
+    console.error("lead whatsapp confirmation failed", err);
+  }
+}
