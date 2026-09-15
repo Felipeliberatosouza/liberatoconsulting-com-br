@@ -16,6 +16,14 @@ async function assertAdmin(context: { supabase: any; userId: string }) {
 const subscribeInput = z.object({
   email: z.string().trim().email().max(255),
   name: z.string().trim().max(120).optional().default(""),
+  // WhatsApp é opcional: quando informado, o inscrito também recebe por lá.
+  whatsapp: z
+    .string()
+    .trim()
+    .max(30)
+    .optional()
+    .default("")
+    .refine((v) => !v || isValidPhone(v), PHONE_ERROR),
   language: z.string().trim().max(8).optional().default("pt"),
   sourcePath: z.string().trim().max(300).optional().default(""),
   website: z.string().max(200).optional().default(""), // honeypot
