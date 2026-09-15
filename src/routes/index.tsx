@@ -274,13 +274,31 @@ function Index() {
       <HeroCarousel />
 
 
-      <section className="border-b border-border">
-        <div className="mx-auto grid max-w-7xl gap-px bg-border sm:grid-cols-3">
-          {t.stats.map((s) => (
-            <div key={s.label} className="bg-background px-6 py-10">
-              <div className="font-display text-4xl font-bold text-accent">{s.value}</div>
-              <p className="mt-2 text-sm text-muted-foreground">{s.label}</p>
-            </div>
+      <section className="border-b border-border bg-ink">
+        <div className="mx-auto grid max-w-7xl gap-px sm:grid-cols-3">
+          {t.stats.map((s, i) => (
+            <Link
+              key={s.title}
+              to="/services"
+              className="group relative overflow-hidden bg-ink"
+            >
+              <img
+                src={[valueMargem, valueVendas, valueProcessos][i]}
+                alt={s.title}
+                width={1200}
+                height={900}
+                loading="lazy"
+                className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105 sm:aspect-[3/4]"
+              />
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent"
+              />
+              <h2 className="absolute inset-x-0 bottom-0 p-6 font-display text-xl font-bold uppercase leading-tight text-ink-foreground md:text-2xl">
+                {s.title}
+                <span className="mt-3 block h-0.5 w-10 bg-accent transition-all duration-500 group-hover:w-16" />
+              </h2>
+            </Link>
           ))}
         </div>
       </section>

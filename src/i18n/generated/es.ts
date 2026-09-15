@@ -516,16 +516,13 @@ export const dict: Dict = {
   },
   "stats": [
     {
-      "value": "IA",
-      "label": "en el núcleo de cada proyecto"
+      "title": "Aumente su margen de beneficio"
     },
     {
-      "value": "4",
-      "label": "frentes de actuación integrados"
+      "title": "Aumente sus ventas"
     },
     {
-      "value": "BR",
-      "label": "inteligencia local para empresas globales"
+      "title": "Mejore sus procesos y su capacidad de ejecución"
     }
   ],
   "purpose": {
