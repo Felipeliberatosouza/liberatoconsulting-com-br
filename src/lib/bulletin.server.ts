@@ -711,7 +711,15 @@ export async function sendUnsubscribeConfirmation(sub: {
   }
   if (WHATSAPP_SENDING_ENABLED && sub.via_whatsapp && sub.whatsapp) {
     try {
-      await sendWhatsAppMessage({ to: sub.whatsapp, caption: message });
+      await sendWhatsAppMessage({
+        to: sub.whatsapp,
+        caption: message,
+        templateName: "boletim_cancelamento",
+        templateParams: [
+          (sub.full_name || "").split(" ")[0] || "assinante",
+          message,
+        ],
+      });
     } catch {
       /* confirmação é best-effort */
     }
