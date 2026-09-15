@@ -32,7 +32,8 @@ const HEADING: Record<KeywordLang, { title: string; intro: string }> = {
 };
 
 /**
- * Bloco de links internos por tema de busca, no idioma servido ao visitante.
+ * Bloco de links internos por tema de busca, em sr-only: invisível ao
+ * visitante, mas presente no HTML servido para mecanismos de busca.
  * Dá ao Google texto âncora descritivo apontando para as páginas de serviço
  * e de dados do Brasil em cada mercado.
  */
@@ -45,7 +46,7 @@ export function SeoKeywordLinks({ themeIds, title, intro, className = "" }: Prop
   if (themes.length === 0) return null;
 
   return (
-    <section className={`border-t border-border bg-secondary py-16 ${className}`}>
+    <section className={`sr-only ${className}`}>
       <div className="mx-auto max-w-7xl px-6">
         <h2 className="text-2xl font-bold leading-tight md:text-3xl">{title ?? labels.title}</h2>
         <p className="mt-3 max-w-3xl text-sm text-muted-foreground">{intro ?? labels.intro}</p>
