@@ -114,6 +114,7 @@ export async function saveApplication(data: ApplicationInput, ipHash: string | n
   }
 
   await notifyNewApplication(data, inserted?.id ?? null);
+  await confirmApplicationByWhatsApp(data);
 
   return { ok: true as const };
 }
