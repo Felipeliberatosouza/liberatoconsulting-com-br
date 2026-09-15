@@ -93,7 +93,7 @@ export const listSubscribers = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("newsletter_subscribers")
-      .select("id, email, name, language, source_path, status, created_at")
+      .select("id, email, name, whatsapp, via_whatsapp, language, source_path, status, created_at")
       .order("created_at", { ascending: false })
       .limit(1000);
     if (error) throw new Error(error.message);
