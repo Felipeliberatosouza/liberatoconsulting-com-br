@@ -47,8 +47,8 @@ type Indicator = {
 
 type Article = { slug: string; title: string; summary: string; kind: string };
 
-/** Desativa envios pelo WhatsApp enquanto a integração não é reativada. */
-export const WHATSAPP_SENDING_ENABLED = false;
+/** Envios pelo WhatsApp ativos via conector WhatsApp Business (Meta). */
+export const WHATSAPP_SENDING_ENABLED = true;
 
 export type BulletinContent = {
   segment: string;
@@ -462,40 +462,57 @@ export function normalizeWhatsAppNumber(raw: string) {
   return digits;
 }
 
-/** Envia mensagem pela WhatsApp Cloud API (imagem com legenda ou texto). */
+/**
+ * Envia mensagem pelo conector WhatsApp Business da Liberato.
+ * Mensagens iniciadas pela empresa (boletim, confirmações) usam modelos
+ * aprovados pela Meta; o conteúdo dinâmico entra como variável do modelo.
+ */
 export async function sendWhatsAppMessage(params: {
   to: string;
   caption: string;
-  imageUrl?: string;
+  templateName?: string;
+  templateParams?: string[];
 }) {
-  const token = process.env["WHATSAPP_TOKEN"];
-  const phoneId = process.env["WHATSAPP_PHONE_NUMBER_ID"];
-  if (!token || !phoneId) {
+  const lovableKey = process.env["LOVABLE_API_KEY"];
+  const connectionKey = process.env["WHATSAPP_API_KEY"];
+  if (!lovableKey || !connectionKey) {
     throw new Error(
-      "WhatsApp não configurado. Cadastre as credenciais da API do WhatsApp para ativar o envio.",
+      "WhatsApp não configurado. Conecte a conta do WhatsApp Business nas integrações do projeto.",
     );
   }
   const to = normalizeWhatsAppNumber(params.to);
   if (!to) throw new Error("Número de WhatsApp inválido.");
 
-  const useImage = Boolean(params.imageUrl && /^https?:\/\//i.test(params.imageUrl));
-  const body = useImage
-    ? {
-        messaging_product: "whatsapp",
-        to,
-        type: "image",
-        image: { link: params.imageUrl, caption: params.caption.slice(0, 1024) },
-      }
-    : { messaging_product: "whatsapp", to, type: "text", text: { body: params.caption } };
+  const templateName = params.templateName ?? "boletim_semanal";
+  const templateParams = params.templateParams ?? [params.caption];
+  const body = {
+    messaging_product: "whatsapp",
+    to,
+    type: "template",
+    template: {
+      name: templateName,
+      language: { code: "pt_BR" },
+      components: [
+        {
+          type: "body",
+          parameters: templateParams.map((text) => ({ type: "text", text })),
+        },
+      ],
+    },
+  };
 
-  const res = await fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
+  const res = await fetch("https://connector-gateway.lovable.dev/whatsapp/messages", {
     method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    headers: {
+      Authorization: `Bearer ${lovableKey}`,
+      "X-Connection-Api-Key": connectionKey,
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(body),
   });
+  const detail = await res.text();
   if (!res.ok) {
-    const detail = await res.text();
-    throw new Error(`Falha no envio por WhatsApp: ${detail.slice(0, 200)}`);
+    throw new Error(`Falha no envio por WhatsApp [${res.status}]: ${detail.slice(0, 200)}`);
   }
   return { ok: true as const };
 }
@@ -622,7 +639,11 @@ export async function dispatchBulletin(options?: {
         await sendWhatsAppMessage({
           to: r.whatsapp,
           caption: renderBulletinWhatsApp(content, unsubscribeUrl, lang),
-          imageUrl: content.logoUrl,
+          templateName: "boletim_semanal",
+          templateParams: [
+            (r.full_name || "").split(" ")[0] || "assinante",
+            renderBulletinWhatsApp(content, unsubscribeUrl, lang),
+          ],
         });
         sentWhatsApp += 1;
       } catch (err) {
@@ -690,7 +711,15 @@ export async function sendUnsubscribeConfirmation(sub: {
   }
   if (WHATSAPP_SENDING_ENABLED && sub.via_whatsapp && sub.whatsapp) {
     try {
-      await sendWhatsAppMessage({ to: sub.whatsapp, caption: message });
+      await sendWhatsAppMessage({
+        to: sub.whatsapp,
+        caption: message,
+        templateName: "boletim_cancelamento",
+        templateParams: [
+          (sub.full_name || "").split(" ")[0] || "assinante",
+          message,
+        ],
+      });
     } catch {
       /* confirmação é best-effort */
     }
