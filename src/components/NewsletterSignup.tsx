@@ -44,7 +44,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
           setBusy(true);
           try {
             const r = await subscribeNewsletter({
-              data: { email, name, language: lang, sourcePath: pathname, website },
+              data: { email, name, whatsapp, language: lang, sourcePath: pathname, website },
             });
             if (!r.ok) {
               setDone(false);
