@@ -76,6 +76,7 @@ export async function insertLead(data: LeadInput, ipHash: string | null) {
   }
 
   await notifyNewLead(data, inserted?.id ?? null);
+  await confirmByWhatsApp(data);
 
   return { ok: true as const };
 }
