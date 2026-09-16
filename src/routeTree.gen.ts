@@ -38,9 +38,11 @@ import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminContratoRouteImport } from './routes/admin.contrato'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 import { Route as AdminEmpresaRouteImport } from './routes/admin.empresa'
+import { Route as AdminFerramentasRouteImport } from './routes/admin.ferramentas'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
 import { Route as AdminHistoricoRouteImport } from './routes/admin.historico'
 import { Route as AdminIndicadoresRouteImport } from './routes/admin.indicadores'
+import { Route as AdminInstitucionalRouteImport } from './routes/admin.institucional'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
@@ -214,6 +216,11 @@ const AdminEmpresaRoute = AdminEmpresaRouteImport.update({
   path: '/admin/empresa',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminFerramentasRoute = AdminFerramentasRouteImport.update({
+  id: '/admin/ferramentas',
+  path: '/admin/ferramentas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminHeroRoute = AdminHeroRouteImport.update({
   id: '/admin/hero',
   path: '/admin/hero',
@@ -227,6 +234,11 @@ const AdminHistoricoRoute = AdminHistoricoRouteImport.update({
 const AdminIndicadoresRoute = AdminIndicadoresRouteImport.update({
   id: '/admin/indicadores',
   path: '/admin/indicadores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminInstitucionalRoute = AdminInstitucionalRouteImport.update({
+  id: '/admin/institucional',
+  path: '/admin/institucional',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
@@ -398,9 +410,11 @@ export interface FileRoutesByFullPath {
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
+  '/admin/ferramentas': typeof AdminFerramentasRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
+  '/admin/institucional': typeof AdminInstitucionalRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
@@ -459,9 +473,11 @@ export interface FileRoutesByTo {
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
+  '/admin/ferramentas': typeof AdminFerramentasRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
+  '/admin/institucional': typeof AdminInstitucionalRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
@@ -521,9 +537,11 @@ export interface FileRoutesById {
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
+  '/admin/ferramentas': typeof AdminFerramentasRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
+  '/admin/institucional': typeof AdminInstitucionalRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
@@ -584,9 +602,11 @@ export interface FileRouteTypes {
     | '/admin/contrato'
     | '/admin/crm'
     | '/admin/empresa'
+    | '/admin/ferramentas'
     | '/admin/hero'
     | '/admin/historico'
     | '/admin/indicadores'
+    | '/admin/institucional'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
@@ -645,9 +665,11 @@ export interface FileRouteTypes {
     | '/admin/contrato'
     | '/admin/crm'
     | '/admin/empresa'
+    | '/admin/ferramentas'
     | '/admin/hero'
     | '/admin/historico'
     | '/admin/indicadores'
+    | '/admin/institucional'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
@@ -706,9 +728,11 @@ export interface FileRouteTypes {
     | '/admin/contrato'
     | '/admin/crm'
     | '/admin/empresa'
+    | '/admin/ferramentas'
     | '/admin/hero'
     | '/admin/historico'
     | '/admin/indicadores'
+    | '/admin/institucional'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
@@ -768,9 +792,11 @@ export interface RootRouteChildren {
   AdminContratoRoute: typeof AdminContratoRoute
   AdminCrmRoute: typeof AdminCrmRoute
   AdminEmpresaRoute: typeof AdminEmpresaRoute
+  AdminFerramentasRoute: typeof AdminFerramentasRoute
   AdminHeroRoute: typeof AdminHeroRoute
   AdminHistoricoRoute: typeof AdminHistoricoRoute
   AdminIndicadoresRoute: typeof AdminIndicadoresRoute
+  AdminInstitucionalRoute: typeof AdminInstitucionalRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminNewsletterRoute: typeof AdminNewsletterRoute
@@ -1006,6 +1032,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEmpresaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/ferramentas': {
+      id: '/admin/ferramentas'
+      path: '/admin/ferramentas'
+      fullPath: '/admin/ferramentas'
+      preLoaderRoute: typeof AdminFerramentasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/hero': {
       id: '/admin/hero'
       path: '/admin/hero'
@@ -1025,6 +1058,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/indicadores'
       fullPath: '/admin/indicadores'
       preLoaderRoute: typeof AdminIndicadoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/institucional': {
+      id: '/admin/institucional'
+      path: '/admin/institucional'
+      fullPath: '/admin/institucional'
+      preLoaderRoute: typeof AdminInstitucionalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/leads': {
@@ -1248,9 +1288,11 @@ const rootRouteChildren: RootRouteChildren = {
   AdminContratoRoute: AdminContratoRoute,
   AdminCrmRoute: AdminCrmRoute,
   AdminEmpresaRoute: AdminEmpresaRoute,
+  AdminFerramentasRoute: AdminFerramentasRoute,
   AdminHeroRoute: AdminHeroRoute,
   AdminHistoricoRoute: AdminHistoricoRoute,
   AdminIndicadoresRoute: AdminIndicadoresRoute,
+  AdminInstitucionalRoute: AdminInstitucionalRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminNewsletterRoute: AdminNewsletterRoute,
