@@ -103,7 +103,7 @@ export type InstitutionalMetric = { value: string; label: string };
 export type InstitutionalLogo = { name: string; imageUrl: string };
 export type InstitutionalImpact = { title: string; body: string; imageUrl?: string };
 export type InstitutionalFaq = { question: string; answer: string };
-export type InstitutionalSettings = {
+export type InstitutionalContent = {
   banner: { eyebrow: string; title: string; imageUrl?: string };
   introduction: { eyebrow: string; title: string; body: string };
   metrics: InstitutionalMetric[];
@@ -113,6 +113,9 @@ export type InstitutionalSettings = {
   mission: string;
   values: string;
   purpose: string;
+};
+export type InstitutionalSettings = InstitutionalContent & {
+  translations?: Partial<Record<Exclude<Lang, "pt">, InstitutionalContent>>;
 };
 
 export const DEFAULT_INSTITUTIONAL: InstitutionalSettings = {

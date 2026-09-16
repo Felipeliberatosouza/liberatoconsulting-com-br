@@ -705,8 +705,35 @@ export const saveInstitutionalSettings = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => institutionalSchema.parse(data))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
+    const { translateRecord } = await import("./admin.server");
+    const source: Record<string, string> = {
+      bannerEyebrow: data.banner.eyebrow,
+      bannerTitle: data.banner.title,
+      introEyebrow: data.introduction.eyebrow,
+      introTitle: data.introduction.title,
+      introBody: data.introduction.body,
+      mission: data.mission,
+      values: data.values,
+      purpose: data.purpose,
+    };
+    data.metrics.forEach((item, index) => { source[`metric${index}`] = item.label; });
+    data.impact.forEach((item, index) => { source[`impactTitle${index}`] = item.title; source[`impactBody${index}`] = item.body; });
+    data.faq.forEach((item, index) => { source[`faqQuestion${index}`] = item.question; source[`faqAnswer${index}`] = item.answer; });
+    const translated = await translateRecord(source);
+    const localize = (lang: "en" | "es" | "zh") => ({
+      banner: { ...data.banner, eyebrow: translated[lang]["bannerEyebrow"] ?? data.banner.eyebrow, title: translated[lang]["bannerTitle"] ?? data.banner.title },
+      introduction: { eyebrow: translated[lang]["introEyebrow"] ?? data.introduction.eyebrow, title: translated[lang]["introTitle"] ?? data.introduction.title, body: translated[lang]["introBody"] ?? data.introduction.body },
+      metrics: data.metrics.map((item, index) => ({ ...item, label: translated[lang][`metric${index}`] ?? item.label })),
+      logos: data.logos,
+      impact: data.impact.map((item, index) => ({ ...item, title: translated[lang][`impactTitle${index}`] ?? item.title, body: translated[lang][`impactBody${index}`] ?? item.body })),
+      faq: data.faq.map((item, index) => ({ question: translated[lang][`faqQuestion${index}`] ?? item.question, answer: translated[lang][`faqAnswer${index}`] ?? item.answer })),
+      mission: translated[lang]["mission"] ?? data.mission,
+      values: translated[lang]["values"] ?? data.values,
+      purpose: translated[lang]["purpose"] ?? data.purpose,
+    });
+    const value = { ...data, translations: { en: localize("en"), es: localize("es"), zh: localize("zh") } };
     const { error } = await context.supabase.from("site_settings").upsert(
-      { key: "institutional", value: data },
+      { key: "institutional", value },
       { onConflict: "key" },
     );
     if (error) return { ok: false as const, error: error.message };
