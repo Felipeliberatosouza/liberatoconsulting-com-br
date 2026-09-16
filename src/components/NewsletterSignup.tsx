@@ -6,7 +6,7 @@ import { useLanguage } from "@/i18n";
 import { trackEvent } from "@/lib/gtag";
 import { subscribeNewsletter } from "@/lib/newsletter.functions";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
-import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
+import { formatPhone, isValidPhone, onlyDigits, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
 
 export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | "page" }) {
@@ -20,6 +20,11 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const { validate, errorClass } = useFieldErrors();
+
+  // "+55" pré-preenchido no foco conta como campo vazio (telefone é opcional aqui).
+  const phoneDigits = onlyDigits(whatsapp);
+  const hasPhoneDigits = phoneDigits.length > 0 && phoneDigits !== "55";
+  const phoneInvalid = hasPhoneDigits && !isValidPhone(whatsapp);
 
   const dark = variant === "footer";
 
