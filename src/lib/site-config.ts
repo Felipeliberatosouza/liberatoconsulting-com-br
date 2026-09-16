@@ -99,6 +99,57 @@ export type BrazilOverrides = Record<string, BrazilSectionOverride>;
 export type AreaBanner = { imageUrl?: string };
 export type AreaBanners = Partial<Record<AreaKey, AreaBanner>>;
 
+export type InstitutionalMetric = { value: string; label: string };
+export type InstitutionalLogo = { name: string; imageUrl: string };
+export type InstitutionalImpact = { title: string; body: string; imageUrl?: string };
+export type InstitutionalFaq = { question: string; answer: string };
+export type InstitutionalSettings = {
+  banner: { eyebrow: string; title: string; imageUrl?: string };
+  introduction: { eyebrow: string; title: string; body: string };
+  metrics: InstitutionalMetric[];
+  logos: InstitutionalLogo[];
+  impact: InstitutionalImpact[];
+  faq: InstitutionalFaq[];
+  mission: string;
+  values: string;
+  purpose: string;
+};
+
+export const DEFAULT_INSTITUTIONAL: InstitutionalSettings = {
+  banner: {
+    eyebrow: "Resultado real, investimento justo",
+    title: "Nosso compromisso é melhorar os seus resultados, melhorar a sua margem de lucro!",
+  },
+  introduction: {
+    eyebrow: "Resultados que permanecem",
+    title: "Gestão prática para transformar desafios em desempenho",
+    body: "Unimos estratégia, execução e inteligência aplicada para melhorar margens, acelerar vendas e fortalecer a capacidade de gestão da sua empresa.",
+  },
+  metrics: [
+    { value: "+50", label: "empresas atendidas" },
+    { value: "R$ 120 mi", label: "em resultados gerados" },
+    { value: "8,4x", label: "retorno sobre investimento" },
+    { value: "20+", label: "anos de experiência" },
+  ],
+  logos: [],
+  impact: [
+    { title: "Aumente sua margem de lucro", body: "Decisões orientadas por dados, custos sob controle e foco no resultado." },
+    { title: "Aumente suas vendas", body: "Estratégia comercial, inteligência de mercado e execução disciplinada." },
+    { title: "Melhore seus processos e sua capacidade de execução", body: "Rotinas claras, produtividade e gestão que sustenta o crescimento." },
+    { title: "Conheça melhor o Brasil, para investir melhor", body: "Pesquisa confiável para decisões de entrada, expansão e investimento." },
+    { title: "Tenha autonomia", body: "Ferramentas de IA que dão autonomia ao seu time após os nossos serviços." },
+  ],
+  faq: [
+    { question: "Como a Liberato Consulting atua?", answer: "Trabalhamos ao lado da liderança e das equipes, conectando diagnóstico, metas, execução e acompanhamento dos resultados." },
+    { question: "A consultoria atende empresas de quais portes?", answer: "Atendemos pequenas e médias empresas, corporações e investidores, com escopo ajustado ao desafio e à estrutura de cada organização." },
+    { question: "A inteligência artificial substitui a equipe?", answer: "Não. Aplicamos IA como ferramenta de análise, produtividade e decisão, sempre com validação humana e transferência de conhecimento." },
+    { question: "Como acesso as ferramentas gratuitas de gestão?", answer: "Crie uma conta gratuita, complete seu perfil e acesse a biblioteca de guias e planilhas disponibilizados pela Liberato Consulting." },
+  ],
+  mission: "Transformar estratégia em resultados mensuráveis, com método, tecnologia e desenvolvimento das pessoas.",
+  values: "Ética, objetividade, excelência, respeito às pessoas, decisões baseadas em evidências e compromisso com o resultado do cliente.",
+  purpose: "Ajudar organizações a tomar decisões melhores e construir capacidade própria para crescer com consistência.",
+};
+
 export const AREA_KEYS = ["services", "about", "content", "brazil"] as const;
 export type AreaKey = (typeof AREA_KEYS)[number];
 
@@ -110,6 +161,7 @@ export type SiteConfig = {
   hero: HeroSettings;
   brazil: BrazilOverrides;
   banners: AreaBanners;
+  institutional: InstitutionalSettings;
   /** Serviços cadastrados no painel (sem preços). */
   products: import("./services-catalog").ServiceProduct[];
 };
@@ -122,6 +174,7 @@ export const EMPTY_CONFIG: SiteConfig = {
   hero: {},
   brazil: {},
   banners: {},
+  institutional: DEFAULT_INSTITUTIONAL,
   products: [],
 };
 

@@ -33,6 +33,7 @@ import {
   type AreaBanners,
   type HeroSettings,
   type SiteConfig,
+  type InstitutionalSettings,
 } from "@/lib/site-config";
 import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
 import { applyServiceProducts } from "@/lib/services-catalog";
@@ -65,6 +66,7 @@ type LanguageContextValue = {
   banners: AreaBanners;
   /** Segmentos atendidos pela consultoria (configuráveis no painel). */
   segments: string[];
+  institutional: InstitutionalSettings;
 };
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
@@ -171,6 +173,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         config.branding?.segments && config.branding.segments.length > 0
           ? config.branding.segments
           : DEFAULT_SEGMENTS,
+      institutional: config.institutional,
     }),
     [lang, setLang, dicts, translating, config],
   );
@@ -190,6 +193,7 @@ const FALLBACK_VALUE: LanguageContextValue = {
   hero: {},
   banners: {},
   segments: DEFAULT_SEGMENTS,
+  institutional: EMPTY_CONFIG.institutional,
 };
 
 export function useLanguage() {

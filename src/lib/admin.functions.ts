@@ -9,6 +9,7 @@ import type {
   BrazilOverrides,
   Branding,
   HeroSettings,
+  InstitutionalSettings,
   SiteConfig,
   TextOverrides,
   Theme,
@@ -44,6 +45,10 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
       hero: (map.get("hero") ?? {}) as HeroSettings,
       brazil: (map.get("brazil") ?? {}) as BrazilOverrides,
       banners: (map.get("banners") ?? {}) as AreaBanners,
+      institutional: {
+        ...((await import("./site-config")).DEFAULT_INSTITUTIONAL),
+        ...((map.get("institutional") ?? {}) as Partial<InstitutionalSettings>),
+      },
       products: (products.data ?? []) as unknown as SiteConfig["products"],
     };
   },
@@ -679,6 +684,31 @@ export const saveAreaBanners = createServerFn({ method: "POST" })
     const { error } = await context.supabase
       .from("site_settings")
       .upsert({ key: "banners", value: data }, { onConflict: "key" });
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
+const institutionalSchema = z.object({
+  banner: z.object({ eyebrow: z.string().trim().max(120), title: z.string().trim().max(300), imageUrl: z.string().trim().max(3_000_000).optional() }),
+  introduction: z.object({ eyebrow: z.string().trim().max(120), title: z.string().trim().max(300), body: z.string().trim().max(1800) }),
+  metrics: z.array(z.object({ value: z.string().trim().max(40), label: z.string().trim().max(100) })).max(8),
+  logos: z.array(z.object({ name: z.string().trim().max(120), imageUrl: z.string().trim().max(1_500_000) })).max(30),
+  impact: z.array(z.object({ title: z.string().trim().max(180), body: z.string().trim().max(600), imageUrl: z.string().trim().max(3_000_000).optional() })).max(8),
+  faq: z.array(z.object({ question: z.string().trim().max(260), answer: z.string().trim().max(2000) })).max(30),
+  mission: z.string().trim().max(1800),
+  values: z.string().trim().max(1800),
+  purpose: z.string().trim().max(1800),
+});
+
+export const saveInstitutionalSettings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => institutionalSchema.parse(data))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase.from("site_settings").upsert(
+      { key: "institutional", value: data },
+      { onConflict: "key" },
+    );
     if (error) return { ok: false as const, error: error.message };
     return { ok: true as const };
   });
