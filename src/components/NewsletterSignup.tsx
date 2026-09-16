@@ -6,7 +6,7 @@ import { useLanguage } from "@/i18n";
 import { trackEvent } from "@/lib/gtag";
 import { subscribeNewsletter } from "@/lib/newsletter.functions";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
-import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
+import { formatPhone, isValidPhone, onlyDigits, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
 
 export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | "page" }) {
@@ -20,6 +20,11 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const { validate, errorClass } = useFieldErrors();
+
+  // "+55" pré-preenchido no foco conta como campo vazio (telefone é opcional aqui).
+  const phoneDigits = onlyDigits(whatsapp);
+  const hasPhoneDigits = phoneDigits.length > 0 && phoneDigits !== "55";
+  const phoneInvalid = hasPhoneDigits && !isValidPhone(whatsapp);
 
   const dark = variant === "footer";
 
@@ -42,7 +47,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
         onSubmit={async (e) => {
           e.preventDefault();
           if (!validate({ email })) return;
-          if (whatsapp && !isValidPhone(whatsapp)) {
+          if (phoneInvalid) {
             toast.error(PHONE_ERROR);
             return;
           }
@@ -102,10 +107,10 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
             onChange={(e) => setWhatsapp(formatPhone(e.target.value))}
             placeholder={tn.whatsappPlaceholder || PHONE_PLACEHOLDER}
             aria-label={tn.whatsappPlaceholder}
-            aria-invalid={Boolean(whatsapp) && !isValidPhone(whatsapp)}
-            className={`${inputBase} ${inputVariant}${whatsapp && !isValidPhone(whatsapp) ? " border-destructive ring-1 ring-destructive" : ""}`}
+            aria-invalid={phoneInvalid}
+            className={`${inputBase} ${inputVariant}${phoneInvalid ? " border-destructive ring-1 ring-destructive" : ""}`}
           />
-          {whatsapp && !isValidPhone(whatsapp) && (
+          {phoneInvalid && (
             <span className="mt-1 block text-xs text-destructive">{PHONE_ERROR}</span>
           )}
         </div>
