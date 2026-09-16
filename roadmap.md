@@ -46,3 +46,12 @@
 - [x] Padronizar subtítulos públicos em laranja
 - [x] Aumentar e simplificar a apresentação das logomarcas
 - [x] Validar cadastro e perfil público em desktop e celular
+
+## Evolução institucional e ferramentas de gestão (16/09/2026)
+- [ ] Atualizar navegação, altura do carrossel e blocos institucionais da home
+- [ ] Criar configuração administrativa de conteúdo institucional, impacto, cases e FAQ
+- [ ] Criar conta pública com perfil completo e biblioteca protegida de ferramentas
+- [ ] Criar cadastro administrativo e armazenamento privado de materiais
+- [ ] Criar formulário compacto de atendimento por WhatsApp integrado a leads/CRM
+- [ ] Adicionar Missão, Valores e Propósito em Quem Somos
+- [ ] Validar idiomas, SEO, autenticação, downloads, WhatsApp e layouts desktop/mobile
