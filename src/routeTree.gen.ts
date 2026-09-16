@@ -69,6 +69,8 @@ import { Route as ApiPublicNewsletterWeeklyRouteImport } from './routes/api/publ
 import { Route as BrasilSlugTopicRouteImport } from './routes/brasil_.$slug_.$topic'
 import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
 import { Route as ApiPublicNewsletterImageSlugRouteImport } from './routes/api/public/newsletter-image.$slug'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
 const IndexRoute = IndexRouteImport.update({
@@ -374,6 +376,16 @@ const ApiPublicNewsletterImageSlugRoute =
     path: '/api/public/newsletter-image/$slug',
     getParentRoute: () => rootRouteImport,
   } as any)
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -442,6 +454,8 @@ export interface FileRoutesByFullPath {
   '/brasil/$slug/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
@@ -505,6 +519,8 @@ export interface FileRoutesByTo {
   '/brasil/$slug/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
@@ -569,6 +585,8 @@ export interface FileRoutesById {
   '/brasil_/$slug_/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
@@ -634,6 +652,8 @@ export interface FileRouteTypes {
     | '/brasil/$slug/$topic'
     | '/lovable/email/events'
     | '/api/public/newsletter-image/$slug'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -697,6 +717,8 @@ export interface FileRouteTypes {
     | '/brasil/$slug/$topic'
     | '/lovable/email/events'
     | '/api/public/newsletter-image/$slug'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
   id:
     | '__root__'
@@ -760,6 +782,8 @@ export interface FileRouteTypes {
     | '/brasil_/$slug_/$topic'
     | '/lovable/email/events'
     | '/api/public/newsletter-image/$slug'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
@@ -824,6 +848,8 @@ export interface RootRouteChildren {
   BrasilSlugTopicRoute: typeof BrasilSlugTopicRoute
   LovableEmailEventsRoute: typeof LovableEmailEventsRoute
   ApiPublicNewsletterImageSlugRoute: typeof ApiPublicNewsletterImageSlugRoute
+  LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
+  LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
@@ -1249,6 +1275,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicNewsletterImageSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
@@ -1320,6 +1360,8 @@ const rootRouteChildren: RootRouteChildren = {
   BrasilSlugTopicRoute: BrasilSlugTopicRoute,
   LovableEmailEventsRoute: LovableEmailEventsRoute,
   ApiPublicNewsletterImageSlugRoute: ApiPublicNewsletterImageSlugRoute,
+  LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
+  LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport
