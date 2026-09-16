@@ -39,7 +39,7 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
-  const { t } = useLanguage();
+  const { t, institutional } = useLanguage();
   const s = t.about.sections;
 
   return (
@@ -67,6 +67,22 @@ function AboutPage() {
               <h2 className="text-lg font-bold">{v.t}</h2>
               <p className="mt-2 text-sm text-muted-foreground">{v.d}</p>
             </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 py-24">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Nossa essência</p>
+        <div className="mt-8 grid gap-10 md:grid-cols-3">
+          {[
+            ["Missão", institutional.mission],
+            ["Valores", institutional.values],
+            ["Propósito", institutional.purpose],
+          ].map(([title, body]) => (
+            <article key={title} className="border-t-2 border-accent pt-5">
+              <h2 className="text-xl font-bold text-accent">{title}</h2>
+              <p className="mt-3 leading-relaxed text-muted-foreground">{body}</p>
+            </article>
           ))}
         </div>
       </section>

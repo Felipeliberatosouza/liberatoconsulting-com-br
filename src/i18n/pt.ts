@@ -4,7 +4,7 @@
 export const pt = {
   nav: {
     home: "Início",
-    services: "Serviços",
+    services: "Soluções — Nossos Serviços",
     about: "Quem somos",
     contact: "Contato",
     content: "Conteúdo",

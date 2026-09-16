@@ -1212,6 +1212,54 @@ export type Database = {
         }
         Relationships: []
       }
+      management_tools: {
+        Row: {
+          category: string
+          cover_url: string | null
+          created_at: string
+          file_name: string
+          file_path: string
+          id: string
+          position: number
+          published: boolean
+          slug: string
+          summary: string
+          title: string
+          translations: Json
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          cover_url?: string | null
+          created_at?: string
+          file_name: string
+          file_path: string
+          id?: string
+          position?: number
+          published?: boolean
+          slug: string
+          summary?: string
+          title: string
+          translations?: Json
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          cover_url?: string | null
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          id?: string
+          position?: number
+          published?: boolean
+          slug?: string
+          summary?: string
+          title?: string
+          translations?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_campaigns: {
         Row: {
           author_contact: string
@@ -1649,6 +1697,80 @@ export type Database = {
         }
         Relationships: []
       }
+      tool_downloads: {
+        Row: {
+          created_at: string
+          id: string
+          tool_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          tool_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          tool_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tool_downloads_tool_id_fkey"
+            columns: ["tool_id"]
+            isOneToOne: false
+            referencedRelation: "management_tools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tool_user_profiles: {
+        Row: {
+          company: string
+          created_at: string
+          first_name: string
+          id: string
+          job_title: string
+          last_name: string
+          phone: string
+          revenue_range: string
+          segment: string
+          state: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company?: string
+          created_at?: string
+          first_name?: string
+          id?: string
+          job_title?: string
+          last_name?: string
+          phone?: string
+          revenue_range?: string
+          segment?: string
+          state?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company?: string
+          created_at?: string
+          first_name?: string
+          id?: string
+          job_title?: string
+          last_name?: string
+          phone?: string
+          revenue_range?: string
+          segment?: string
+          state?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1681,6 +1803,13 @@ export type Database = {
           job_name: string
           schedule: string
         }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
       }
       list_public_consultants: {
         Args: never

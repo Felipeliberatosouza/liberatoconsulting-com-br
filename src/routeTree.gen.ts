@@ -16,7 +16,9 @@ import { Route as BrasilRouteImport } from './routes/brasil'
 import { Route as CareersRouteImport } from './routes/careers'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContentRouteImport } from './routes/content'
+import { Route as FerramentasRouteImport } from './routes/ferramentas'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapEnDotxmlRouteImport } from './routes/sitemap-en[.]xml'
 import { Route as SitemapEsDotxmlRouteImport } from './routes/sitemap-es[.]xml'
@@ -36,9 +38,11 @@ import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminContratoRouteImport } from './routes/admin.contrato'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 import { Route as AdminEmpresaRouteImport } from './routes/admin.empresa'
+import { Route as AdminFerramentasRouteImport } from './routes/admin.ferramentas'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
 import { Route as AdminHistoricoRouteImport } from './routes/admin.historico'
 import { Route as AdminIndicadoresRouteImport } from './routes/admin.indicadores'
+import { Route as AdminInstitucionalRouteImport } from './routes/admin.institucional'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
@@ -102,9 +106,19 @@ const ContentRoute = ContentRouteImport.update({
   path: '/content',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FerramentasRoute = FerramentasRouteImport.update({
+  id: '/ferramentas',
+  path: '/ferramentas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
@@ -202,6 +216,11 @@ const AdminEmpresaRoute = AdminEmpresaRouteImport.update({
   path: '/admin/empresa',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminFerramentasRoute = AdminFerramentasRouteImport.update({
+  id: '/admin/ferramentas',
+  path: '/admin/ferramentas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminHeroRoute = AdminHeroRouteImport.update({
   id: '/admin/hero',
   path: '/admin/hero',
@@ -215,6 +234,11 @@ const AdminHistoricoRoute = AdminHistoricoRouteImport.update({
 const AdminIndicadoresRoute = AdminIndicadoresRouteImport.update({
   id: '/admin/indicadores',
   path: '/admin/indicadores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminInstitucionalRoute = AdminInstitucionalRouteImport.update({
+  id: '/admin/institucional',
+  path: '/admin/institucional',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminLeadsRoute = AdminLeadsRouteImport.update({
@@ -365,7 +389,9 @@ export interface FileRoutesByFullPath {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/ferramentas': typeof FerramentasRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-es.xml': typeof SitemapEsDotxmlRoute
@@ -384,9 +410,11 @@ export interface FileRoutesByFullPath {
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
+  '/admin/ferramentas': typeof AdminFerramentasRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
+  '/admin/institucional': typeof AdminInstitucionalRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
@@ -424,7 +452,9 @@ export interface FileRoutesByTo {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/ferramentas': typeof FerramentasRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-es.xml': typeof SitemapEsDotxmlRoute
@@ -443,9 +473,11 @@ export interface FileRoutesByTo {
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
+  '/admin/ferramentas': typeof AdminFerramentasRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
+  '/admin/institucional': typeof AdminInstitucionalRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
@@ -484,7 +516,9 @@ export interface FileRoutesById {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/ferramentas': typeof FerramentasRoute
   '/privacy': typeof PrivacyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-es.xml': typeof SitemapEsDotxmlRoute
@@ -503,9 +537,11 @@ export interface FileRoutesById {
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
+  '/admin/ferramentas': typeof AdminFerramentasRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
+  '/admin/institucional': typeof AdminInstitucionalRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
@@ -545,7 +581,9 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/ferramentas'
     | '/privacy'
+    | '/reset-password'
     | '/robots.txt'
     | '/sitemap-en.xml'
     | '/sitemap-es.xml'
@@ -564,9 +602,11 @@ export interface FileRouteTypes {
     | '/admin/contrato'
     | '/admin/crm'
     | '/admin/empresa'
+    | '/admin/ferramentas'
     | '/admin/hero'
     | '/admin/historico'
     | '/admin/indicadores'
+    | '/admin/institucional'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
@@ -604,7 +644,9 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/ferramentas'
     | '/privacy'
+    | '/reset-password'
     | '/robots.txt'
     | '/sitemap-en.xml'
     | '/sitemap-es.xml'
@@ -623,9 +665,11 @@ export interface FileRouteTypes {
     | '/admin/contrato'
     | '/admin/crm'
     | '/admin/empresa'
+    | '/admin/ferramentas'
     | '/admin/hero'
     | '/admin/historico'
     | '/admin/indicadores'
+    | '/admin/institucional'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
@@ -663,7 +707,9 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/ferramentas'
     | '/privacy'
+    | '/reset-password'
     | '/robots.txt'
     | '/sitemap-en.xml'
     | '/sitemap-es.xml'
@@ -682,9 +728,11 @@ export interface FileRouteTypes {
     | '/admin/contrato'
     | '/admin/crm'
     | '/admin/empresa'
+    | '/admin/ferramentas'
     | '/admin/hero'
     | '/admin/historico'
     | '/admin/indicadores'
+    | '/admin/institucional'
     | '/admin/leads'
     | '/admin/login'
     | '/admin/newsletter'
@@ -723,7 +771,9 @@ export interface RootRouteChildren {
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   ContentRoute: typeof ContentRoute
+  FerramentasRoute: typeof FerramentasRoute
   PrivacyRoute: typeof PrivacyRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapEnDotxmlRoute: typeof SitemapEnDotxmlRoute
   SitemapEsDotxmlRoute: typeof SitemapEsDotxmlRoute
@@ -742,9 +792,11 @@ export interface RootRouteChildren {
   AdminContratoRoute: typeof AdminContratoRoute
   AdminCrmRoute: typeof AdminCrmRoute
   AdminEmpresaRoute: typeof AdminEmpresaRoute
+  AdminFerramentasRoute: typeof AdminFerramentasRoute
   AdminHeroRoute: typeof AdminHeroRoute
   AdminHistoricoRoute: typeof AdminHistoricoRoute
   AdminIndicadoresRoute: typeof AdminIndicadoresRoute
+  AdminInstitucionalRoute: typeof AdminInstitucionalRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminNewsletterRoute: typeof AdminNewsletterRoute
@@ -826,11 +878,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ferramentas': {
+      id: '/ferramentas'
+      path: '/ferramentas'
+      fullPath: '/ferramentas'
+      preLoaderRoute: typeof FerramentasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/robots.txt': {
@@ -966,6 +1032,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminEmpresaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/ferramentas': {
+      id: '/admin/ferramentas'
+      path: '/admin/ferramentas'
+      fullPath: '/admin/ferramentas'
+      preLoaderRoute: typeof AdminFerramentasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/hero': {
       id: '/admin/hero'
       path: '/admin/hero'
@@ -985,6 +1058,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/indicadores'
       fullPath: '/admin/indicadores'
       preLoaderRoute: typeof AdminIndicadoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/institucional': {
+      id: '/admin/institucional'
+      path: '/admin/institucional'
+      fullPath: '/admin/institucional'
+      preLoaderRoute: typeof AdminInstitucionalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/leads': {
@@ -1187,7 +1267,9 @@ const rootRouteChildren: RootRouteChildren = {
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   ContentRoute: ContentRoute,
+  FerramentasRoute: FerramentasRoute,
   PrivacyRoute: PrivacyRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapEnDotxmlRoute: SitemapEnDotxmlRoute,
   SitemapEsDotxmlRoute: SitemapEsDotxmlRoute,
@@ -1206,9 +1288,11 @@ const rootRouteChildren: RootRouteChildren = {
   AdminContratoRoute: AdminContratoRoute,
   AdminCrmRoute: AdminCrmRoute,
   AdminEmpresaRoute: AdminEmpresaRoute,
+  AdminFerramentasRoute: AdminFerramentasRoute,
   AdminHeroRoute: AdminHeroRoute,
   AdminHistoricoRoute: AdminHistoricoRoute,
   AdminIndicadoresRoute: AdminIndicadoresRoute,
+  AdminInstitucionalRoute: AdminInstitucionalRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminNewsletterRoute: AdminNewsletterRoute,

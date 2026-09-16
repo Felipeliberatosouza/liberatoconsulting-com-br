@@ -40,6 +40,16 @@ export const Route = createFileRoute("/admin/settings")({
 
 const LINKS = [
   {
+    to: "/admin/institucional",
+    title: "Conteúdo institucional",
+    text: "Banner, números, cases de sucesso, impactos, missão, valores, propósito e FAQ.",
+  },
+  {
+    to: "/admin/ferramentas",
+    title: "Ferramentas gratuitas",
+    text: "Cadastre guias e planilhas para a biblioteca de usuários.",
+  },
+  {
     to: "/admin/servicos",
     title: "Cadastro de serviços",
     text: "Crie e edite os serviços: família, frente, problema, promessa, entregas, tempo e preços internos.",

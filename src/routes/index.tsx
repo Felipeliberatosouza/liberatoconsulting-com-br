@@ -17,6 +17,9 @@ import valueMargem from "@/assets/value-margem.jpg";
 import valueVendas from "@/assets/value-vendas.jpg";
 import valueProcessos from "@/assets/value-processos.jpg";
 import { CtaBand } from "@/components/CtaBand";
+import { FaqSection } from "@/components/FaqSection";
+import { ImpactSection } from "@/components/ImpactSection";
+import { InstitutionalShowcase } from "@/components/InstitutionalShowcase";
 import { SeoKeywordLinks } from "@/components/SeoKeywordLinks";
 import { FilterScopeBadge } from "@/components/SiteFilterBar";
 import { useAudienceFilters } from "@/lib/audience-filters";
@@ -184,7 +187,7 @@ function HeroCarousel() {
           }`}
         />
       ))}
-      <div className="relative mx-auto max-w-7xl px-6 py-16 sm:py-24 md:py-40">
+      <div className="relative mx-auto max-w-7xl px-6 py-8 sm:py-10 md:py-16">
 
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
@@ -274,6 +277,10 @@ function Index() {
   return (
     <div>
       <HeroCarousel />
+
+      <InstitutionalShowcase />
+
+      <ImpactSection />
 
 
       <section className="border-b border-border bg-background">
@@ -435,6 +442,8 @@ function Index() {
         themeIds={["gestao", "operacoes", "ia", "pesquisas", "brasil", "financas"]}
         title="Consultoria empresarial: temas mais procurados"
       />
+
+      <FaqSection />
 
       <CtaBand />
     </div>
