@@ -32,8 +32,10 @@ async function logoData(file: File) {
   }
 }
 function AdminInstitutional() {
-  const [data, setData] = useState<InstitutionalSettings>(DEFAULT_INSTITUTIONAL); const [busy, setBusy] = useState(false);
-  useEffect(() => { getSiteConfig().then((config) => setData(config.institutional)).catch(() => undefined); }, []);
+  const [data, setData] = useState<InstitutionalSettings>(DEFAULT_INSTITUTIONAL); const [busy, setBusy] = useState(false); const [loaded, setLoaded] = useState(false);
+  // Enquanto o conteúdo salvo não carregar, o botão fica bloqueado — assim o
+  // painel nunca grava os valores padrão por cima do que já está publicado.
+  useEffect(() => { getSiteConfig().then((config) => { setData(config.institutional); setLoaded(true); }).catch(() => toast.error("Não foi possível carregar o conteúdo salvo. Recarregue a página antes de editar.")); }, []);
   const update = (patch: Partial<InstitutionalSettings>) => setData((value) => ({ ...value, ...patch }));
   return <AdminShell title="Site institucional" description="Edite os textos, números, logomarcas, impactos, missão, valores, propósito e FAQ exibidos no site."><div className="max-w-4xl space-y-8">
     <Section title="Banner de resultados"><label>Frase curta<input className={field} value={data.banner.eyebrow} onChange={(event) => update({ banner: { ...data.banner, eyebrow: event.target.value } })} /></label><label>Frase principal<textarea className={field} rows={3} value={data.banner.title} onChange={(event) => update({ banner: { ...data.banner, title: event.target.value } })} /></label><label>Imagem<input className={field} type="file" accept="image/*" onChange={async (event) => { const file = event.target.files?.[0]; if (file) update({ banner: { ...data.banner, imageUrl: await imageData(file) } }); }} /></label></Section>
