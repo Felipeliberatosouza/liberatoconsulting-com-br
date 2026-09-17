@@ -25,7 +25,7 @@ async function logoData(file: File) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return original;
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    const compact = canvas.toDataURL("image/webp", 0.9);
+    const compact = canvas.toDataURL("image/webp", 0.72);
     return compact.startsWith("data:image/webp") && compact.length < original.length ? compact : original;
   } catch {
     return original;
