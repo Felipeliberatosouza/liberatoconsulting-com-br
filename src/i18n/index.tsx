@@ -173,7 +173,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         config.branding?.segments && config.branding.segments.length > 0
           ? config.branding.segments
           : DEFAULT_SEGMENTS,
-      institutional: lang === "pt" ? config.institutional : (config.institutional.translations?.[lang] ?? config.institutional),
+      institutional: mergeInstitutional(config.institutional, lang),
     }),
     [lang, setLang, dicts, translating, config],
   );
