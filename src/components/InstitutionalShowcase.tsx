@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { ArrowRight, Download } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n";
@@ -9,7 +9,6 @@ const SPEED = 45;
 
 function ClientMarquee({ logos }: { logos: Array<{ name: string; imageUrl: string }> }) {
   const trackRef = useRef<HTMLDivElement>(null);
-  const [paused, setPaused] = useState(false);
 
   // Rolagem contínua feita em JavaScript: funciona em qualquer navegador e não
   // depende de a animação em CSS ser preservada no build publicado.
@@ -23,16 +22,14 @@ function ClientMarquee({ logos }: { logos: Array<{ name: string; imageUrl: strin
     const step = (now: number) => {
       const delta = (now - last) / 1000;
       last = now;
-      if (!paused) {
-        const half = track.scrollWidth / 2 || 1;
-        offset = (offset + SPEED * delta) % half;
-        track.style.transform = `translate3d(${-offset}px, 0, 0)`;
-      }
+      const half = track.scrollWidth / 2 || 1;
+      offset = (offset + SPEED * delta) % half;
+      track.style.transform = `translate3d(${-offset}px, 0, 0)`;
       frame = requestAnimationFrame(step);
     };
     frame = requestAnimationFrame(step);
     return () => cancelAnimationFrame(frame);
-  }, [paused, logos.length]);
+  }, [logos.length]);
 
   // Duas cópias da lista garantem o loop sem emenda visível.
   const sets = [...logos, ...logos];
@@ -41,10 +38,6 @@ function ClientMarquee({ logos }: { logos: Array<{ name: string; imageUrl: strin
     <div
       className="mt-7 overflow-hidden"
       aria-label="Clientes da Liberato Consulting"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
     >
       <div ref={trackRef} className="flex w-max items-center will-change-transform">
         {sets.map((logo, index) => (
