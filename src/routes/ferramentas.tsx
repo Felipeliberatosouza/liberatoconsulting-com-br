@@ -15,7 +15,7 @@ export const Route = createFileRoute("/ferramentas")({
 });
 
 const input = "mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
-const EMPTY = { first_name: "", last_name: "", phone: "", company: "", job_title: "", revenue_range: "", segment: "", state: "" };
+const EMPTY = { first_name: "", last_name: "", email: "", phone: "", company: "", job_title: "", revenue_range: "", segment: "" };
 
 function ToolsPage() {
   const navigate = useNavigate();
@@ -28,6 +28,7 @@ function ToolsPage() {
   const [profile, setProfile] = useState(EMPTY);
   useEffect(() => { supabase.auth.getSession().then(({ data }) => { setSession(data.session); setSessionReady(true); }); const { data } = supabase.auth.onAuthStateChange((_event, next) => { setSession(next); setSessionReady(true); }); return () => data.subscription.unsubscribe(); }, []);
   useEffect(() => { if (account.data?.profile) setProfile(account.data.profile); }, [account.data?.profile]);
+  useEffect(() => { const email = session?.user?.email ?? ""; if (email) setProfile((prev) => (prev.email ? prev : { ...prev, email })); }, [session]);
 
   if (!sessionReady) return <div className="mx-auto max-w-7xl px-6 py-24 text-muted-foreground">Carregando…</div>;
   if (!session) return <ToolsAuth onDone={() => { void supabase.auth.getSession().then(({ data }) => setSession(data.session)); }} />;
