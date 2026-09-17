@@ -721,11 +721,12 @@ export const saveInstitutionalSettings = createServerFn({ method: "POST" })
     data.faq.forEach((item, index) => { source[`faqQuestion${index}`] = item.question; source[`faqAnswer${index}`] = item.answer; });
     const translated = await translateRecord(source);
     const localize = (lang: "en" | "es" | "zh") => ({
-      banner: { ...data.banner, eyebrow: translated[lang]["bannerEyebrow"] ?? data.banner.eyebrow, title: translated[lang]["bannerTitle"] ?? data.banner.title },
+      banner: { eyebrow: translated[lang]["bannerEyebrow"] ?? data.banner.eyebrow, title: translated[lang]["bannerTitle"] ?? data.banner.title },
       introduction: { eyebrow: translated[lang]["introEyebrow"] ?? data.introduction.eyebrow, title: translated[lang]["introTitle"] ?? data.introduction.title, body: translated[lang]["introBody"] ?? data.introduction.body },
       metrics: data.metrics.map((item, index) => ({ ...item, label: translated[lang][`metric${index}`] ?? item.label })),
-      logos: data.logos,
-      impact: data.impact.map((item, index) => ({ ...item, title: translated[lang][`impactTitle${index}`] ?? item.title, body: translated[lang][`impactBody${index}`] ?? item.body })),
+      // As imagens ficam apenas na versão PT; os idiomas só guardam textos.
+      logos: data.logos.map((item) => ({ name: item.name })),
+      impact: data.impact.map((item, index) => ({ title: translated[lang][`impactTitle${index}`] ?? item.title, body: translated[lang][`impactBody${index}`] ?? item.body })),
       faq: data.faq.map((item, index) => ({ question: translated[lang][`faqQuestion${index}`] ?? item.question, answer: translated[lang][`faqAnswer${index}`] ?? item.answer })),
       mission: translated[lang]["mission"] ?? data.mission,
       values: translated[lang]["values"] ?? data.values,

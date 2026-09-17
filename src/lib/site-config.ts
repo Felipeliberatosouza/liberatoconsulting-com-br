@@ -114,8 +114,14 @@ export type InstitutionalContent = {
   values: string;
   purpose: string;
 };
+/** Tradução: só textos — as imagens ficam apenas na versão PT. */
+export type InstitutionalTranslation = Omit<InstitutionalContent, "logos" | "banner" | "impact"> & {
+  banner: { eyebrow: string; title: string };
+  logos: Array<{ name: string }>;
+  impact: Array<{ title: string; body: string }>;
+};
 export type InstitutionalSettings = InstitutionalContent & {
-  translations?: Partial<Record<Exclude<Lang, "pt">, InstitutionalContent>>;
+  translations?: Partial<Record<Exclude<Lang, "pt">, InstitutionalTranslation>>;
 };
 
 export const DEFAULT_INSTITUTIONAL: InstitutionalSettings = {

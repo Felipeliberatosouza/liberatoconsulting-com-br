@@ -36,6 +36,20 @@ import {
   type InstitutionalSettings,
 } from "@/lib/site-config";
 import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
+
+/** Usa os textos traduzidos, mantendo as imagens cadastradas em PT. */
+function mergeInstitutional(base: InstitutionalSettings, lang: Lang): InstitutionalSettings {
+  if (lang === "pt") return base;
+  const tr = base.translations?.[lang];
+  if (!tr) return base;
+  return {
+    ...base,
+    ...tr,
+    banner: { ...base.banner, ...tr.banner },
+    logos: base.logos.map((logo, index) => ({ ...logo, name: tr.logos?.[index]?.name ?? logo.name })),
+    impact: base.impact.map((item, index) => ({ ...item, ...(tr.impact?.[index] ?? {}) })),
+  };
+}
 import { applyServiceProducts } from "@/lib/services-catalog";
 
 export type { Lang };
@@ -173,7 +187,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         config.branding?.segments && config.branding.segments.length > 0
           ? config.branding.segments
           : DEFAULT_SEGMENTS,
-      institutional: lang === "pt" ? config.institutional : (config.institutional.translations?.[lang] ?? config.institutional),
+      institutional: mergeInstitutional(config.institutional, lang),
     }),
     [lang, setLang, dicts, translating, config],
   );

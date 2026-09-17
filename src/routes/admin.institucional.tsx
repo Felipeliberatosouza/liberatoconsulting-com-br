@@ -17,7 +17,7 @@ async function logoData(file: File) {
   const original = await imageData(file);
   try {
     const image = await new Promise<HTMLImageElement>((resolve, reject) => { const img = new Image(); img.onload = () => resolve(img); img.onerror = () => reject(new Error("image")); img.src = original; });
-    const maxWidth = 360;
+    const maxWidth = 240;
     const scale = Math.min(1, maxWidth / (image.width || maxWidth));
     const canvas = document.createElement("canvas");
     canvas.width = Math.round((image.width || maxWidth) * scale);
@@ -25,15 +25,17 @@ async function logoData(file: File) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return original;
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    const compact = canvas.toDataURL("image/webp", 0.9);
+    const compact = canvas.toDataURL("image/webp", 0.72);
     return compact.startsWith("data:image/webp") && compact.length < original.length ? compact : original;
   } catch {
     return original;
   }
 }
 function AdminInstitutional() {
-  const [data, setData] = useState<InstitutionalSettings>(DEFAULT_INSTITUTIONAL); const [busy, setBusy] = useState(false);
-  useEffect(() => { getSiteConfig().then((config) => setData(config.institutional)).catch(() => undefined); }, []);
+  const [data, setData] = useState<InstitutionalSettings>(DEFAULT_INSTITUTIONAL); const [busy, setBusy] = useState(false); const [loaded, setLoaded] = useState(false);
+  // Enquanto o conteúdo salvo não carregar, o botão fica bloqueado — assim o
+  // painel nunca grava os valores padrão por cima do que já está publicado.
+  useEffect(() => { getSiteConfig().then((config) => { setData(config.institutional); setLoaded(true); }).catch(() => toast.error("Não foi possível carregar o conteúdo salvo. Recarregue a página antes de editar.")); }, []);
   const update = (patch: Partial<InstitutionalSettings>) => setData((value) => ({ ...value, ...patch }));
   return <AdminShell title="Site institucional" description="Edite os textos, números, logomarcas, impactos, missão, valores, propósito e FAQ exibidos no site."><div className="max-w-4xl space-y-8">
     <Section title="Banner de resultados"><label>Frase curta<input className={field} value={data.banner.eyebrow} onChange={(event) => update({ banner: { ...data.banner, eyebrow: event.target.value } })} /></label><label>Frase principal<textarea className={field} rows={3} value={data.banner.title} onChange={(event) => update({ banner: { ...data.banner, title: event.target.value } })} /></label><label>Imagem<input className={field} type="file" accept="image/*" onChange={async (event) => { const file = event.target.files?.[0]; if (file) update({ banner: { ...data.banner, imageUrl: await imageData(file) } }); }} /></label></Section>
@@ -43,7 +45,7 @@ function AdminInstitutional() {
     <Section title="Impactos para o negócio">{data.impact.map((item, index) => <div key={`impact-${index}`} className="border-t border-border pt-4"><input className={field} value={item.title} onChange={(event) => update({ impact: data.impact.map((impact, n) => n === index ? { ...impact, title: event.target.value } : impact) })} /><textarea className={field} rows={2} value={item.body} onChange={(event) => update({ impact: data.impact.map((impact, n) => n === index ? { ...impact, body: event.target.value } : impact) })} /></div>)}</Section>
     <Section title="Missão, Valores e Propósito">{(["mission", "values", "purpose"] as const).map((key) => <label key={key} className="block capitalize">{key}<textarea className={field} rows={3} value={data[key]} onChange={(event) => update({ [key]: event.target.value })} /></label>)}</Section>
     <Section title="Perguntas frequentes">{data.faq.map((item, index) => <div key={`faq-${index}`} className="grid gap-2 border-t border-border pt-4"><div className="flex gap-2"><input className={field} placeholder="Pergunta" value={item.question} onChange={(event) => update({ faq: data.faq.map((faq, n) => n === index ? { ...faq, question: event.target.value } : faq) })} /><Button type="button" variant="ghost" size="icon" onClick={() => update({ faq: data.faq.filter((_, n) => n !== index) })}><Trash2 /></Button></div><textarea className={field} rows={3} placeholder="Resposta" value={item.answer} onChange={(event) => update({ faq: data.faq.map((faq, n) => n === index ? { ...faq, answer: event.target.value } : faq) })} /></div>)}<Button type="button" variant="outline" onClick={() => update({ faq: [...data.faq, { question: "", answer: "" }] })}><Plus />Adicionar pergunta</Button></Section>
-    <Button disabled={busy} onClick={async () => { setBusy(true); try { const result = await saveInstitutionalSettings({ data }); result.ok ? toast.success("Conteúdo atualizado.") : toast.error(result.error); } finally { setBusy(false); } }}>{busy ? "Salvando…" : "Salvar conteúdo institucional"}</Button>
+    <Button disabled={busy || !loaded} onClick={async () => { setBusy(true); try { const result = await saveInstitutionalSettings({ data }); result.ok ? toast.success("Conteúdo atualizado.") : toast.error(result.error); } catch (error) { toast.error(error instanceof Error ? error.message : "Não foi possível salvar. Tente reduzir o tamanho das logomarcas."); } finally { setBusy(false); } }}>{busy ? "Salvando…" : loaded ? "Salvar conteúdo institucional" : "Carregando…"}</Button>
   </div></AdminShell>;
 }
 function Section({ title, children }: { title: string; children: ReactNode }) { return <section className="space-y-4 rounded-lg border border-border bg-background p-6"><h2 className="text-xl font-bold">{title}</h2>{children}</section>; }
