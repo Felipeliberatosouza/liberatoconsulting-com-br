@@ -40,7 +40,7 @@ export function InstitutionalShowcase() {
             <div className="client-logo-marquee mt-7 overflow-hidden" aria-label="Clientes da Liberato Consulting">
               <div
                 className="client-logo-track flex w-max items-center"
-                style={{ "--copies": copies } as React.CSSProperties}
+                style={{ "--copies": copies } as CSSProperties}
               >
                 {sets.map((logo, index) => (
                   <div key={`logo-${index}`} className="flex h-20 w-44 shrink-0 items-center justify-center px-6 sm:w-52">
