@@ -1818,6 +1818,10 @@ export const pt = {
     applied: "Filtros aplicados",
     showing: "Exibindo informações destacadas para",
   },
+  toolsAuth: {
+    accountNotFound: "Conta inexistente! Clique abaixo em \u201CCriar conta gratuita\u201D.",
+    errorGeneric: "Não foi possível entrar agora. Tente novamente em instantes.",
+  },
 };
 
 export type Dict = typeof pt;
