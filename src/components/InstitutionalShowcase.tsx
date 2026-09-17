@@ -1,11 +1,17 @@
+import type { CSSProperties } from "react";
 import { ArrowRight, Download } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n";
 import resultImage from "@/assets/resultados-consultoria.jpg";
 
+/** Cada logo ocupa ~208px (sm:w-52); uma volta completa precisa cobrir telas largas. */
+const SET_WIDTH_ESTIMATE = 208;
+
 export function InstitutionalShowcase() {
   const { institutional } = useLanguage();
   const logos = institutional.logos.filter((logo) => logo.imageUrl);
+  const copies = Math.max(2, Math.ceil(2400 / Math.max(1, logos.length * SET_WIDTH_ESTIMATE)));
+  const sets = Array.from({ length: copies }, () => logos).flat();
   return (
     <section className="bg-background py-20">
       <div className="mx-auto max-w-7xl px-6">
