@@ -1,17 +1,70 @@
-import type { CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Download } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n";
 import resultImage from "@/assets/resultados-consultoria.jpg";
 
-/** Cada logo ocupa ~208px (sm:w-52); uma volta completa precisa cobrir telas largas. */
-const SET_WIDTH_ESTIMATE = 208;
+/** Velocidade do carrossel de clientes, em pixels por segundo. */
+const SPEED = 45;
+
+function ClientMarquee({ logos }: { logos: Array<{ name: string; imageUrl: string }> }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [paused, setPaused] = useState(false);
+
+  // Rolagem contínua feita em JavaScript: funciona em qualquer navegador e não
+  // depende de a animação em CSS ser preservada no build publicado.
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let offset = 0;
+    let last = performance.now();
+    let frame = 0;
+    const step = (now: number) => {
+      const delta = (now - last) / 1000;
+      last = now;
+      if (!paused) {
+        const half = track.scrollWidth / 2 || 1;
+        offset = (offset + SPEED * delta) % half;
+        track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+      }
+      frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [paused, logos.length]);
+
+  // Duas cópias da lista garantem o loop sem emenda visível.
+  const sets = [...logos, ...logos];
+
+  return (
+    <div
+      className="mt-7 overflow-hidden"
+      aria-label="Clientes da Liberato Consulting"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+    >
+      <div ref={trackRef} className="flex w-max items-center will-change-transform">
+        {sets.map((logo, index) => (
+          <div key={`logo-${index}`} className="flex h-20 w-44 shrink-0 items-center justify-center px-6 sm:w-52">
+            <img
+              src={logo.imageUrl}
+              alt={logo.name || "Cliente da Liberato Consulting"}
+              loading="lazy"
+              className="max-h-12 max-w-32 object-contain grayscale sm:max-w-36"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function InstitutionalShowcase() {
   const { institutional } = useLanguage();
   const logos = institutional.logos.filter((logo) => logo.imageUrl);
-  const copies = Math.max(2, Math.ceil(2400 / Math.max(1, logos.length * SET_WIDTH_ESTIMATE)));
-  const sets = Array.from({ length: copies }, () => logos).flat();
   return (
     <section className="bg-background py-20">
       <div className="mx-auto max-w-7xl px-6">
@@ -36,20 +89,7 @@ export function InstitutionalShowcase() {
         </div>
         <div className="mt-10">
           <h3 className="text-center text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">Clientes</h3>
-          {logos.length ? (
-            <div className="client-logo-marquee mt-7 overflow-hidden" aria-label="Clientes da Liberato Consulting">
-              <div
-                className="client-logo-track flex w-max items-center"
-                style={{ "--copies": copies } as CSSProperties}
-              >
-                {sets.map((logo, index) => (
-                  <div key={`logo-${index}`} className="flex h-20 w-44 shrink-0 items-center justify-center px-6 sm:w-52">
-                    <img src={logo.imageUrl} alt={logo.name || "Cliente da Liberato Consulting"} loading="lazy" className="max-h-12 max-w-32 object-contain grayscale sm:max-w-36" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : <div className="mt-7 h-px bg-border" />}
+          {logos.length ? <ClientMarquee logos={logos} /> : <div className="mt-7 h-px bg-border" />}
         </div>
         <div className="relative mt-16 overflow-hidden bg-ink text-ink-foreground">
           <img src={institutional.banner.imageUrl || resultImage} alt="Consultoria orientada a resultados" width={1600} height={912} loading="lazy" className="absolute inset-0 size-full object-cover opacity-35" />
