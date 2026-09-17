@@ -36,6 +36,10 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
         .order("position", { ascending: true }),
     ]);
 
+    if (settings.error) {
+      throw new Error(`Não foi possível carregar as configurações do site: ${settings.error.message}`);
+    }
+
     const map = new Map((settings.data ?? []).map((r) => [r.key, r.value]));
     return {
       theme: (map.get("theme") ?? {}) as Theme,
