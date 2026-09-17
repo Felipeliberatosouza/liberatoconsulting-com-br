@@ -1,11 +1,17 @@
+import type { CSSProperties } from "react";
 import { ArrowRight, Download } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n";
 import resultImage from "@/assets/resultados-consultoria.jpg";
 
+/** Cada logo ocupa ~208px (sm:w-52); uma volta completa precisa cobrir telas largas. */
+const SET_WIDTH_ESTIMATE = 208;
+
 export function InstitutionalShowcase() {
   const { institutional } = useLanguage();
   const logos = institutional.logos.filter((logo) => logo.imageUrl);
+  const copies = Math.max(2, Math.ceil(2400 / Math.max(1, logos.length * SET_WIDTH_ESTIMATE)));
+  const sets = Array.from({ length: copies }, () => logos).flat();
   return (
     <section className="bg-background py-20">
       <div className="mx-auto max-w-7xl px-6">
@@ -32,8 +38,11 @@ export function InstitutionalShowcase() {
           <h3 className="text-center text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">Clientes</h3>
           {logos.length ? (
             <div className="client-logo-marquee mt-7 overflow-hidden" aria-label="Clientes da Liberato Consulting">
-              <div className="client-logo-track flex w-max items-center">
-                {[...logos, ...logos].map((logo, index) => (
+              <div
+                className="client-logo-track flex w-max items-center"
+                style={{ "--copies": copies } as CSSProperties}
+              >
+                {sets.map((logo, index) => (
                   <div key={`logo-${index}`} className="flex h-20 w-44 shrink-0 items-center justify-center px-6 sm:w-52">
                     <img src={logo.imageUrl} alt={logo.name || "Cliente da Liberato Consulting"} loading="lazy" className="max-h-12 max-w-32 object-contain grayscale sm:max-w-36" />
                   </div>
