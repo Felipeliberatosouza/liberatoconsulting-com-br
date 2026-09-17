@@ -211,23 +211,54 @@ export const saveAdminTool = createServerFn({ method: "POST" })
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const bytes = Uint8Array.from(atob(data.base64), (char) => char.charCodeAt(0));
-    if (bytes.byteLength > 20 * 1024 * 1024) return { ok: false as const, error: "O arquivo deve ter no máximo 20 MB." };
-    const extension = data.file_name.toLowerCase().split(".").pop() ?? "";
-    const allowedExtension = data.content_type === "application/pdf" ? extension === "pdf" : data.content_type === "application/vnd.ms-excel" ? extension === "xls" : extension === "xlsx";
-    if (!allowedExtension) return { ok: false as const, error: "O tipo do arquivo não corresponde à extensão." };
-    const safe = data.file_name.replace(/[^a-zA-Z0-9._-]+/g, "-");
-    const filePath = `${crypto.randomUUID()}/${safe}`;
-    const uploaded = await supabaseAdmin.storage.from("management-tools").upload(filePath, bytes, { contentType: data.content_type, upsert: false });
-    if (uploaded.error) return { ok: false as const, error: uploaded.error.message };
+
+    let filePath: string | null = null;
+    if (data.base64 && data.file_name && data.content_type) {
+      const bytes = Uint8Array.from(atob(data.base64), (char) => char.charCodeAt(0));
+      if (bytes.byteLength > 20 * 1024 * 1024) return { ok: false as const, error: "O arquivo deve ter no máximo 20 MB." };
+      const extension = data.file_name.toLowerCase().split(".").pop() ?? "";
+      const allowedExtension = data.content_type === "application/pdf" ? extension === "pdf" : data.content_type === "application/vnd.ms-excel" ? extension === "xls" : extension === "xlsx";
+      if (!allowedExtension) return { ok: false as const, error: "O tipo do arquivo não corresponde à extensão." };
+      const safe = data.file_name.replace(/[^a-zA-Z0-9._-]+/g, "-");
+      filePath = `${crypto.randomUUID()}/${safe}`;
+      const uploaded = await supabaseAdmin.storage.from("management-tools").upload(filePath, bytes, { contentType: data.content_type, upsert: false });
+      if (uploaded.error) return { ok: false as const, error: uploaded.error.message };
+    } else if (!data.id) {
+      return { ok: false as const, error: "Selecione um arquivo." };
+    }
+
     const slug = data.title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 120);
     if (data.welcome_attachment) {
       await supabaseAdmin.from("management_tools").update({ welcome_attachment: false }).eq("welcome_attachment", true);
     }
-    const row = { slug: `${slug}-${Date.now().toString(36)}`, title: data.title, summary: data.summary, category: data.category, position: data.position, published: data.published, file_name: data.file_name, file_path: filePath, welcome_attachment: data.welcome_attachment };
+    const base = {
+      title: data.title,
+      summary: data.summary,
+      category: data.category,
+      position: data.position,
+      published: data.published,
+      welcome_attachment: data.welcome_attachment,
+    };
+
+    if (data.id) {
+      const current = await supabaseAdmin.from("management_tools").select("file_path").eq("id", data.id).maybeSingle();
+      const update = filePath && data.file_name ? { ...base, file_path: filePath, file_name: data.file_name } : base;
+      const saved = await supabaseAdmin.from("management_tools").update(update).eq("id", data.id);
+      if (saved.error) {
+        if (filePath) await supabaseAdmin.storage.from("management-tools").remove([filePath]);
+        return { ok: false as const, error: saved.error.message };
+      }
+      // Arquivo antigo só é apagado depois que a troca deu certo.
+      if (filePath && current.data?.file_path) {
+        await supabaseAdmin.storage.from("management-tools").remove([current.data.file_path]);
+      }
+      return { ok: true as const };
+    }
+
+    const row = { ...base, slug: `${slug}-${Date.now().toString(36)}`, file_name: data.file_name!, file_path: filePath! };
     const saved = await supabaseAdmin.from("management_tools").insert(row);
     if (saved.error) {
-      await supabaseAdmin.storage.from("management-tools").remove([filePath]);
+      if (filePath) await supabaseAdmin.storage.from("management-tools").remove([filePath]);
       return { ok: false as const, error: saved.error.message };
     }
     return { ok: true as const };
