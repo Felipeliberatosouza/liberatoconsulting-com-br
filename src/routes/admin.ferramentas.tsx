@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Trash2, Upload } from "lucide-react";
+import { Pencil, Trash2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { AdminShell } from "@/components/AdminShell";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ const field = "mt-1 w-full rounded-md border border-input bg-background px-3 py-
 
 function AdminTools() {
   const query = useQuery({ queryKey: ["admin-tools"], queryFn: () => listAdminTools() });
+  const [editing, setEditing] = useState<any | null>(null);
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [category, setCategory] = useState("Guia");
@@ -38,6 +39,27 @@ function AdminTools() {
   const [published, setPublished] = useState(true);
   const [welcome, setWelcome] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  function reset() {
+    setEditing(null);
+    setTitle("");
+    setSummary("");
+    setCategory("Guia");
+    setFile(null);
+    setPublished(true);
+    setWelcome(false);
+  }
+
+  function startEdit(tool: any) {
+    setEditing(tool);
+    setTitle(tool.title ?? "");
+    setSummary(tool.summary ?? "");
+    setCategory(tool.category ?? "Guia");
+    setFile(null);
+    setPublished(Boolean(tool.published));
+    setWelcome(Boolean(tool.welcome_attachment));
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   return (
     <AdminShell
@@ -56,54 +78,56 @@ function AdminTools() {
           className="space-y-4 rounded-lg border border-border bg-background p-6"
           onSubmit={async (event) => {
             event.preventDefault();
-            if (!file) {
+            let contentType: string | null = null;
+            if (file) {
+              if (file.size > 20 * 1024 * 1024) {
+                toast.error("O arquivo deve ter no máximo 20 MB.");
+                return;
+              }
+              const extension = file.name.toLowerCase().split(".").pop();
+              contentType =
+                extension === "pdf"
+                  ? "application/pdf"
+                  : extension === "xls"
+                    ? "application/vnd.ms-excel"
+                    : extension === "xlsx"
+                      ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                      : null;
+              if (!contentType) {
+                toast.error("Envie um arquivo PDF, XLS ou XLSX.");
+                return;
+              }
+            } else if (!editing) {
               toast.error("Selecione um arquivo.");
-              return;
-            }
-            if (file.size > 20 * 1024 * 1024) {
-              toast.error("O arquivo deve ter no máximo 20 MB.");
-              return;
-            }
-            const extension = file.name.toLowerCase().split(".").pop();
-            const contentType =
-              extension === "pdf"
-                ? "application/pdf"
-                : extension === "xls"
-                  ? "application/vnd.ms-excel"
-                  : extension === "xlsx"
-                    ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    : null;
-            if (!contentType) {
-              toast.error("Envie um arquivo PDF, XLS ou XLSX.");
               return;
             }
             setBusy(true);
             try {
-              const base64 = await new Promise<string>((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(String(reader.result).split(",")[1] ?? "");
-                reader.onerror = () => reject(new Error("read"));
-                reader.readAsDataURL(file);
-              });
+              const base64 = file
+                ? await new Promise<string>((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(String(reader.result).split(",")[1] ?? "");
+                    reader.onerror = () => reject(new Error("read"));
+                    reader.readAsDataURL(file);
+                  })
+                : undefined;
               const result = await saveAdminTool({
                 data: {
+                  ...(editing ? { id: editing.id as string } : {}),
                   title,
                   summary,
                   category,
-                  position: (query.data?.length ?? 0) + 1,
+                  position: editing ? (editing.position ?? 0) : (query.data?.length ?? 0) + 1,
                   published,
                   welcome_attachment: welcome,
-                  file_name: file.name,
-                  content_type: contentType,
-                  base64,
+                  ...(file && base64
+                    ? { file_name: file.name, content_type: contentType as any, base64 }
+                    : {}),
                 },
               });
               if (result.ok) {
-                toast.success("Material cadastrado.");
-                setTitle("");
-                setSummary("");
-                setFile(null);
-                setWelcome(false);
+                toast.success(editing ? "Material atualizado." : "Material cadastrado.");
+                reset();
                 void query.refetch();
               } else toast.error(result.error);
             } finally {
@@ -111,7 +135,14 @@ function AdminTools() {
             }
           }}
         >
-          <h2 className="text-xl font-bold">Novo material</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-xl font-bold">{editing ? "Editar material" : "Novo material"}</h2>
+            {editing ? (
+              <button type="button" onClick={reset} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-accent">
+                <X className="size-4" /> Cancelar
+              </button>
+            ) : null}
+          </div>
           <label className="block text-sm font-medium">
             Título *
             <input required className={field} value={title} onChange={(e) => setTitle(e.target.value)} />
@@ -125,14 +156,17 @@ function AdminTools() {
             <input required className={field} value={category} onChange={(e) => setCategory(e.target.value)} />
           </label>
           <label className="block text-sm font-medium">
-            Arquivo PDF ou Excel *
+            {editing ? "Substituir arquivo (opcional)" : "Arquivo PDF ou Excel *"}
             <input
-              required
+              required={!editing}
               className={field}
               type="file"
               accept="application/pdf,.xlsx,.xls"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
             />
+            {editing ? (
+              <span className="mt-1 block text-xs text-muted-foreground">Arquivo atual: {editing.file_name}</span>
+            ) : null}
           </label>
           <label className="flex items-center gap-2 text-sm">
             <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
@@ -149,7 +183,7 @@ function AdminTools() {
           </label>
           <Button disabled={busy}>
             <Upload />
-            {busy ? "Enviando…" : "Cadastrar material"}
+            {busy ? "Salvando…" : editing ? "Salvar alterações" : "Cadastrar material"}
           </Button>
         </form>
 
@@ -186,17 +220,26 @@ function AdminTools() {
                       Enviar no e-mail de boas-vindas
                     </label>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={async () => {
-                      if (!confirm("Excluir este material?")) return;
-                      const result = await deleteAdminTool({ data: { id: tool.id } });
-                      result.ok ? void query.refetch() : toast.error(result.error);
-                    }}
-                  >
-                    <Trash2 />
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    <Button variant="ghost" size="icon" title="Editar" onClick={() => startEdit(tool)}>
+                      <Pencil />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      title="Excluir"
+                      onClick={async () => {
+                        if (!confirm("Excluir este material?")) return;
+                        const result = await deleteAdminTool({ data: { id: tool.id } });
+                        if (result.ok) {
+                          if (editing?.id === tool.id) reset();
+                          void query.refetch();
+                        } else toast.error(result.error);
+                      }}
+                    >
+                      <Trash2 />
+                    </Button>
+                  </div>
                 </article>
               ))
             ) : (
