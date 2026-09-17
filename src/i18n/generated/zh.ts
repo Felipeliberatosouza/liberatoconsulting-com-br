@@ -2773,5 +2773,9 @@ export const dict: Dict = {
     "apply": "应用过滤器",
     "applied": "已应用过滤器",
     "showing": "显示突出信息："
+  },
+  "toolsAuth": {
+    "accountNotFound": "账户不存在！请点击下方的“免费创建账户”。",
+    "errorGeneric": "暂时无法登录，请稍后重试。"
   }
 };
