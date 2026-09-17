@@ -186,9 +186,13 @@ const adminToolSchema = z.object({
   category: z.string().trim().min(2).max(80),
   position: z.number().int().min(0).max(9999),
   published: z.boolean(),
-  file_name: z.string().trim().min(1).max(240),
-  content_type: z.enum(["application/pdf", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"]),
-  base64: z.string().min(1).max(28_000_000),
+  // Ao editar um material existente o arquivo é opcional: só é trocado quando
+  // um novo é enviado.
+  file_name: z.string().trim().min(1).max(240).optional(),
+  content_type: z
+    .enum(["application/pdf", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"])
+    .optional(),
+  base64: z.string().min(1).max(28_000_000).optional(),
   welcome_attachment: z.boolean().optional().default(false),
 });
 
