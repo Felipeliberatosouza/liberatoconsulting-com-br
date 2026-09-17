@@ -2773,5 +2773,9 @@ export const dict: Dict = {
     "apply": "Apply filters",
     "applied": "Applied filters",
     "showing": "Displaying highlighted info for"
+  },
+  "toolsAuth": {
+    "accountNotFound": "Account not found! Click “Create free account” below.",
+    "errorGeneric": "Could not sign in right now. Please try again in a moment."
   }
 };

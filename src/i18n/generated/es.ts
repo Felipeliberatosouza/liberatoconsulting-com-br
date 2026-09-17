@@ -2538,5 +2538,9 @@ export const dict: Dict = {
     "apply": "Aplicar filtros",
     "applied": "Filtros aplicados",
     "showing": "Mostrando destacados para"
+  },
+  "toolsAuth": {
+    "accountNotFound": "¡Cuenta inexistente! Haga clic abajo en «Crear cuenta gratuita».",
+    "errorGeneric": "No fue posible entrar ahora. Inténtelo de nuevo en un momento."
   }
 };
