@@ -726,7 +726,7 @@ export const saveInstitutionalSettings = createServerFn({ method: "POST" })
       metrics: data.metrics.map((item, index) => ({ ...item, label: translated[lang][`metric${index}`] ?? item.label })),
       // As imagens ficam apenas na versão PT; os idiomas só guardam textos.
       logos: data.logos.map((item) => ({ name: item.name })),
-      impact: data.impact.map((item, index) => ({ ...item, title: translated[lang][`impactTitle${index}`] ?? item.title, body: translated[lang][`impactBody${index}`] ?? item.body })),
+      impact: data.impact.map((item, index) => ({ title: translated[lang][`impactTitle${index}`] ?? item.title, body: translated[lang][`impactBody${index}`] ?? item.body })),
       faq: data.faq.map((item, index) => ({ question: translated[lang][`faqQuestion${index}`] ?? item.question, answer: translated[lang][`faqAnswer${index}`] ?? item.answer })),
       mission: translated[lang]["mission"] ?? data.mission,
       values: translated[lang]["values"] ?? data.values,
