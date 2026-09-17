@@ -58,10 +58,10 @@
 - [x] Validar idiomas, SEO, autenticação, downloads, WhatsApp e layouts desktop/mobile
 
 ## Portal do cliente e conteúdo (17/09/2026)
-- [ ] Converter as logomarcas de clientes em carrossel de uma linha, 40% menores, e renomear a seção para “Clientes”
-- [ ] Destacar “Sair” em laranja ao passar o mouse
-- [ ] Adicionar login/cadastro e menu personalizado do cliente no cabeçalho
-- [ ] Criar área do cliente com ferramentas, guia, solicitação de serviços e conteúdos recentes
-- [ ] Permitir edição do perfil e preferências de recebimento
-- [ ] Reorganizar o menu Conteúdo com categorias de artigos, ferramentas, newsletters, boletins e guia
+- [x] Converter as logomarcas de clientes em carrossel de uma linha, 40% menores, e renomear a seção para “Clientes”
+- [x] Destacar “Sair” em laranja ao passar o mouse
+- [x] Adicionar login/cadastro e menu personalizado do cliente no cabeçalho
+- [x] Criar área do cliente com ferramentas, guia, solicitação de serviços e conteúdos recentes
+- [x] Permitir edição do perfil e preferências de recebimento
+- [x] Reorganizar o menu Conteúdo com categorias de artigos, ferramentas, newsletters, boletins e guia
 - [ ] Validar navegação e apresentação em computador e celular

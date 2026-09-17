@@ -34,7 +34,7 @@ export function AccountMenu({ mobile = false, onNavigate }: { mobile?: boolean; 
   if (!sessionReady) return null;
   if (!signedIn) return (
     <div className={mobile ? "flex gap-3 py-4" : "hidden items-center gap-2 lg:flex"}>
-      <Button asChild variant="ghost" size="sm"><Link to="/ferramentas" search={{}} hash="entrar" onClick={onNavigate}><LogIn /> Entrar</Link></Button>
+      <Button asChild variant="ghost" size="sm"><Link to="/ferramentas" search={{ modo: undefined }} hash="entrar" onClick={onNavigate}><LogIn /> Entrar</Link></Button>
       <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90"><Link to="/ferramentas" search={{ modo: "cadastro" }} onClick={onNavigate}>Criar conta</Link></Button>
     </div>
   );
@@ -50,7 +50,7 @@ export function AccountMenu({ mobile = false, onNavigate }: { mobile?: boolean; 
         <DropdownMenuSeparator />
         {links.map((item) => <DropdownMenuItem key={item.section} asChild><Link to="/area-cliente" search={{ secao: item.section }} onClick={onNavigate}><item.icon />{item.label}</Link></DropdownMenuItem>)}
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-muted-foreground focus:bg-accent focus:text-accent-foreground" onSelect={async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); onNavigate?.(); navigate({ to: "/ferramentas", search: {}, replace: true }); }}><LogOut /> Sair</DropdownMenuItem>
+        <DropdownMenuItem className="text-muted-foreground focus:bg-accent focus:text-accent-foreground" onSelect={async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); onNavigate?.(); navigate({ to: "/ferramentas", search: { modo: undefined }, replace: true }); }}><LogOut /> Sair</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

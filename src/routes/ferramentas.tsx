@@ -10,7 +10,7 @@ import { CRM_SEGMENTS } from "@/lib/crm-segments";
 import { formatPhone, isValidPhone } from "@/lib/validation";
 
 export const Route = createFileRoute("/ferramentas")({
-  validateSearch: (search: Record<string, unknown>): { modo?: "cadastro" } => search["modo"] === "cadastro" ? { modo: "cadastro" } : {},
+  validateSearch: (search: Record<string, unknown>): { modo: "cadastro" | undefined } => ({ modo: search["modo"] === "cadastro" ? "cadastro" : undefined }),
   head: () => ({ meta: [{ title: "Ferramentas gratuitas de gestão — Liberato Consulting" }, { name: "description", content: "Guias e planilhas gratuitas para melhorar a gestão da sua empresa." }, { property: "og:title", content: "Ferramentas gratuitas de gestão — Liberato Consulting" }, { property: "og:description", content: "Biblioteca de guias e planilhas práticas para empresas." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: ToolsPage,
 });
