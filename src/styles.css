@@ -191,11 +191,11 @@ body.no-copy [data-allow-copy] {
 
 @keyframes client-logo-scroll {
   from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  to { transform: translateX(calc(-100% / var(--copies, 2))); }
 }
 
 .client-logo-track {
-  animation: client-logo-scroll 28s linear infinite;
+  animation: client-logo-scroll calc(28s * var(--copies, 2) / 2) linear infinite;
 }
 
 .client-logo-marquee:hover .client-logo-track,
