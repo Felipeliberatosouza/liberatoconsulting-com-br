@@ -308,7 +308,7 @@ export function SiteHeader() {
                       {CONTENT_ARTICLE_GROUPS.map((g) => <Link key={g.id} to="/content" search={{ category: g.id }} onClick={closeAll} className="block text-xs text-muted-foreground hover:text-accent">{contentGroups.find((item) => item.id === g.id)?.title ?? g.label}</Link>)}
                     </div>
                   </div>
-                  <Link to="/ferramentas" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">Ferramentas de Gestão</Link>
+              <Link to="/ferramentas" search={{}} onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">Ferramentas de Gestão</Link>
                   <Link to="/newsletters" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">Newsletters</Link>
                   <Link to="/boletins" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">Boletins Semanais</Link>
                   <Link to="/guia-gestao" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">Guia Gestão Completa para Crescer com Controle</Link>
@@ -490,10 +490,10 @@ export function SiteHeader() {
                   onClick={closeAll}
                   className="block py-1.5 text-sm text-muted-foreground transition-colors hover:text-accent"
                 >
-                  {g.title}
+                  {contentGroups.find((item) => item.id === g.id)?.title ?? g.label}
                 </Link>
               ))}
-              <Link to="/ferramentas" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">Ferramentas de Gestão</Link>
+              <Link to="/ferramentas" search={{}} onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">Ferramentas de Gestão</Link>
               <Link to="/newsletters" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">Newsletters</Link>
               <Link to="/boletins" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">Boletins Semanais</Link>
               <Link to="/guia-gestao" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">Guia Gestão Completa para Crescer com Controle</Link>
