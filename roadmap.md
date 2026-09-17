@@ -64,4 +64,4 @@
 - [x] Criar área do cliente com ferramentas, guia, solicitação de serviços e conteúdos recentes
 - [x] Permitir edição do perfil e preferências de recebimento
 - [x] Reorganizar o menu Conteúdo com categorias de artigos, ferramentas, newsletters, boletins e guia
-- [ ] Validar navegação e apresentação em computador e celular
+- [x] Validar navegação e apresentação em computador e celular
