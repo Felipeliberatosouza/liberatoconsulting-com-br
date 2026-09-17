@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 
@@ -46,6 +46,12 @@ function AdminLeads() {
       title="Leads"
       description="Pesquise novos contatos com IA e consulte os contatos recebidos pelos formulários do site."
     >
+      <p className="mb-6 text-sm">
+        <Link to="/admin/ferramentas-clientes" className="font-semibold text-accent hover:underline">
+          Ver clientes cadastrados para receber materiais →
+        </Link>
+      </p>
+
       <CrmProspect
         onImported={() => {
           void queryClient.invalidateQueries({ queryKey: ["crm-companies"] });

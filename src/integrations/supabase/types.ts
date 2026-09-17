@@ -1227,6 +1227,7 @@ export type Database = {
           title: string
           translations: Json
           updated_at: string
+          welcome_attachment: boolean
         }
         Insert: {
           category?: string
@@ -1242,6 +1243,7 @@ export type Database = {
           title: string
           translations?: Json
           updated_at?: string
+          welcome_attachment?: boolean
         }
         Update: {
           category?: string
@@ -1257,6 +1259,7 @@ export type Database = {
           title?: string
           translations?: Json
           updated_at?: string
+          welcome_attachment?: boolean
         }
         Relationships: []
       }
@@ -1730,6 +1733,7 @@ export type Database = {
         Row: {
           company: string
           created_at: string
+          email: string
           first_name: string
           id: string
           job_title: string
@@ -1740,10 +1744,12 @@ export type Database = {
           state: string
           updated_at: string
           user_id: string
+          welcome_sent_at: string | null
         }
         Insert: {
           company?: string
           created_at?: string
+          email?: string
           first_name?: string
           id?: string
           job_title?: string
@@ -1754,10 +1760,12 @@ export type Database = {
           state?: string
           updated_at?: string
           user_id: string
+          welcome_sent_at?: string | null
         }
         Update: {
           company?: string
           created_at?: string
+          email?: string
           first_name?: string
           id?: string
           job_title?: string
@@ -1768,6 +1776,7 @@ export type Database = {
           state?: string
           updated_at?: string
           user_id?: string
+          welcome_sent_at?: string | null
         }
         Relationships: []
       }

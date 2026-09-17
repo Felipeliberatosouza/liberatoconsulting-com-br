@@ -39,6 +39,7 @@ import { Route as AdminContratoRouteImport } from './routes/admin.contrato'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 import { Route as AdminEmpresaRouteImport } from './routes/admin.empresa'
 import { Route as AdminFerramentasRouteImport } from './routes/admin.ferramentas'
+import { Route as AdminFerramentasClientesRouteImport } from './routes/admin.ferramentas-clientes'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
 import { Route as AdminHistoricoRouteImport } from './routes/admin.historico'
 import { Route as AdminIndicadoresRouteImport } from './routes/admin.indicadores'
@@ -223,6 +224,12 @@ const AdminFerramentasRoute = AdminFerramentasRouteImport.update({
   path: '/admin/ferramentas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminFerramentasClientesRoute =
+  AdminFerramentasClientesRouteImport.update({
+    id: '/admin/ferramentas-clientes',
+    path: '/admin/ferramentas-clientes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminHeroRoute = AdminHeroRouteImport.update({
   id: '/admin/hero',
   path: '/admin/hero',
@@ -423,6 +430,7 @@ export interface FileRoutesByFullPath {
   '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/ferramentas': typeof AdminFerramentasRoute
+  '/admin/ferramentas-clientes': typeof AdminFerramentasClientesRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
@@ -488,6 +496,7 @@ export interface FileRoutesByTo {
   '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/ferramentas': typeof AdminFerramentasRoute
+  '/admin/ferramentas-clientes': typeof AdminFerramentasClientesRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
@@ -554,6 +563,7 @@ export interface FileRoutesById {
   '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/ferramentas': typeof AdminFerramentasRoute
+  '/admin/ferramentas-clientes': typeof AdminFerramentasClientesRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
@@ -621,6 +631,7 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/admin/empresa'
     | '/admin/ferramentas'
+    | '/admin/ferramentas-clientes'
     | '/admin/hero'
     | '/admin/historico'
     | '/admin/indicadores'
@@ -686,6 +697,7 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/admin/empresa'
     | '/admin/ferramentas'
+    | '/admin/ferramentas-clientes'
     | '/admin/hero'
     | '/admin/historico'
     | '/admin/indicadores'
@@ -751,6 +763,7 @@ export interface FileRouteTypes {
     | '/admin/crm'
     | '/admin/empresa'
     | '/admin/ferramentas'
+    | '/admin/ferramentas-clientes'
     | '/admin/hero'
     | '/admin/historico'
     | '/admin/indicadores'
@@ -817,6 +830,7 @@ export interface RootRouteChildren {
   AdminCrmRoute: typeof AdminCrmRoute
   AdminEmpresaRoute: typeof AdminEmpresaRoute
   AdminFerramentasRoute: typeof AdminFerramentasRoute
+  AdminFerramentasClientesRoute: typeof AdminFerramentasClientesRoute
   AdminHeroRoute: typeof AdminHeroRoute
   AdminHistoricoRoute: typeof AdminHistoricoRoute
   AdminIndicadoresRoute: typeof AdminIndicadoresRoute
@@ -1063,6 +1077,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/ferramentas'
       fullPath: '/admin/ferramentas'
       preLoaderRoute: typeof AdminFerramentasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/ferramentas-clientes': {
+      id: '/admin/ferramentas-clientes'
+      path: '/admin/ferramentas-clientes'
+      fullPath: '/admin/ferramentas-clientes'
+      preLoaderRoute: typeof AdminFerramentasClientesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/hero': {
@@ -1329,6 +1350,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminCrmRoute: AdminCrmRoute,
   AdminEmpresaRoute: AdminEmpresaRoute,
   AdminFerramentasRoute: AdminFerramentasRoute,
+  AdminFerramentasClientesRoute: AdminFerramentasClientesRoute,
   AdminHeroRoute: AdminHeroRoute,
   AdminHistoricoRoute: AdminHistoricoRoute,
   AdminIndicadoresRoute: AdminIndicadoresRoute,

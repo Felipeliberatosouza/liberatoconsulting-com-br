@@ -3,6 +3,7 @@ import type { ComponentType } from 'react'
 import { template as leadNotification } from './lead-notification'
 import { template as applicationNotification } from './application-notification'
 import { template as crmBirthday } from './crm-birthday'
+import { template as toolsWelcome } from './tools-welcome'
 
 export interface TemplateEntry {
   component: ComponentType<any>
@@ -25,4 +26,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'lead-notification': leadNotification,
   'application-notification': applicationNotification,
   'crm-birthday': crmBirthday,
+  'tools-welcome': toolsWelcome,
 }
