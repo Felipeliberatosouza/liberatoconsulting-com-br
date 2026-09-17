@@ -17,7 +17,7 @@ async function logoData(file: File) {
   const original = await imageData(file);
   try {
     const image = await new Promise<HTMLImageElement>((resolve, reject) => { const img = new Image(); img.onload = () => resolve(img); img.onerror = () => reject(new Error("image")); img.src = original; });
-    const maxWidth = 360;
+    const maxWidth = 240;
     const scale = Math.min(1, maxWidth / (image.width || maxWidth));
     const canvas = document.createElement("canvas");
     canvas.width = Math.round((image.width || maxWidth) * scale);
