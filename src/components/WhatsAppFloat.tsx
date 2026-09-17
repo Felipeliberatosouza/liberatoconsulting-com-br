@@ -19,7 +19,7 @@ export function WhatsAppFloat() {
         setOpen(true);
       }}
       aria-label={label}
-      className="fixed bottom-28 right-4 z-30 h-auto gap-3 rounded-full px-4 py-3 shadow-lg transition-transform hover:scale-[1.02] md:right-6"
+      className="fixed bottom-28 right-4 z-30 h-auto gap-3 rounded-full bg-whatsapp px-4 py-3 text-whatsapp-foreground shadow-lg transition-transform hover:bg-whatsapp/90 hover:scale-[1.02] md:right-6"
     >
       <MessageCircle className="size-5" />
       <span className="hidden sm:inline">Seja atendido por WhatsApp</span>
