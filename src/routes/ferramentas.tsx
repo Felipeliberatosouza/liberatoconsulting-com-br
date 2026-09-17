@@ -5,6 +5,7 @@ import { Download, LockKeyhole, LogOut, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/i18n";
 import { getToolDownload, getToolsAccount, saveToolsProfile } from "@/lib/tools.functions";
 import { CRM_SEGMENTS } from "@/lib/crm-segments";
 import { formatPhone, isValidPhone } from "@/lib/validation";
