@@ -1,5 +1,6 @@
 import { useLanguage } from "@/i18n";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { LinkifiedText } from "@/components/LinkifiedText";
 
 export function FaqSection() {
   const { institutional } = useLanguage();
