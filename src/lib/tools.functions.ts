@@ -118,6 +118,7 @@ const adminToolSchema = z.object({
   file_name: z.string().trim().min(1).max(240),
   content_type: z.enum(["application/pdf", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.ms-excel"]),
   base64: z.string().min(1).max(28_000_000),
+  welcome_attachment: z.boolean().optional().default(false),
 });
 
 export const listAdminTools = createServerFn({ method: "GET" }).middleware([requireSupabaseAuth]).handler(async ({ context }) => {
@@ -145,7 +146,10 @@ export const saveAdminTool = createServerFn({ method: "POST" })
     const uploaded = await supabaseAdmin.storage.from("management-tools").upload(filePath, bytes, { contentType: data.content_type, upsert: false });
     if (uploaded.error) return { ok: false as const, error: uploaded.error.message };
     const slug = data.title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 120);
-    const row = { slug: `${slug}-${Date.now().toString(36)}`, title: data.title, summary: data.summary, category: data.category, position: data.position, published: data.published, file_name: data.file_name, file_path: filePath };
+    if (data.welcome_attachment) {
+      await supabaseAdmin.from("management_tools").update({ welcome_attachment: false }).eq("welcome_attachment", true);
+    }
+    const row = { slug: `${slug}-${Date.now().toString(36)}`, title: data.title, summary: data.summary, category: data.category, position: data.position, published: data.published, file_name: data.file_name, file_path: filePath, welcome_attachment: data.welcome_attachment };
     const saved = await supabaseAdmin.from("management_tools").insert(row);
     if (saved.error) {
       await supabaseAdmin.storage.from("management-tools").remove([filePath]);
