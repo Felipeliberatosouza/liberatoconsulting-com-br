@@ -188,3 +188,27 @@ body.no-copy [data-allow-copy] {
   -webkit-user-select: text;
   user-select: text;
 }
+
+@keyframes client-logo-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.client-logo-track {
+  animation: client-logo-scroll 28s linear infinite;
+}
+
+.client-logo-marquee:hover .client-logo-track,
+.client-logo-marquee:focus-within .client-logo-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .client-logo-track {
+    animation: none;
+  }
+
+  .client-logo-marquee {
+    overflow-x: auto;
+  }
+}

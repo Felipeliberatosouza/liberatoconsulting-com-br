@@ -12,6 +12,9 @@ export type ToolsProfile = {
   job_title: string;
   revenue_range: string;
   segment: string;
+  receive_newsletter?: boolean;
+  receive_bulletin?: boolean;
+  receive_insights?: boolean;
 };
 
 const WELCOME_SLUG = "tools_welcome";
@@ -36,12 +39,12 @@ export async function runToolsOnboarding(
 
   const fullName = `${profile.first_name} ${profile.last_name}`.trim();
 
-  await subscribeLists(supabaseAdmin, address, fullName, profile);
+  await syncSubscriptions(supabaseAdmin, address, fullName, profile);
   await registerLead(supabaseAdmin, address, fullName, profile);
   await sendWelcome(supabaseAdmin, userId, address, fullName, profile);
 }
 
-async function subscribeLists(
+async function syncSubscriptions(
   supabaseAdmin: any,
   email: string,
   fullName: string,
@@ -56,7 +59,7 @@ async function subscribeLists(
         via_whatsapp: false,
         language: "pt",
         source_path: "/ferramentas",
-        status: "active",
+        status: profile.receive_newsletter === false ? "unsubscribed" : "active",
       },
       { onConflict: "email" },
     );
@@ -80,8 +83,8 @@ async function subscribeLists(
       via_whatsapp: false,
       language: "pt",
       source_path: "/ferramentas",
-      status: "active",
-      unsubscribed_at: null,
+       status: profile.receive_bulletin === false ? "unsubscribed" : "active",
+       unsubscribed_at: profile.receive_bulletin === false ? new Date().toISOString() : null,
     };
     if (existing) await supabaseAdmin.from("bulletin_subscribers").update(payload).eq("id", existing.id);
     else await supabaseAdmin.from("bulletin_subscribers").insert(payload);

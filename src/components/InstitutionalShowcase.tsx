@@ -5,6 +5,7 @@ import resultImage from "@/assets/resultados-consultoria.jpg";
 
 export function InstitutionalShowcase() {
   const { institutional } = useLanguage();
+  const logos = institutional.logos.filter((logo) => logo.imageUrl);
   return (
     <section className="bg-background py-20">
       <div className="mx-auto max-w-7xl px-6">
@@ -28,10 +29,16 @@ export function InstitutionalShowcase() {
           </div>
         </div>
         <div className="mt-10">
-          <h3 className="text-center text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">Cases de Sucesso</h3>
-          {institutional.logos.some((logo) => logo.imageUrl) ? (
-            <div className="mt-7 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-5">
-              {institutional.logos.filter((logo) => logo.imageUrl).map((logo, index) => <div key={`logo-${index}`} className="flex aspect-[3/2] items-center justify-center px-4"><img src={logo.imageUrl} alt={logo.name || "Cliente atendido pela Liberato Consulting"} loading="lazy" className="max-h-full max-w-full object-contain grayscale" /></div>)}
+          <h3 className="text-center text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">Clientes</h3>
+          {logos.length ? (
+            <div className="client-logo-marquee mt-7 overflow-hidden" aria-label="Clientes da Liberato Consulting">
+              <div className="client-logo-track flex w-max items-center">
+                {[...logos, ...logos].map((logo, index) => (
+                  <div key={`logo-${index}`} className="flex h-20 w-44 shrink-0 items-center justify-center px-6 sm:w-52">
+                    <img src={logo.imageUrl} alt={logo.name || "Cliente da Liberato Consulting"} loading="lazy" className="max-h-12 max-w-32 object-contain grayscale sm:max-w-36" />
+                  </div>
+                ))}
+              </div>
             </div>
           ) : <div className="mt-7 h-px bg-border" />}
         </div>

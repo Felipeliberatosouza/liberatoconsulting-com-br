@@ -12,6 +12,9 @@ const profileSchema = z.object({
   revenue_range: z.string().trim().min(1).max(100),
   segment: z.string().trim().min(1).max(140),
   email: z.string().trim().email().max(160),
+  receive_newsletter: z.boolean().optional().default(true),
+  receive_bulletin: z.boolean().optional().default(true),
+  receive_insights: z.boolean().optional().default(true),
 });
 
 export const getToolsAccount = createServerFn({ method: "GET" })
@@ -44,6 +47,43 @@ export const saveToolsProfile = createServerFn({ method: "POST" })
       console.error("tools onboarding failed", onboardingError);
     }
     return { ok: true as const };
+  });
+
+export const getMemberContent = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const since = new Date();
+    since.setMonth(since.getMonth() - 3);
+    const iso = since.toISOString();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [articles, newsletters, bulletins] = await Promise.all([
+      context.supabase
+        .rpc("list_site_articles")
+        .then(({ data, error }) => {
+          if (error) throw error;
+          return data ?? [];
+        }),
+      supabaseAdmin
+        .from("newsletter_campaigns")
+        .select("id, slug, subject, preheader, reference_date, published_at")
+        .not("published_at", "is", null)
+        .gte("published_at", iso)
+        .order("published_at", { ascending: false }),
+      supabaseAdmin
+        .from("bulletin_dispatches")
+        .select("id, subject, date_label, created_at")
+        .eq("status", "sent")
+        .eq("is_test", false)
+        .gte("created_at", iso)
+        .order("created_at", { ascending: false }),
+    ]);
+    if (newsletters.error) throw new Error(newsletters.error.message);
+    if (bulletins.error) throw new Error(bulletins.error.message);
+    return {
+      articles,
+      newsletters: newsletters.data ?? [],
+      bulletins: bulletins.data ?? [],
+    };
   });
 
 /** Clientes cadastrados para receber os materiais gratuitos. */
