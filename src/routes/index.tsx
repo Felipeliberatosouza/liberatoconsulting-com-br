@@ -13,9 +13,6 @@ import heroImage from "@/assets/hero.webp";
 import heroEmpreendedorismo from "@/assets/hero-empreendedorismo.webp";
 import heroOperacoes from "@/assets/hero-operacoes.webp";
 import heroEstrategia from "@/assets/hero-estrategia.webp";
-import valueMargem from "@/assets/value-margem.jpg";
-import valueVendas from "@/assets/value-vendas.jpg";
-import valueProcessos from "@/assets/value-processos.jpg";
 import { CtaBand } from "@/components/CtaBand";
 import { FaqSection } from "@/components/FaqSection";
 import { ImpactSection } from "@/components/ImpactSection";
@@ -283,30 +280,6 @@ function Index() {
       <ImpactSection />
 
 
-      <section className="border-b border-border bg-background">
-        <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 sm:grid-cols-3">
-          {t.stats.map((s, i) => (
-            <Link
-              key={s.title}
-              to="/services"
-              className="group bg-background"
-            >
-              <img
-                src={[valueMargem, valueVendas, valueProcessos][i]}
-                alt={s.title}
-                width={1200}
-                height={675}
-                loading="lazy"
-                className="aspect-[16/9] w-full rounded-lg object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-              />
-              <h2 className="mt-4 font-display text-lg font-bold uppercase leading-tight text-ink md:text-xl">
-                {s.title}
-                <span className="mt-2 block h-0.5 w-10 bg-accent transition-all duration-500 group-hover:w-16" />
-              </h2>
-            </Link>
-          ))}
-        </div>
-      </section>
 
       <section className="bg-secondary py-24">
         <div className="mx-auto max-w-7xl px-6">
