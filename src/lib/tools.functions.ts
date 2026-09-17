@@ -128,7 +128,7 @@ export const listToolClients = createServerFn({ method: "GET" })
       supabaseAdmin
         .from("tool_user_profiles")
         .select(
-          "id, user_id, email, first_name, last_name, phone, company, job_title, revenue_range, segment, state, welcome_sent_at, created_at",
+          "id, user_id, email, first_name, last_name, phone, company, job_title, revenue_range, segment, welcome_sent_at, created_at",
         )
         .order("created_at", { ascending: false })
         .limit(1000),
