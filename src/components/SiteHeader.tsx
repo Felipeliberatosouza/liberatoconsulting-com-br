@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { ChevronDown, ChevronRight, Menu, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useLanguage, LANGS, LANG_LABELS, LANG_SHORT } from "@/i18n";
+import { AccountMenu } from "@/components/AccountMenu";
+import { CONTENT_ARTICLE_GROUPS } from "@/lib/content-menu";
 
 function LangSwitch() {
   const { lang, setLang } = useLanguage();
@@ -299,22 +301,17 @@ export function SiteHeader() {
             >
               <div className="mx-auto max-w-7xl px-6 py-8">
                 <p className="mb-5 text-sm font-semibold text-accent">{t.nav.content}</p>
-                <div className="grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4">
-                  {contentGroups.map((g, i) => (
-                    <div
-                      key={g.id}
-                      className={`min-w-0 ${i > 0 ? "md:border-l md:border-border md:pl-8" : ""}`}
-                    >
-                      <Link
-                        to="/content"
-                        search={{ category: g.id }}
-                        onClick={closeAll}
-                        className="block text-sm font-normal text-muted-foreground transition-colors hover:text-accent"
-                      >
-                        {g.title}
-                      </Link>
+                <div className="grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-5">
+                  <div className="min-w-0">
+                    <Link to="/content" onClick={closeAll} className="block text-sm font-semibold text-foreground hover:text-accent">Artigos</Link>
+                    <div className="mt-3 space-y-2 border-l border-border pl-3">
+                      {CONTENT_ARTICLE_GROUPS.map((g) => <Link key={g.id} to="/content" search={{ category: g.id }} onClick={closeAll} className="block text-xs text-muted-foreground hover:text-accent">{contentGroups.find((item) => item.id === g.id)?.title ?? g.label}</Link>)}
                     </div>
-                  ))}
+                  </div>
+                  <Link to="/ferramentas" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">Ferramentas de Gestão</Link>
+                  <Link to="/newsletters" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">Newsletters</Link>
+                  <Link to="/boletins" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">Boletins Semanais</Link>
+                  <Link to="/guia-gestao" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">Guia Gestão Completa para Crescer com Controle</Link>
                 </div>
 
                 <div className="mt-8 text-right">
@@ -402,6 +399,7 @@ export function SiteHeader() {
 
 
         <div className="flex items-center gap-3">
+          <AccountMenu />
           <LangSwitch />
           <Link
             to="/contact"
@@ -482,8 +480,9 @@ export function SiteHeader() {
           </MobileAccordion>
 
           <MobileAccordion title={t.nav.content} to="/content" onNavigate={closeAll}>
-            <div className="grid grid-cols-2 gap-x-4">
-              {contentGroups.map((g) => (
+            <div className="space-y-1 border-l border-border pl-3">
+              <Link to="/content" onClick={closeAll} className="block py-1.5 text-sm font-semibold">Artigos</Link>
+              {CONTENT_ARTICLE_GROUPS.map((g) => (
                 <Link
                   key={g.id}
                   to="/content"
@@ -494,6 +493,10 @@ export function SiteHeader() {
                   {g.title}
                 </Link>
               ))}
+              <Link to="/ferramentas" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">Ferramentas de Gestão</Link>
+              <Link to="/newsletters" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">Newsletters</Link>
+              <Link to="/boletins" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">Boletins Semanais</Link>
+              <Link to="/guia-gestao" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">Guia Gestão Completa para Crescer com Controle</Link>
             </div>
           </MobileAccordion>
 
@@ -520,6 +523,8 @@ export function SiteHeader() {
               ))}
             </div>
           </MobileAccordion>
+
+          <AccountMenu mobile onNavigate={closeAll} />
 
         </nav>
       )}

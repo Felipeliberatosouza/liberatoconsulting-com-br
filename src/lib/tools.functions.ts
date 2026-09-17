@@ -86,6 +86,37 @@ export const getMemberContent = createServerFn({ method: "GET" })
     };
   });
 
+export const requestMemberService = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ serviceSlug: z.string().trim().min(1).max(120), serviceTitle: z.string().trim().min(2).max(200), message: z.string().trim().min(5).max(1500) }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { data: profile, error } = await context.supabase
+      .from("tool_user_profiles")
+      .select("first_name, last_name, email, phone, company")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (error || !profile) return { ok: false as const, error: "Complete seu perfil antes de solicitar um serviço." };
+    const { insertLead } = await import("./leads.server");
+    const result = await insertLead({
+      name: `${profile.first_name} ${profile.last_name}`.trim(),
+      company: profile.company,
+      country: "Brasil",
+      email: profile.email,
+      phone: profile.phone,
+      serviceSlug: data.serviceSlug,
+      serviceTitle: data.serviceTitle,
+      message: data.message,
+      language: "pt",
+      sourcePath: "/area-cliente",
+      website: "",
+      elapsedMs: 3000,
+      captchaAnswer: "2",
+      captchaA: 1,
+      captchaB: 1,
+    }, null);
+    return result.ok ? { ok: true as const } : { ok: false as const, error: "Não foi possível enviar a solicitação." };
+  });
+
 /** Clientes cadastrados para receber os materiais gratuitos. */
 export const listToolClients = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

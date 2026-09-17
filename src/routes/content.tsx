@@ -12,12 +12,14 @@ import { READ_COUNT_BASE } from "@/lib/site-config";
 type ContentSearch = {
   category?: string | undefined;
   service?: string | undefined;
+  q?: string | undefined;
 };
 
 export const Route = createFileRoute("/content")({
   validateSearch: (search: Record<string, unknown>): ContentSearch => ({
     category: typeof search["category"] === "string" ? search["category"] : undefined,
     service: typeof search["service"] === "string" ? search["service"] : undefined,
+    q: typeof search["q"] === "string" ? search["q"].slice(0, 100) : undefined,
   }),
   head: (ctx) => ({
     meta: [
@@ -53,11 +55,13 @@ function ContentPage() {
   const search = useSearch({ from: "/content" });
   const [filter, setFilter] = useState<string>(search.category || "all");
   const [serviceFilter, setServiceFilter] = useState<string | null>(search.service || null);
+  const [query, setQuery] = useState(search.q || "");
 
   useEffect(() => {
     setFilter(search.category || "all");
     setServiceFilter(search.service || null);
-  }, [search.category, search.service]);
+    setQuery(search.q || "");
+  }, [search.category, search.service, search.q]);
 
   const serviceLabel = useMemo(() => {
     const map: Record<string, string> = {};
@@ -96,6 +100,8 @@ function ContentPage() {
   const items = all.filter((i) => {
     if (filter !== "all" && i.group !== filter) return false;
     if (serviceFilter && i.service !== serviceFilter) return false;
+    const needle = query.trim().toLocaleLowerCase();
+    if (needle && !`${i.title} ${i.summary} ${i.authors}`.toLocaleLowerCase().includes(needle)) return false;
     return true;
   });
 
@@ -111,6 +117,7 @@ function ContentPage() {
       </AreaBannerSection>
 
       <section className="mx-auto max-w-7xl px-6 py-20">
+        <label className="mb-6 block max-w-xl text-sm font-medium">Pesquisar em todos os artigos publicados<input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Digite um tema, título ou autor" className="mt-2 w-full rounded-md border border-input bg-background px-4 py-3 outline-none focus:border-accent" /></label>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setFilter("all")}
