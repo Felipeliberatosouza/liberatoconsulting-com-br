@@ -12,7 +12,6 @@ export type ToolsProfile = {
   job_title: string;
   revenue_range: string;
   segment: string;
-  state: string;
 };
 
 const WELCOME_SLUG = "tools_welcome";
@@ -113,7 +112,7 @@ async function registerLead(
       phone: profile.phone,
       service_slug: "ferramentas-gratuitas",
       service_title: "Ferramentas gratuitas de gestão",
-      message: `Cargo: ${profile.job_title} · Faturamento: ${profile.revenue_range} · Segmento: ${profile.segment} · Estado: ${profile.state}`,
+      message: `Cargo: ${profile.job_title} · Faturamento: ${profile.revenue_range} · Segmento: ${profile.segment}`,
       language: "pt",
       source_path: "/ferramentas",
       email_opt_in: true,
