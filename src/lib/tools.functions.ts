@@ -30,12 +30,69 @@ export const saveToolsProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => profileSchema.parse(data))
   .handler(async ({ data, context }) => {
+    const email = String((context.claims as any)?.email ?? "").toLowerCase();
     const { error } = await context.supabase.from("tool_user_profiles").upsert(
-      { ...data, user_id: context.userId },
+      { ...data, email, user_id: context.userId },
       { onConflict: "user_id" },
     );
     if (error) return { ok: false as const, error: error.message };
+    // Boas-vindas, newsletter, boletim e registro como lead — falhas não bloqueiam o acesso.
+    try {
+      const { runToolsOnboarding } = await import("./tools-onboarding.server");
+      await runToolsOnboarding(context.userId, email, data);
+    } catch (onboardingError) {
+      console.error("tools onboarding failed", onboardingError);
+    }
     return { ok: true as const };
+  });
+
+/** Clientes cadastrados para receber os materiais gratuitos. */
+export const listToolClients = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("./access.server");
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [{ data: profiles, error }, { data: downloads }] = await Promise.all([
+      supabaseAdmin
+        .from("tool_user_profiles")
+        .select(
+          "id, user_id, email, first_name, last_name, phone, company, job_title, revenue_range, segment, state, welcome_sent_at, created_at",
+        )
+        .order("created_at", { ascending: false })
+        .limit(1000),
+      supabaseAdmin.from("tool_downloads").select("user_id"),
+    ]);
+    if (error) throw new Error(error.message);
+    const counts = new Map<string, number>();
+    for (const row of (downloads ?? []) as Array<{ user_id: string }>) {
+      counts.set(row.user_id, (counts.get(row.user_id) ?? 0) + 1);
+    }
+    return (profiles ?? []).map((p: any) => ({ ...p, downloads: counts.get(p.user_id) ?? 0 }));
+  });
+
+/** Marca (ou desmarca) o material enviado no e-mail de boas-vindas. */
+export const setToolWelcomeAttachment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z.object({ id: z.string().uuid(), welcome_attachment: z.boolean() }).parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./access.server");
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Apenas um material acompanha o e-mail de boas-vindas.
+    if (data.welcome_attachment) {
+      await supabaseAdmin
+        .from("management_tools")
+        .update({ welcome_attachment: false })
+        .eq("welcome_attachment", true);
+    }
+    const { error } = await supabaseAdmin
+      .from("management_tools")
+      .update({ welcome_attachment: data.welcome_attachment })
+      .eq("id", data.id);
+    return error ? { ok: false as const, error: error.message } : { ok: true as const };
   });
 
 export const getToolDownload = createServerFn({ method: "POST" })
