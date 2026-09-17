@@ -11,7 +11,7 @@ const profileSchema = z.object({
   job_title: z.string().trim().min(2).max(120),
   revenue_range: z.string().trim().min(1).max(100),
   segment: z.string().trim().min(1).max(140),
-  state: z.string().trim().min(2).max(80),
+  email: z.string().trim().email().max(160),
 });
 
 export const getToolsAccount = createServerFn({ method: "GET" })
@@ -30,7 +30,7 @@ export const saveToolsProfile = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => profileSchema.parse(data))
   .handler(async ({ data, context }) => {
-    const email = String((context.claims as any)?.email ?? "").toLowerCase();
+    const email = (data.email || String((context.claims as any)?.email ?? "")).toLowerCase();
     const { error } = await context.supabase.from("tool_user_profiles").upsert(
       { ...data, email, user_id: context.userId },
       { onConflict: "user_id" },
