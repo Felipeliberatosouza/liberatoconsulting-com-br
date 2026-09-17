@@ -56,3 +56,12 @@
 - [x] Adicionar Missão, Valores e Propósito em Quem Somos
 - [ ] Substituir a proteção matemática pelo reCAPTCHA visível (aguarda chaves públicas/privadas do Google)
 - [x] Validar idiomas, SEO, autenticação, downloads, WhatsApp e layouts desktop/mobile
+
+## Portal do cliente e conteúdo (17/09/2026)
+- [ ] Converter as logomarcas de clientes em carrossel de uma linha, 40% menores, e renomear a seção para “Clientes”
+- [ ] Destacar “Sair” em laranja ao passar o mouse
+- [ ] Adicionar login/cadastro e menu personalizado do cliente no cabeçalho
+- [ ] Criar área do cliente com ferramentas, guia, solicitação de serviços e conteúdos recentes
+- [ ] Permitir edição do perfil e preferências de recebimento
+- [ ] Reorganizar o menu Conteúdo com categorias de artigos, ferramentas, newsletters, boletins e guia
+- [ ] Validar navegação e apresentação em computador e celular
