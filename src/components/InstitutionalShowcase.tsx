@@ -29,9 +29,9 @@ export function InstitutionalShowcase() {
         </div>
         <div className="mt-10">
           <h3 className="text-center text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">Cases de Sucesso</h3>
-          {institutional.logos.length ? (
+          {institutional.logos.some((logo) => logo.imageUrl) ? (
             <div className="mt-7 grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-5">
-              {institutional.logos.map((logo) => <div key={logo.name} className="flex aspect-[3/2] items-center justify-center px-4"><img src={logo.imageUrl} alt={logo.name} loading="lazy" className="max-h-full max-w-full object-contain grayscale" /></div>)}
+              {institutional.logos.filter((logo) => logo.imageUrl).map((logo, index) => <div key={`logo-${index}`} className="flex aspect-[3/2] items-center justify-center px-4"><img src={logo.imageUrl} alt={logo.name || "Cliente atendido pela Liberato Consulting"} loading="lazy" className="max-h-full max-w-full object-contain grayscale" /></div>)}
             </div>
           ) : <div className="mt-7 h-px bg-border" />}
         </div>
