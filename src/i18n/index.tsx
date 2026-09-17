@@ -48,7 +48,6 @@ function mergeInstitutional(base: InstitutionalSettings, lang: Lang): Institutio
     banner: { ...base.banner, ...tr.banner },
     logos: base.logos.map((logo, index) => ({ ...logo, name: tr.logos?.[index]?.name ?? logo.name })),
     impact: base.impact.map((item, index) => ({ ...item, ...(tr.impact?.[index] ?? {}) })),
-    translations: base.translations,
   };
 }
 import { applyServiceProducts } from "@/lib/services-catalog";
