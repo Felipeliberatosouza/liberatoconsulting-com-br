@@ -1,5 +1,6 @@
 import { useLanguage } from "@/i18n";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { LinkifiedText } from "@/components/LinkifiedText";
 
 export function FaqSection() {
   const { institutional } = useLanguage();
@@ -15,8 +16,12 @@ export function FaqSection() {
         <Accordion type="single" collapsible className="border-t border-border">
           {items.map((item, index) => (
             <AccordionItem key={`${item.question}-${index}`} value={`faq-${index}`}>
-              <AccordionTrigger className="py-6 text-left text-base font-bold">{item.question}</AccordionTrigger>
-              <AccordionContent className="pb-6 leading-relaxed text-muted-foreground">{item.answer}</AccordionContent>
+              <AccordionTrigger className="py-6 text-left text-base font-bold">
+                <LinkifiedText text={item.question} />
+              </AccordionTrigger>
+              <AccordionContent className="whitespace-pre-line pb-6 leading-relaxed text-muted-foreground">
+                <LinkifiedText text={item.answer} />
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
