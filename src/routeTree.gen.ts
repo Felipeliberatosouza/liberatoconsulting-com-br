@@ -12,11 +12,15 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AreaClienteRouteImport } from './routes/area-cliente'
+import { Route as BoletinsRouteImport } from './routes/boletins'
 import { Route as BrasilRouteImport } from './routes/brasil'
 import { Route as CareersRouteImport } from './routes/careers'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContentRouteImport } from './routes/content'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
+import { Route as GuiaGestaoRouteImport } from './routes/guia-gestao'
+import { Route as NewslettersRouteImport } from './routes/newsletters'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
@@ -89,6 +93,16 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AreaClienteRoute = AreaClienteRouteImport.update({
+  id: '/area-cliente',
+  path: '/area-cliente',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoletinsRoute = BoletinsRouteImport.update({
+  id: '/boletins',
+  path: '/boletins',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BrasilRoute = BrasilRouteImport.update({
   id: '/brasil',
   path: '/brasil',
@@ -112,6 +126,16 @@ const ContentRoute = ContentRouteImport.update({
 const FerramentasRoute = FerramentasRouteImport.update({
   id: '/ferramentas',
   path: '/ferramentas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuiaGestaoRoute = GuiaGestaoRouteImport.update({
+  id: '/guia-gestao',
+  path: '/guia-gestao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewslettersRoute = NewslettersRouteImport.update({
+  id: '/newsletters',
+  path: '/newsletters',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -404,11 +428,15 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/about': typeof AboutRoute
+  '/area-cliente': typeof AreaClienteRoute
+  '/boletins': typeof BoletinsRoute
   '/brasil': typeof BrasilRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
   '/ferramentas': typeof FerramentasRoute
+  '/guia-gestao': typeof GuiaGestaoRoute
+  '/newsletters': typeof NewslettersRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -470,11 +498,15 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/about': typeof AboutRoute
+  '/area-cliente': typeof AreaClienteRoute
+  '/boletins': typeof BoletinsRoute
   '/brasil': typeof BrasilRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
   '/ferramentas': typeof FerramentasRoute
+  '/guia-gestao': typeof GuiaGestaoRoute
+  '/newsletters': typeof NewslettersRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -537,11 +569,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/$slug': typeof SlugRoute
   '/about': typeof AboutRoute
+  '/area-cliente': typeof AreaClienteRoute
+  '/boletins': typeof BoletinsRoute
   '/brasil': typeof BrasilRoute
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
   '/ferramentas': typeof FerramentasRoute
+  '/guia-gestao': typeof GuiaGestaoRoute
+  '/newsletters': typeof NewslettersRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -605,11 +641,15 @@ export interface FileRouteTypes {
     | '/'
     | '/$slug'
     | '/about'
+    | '/area-cliente'
+    | '/boletins'
     | '/brasil'
     | '/careers'
     | '/contact'
     | '/content'
     | '/ferramentas'
+    | '/guia-gestao'
+    | '/newsletters'
     | '/privacy'
     | '/reset-password'
     | '/robots.txt'
@@ -671,11 +711,15 @@ export interface FileRouteTypes {
     | '/'
     | '/$slug'
     | '/about'
+    | '/area-cliente'
+    | '/boletins'
     | '/brasil'
     | '/careers'
     | '/contact'
     | '/content'
     | '/ferramentas'
+    | '/guia-gestao'
+    | '/newsletters'
     | '/privacy'
     | '/reset-password'
     | '/robots.txt'
@@ -737,11 +781,15 @@ export interface FileRouteTypes {
     | '/'
     | '/$slug'
     | '/about'
+    | '/area-cliente'
+    | '/boletins'
     | '/brasil'
     | '/careers'
     | '/contact'
     | '/content'
     | '/ferramentas'
+    | '/guia-gestao'
+    | '/newsletters'
     | '/privacy'
     | '/reset-password'
     | '/robots.txt'
@@ -804,11 +852,15 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SlugRoute: typeof SlugRoute
   AboutRoute: typeof AboutRoute
+  AreaClienteRoute: typeof AreaClienteRoute
+  BoletinsRoute: typeof BoletinsRoute
   BrasilRoute: typeof BrasilRoute
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   ContentRoute: typeof ContentRoute
   FerramentasRoute: typeof FerramentasRoute
+  GuiaGestaoRoute: typeof GuiaGestaoRoute
+  NewslettersRoute: typeof NewslettersRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -890,6 +942,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/area-cliente': {
+      id: '/area-cliente'
+      path: '/area-cliente'
+      fullPath: '/area-cliente'
+      preLoaderRoute: typeof AreaClienteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/boletins': {
+      id: '/boletins'
+      path: '/boletins'
+      fullPath: '/boletins'
+      preLoaderRoute: typeof BoletinsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/brasil': {
       id: '/brasil'
       path: '/brasil'
@@ -923,6 +989,20 @@ declare module '@tanstack/react-router' {
       path: '/ferramentas'
       fullPath: '/ferramentas'
       preLoaderRoute: typeof FerramentasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guia-gestao': {
+      id: '/guia-gestao'
+      path: '/guia-gestao'
+      fullPath: '/guia-gestao'
+      preLoaderRoute: typeof GuiaGestaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/newsletters': {
+      id: '/newsletters'
+      path: '/newsletters'
+      fullPath: '/newsletters'
+      preLoaderRoute: typeof NewslettersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -1324,11 +1404,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SlugRoute: SlugRoute,
   AboutRoute: AboutRoute,
+  AreaClienteRoute: AreaClienteRoute,
+  BoletinsRoute: BoletinsRoute,
   BrasilRoute: BrasilRoute,
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   ContentRoute: ContentRoute,
   FerramentasRoute: FerramentasRoute,
+  GuiaGestaoRoute: GuiaGestaoRoute,
+  NewslettersRoute: NewslettersRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,

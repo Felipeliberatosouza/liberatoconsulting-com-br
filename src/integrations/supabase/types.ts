@@ -1739,6 +1739,9 @@ export type Database = {
           job_title: string
           last_name: string
           phone: string
+          receive_bulletin: boolean
+          receive_insights: boolean
+          receive_newsletter: boolean
           revenue_range: string
           segment: string
           state: string
@@ -1755,6 +1758,9 @@ export type Database = {
           job_title?: string
           last_name?: string
           phone?: string
+          receive_bulletin?: boolean
+          receive_insights?: boolean
+          receive_newsletter?: boolean
           revenue_range?: string
           segment?: string
           state?: string
@@ -1771,6 +1777,9 @@ export type Database = {
           job_title?: string
           last_name?: string
           phone?: string
+          receive_bulletin?: boolean
+          receive_insights?: boolean
+          receive_newsletter?: boolean
           revenue_range?: string
           segment?: string
           state?: string

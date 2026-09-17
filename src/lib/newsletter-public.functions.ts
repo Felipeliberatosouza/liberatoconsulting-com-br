@@ -62,3 +62,34 @@ export const getPublishedNewsletter = createServerFn({ method: "GET" })
     };
 
   });
+
+/** Arquivo público das newsletters publicadas nos últimos três meses. */
+export const listRecentNewsletters = createServerFn({ method: "GET" }).handler(async () => {
+  const since = new Date();
+  since.setMonth(since.getMonth() - 3);
+  const { publicClient } = await import("./admin.server");
+  const { data, error } = await publicClient()
+    .from("newsletter_campaigns")
+    .select("id, slug, subject, preheader, reference_date, published_at")
+    .not("published_at", "is", null)
+    .gte("published_at", since.toISOString())
+    .order("published_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data ?? [];
+});
+
+/** Histórico público, sem dados de destinatários, dos boletins dos últimos três meses. */
+export const listRecentBulletins = createServerFn({ method: "GET" }).handler(async () => {
+  const since = new Date();
+  since.setMonth(since.getMonth() - 3);
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin
+    .from("bulletin_dispatches")
+    .select("id, subject, date_label, created_at")
+    .eq("status", "sent")
+    .eq("is_test", false)
+    .gte("created_at", since.toISOString())
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return data ?? [];
+});

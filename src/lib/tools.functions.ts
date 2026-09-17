@@ -12,6 +12,9 @@ const profileSchema = z.object({
   revenue_range: z.string().trim().min(1).max(100),
   segment: z.string().trim().min(1).max(140),
   email: z.string().trim().email().max(160),
+  receive_newsletter: z.boolean().optional().default(true),
+  receive_bulletin: z.boolean().optional().default(true),
+  receive_insights: z.boolean().optional().default(true),
 });
 
 export const getToolsAccount = createServerFn({ method: "GET" })
@@ -44,6 +47,74 @@ export const saveToolsProfile = createServerFn({ method: "POST" })
       console.error("tools onboarding failed", onboardingError);
     }
     return { ok: true as const };
+  });
+
+export const getMemberContent = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const since = new Date();
+    since.setMonth(since.getMonth() - 3);
+    const iso = since.toISOString();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [articles, newsletters, bulletins] = await Promise.all([
+      context.supabase
+        .rpc("list_site_articles")
+        .then(({ data, error }) => {
+          if (error) throw error;
+          return data ?? [];
+        }),
+      supabaseAdmin
+        .from("newsletter_campaigns")
+        .select("id, slug, subject, preheader, reference_date, published_at")
+        .not("published_at", "is", null)
+        .gte("published_at", iso)
+        .order("published_at", { ascending: false }),
+      supabaseAdmin
+        .from("bulletin_dispatches")
+        .select("id, subject, date_label, created_at")
+        .eq("status", "sent")
+        .eq("is_test", false)
+        .gte("created_at", iso)
+        .order("created_at", { ascending: false }),
+    ]);
+    if (newsletters.error) throw new Error(newsletters.error.message);
+    if (bulletins.error) throw new Error(bulletins.error.message);
+    return {
+      articles,
+      newsletters: newsletters.data ?? [],
+      bulletins: bulletins.data ?? [],
+    };
+  });
+
+export const requestMemberService = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ serviceSlug: z.string().trim().min(1).max(120), serviceTitle: z.string().trim().min(2).max(200), message: z.string().trim().min(5).max(1500) }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { data: profile, error } = await context.supabase
+      .from("tool_user_profiles")
+      .select("first_name, last_name, email, phone, company")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+    if (error || !profile) return { ok: false as const, error: "Complete seu perfil antes de solicitar um serviço." };
+    const { insertLead } = await import("./leads.server");
+    const result = await insertLead({
+      name: `${profile.first_name} ${profile.last_name}`.trim(),
+      company: profile.company,
+      country: "Brasil",
+      email: profile.email,
+      phone: profile.phone,
+      serviceSlug: data.serviceSlug,
+      serviceTitle: data.serviceTitle,
+      message: data.message,
+      language: "pt",
+      sourcePath: "/area-cliente",
+      website: "",
+      elapsedMs: 3000,
+      captchaAnswer: "2",
+      captchaA: 1,
+      captchaB: 1,
+    }, null);
+    return result.ok ? { ok: true as const } : { ok: false as const, error: "Não foi possível enviar a solicitação." };
   });
 
 /** Clientes cadastrados para receber os materiais gratuitos. */
