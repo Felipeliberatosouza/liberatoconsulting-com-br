@@ -12,6 +12,25 @@ export const Route = createFileRoute("/admin/institucional")({
 });
 const field = "mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
 function imageData(file: File) { return new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(new Error("read")); reader.readAsDataURL(file); }); }
+/** Reduz a logomarca antes de salvar para o site continuar leve. */
+async function logoData(file: File) {
+  const original = await imageData(file);
+  try {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => { const img = new Image(); img.onload = () => resolve(img); img.onerror = () => reject(new Error("image")); img.src = original; });
+    const maxWidth = 360;
+    const scale = Math.min(1, maxWidth / (image.width || maxWidth));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round((image.width || maxWidth) * scale);
+    canvas.height = Math.round((image.height || maxWidth) * scale);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return original;
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const compact = canvas.toDataURL("image/webp", 0.9);
+    return compact.startsWith("data:image/webp") && compact.length < original.length ? compact : original;
+  } catch {
+    return original;
+  }
+}
 function AdminInstitutional() {
   const [data, setData] = useState<InstitutionalSettings>(DEFAULT_INSTITUTIONAL); const [busy, setBusy] = useState(false);
   useEffect(() => { getSiteConfig().then((config) => setData(config.institutional)).catch(() => undefined); }, []);
