@@ -41,6 +41,7 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
                     confirmationUrl: data.url,
                     lang: content.htmlLang,
                     brandFooter: content.brandFooter,
+                    logoUrl: content.logoUrl,
                   })
                 } catch {
                   return React.createElement(SignupEmail, {

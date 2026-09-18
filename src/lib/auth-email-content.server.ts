@@ -95,9 +95,16 @@ export async function getSignupEmailContent(email: string, confirmationUrl: stri
   );
 
   let brandFooter: string | undefined;
+  let logoUrl: string | undefined;
   try {
     const { getEmailBrandFooter } = await import("@/lib/email-brand.server");
-    brandFooter = await getEmailBrandFooter();
+    const { loadEmailBrand } = await import("@/lib/company-footer.server");
+    const [footer, brand] = await Promise.all([
+      getEmailBrandFooter(),
+      loadEmailBrand("https://liberatoconsulting.com.br"),
+    ]);
+    brandFooter = footer;
+    logoUrl = brand.logoUrl;
   } catch {
     brandFooter = undefined;
   }
@@ -109,5 +116,6 @@ export async function getSignupEmailContent(email: string, confirmationUrl: stri
     buttonLabel: translated.button || DEFAULT.button,
     htmlLang: LOCALES[lang],
     brandFooter,
+    logoUrl,
   };
 }
