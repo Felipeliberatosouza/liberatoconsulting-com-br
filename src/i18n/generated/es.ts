@@ -148,6 +148,11 @@ export const dict: Dict = {
   },
   "contentMenu": {
     "more": "ver todos los contenidos",
+    "articles": "Artículos",
+    "tools": "Herramientas de Gestión",
+    "newsletters": "Newsletters",
+    "bulletins": "Boletines Semanales",
+    "guide": "Guía de Gestión Completa para Crecer con Control",
     "groups": [
       {
         "id": "estrategia",
@@ -1037,8 +1042,25 @@ export const dict: Dict = {
   },
   "whatsapp": {
     "label": "Hable por WhatsApp",
+    "floatingLabel": "Reciba atención por WhatsApp",
     "title": "Abrir conversación en WhatsApp",
     "message": "Hola! Me gustaría saber más sobre los servicios de Liberato Consulting."
+  },
+  "accountMenu": {
+    "signIn": "Entrar",
+    "createAccount": "Crear cuenta",
+    "greeting": "Hola",
+    "customer": "Cliente",
+    "areaTitle": "Su área de materiales",
+    "tools": "Herramientas de Gestión",
+    "guide": "Guía de Gestión Completa para Crecer con Control",
+    "services": "Servicios",
+    "newsletter": "Newsletter",
+    "bulletin": "Boletín Semanal",
+    "insights": "Insights",
+    "articles": "Artículos",
+    "settings": "Configurar mis datos",
+    "signOut": "Salir"
   },
   "careers": {
     "eyebrow": "Trabaje con Nosotros",

@@ -148,6 +148,11 @@ export const dict: Dict = {
   },
   "contentMenu": {
     "more": "查看所有内容",
+    "articles": "文章",
+    "tools": "管理工具",
+    "newsletters": "电子简报",
+    "bulletins": "每周简报",
+    "guide": "稳健增长完整管理指南",
     "groups": [
       {
         "id": "estrategia",
@@ -1037,8 +1042,25 @@ export const dict: Dict = {
   },
   "whatsapp": {
     "label": "通过 WhatsApp 交谈",
+    "floatingLabel": "通过 WhatsApp 获取服务",
     "title": "在新标签页打开 WhatsApp 交谈",
     "message": "您好！我想了解更多关于 Liberato Consulting 服务的信息。"
+  },
+  "accountMenu": {
+    "signIn": "登录",
+    "createAccount": "创建账户",
+    "greeting": "您好",
+    "customer": "客户",
+    "areaTitle": "您的资料专区",
+    "tools": "管理工具",
+    "guide": "稳健增长完整管理指南",
+    "services": "服务",
+    "newsletter": "电子简报",
+    "bulletin": "每周简报",
+    "insights": "洞察",
+    "articles": "文章",
+    "settings": "设置我的资料",
+    "signOut": "退出"
   },
   "careers": {
     "eyebrow": "加入我们",

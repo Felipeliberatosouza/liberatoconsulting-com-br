@@ -6,19 +6,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { getToolsAccount } from "@/lib/tools.functions";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useLanguage } from "@/i18n";
 
 const links = [
-  { label: "Ferramentas de Gestão", section: "ferramentas", icon: Wrench },
-  { label: "Guia Gestão Completa para Crescer com Controle", section: "guia", icon: BookOpen },
-  { label: "Serviços", section: "servicos", icon: FileText },
-  { label: "Newsletter", section: "newsletter", icon: Mail },
-  { label: "Boletim Semanal", section: "boletim", icon: Newspaper },
-  { label: "Insights", section: "insights", icon: BookOpen },
-  { label: "Artigos", section: "artigos", icon: FileText },
-  { label: "Configurar meus dados", section: "perfil", icon: Settings },
+  { labelKey: "tools", section: "ferramentas", icon: Wrench },
+  { labelKey: "guide", section: "guia", icon: BookOpen },
+  { labelKey: "services", section: "servicos", icon: FileText },
+  { labelKey: "newsletter", section: "newsletter", icon: Mail },
+  { labelKey: "bulletin", section: "boletim", icon: Newspaper },
+  { labelKey: "insights", section: "insights", icon: BookOpen },
+  { labelKey: "articles", section: "artigos", icon: FileText },
+  { labelKey: "settings", section: "perfil", icon: Settings },
 ] as const;
 
 export function AccountMenu({ mobile = false, onNavigate }: { mobile?: boolean; onNavigate?: () => void }) {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [sessionReady, setSessionReady] = useState(false);
@@ -34,23 +36,23 @@ export function AccountMenu({ mobile = false, onNavigate }: { mobile?: boolean; 
   if (!sessionReady) return null;
   if (!signedIn) return (
     <div className={mobile ? "flex gap-3 py-4" : "hidden items-center gap-2 lg:flex"}>
-      <Button asChild variant="ghost" size="sm"><Link to="/ferramentas" search={{ modo: undefined }} hash="entrar" onClick={onNavigate}><LogIn /> Entrar</Link></Button>
-      <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90"><Link to="/ferramentas" search={{ modo: "cadastro" }} onClick={onNavigate}>Criar conta</Link></Button>
+      <Button asChild variant="ghost" size="sm"><Link to="/ferramentas" search={{ modo: undefined }} hash="entrar" onClick={onNavigate}><LogIn /> {t.accountMenu.signIn}</Link></Button>
+      <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90"><Link to="/ferramentas" search={{ modo: "cadastro" }} onClick={onNavigate}>{t.accountMenu.createAccount}</Link></Button>
     </div>
   );
 
-  const firstName = account.data?.profile?.first_name?.trim() || "Cliente";
+  const firstName = account.data?.profile?.first_name?.trim() || t.accountMenu.customer;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className={mobile ? "w-full justify-between" : "hidden max-w-44 lg:inline-flex"}>Olá, {firstName}<ChevronDown /></Button>
+        <Button variant="ghost" className={mobile ? "w-full justify-between" : "hidden max-w-44 lg:inline-flex"}>{t.accountMenu.greeting}, {firstName}<ChevronDown /></Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-80">
-        <DropdownMenuLabel>Sua área de materiais</DropdownMenuLabel>
+        <DropdownMenuLabel>{t.accountMenu.areaTitle}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {links.map((item) => <DropdownMenuItem key={item.section} asChild><Link to="/area-cliente" search={{ secao: item.section }} onClick={onNavigate}><item.icon />{item.label}</Link></DropdownMenuItem>)}
+        {links.map((item) => <DropdownMenuItem key={item.section} asChild><Link to="/area-cliente" search={{ secao: item.section }} onClick={onNavigate}><item.icon />{t.accountMenu[item.labelKey]}</Link></DropdownMenuItem>)}
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-muted-foreground focus:bg-accent focus:text-accent-foreground" onSelect={async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); onNavigate?.(); navigate({ to: "/ferramentas", search: { modo: undefined }, replace: true }); }}><LogOut /> Sair</DropdownMenuItem>
+        <DropdownMenuItem className="text-muted-foreground focus:bg-accent focus:text-accent-foreground" onSelect={async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); onNavigate?.(); navigate({ to: "/ferramentas", search: { modo: undefined }, replace: true }); }}><LogOut /> {t.accountMenu.signOut}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
