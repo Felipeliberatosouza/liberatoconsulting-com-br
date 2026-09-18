@@ -91,12 +91,16 @@ const SPECS: SeriesSpec[] = [
     source_url: "https://www.ibge.gov.br/estatisticas/sociais/trabalho.html",
   },
   {
+    // PIB trimestral (índice encadeado dessazonalizado): usamos a variação
+    // percentual do trimestre mais recente sobre o trimestre imediatamente
+    // anterior, para que o dado nunca fique preso ao fechamento anual.
     slug: "pib",
-    series: 7326,
+    series: 22109,
     unit: "%",
-    period: "yearly",
+    period: "quarterly",
+    transform: "qoq",
     decimals: 2,
-    source_name: "IBGE / Banco Central do Brasil",
+    source_name: "IBGE (Contas Nacionais Trimestrais) / Banco Central do Brasil",
     source_url: "https://www.ibge.gov.br/estatisticas/economicas/contas-nacionais.html",
   },
   {
