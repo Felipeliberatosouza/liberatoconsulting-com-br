@@ -28,6 +28,7 @@ function ToolsPage() {
   const [session, setSession] = useState<Awaited<ReturnType<typeof supabase.auth.getSession>>["data"]["session"]>(null);
   const account = useQuery({ queryKey: ["tools-account"], queryFn: () => getToolsAccount(), enabled: Boolean(session), retry: false });
   const [profile, setProfile] = useState(EMPTY);
+  const [justSaved, setJustSaved] = useState(false);
   useEffect(() => { supabase.auth.getSession().then(({ data }) => { setSession(data.session); setSessionReady(true); }); const { data } = supabase.auth.onAuthStateChange((_event, next) => { setSession(next); setSessionReady(true); }); return () => data.subscription.unsubscribe(); }, []);
   useEffect(() => { if (account.data?.profile) setProfile(account.data.profile); }, [account.data?.profile]);
   useEffect(() => { const email = session?.user?.email ?? ""; if (email) setProfile((prev) => (prev.email ? prev : { ...prev, email })); }, [session]);

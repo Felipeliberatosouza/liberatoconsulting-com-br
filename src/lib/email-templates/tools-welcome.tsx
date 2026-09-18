@@ -44,11 +44,20 @@ const Email = ({ subject, body, material, link, materials, brandFooter }: Props)
               {paragraph}
             </Text>
           ))}
-        {link ? (
-          <Button style={button} href={link}>
-            {material ? `Baixar ${material}` : 'Baixar material'}
-          </Button>
-        ) : null}
+        {(materials?.length
+          ? materials
+          : link
+            ? [{ title: material || 'material', link }]
+            : []
+        ).map((item) =>
+          item.link ? (
+            <Text key={item.title} style={text}>
+              <Button style={button} href={item.link}>
+                {`Baixar ${item.title}`}
+              </Button>
+            </Text>
+          ) : null,
+        )}
         <BrandFooter text={brandFooter} />
       </Container>
     </Body>
