@@ -170,6 +170,8 @@ type RefreshOut = {
     note?: string;
     source_name: string;
     source_url: string;
+    /** true = veio direto da série oficial (fonte primária), não de estimativa por IA. */
+    official?: boolean;
   }>;
 };
 
