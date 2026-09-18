@@ -21,7 +21,6 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { CrmTracker } from "@/components/CrmTracker";
 import { CopyProtection } from "@/components/CopyProtection";
-import { normalizeLang } from "@/lib/seo";
 import { trackPageView } from "@/lib/gtag";
 import { getPublicCompanyAddress } from "@/lib/company-public.functions";
 import { ALL_KEYWORDS_MULTILINGUAL } from "@/lib/keywords";
@@ -191,13 +190,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
-
-const HTML_LANG: Record<string, string> = {
-  pt: "pt-BR",
-  en: "en",
-  es: "es",
-  zh: "zh-Hans",
-};
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
