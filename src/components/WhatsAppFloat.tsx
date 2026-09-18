@@ -3,6 +3,7 @@ import { trackEvent } from "@/lib/gtag";
 import { useState } from "react";
 import { WhatsAppLeadDialog } from "@/components/WhatsAppLeadDialog";
 import { Button } from "@/components/ui/button";
+import { HEADER_TRANSLATIONS } from "@/lib/header-translations";
 
 // Official WhatsApp glyph (simple-icons path), filled with currentColor
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -14,9 +15,9 @@ function WhatsAppIcon({ className }: { className?: string }) {
 }
 
 export function WhatsAppFloat() {
-  const { t, whatsapp } = useLanguage();
+  const { lang, whatsapp } = useLanguage();
   const [open, setOpen] = useState(false);
-  const label = t.whatsapp?.label ?? "WhatsApp";
+  const copy = HEADER_TRANSLATIONS[lang];
   return (
     <>
     <Button
@@ -25,11 +26,11 @@ export function WhatsAppFloat() {
         trackEvent("cta_click", { label: "whatsapp_float", category: "engagement" });
         setOpen(true);
       }}
-      aria-label={label}
+      aria-label={copy.whatsappLabel}
       className="fixed bottom-28 right-4 z-30 h-auto gap-2.5 rounded-full bg-whatsapp px-4 py-3 text-whatsapp-foreground shadow-lg transition-transform hover:bg-whatsapp/90 hover:scale-[1.02] md:right-6"
     >
       <WhatsAppIcon className="size-6 shrink-0" />
-      <span className="hidden font-semibold sm:inline">{t.whatsapp.floatingLabel}</span>
+      <span className="hidden font-semibold sm:inline">{copy.whatsappText}</span>
     </Button>
     <WhatsAppLeadDialog open={open} onOpenChange={setOpen} />
     </>
