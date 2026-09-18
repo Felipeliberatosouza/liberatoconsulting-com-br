@@ -2541,6 +2541,12 @@ export const dict: Dict = {
   },
   "toolsAuth": {
     "accountNotFound": "¡Cuenta inexistente! Haga clic abajo en «Crear cuenta gratuita».",
-    "errorGeneric": "No fue posible entrar ahora. Inténtelo de nuevo en un momento."
+    "errorGeneric": "No fue posible entrar ahora. Inténtelo de nuevo en un momento.",
+    "invalidLogin": "Correo o contraseña incorrectos. Verifique los datos e inténtelo de nuevo. Si aún no tiene cuenta, haga clic abajo en «Crear cuenta gratuita».",
+    "emailNotConfirmed": "Confirme su correo con el enlace que enviamos antes de entrar.",
+    "emailInUse": "Este correo ya tiene cuenta. Entre con su contraseña o use «Olvidé mi contraseña».",
+    "weakPassword": "Contraseña demasiado débil. Use al menos 8 caracteres, con letras y números.",
+    "tooManyRequests": "Demasiados intentos seguidos. Espere unos minutos e inténtelo de nuevo.",
+    "signupError": "No fue posible crear la cuenta ahora. Inténtelo de nuevo en un momento."
   }
 };
