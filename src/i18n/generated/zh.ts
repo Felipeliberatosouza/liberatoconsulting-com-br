@@ -2776,6 +2776,12 @@ export const dict: Dict = {
   },
   "toolsAuth": {
     "accountNotFound": "账户不存在！请点击下方的“免费创建账户”。",
-    "errorGeneric": "暂时无法登录，请稍后重试。"
+    "errorGeneric": "暂时无法登录，请稍后重试。",
+    "invalidLogin": "邮箱或密码不正确。请检查后重试。如果还没有账户，请点击下方的“免费创建账户”。",
+    "emailNotConfirmed": "请先通过我们发送的链接确认邮箱，然后再登录。",
+    "emailInUse": "该邮箱已注册。请使用密码登录，或点击“忘记密码”。",
+    "weakPassword": "密码过于简单。请使用至少 8 个字符，并包含字母和数字。",
+    "tooManyRequests": "尝试次数过多。请等待几分钟后再试。",
+    "signupError": "暂时无法创建账户，请稍后重试。"
   }
 };
