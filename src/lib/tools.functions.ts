@@ -228,9 +228,6 @@ export const saveAdminTool = createServerFn({ method: "POST" })
     }
 
     const slug = data.title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 120);
-    if (data.welcome_attachment) {
-      await supabaseAdmin.from("management_tools").update({ welcome_attachment: false }).eq("welcome_attachment", true);
-    }
     const base = {
       title: data.title,
       summary: data.summary,
