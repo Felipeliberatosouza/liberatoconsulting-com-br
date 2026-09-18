@@ -1,20 +1,16 @@
 import * as React from 'react'
 import { render } from '@react-email/render'
 import { createFileRoute } from '@tanstack/react-router'
-import { SignupEmail } from '@/lib/email-templates/signup'
-import { InviteEmail } from '@/lib/email-templates/invite'
-import { MagicLinkEmail } from '@/lib/email-templates/magic-link'
-import { RecoveryEmail } from '@/lib/email-templates/recovery'
-import { EmailChangeEmail } from '@/lib/email-templates/email-change'
-import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
+import { AuthSignupEmail } from '@/lib/email-templates/auth-signup'
+import { AuthActionEmail } from '@/lib/email-templates/auth-action'
 
 const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
-  signup: SignupEmail,
-  invite: InviteEmail,
-  magiclink: MagicLinkEmail,
-  recovery: RecoveryEmail,
-  email_change: EmailChangeEmail,
-  reauthentication: ReauthenticationEmail,
+  signup: AuthSignupEmail,
+  invite: AuthActionEmail,
+  magiclink: AuthActionEmail,
+  recovery: AuthActionEmail,
+  email_change: AuthActionEmail,
+  reauthentication: AuthActionEmail,
 }
 
 // Configuration
@@ -30,32 +26,29 @@ const SAMPLE_PROJECT_URL = "https://liberatoconsulting-com-br.lovable.app"
 const SAMPLE_EMAIL = "user@example.test"
 const SAMPLE_DATA: Record<string, object> = {
   signup: {
-    siteName: SITE_NAME,
-    siteUrl: SAMPLE_PROJECT_URL,
-    recipient: SAMPLE_EMAIL,
+    subject: 'Confirme seu cadastro na Liberato Consulting',
+    body: `Recebemos seu cadastro. Para ativar sua conta, confirme seu e-mail (${SAMPLE_EMAIL}) usando o botão abaixo.`,
+    buttonLabel: 'Confirmar meu e-mail',
     confirmationUrl: SAMPLE_PROJECT_URL,
   },
   magiclink: {
-    siteName: SITE_NAME,
+    kind: 'magiclink',
     confirmationUrl: SAMPLE_PROJECT_URL,
   },
   recovery: {
-    siteName: SITE_NAME,
+    kind: 'recovery',
     confirmationUrl: SAMPLE_PROJECT_URL,
   },
   invite: {
-    siteName: SITE_NAME,
-    siteUrl: SAMPLE_PROJECT_URL,
+    kind: 'invite',
     confirmationUrl: SAMPLE_PROJECT_URL,
   },
   email_change: {
-    siteName: SITE_NAME,
-    oldEmail: SAMPLE_EMAIL,
-    email: SAMPLE_EMAIL,
-    newEmail: SAMPLE_EMAIL,
+    kind: 'email_change',
     confirmationUrl: SAMPLE_PROJECT_URL,
   },
   reauthentication: {
+    kind: 'reauthentication',
     token: '123456',
   },
 }

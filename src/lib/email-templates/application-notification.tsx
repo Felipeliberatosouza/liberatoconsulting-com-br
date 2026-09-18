@@ -1,17 +1,7 @@
 import React from 'react'
-import {
-  Body,
-  Container,
-  Head,
-  Heading,
-  Hr,
-  Html,
-  Preview,
-  Section,
-  Text,
-} from '@react-email/components'
+import { Hr, Section, Text } from '@react-email/components'
 import type { TemplateEntry } from './registry'
-import { BrandFooter, BrandLogo } from './brand-shell'
+import { BrandEmailLayout, EMAIL_STYLES } from './brand-shell'
 
 interface Props {
   fullName?: string
@@ -24,6 +14,7 @@ interface Props {
   sourcePath?: string
   /** Rodapé institucional montado no envio. */
   brandFooter?: string
+  logoUrl?: string
 }
 
 const Row = ({ label, value }: { label: string; value?: string | undefined }) =>
@@ -44,15 +35,10 @@ const Email = ({
   language,
   sourcePath,
   brandFooter,
+  logoUrl,
 }: Props) => (
-  <Html lang="pt-BR" dir="ltr">
-    <Head />
-    <Preview>{`Nova candidatura: ${fullName ?? 'sem nome'}`}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <BrandLogo />
-        <Heading style={heading}>Nova candidatura — Trabalhe Conosco</Heading>
-        <Text style={intro}>
+  <BrandEmailLayout subject="Nova candidatura — Trabalhe Conosco" brandFooter={brandFooter} logoUrl={logoUrl}>
+        <Text style={EMAIL_STYLES.text}>
           {fullName ?? 'Uma pessoa candidata'} enviou uma candidatura pelo site oficial
           liberatoconsulting.com.br. O arquivo está disponível no painel administrativo,
           em Candidaturas, e você pode responder diretamente a este e-mail.
@@ -68,10 +54,7 @@ const Email = ({
           <Row label="Idioma" value={language} />
           <Row label="Origem" value={sourcePath} />
         </Section>
-        <BrandFooter text={brandFooter} />
-      </Container>
-    </Body>
-  </Html>
+  </BrandEmailLayout>
 )
 
 export const template = {
@@ -92,10 +75,6 @@ export const template = {
   to: 'contato@liberatoconsulting.com.br',
 } satisfies TemplateEntry
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif' }
-const container = { padding: '24px', maxWidth: '600px' }
-const heading = { fontSize: '20px', color: '#111111', margin: '0 0 4px' }
-const intro = { fontSize: '14px', color: '#555555', margin: '0' }
 const hr = { borderColor: '#eeeeee', margin: '16px 0' }
-const row = { fontSize: '14px', color: '#111111', margin: '0 0 6px' }
+const row = { ...EMAIL_STYLES.text, margin: '0 0 6px' }
 const rowLabel = { fontWeight: 'bold' as const, color: '#E8630A' }

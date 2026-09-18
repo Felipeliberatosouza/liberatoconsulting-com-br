@@ -8,6 +8,7 @@ import {
   type CompanyFooter,
 } from "./company-footer.server";
 import { emailLang, formatDateFor, labelsFor, type EmailLang } from "./email-i18n.server";
+import { EMAIL_LOGO_URL } from "./email-brand";
 import { compareIndicator, resolvePolarity } from "./indicator-compare";
 import { DEFAULT_NEWSLETTER_SETTINGS, type NewsletterSettings } from "./newsletter.server";
 
@@ -160,7 +161,7 @@ export async function buildBulletinContent(segment: string): Promise<BulletinCon
   );
 
   const logo =
-    ((branding?.value ?? {}) as { logoUrl?: string }).logoUrl || `${siteOrigin()}/logo.png`;
+    ((branding?.value ?? {}) as { logoUrl?: string }).logoUrl || EMAIL_LOGO_URL;
 
   return {
     segment: isGeneral ? "Todos os segmentos" : segment,

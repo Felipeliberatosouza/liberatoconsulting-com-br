@@ -271,6 +271,11 @@ function EmailTemplatesBlock() {
     queryFn: () => getPublicCompanyIdentity(),
     retry: false,
   });
+  const brandingQ = useQuery({
+    queryKey: ["site-config-email-preview"],
+    queryFn: () => getSiteConfig(),
+    retry: false,
+  });
   const [preview, setPreview] = useState<string | null>(null);
   const [open, setOpen] = useState<string | null>(null);
   const [draft, setDraft] = useState<{ subject: string; body: string; enabled: boolean }>({
@@ -320,6 +325,13 @@ function EmailTemplatesBlock() {
                     subject: open === t.id ? draft.subject : t.subject,
                     body: open === t.id ? draft.body : t.body,
                     identity: identityQ.data ?? undefined,
+                    logoUrl: brandingQ.data?.branding?.logoUrl,
+                    buttonLabel:
+                      t.slug === "tools_welcome"
+                        ? "Baixar material"
+                        : t.slug === "auth_signup"
+                          ? "Confirmar meu e-mail"
+                          : undefined,
                   })}
                 />
                 <p className="mt-2 text-xs text-muted-foreground">

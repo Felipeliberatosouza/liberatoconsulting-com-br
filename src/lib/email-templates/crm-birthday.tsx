@@ -1,16 +1,7 @@
 import React from 'react'
-import {
-  Body,
-  Container,
-  Head,
-  Heading,
-  Hr,
-  Html,
-  Preview,
-  Text,
-} from '@react-email/components'
+import { Text } from '@react-email/components'
 import type { TemplateEntry } from './registry'
-import { BrandFooter, BrandLogo } from './brand-shell'
+import { BrandEmailLayout, EmailParagraphs, EMAIL_STYLES } from './brand-shell'
 
 interface Props {
   /** Nome da pessoa ou da empresa homenageada. */
@@ -25,9 +16,10 @@ interface Props {
   body?: string
   /** Rodapé institucional montado no envio. */
   brandFooter?: string
+  logoUrl?: string
 }
 
-const Email = ({ name, target = 'pessoa', company, years, subject, body, brandFooter }: Props) => {
+const Email = ({ name, target = 'pessoa', company, years, subject, body, brandFooter, logoUrl }: Props) => {
   const isCompany = target === 'empresa'
   const title =
     subject ||
@@ -36,47 +28,26 @@ const Email = ({ name, target = 'pessoa', company, years, subject, body, brandFo
       : `Feliz aniversário, ${name ?? ''}!`)
 
   return (
-    <Html lang="pt-BR" dir="ltr">
-      <Head />
-      <Preview>{title}</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          <BrandLogo />
-          <Heading style={heading}>{title}</Heading>
+    <BrandEmailLayout subject={title} brandFooter={brandFooter} logoUrl={logoUrl}>
           {body ? (
-            body
-              .split(/\n{2,}/)
-              .map((p, i) => (
-                <Text key={i} style={text}>
-                  {p}
-                </Text>
-              ))
+            <EmailParagraphs body={body} />
           ) : isCompany ? (
-            <Text style={text}>
+            <Text style={EMAIL_STYLES.text}>
               A equipe da Liberato Consulting parabeniza a {name} por mais um ano de
               história. Que o próximo ciclo traga crescimento, boas decisões e
               resultados consistentes.
             </Text>
           ) : (
-            <Text style={text}>
+            <Text style={EMAIL_STYLES.text}>
               A equipe da Liberato Consulting deseja um feliz aniversário
               {company ? `, com votos de sucesso também na ${company}` : ''}. Que o novo
               ano pessoal e profissional seja repleto de conquistas.
             </Text>
           )}
-          <BrandFooter text={brandFooter} />
-        </Container>
-      </Body>
-    </Html>
+    </BrandEmailLayout>
   )
 }
 
-const main = { backgroundColor: '#f5f5f4', fontFamily: 'Arial, Helvetica, sans-serif' }
-const container = { margin: '0 auto', padding: '32px', maxWidth: '560px', backgroundColor: '#ffffff' }
-const heading = { fontSize: '22px', color: '#0f172a', margin: '0 0 16px' }
-const text = { fontSize: '15px', lineHeight: '24px', color: '#1f2937' }
-const hr = { borderColor: '#e5e7eb', margin: '24px 0' }
-const footer = { fontSize: '12px', color: '#6b7280' }
 
 export const template: TemplateEntry = {
   component: Email,

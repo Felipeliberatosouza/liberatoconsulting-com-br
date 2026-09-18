@@ -1,16 +1,7 @@
 import React from 'react'
-import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Preview,
-  Text,
-} from '@react-email/components'
+import { Button, Text } from '@react-email/components'
 import type { TemplateEntry } from './registry'
-import { BrandFooter, BrandLogo } from './brand-shell'
+import { BrandEmailLayout, EmailParagraphs, EMAIL_STYLES } from './brand-shell'
 
 interface Props {
   /** Assunto vindo do modelo editável no painel. */
@@ -24,26 +15,14 @@ interface Props {
   /** Materiais marcados no painel, cada um com o seu link temporário. */
   materials?: Array<{ title: string; link: string }>
   brandFooter?: string
+  logoUrl?: string
 }
 
-const Email = ({ subject, body, material, link, materials, brandFooter }: Props) => (
-  <Html lang="pt-BR" dir="ltr">
-    <Head />
-    <Preview>{subject || 'Bem-vindo à biblioteca gratuita da Liberato Consulting'}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <BrandLogo />
-        <Heading style={heading}>
-          {subject || 'Bem-vindo à biblioteca gratuita da Liberato Consulting'}
-        </Heading>
-        {(body ?? '')
-          .split(/\n{2,}/)
-          .filter(Boolean)
-          .map((paragraph, index) => (
-            <Text key={index} style={text}>
-              {paragraph}
-            </Text>
-          ))}
+const Email = ({ subject, body, material, link, materials, brandFooter, logoUrl }: Props) => {
+  const title = subject || 'Bem-vindo à biblioteca gratuita da Liberato Consulting'
+  return (
+    <BrandEmailLayout subject={title} brandFooter={brandFooter} logoUrl={logoUrl}>
+        <EmailParagraphs body={body ?? ''} />
         {(materials?.length
           ? materials
           : link
@@ -51,18 +30,16 @@ const Email = ({ subject, body, material, link, materials, brandFooter }: Props)
             : []
         ).map((item) =>
           item.link ? (
-            <Text key={item.title} style={text}>
-              <Button style={button} href={item.link}>
+            <Text key={`${item.title}-${item.link}`} style={EMAIL_STYLES.text}>
+              <Button style={EMAIL_STYLES.button} href={item.link}>
                 {`Baixar ${item.title}`}
               </Button>
             </Text>
           ) : null,
         )}
-        <BrandFooter text={brandFooter} />
-      </Container>
-    </Body>
-  </Html>
-)
+    </BrandEmailLayout>
+  )
+}
 
 export const template = {
   component: Email,
@@ -71,23 +48,9 @@ export const template = {
   displayName: 'Boas-vindas — Ferramentas gratuitas',
   previewData: {
     subject: 'Bem-vindo(a) à biblioteca gratuita da Liberato Consulting, Maria!',
-    body: 'Olá Maria, é uma alegria ter você e a Acme conosco.\n\nSegue em anexo o material Guia de Margem, disponível também neste link.',
+    body: 'Olá Maria, é uma alegria ter você e a Acme conosco.\n\nPreparamos o material Guia de Margem para você.',
     material: 'Guia de Margem',
     link: 'https://liberatoconsulting.com.br/ferramentas',
   },
 } satisfies TemplateEntry
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, Helvetica, sans-serif' }
-const container = { padding: '24px', maxWidth: '600px' }
-const heading = { fontSize: '20px', color: '#111111', margin: '0 0 12px' }
-const text = { fontSize: '14px', lineHeight: '22px', color: '#333333', margin: '0 0 14px' }
-const button = {
-  backgroundColor: '#E8630A',
-  color: '#ffffff',
-  fontSize: '14px',
-  fontWeight: 'bold' as const,
-  borderRadius: '999px',
-  padding: '12px 22px',
-  textDecoration: 'none',
-  display: 'inline-block',
-}

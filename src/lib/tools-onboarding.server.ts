@@ -34,6 +34,15 @@ function fill(text: string, vars: Record<string, string>) {
   );
 }
 
+/** O endereço temporário aparece somente nos botões, nunca como texto corrido. */
+function withoutVisibleDownloadLink(text: string) {
+  return text
+    .replace(/\s*(?:,|—|-)?\s*(?:disponível\s+também\s+)?(?:neste|no|pelo)\s+link\s*:\s*\{\{link\}\}/gi, "")
+    .replace(/\s*\{\{link\}\}/g, "")
+    .replace(/[ \t]+([.,;:!?])/g, "$1")
+    .trim();
+}
+
 export async function runToolsOnboarding(
   userId: string,
   email: string,
@@ -186,7 +195,7 @@ async function sendWelcome(
       tpl?.subject || "Bem-vindo(a) à biblioteca gratuita da Liberato Consulting, {{nome}}!",
       vars,
     );
-    let body = fill(tpl?.body || "", vars);
+    let body = fill(withoutVisibleDownloadLink(tpl?.body || ""), vars);
     if (!materials.length) {
       // Sem material marcado no painel, a frase do anexo é removida do texto.
       body = body
@@ -196,7 +205,7 @@ async function sendWelcome(
     }
 
     const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
-    await sendTemplateEmail("tools-welcome", email, {
+    const result = await sendTemplateEmail("tools-welcome", email, {
       templateData: {
         subject,
         body,
@@ -206,6 +215,9 @@ async function sendWelcome(
       },
       idempotencyKey: `tools-welcome-${userId}`,
     });
+
+    // Só registra como enviado quando o provedor realmente aceitou o destinatário.
+    if (!result.sent) return;
 
     await supabaseAdmin
       .from("tool_user_profiles")
