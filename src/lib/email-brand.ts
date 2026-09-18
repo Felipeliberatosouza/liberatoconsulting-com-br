@@ -5,7 +5,8 @@
  */
 
 export const EMAIL_SITE_URL = "https://liberatoconsulting.com.br";
-export const EMAIL_LOGO_URL = `${EMAIL_SITE_URL}/logo.png`;
+/** Arquivo público e imutável; evita que leitores de e-mail bloqueiem a logo da aplicação. */
+export const EMAIL_LOGO_URL = `${EMAIL_SITE_URL}/__l5e/assets-v1/8f1741ce-2227-402a-9f0f-f4489bab37c8/liberato-email-logo.png`;
 
 export type EmailBrandIdentity = {
   legalName?: string;

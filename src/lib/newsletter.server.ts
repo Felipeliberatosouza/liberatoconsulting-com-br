@@ -47,7 +47,7 @@ export function renderCampaignHtml(input: {
     .filter(Boolean)
     .map(
       (p) =>
-        `<p style="margin:0 0 16px;font-size:16px;line-height:1.65;color:#1f2328">${escapeHtml(
+        `<p style="margin:0 0 14px;font-size:15px;line-height:24px;color:#1f2937">${escapeHtml(
           p,
         ).replace(/\n/g, "<br />")}</p>`,
     )
@@ -57,33 +57,34 @@ export function renderCampaignHtml(input: {
   const site = input.company?.website || "";
   // Logomarca atual do painel; sem logo cadastrada, cai no logotipo em texto.
   const logoImg = input.logoUrl
-    ? `<img src="${input.logoUrl}" alt="${escapeHtml(brandName)}" width="180" style="display:block;margin:0 auto;max-width:220px;height:auto;border:0" />`
+    ? `<img src="${input.logoUrl}" alt="${escapeHtml(brandName)}" width="180" style="display:block;width:180px;height:auto;border:0" />`
     : `<span style="font-size:20px;font-weight:800;letter-spacing:-0.02em;color:#111111">LIBERATO</span><span style="font-size:20px;font-weight:600;color:#ea580c"> consulting</span>`;
   const logoBlock = site
     ? `<a href="${site}" style="text-decoration:none">${logoImg}</a>`
     : logoImg;
 
   const companyBlock = input.company
-    ? `<tr><td style="padding:22px 32px;background:#14192a;color:#f7f6f4">
+    ? `<tr><td style="padding:0 32px 24px;color:#6b7280;font-size:12px;line-height:18px">
+<div style="border-top:1px solid #e5e7eb;padding-top:24px">
 ${companyFooterHtml(input.company)}
-</td></tr>`
+</div></td></tr>`
     : "";
 
-  return `<!doctype html><html lang="${input.lang ?? "pt"}"><body style="margin:0;background:#f5f5f4;padding:32px 0;font-family:Helvetica,Arial,sans-serif">
+  return `<!doctype html><html lang="${input.lang ?? "pt"}"><body style="margin:0;background:#f5f5f4;font-family:Arial,Helvetica,sans-serif">
 <span style="display:none;opacity:0;color:transparent">${escapeHtml(input.preheader)}</span>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:92%;background:#ffffff;border-radius:12px;overflow:hidden">
-<tr><td align="center" style="padding:28px 32px;border-bottom:1px solid #e7e5e4;text-align:center">
+<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="width:560px;max-width:100%;background:#ffffff">
+<tr><td align="left" style="padding:32px 32px 0;text-align:left">
 ${logoBlock}
 </td></tr>
-<tr><td style="padding:32px">
-<h1 style="margin:0 0 20px;font-size:24px;line-height:1.25;color:#111111;text-align:center">${escapeHtml(input.subject)}</h1>
+<tr><td style="padding:24px 32px 10px">
+<h1 style="margin:0 0 16px;font-size:22px;line-height:28px;color:#0f172a;text-align:left">${escapeHtml(input.subject)}</h1>
 ${paragraphs}
 </td></tr>
 ${companyBlock}
-<tr><td style="padding:20px 32px 28px;border-top:1px solid #e7e5e4;font-size:12px;color:#78716c">
+<tr><td style="padding:0 32px 32px;font-size:12px;line-height:18px;color:#6b7280">
 ${escapeHtml(labels.newsletterWhy)}
-<a href="${input.unsubscribeUrl}" style="color:#ea580c">${escapeHtml(labels.unsubscribe)}</a>.
+<a href="${input.unsubscribeUrl}" style="color:#E8630A">${escapeHtml(labels.unsubscribe)}</a>.
 </td></tr>
 </table></td></tr></table></body></html>`;
 }

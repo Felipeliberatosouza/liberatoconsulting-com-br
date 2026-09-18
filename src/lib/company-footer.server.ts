@@ -60,6 +60,7 @@ export async function loadCompanyFooter(fallbackWebsite: string): Promise<Compan
 export async function loadEmailBrand(
   fallbackWebsite: string,
 ): Promise<{ company: CompanyFooter; logoUrl: string }> {
+  const { EMAIL_LOGO_URL } = await import("./email-brand");
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const [{ data: companyRow }, { data: branding }] = await Promise.all([
     supabaseAdmin.from("company_profile").select("*").limit(1).maybeSingle(),
@@ -70,7 +71,7 @@ export async function loadEmailBrand(
   const logoUrl =
     ((branding?.value ?? {}) as { logoUrl?: string }).logoUrl ||
     c["logo_url"] ||
-    `${fallbackWebsite.replace(/\/$/, "")}/logo.png`;
+    EMAIL_LOGO_URL;
   return { company, logoUrl };
 }
 

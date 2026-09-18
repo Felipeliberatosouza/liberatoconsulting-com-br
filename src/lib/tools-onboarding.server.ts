@@ -205,7 +205,7 @@ async function sendWelcome(
     }
 
     const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
-    await sendTemplateEmail("tools-welcome", email, {
+    const result = await sendTemplateEmail("tools-welcome", email, {
       templateData: {
         subject,
         body,
@@ -215,6 +215,9 @@ async function sendWelcome(
       },
       idempotencyKey: `tools-welcome-${userId}`,
     });
+
+    // Só registra como enviado quando o provedor realmente aceitou o destinatário.
+    if (!result.sent) return;
 
     await supabaseAdmin
       .from("tool_user_profiles")
