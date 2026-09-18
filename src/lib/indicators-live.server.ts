@@ -131,9 +131,67 @@ function formatPeriod(dateBr: string, period: SeriesSpec["period"]): string {
   const [, month, year] = dateBr.split("/");
   if (!year) return dateBr;
   if (period === "yearly") return year;
+  if (period === "quarterly") {
+    const quarter = Math.floor((Number(month) - 1) / 3) + 1;
+    return `${quarter}º trimestre/${year}`;
+  }
   const index = Number(month) - 1;
   const name = MONTHS[index] ?? month;
   return `${name}/${year}`;
+}
+
+/** Variação percentual entre duas observações de um índice. */
+function percentChange(current: string, base: string, decimals: number): string {
+  const a = Number(current);
+  const b = Number(base);
+  if (!Number.isFinite(a) || !Number.isFinite(b) || b === 0) return "";
+  return (((a - b) / b) * 100).toFixed(decimals).replace(".", ",");
+}
+
+/**
+ * Séries de índice (ex.: PIB trimestral): o valor exibido é a variação do
+ * período mais recente, e o "anterior" é a variação do período imediatamente
+ * anterior — sempre as duas últimas divulgações disponíveis.
+ */
+async function fetchChangeSeries(spec: SeriesSpec): Promise<LiveIndicator | null> {
+  try {
+    const response = await fetch(
+      `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${spec.series}/dados/ultimos/3?formato=json`,
+      { headers: { Accept: "application/json" } },
+    );
+    if (!response.ok) return null;
+    const points = (await response.json()) as SgsPoint[];
+    if (!Array.isArray(points) || points.length < 2) return null;
+    const last = points[points.length - 1]!;
+    const prior = points[points.length - 2]!;
+    const older = points.length > 2 ? points[points.length - 3] : undefined;
+    const value = percentChange(last.valor, prior.valor, spec.decimals);
+    if (!value) return null;
+    const previousValue = older ? percentChange(prior.valor, older.valor, spec.decimals) : "";
+    const a = Number(value.replace(",", "."));
+    const b = Number(previousValue.replace(",", "."));
+    const trend =
+      previousValue && Number.isFinite(a) && Number.isFinite(b)
+        ? a > b
+          ? "alta"
+          : a < b
+            ? "baixa"
+            : "estável"
+        : "";
+    return {
+      slug: spec.slug,
+      value,
+      unit: spec.unit,
+      reference_period: formatPeriod(last.data, spec.period),
+      previous_value: previousValue,
+      previous_period: previousValue ? formatPeriod(prior.data, spec.period) : "",
+      source_name: spec.source_name,
+      source_url: spec.source_url,
+      trend,
+    };
+  } catch {
+    return null;
+  }
 }
 
 function formatValue(raw: string, spec: SeriesSpec): string {
