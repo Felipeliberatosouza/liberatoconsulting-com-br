@@ -1,7 +1,7 @@
 import type { Dict } from "../pt";
 
 // Gerado automaticamente por scripts/translate-i18n.ts — não editar à mão.
-export const sourceHash = "jht5rn";
+export const sourceHash = "5lb8dl";
 
 export const dict: Dict = {
   "nav": {
