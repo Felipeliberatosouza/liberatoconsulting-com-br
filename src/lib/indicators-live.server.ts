@@ -40,7 +40,12 @@ type SeriesSpec = {
    * step = série diária que só muda por decisão (ex.: Selic): o valor anterior
    * é o último patamar diferente, e não o dia anterior.
    */
-  period: "monthly" | "yearly" | "daily" | "step";
+  period: "monthly" | "yearly" | "daily" | "step" | "quarterly";
+  /**
+   * "qoq" = a série é um índice; o valor exibido é a variação percentual
+   * em relação à observação imediatamente anterior (ex.: PIB trimestral).
+   */
+  transform?: "qoq";
   /** divisor aplicado ao valor bruto (ex.: US$ milhões -> US$ bilhões) */
   divide?: number;
   decimals: number;
