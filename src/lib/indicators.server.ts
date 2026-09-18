@@ -200,7 +200,8 @@ function periodRank(period: string): number {
   if (!year) return 0;
   const monthIndex = MONTHS.findIndex((m) => text.includes(m.slice(0, 4)));
   if (monthIndex >= 0) return year * 10000 + (monthIndex + 1) * 100;
-  const quarter = Number(text.match(/([1-4])\s*t/)?.[1] ?? 0);
+  // Aceita "3T2025" e também "3º trimestre/2025".
+  const quarter = Number(text.match(/([1-4])\s*[ºo°]?\s*(?:t\b|trim)/)?.[1] ?? 0);
   if (quarter) return year * 10000 + quarter * 300;
   return year * 10000 + 9999;
 }
