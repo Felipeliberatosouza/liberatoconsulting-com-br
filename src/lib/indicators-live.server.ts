@@ -130,6 +130,9 @@ type SgsPoint = { data: string; valor: string };
 function formatPeriod(dateBr: string, period: SeriesSpec["period"]): string {
   const [, month, year] = dateBr.split("/");
   if (!year) return dateBr;
+  // Séries diárias e de patamar (Selic) precisam da data exata: o patamar atual
+  // e o anterior podem cair no mesmo mês.
+  if (period === "daily" || period === "step") return dateBr;
   if (period === "yearly") return year;
   if (period === "quarterly") {
     const quarter = Math.floor((Number(month) - 1) / 3) + 1;
