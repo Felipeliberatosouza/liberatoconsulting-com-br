@@ -202,6 +202,7 @@ function formatValue(raw: string, spec: SeriesSpec): string {
 }
 
 async function fetchSeries(spec: SeriesSpec): Promise<LiveIndicator | null> {
+  if (spec.transform === "qoq") return fetchChangeSeries(spec);
   // Séries "step" (Selic) precisam de histórico para achar o patamar anterior:
   // a API só aceita "ultimos/N" pequeno, então usamos intervalo de datas (2 anos).
   const base = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.${spec.series}/dados`;
