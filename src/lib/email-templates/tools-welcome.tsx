@@ -21,10 +21,12 @@ interface Props {
   material?: string
   /** Link temporário de download do material. */
   link?: string
+  /** Materiais marcados no painel, cada um com o seu link temporário. */
+  materials?: Array<{ title: string; link: string }>
   brandFooter?: string
 }
 
-const Email = ({ subject, body, material, link, brandFooter }: Props) => (
+const Email = ({ subject, body, material, link, materials, brandFooter }: Props) => (
   <Html lang="pt-BR" dir="ltr">
     <Head />
     <Preview>{subject || 'Bem-vindo à biblioteca gratuita da Liberato Consulting'}</Preview>
