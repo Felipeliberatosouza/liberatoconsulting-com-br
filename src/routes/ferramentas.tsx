@@ -89,7 +89,7 @@ function ToolsAuth({ onDone }: { onDone: () => void }) {
   const [challenge,setChallenge]=useState(()=>({a:1+Math.floor(Math.random()*8),b:1+Math.floor(Math.random()*8)})); const [captcha,setCaptcha]=useState('');
   function newChallenge(){setChallenge({a:1+Math.floor(Math.random()*8),b:1+Math.floor(Math.random()*8)});setCaptcha('');}
   /** Traduz o erro do provedor de autenticação numa mensagem específica e acionável. */
-  function describeError(error: { code?: string; status?: number; message: string }, current: 'login' | 'signup'): string {
+  function describeError(error: { code?: string | undefined; status?: number | undefined; message: string }, current: 'login' | 'signup'): string {
     const code = error.code ?? '';
     const msg = error.message ?? '';
     if (code === 'over_email_send_rate_limit' || code === 'over_request_rate_limit' || error.status === 429 || /rate limit/i.test(msg)) return t.toolsAuth.tooManyRequests;
