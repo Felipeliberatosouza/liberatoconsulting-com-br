@@ -2776,6 +2776,12 @@ export const dict: Dict = {
   },
   "toolsAuth": {
     "accountNotFound": "Account not found! Click “Create free account” below.",
-    "errorGeneric": "Could not sign in right now. Please try again in a moment."
+    "errorGeneric": "Could not sign in right now. Please try again in a moment.",
+    "invalidLogin": "Incorrect e-mail or password. Check your details and try again. If you don't have an account yet, click “Create free account” below.",
+    "emailNotConfirmed": "Please confirm your e-mail using the link we sent before signing in.",
+    "emailInUse": "This e-mail already has an account. Sign in with your password or use “Forgot my password”.",
+    "weakPassword": "Password too weak. Use at least 8 characters, with letters and numbers.",
+    "tooManyRequests": "Too many attempts in a row. Please wait a few minutes and try again.",
+    "signupError": "Could not create the account right now. Please try again in a moment."
   }
 };

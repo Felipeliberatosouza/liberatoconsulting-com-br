@@ -1821,6 +1821,13 @@ export const pt = {
   toolsAuth: {
     accountNotFound: "Conta inexistente! Clique abaixo em \u201CCriar conta gratuita\u201D.",
     errorGeneric: "Não foi possível entrar agora. Tente novamente em instantes.",
+    invalidLogin:
+      "E-mail ou senha incorretos. Confira os dados e tente novamente. Se ainda não tem conta, clique abaixo em \u201CCriar conta gratuita\u201D.",
+    emailNotConfirmed: "Confirme seu e-mail pelo link que enviamos antes de entrar.",
+    emailInUse: "Este e-mail já tem conta. Entre com sua senha ou use \u201CEsqueci minha senha\u201D.",
+    weakPassword: "Senha muito fraca. Use pelo menos 8 caracteres, com letras e números.",
+    tooManyRequests: "Muitas tentativas seguidas. Aguarde alguns minutos e tente novamente.",
+    signupError: "Não foi possível criar a conta agora. Tente novamente em instantes.",
   },
 };
 
