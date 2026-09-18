@@ -74,6 +74,11 @@ export const pt = {
   },
   contentMenu: {
     more: "ver todos os conteúdos",
+    articles: "Artigos",
+    tools: "Ferramentas de Gestão",
+    newsletters: "Newsletters",
+    bulletins: "Boletins Semanais",
+    guide: "Guia Gestão Completa para Crescer com Controle",
     groups: [
       {
         id: "estrategia",
@@ -819,8 +824,25 @@ export const pt = {
   },
   whatsapp: {
     label: "Fale pelo WhatsApp",
+    floatingLabel: "Seja atendido por WhatsApp",
     title: "Abrir conversa no WhatsApp em nova aba",
     message: "Olá! Gostaria de saber mais sobre os serviços da Liberato Consulting.",
+  },
+  accountMenu: {
+    signIn: "Entrar",
+    createAccount: "Criar conta",
+    greeting: "Olá",
+    customer: "Cliente",
+    areaTitle: "Sua área de materiais",
+    tools: "Ferramentas de Gestão",
+    guide: "Guia Gestão Completa para Crescer com Controle",
+    services: "Serviços",
+    newsletter: "Newsletter",
+    bulletin: "Boletim Semanal",
+    insights: "Insights",
+    articles: "Artigos",
+    settings: "Configurar meus dados",
+    signOut: "Sair",
   },
   careers: {
     eyebrow: "Trabalhe Conosco",

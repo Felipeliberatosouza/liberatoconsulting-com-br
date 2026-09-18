@@ -303,15 +303,15 @@ export function SiteHeader() {
                 <p className="mb-5 text-sm font-semibold text-accent">{t.nav.content}</p>
                 <div className="grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-5">
                   <div className="min-w-0">
-                    <Link to="/content" onClick={closeAll} className="block text-sm font-semibold text-foreground hover:text-accent">Artigos</Link>
+                    <Link to="/content" onClick={closeAll} className="block text-sm font-semibold text-foreground hover:text-accent">{t.contentMenu.articles}</Link>
                     <div className="mt-3 space-y-2 border-l border-border pl-3">
                       {CONTENT_ARTICLE_GROUPS.map((g) => <Link key={g.id} to="/content" search={{ category: g.id }} onClick={closeAll} className="block text-xs text-muted-foreground hover:text-accent">{contentGroups.find((item) => item.id === g.id)?.title ?? g.label}</Link>)}
                     </div>
                   </div>
-              <Link to="/ferramentas" search={{ modo: undefined }} onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">Ferramentas de Gestão</Link>
-                  <Link to="/newsletters" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">Newsletters</Link>
-                  <Link to="/boletins" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">Boletins Semanais</Link>
-                  <Link to="/guia-gestao" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">Guia Gestão Completa para Crescer com Controle</Link>
+                    <Link to="/ferramentas" search={{ modo: undefined }} onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">{t.contentMenu.tools}</Link>
+                  <Link to="/newsletters" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">{t.contentMenu.newsletters}</Link>
+                  <Link to="/boletins" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">{t.contentMenu.bulletins}</Link>
+                  <Link to="/guia-gestao" onClick={closeAll} className="border-l border-border pl-8 text-sm text-muted-foreground hover:text-accent">{t.contentMenu.guide}</Link>
                 </div>
 
                 <div className="mt-8 text-right">
@@ -481,7 +481,7 @@ export function SiteHeader() {
 
           <MobileAccordion title={t.nav.content} to="/content" onNavigate={closeAll}>
             <div className="space-y-1 border-l border-border pl-3">
-              <Link to="/content" onClick={closeAll} className="block py-1.5 text-sm font-semibold">Artigos</Link>
+              <Link to="/content" onClick={closeAll} className="block py-1.5 text-sm font-semibold">{t.contentMenu.articles}</Link>
               {CONTENT_ARTICLE_GROUPS.map((g) => (
                 <Link
                   key={g.id}
@@ -493,10 +493,10 @@ export function SiteHeader() {
                   {contentGroups.find((item) => item.id === g.id)?.title ?? g.label}
                 </Link>
               ))}
-              <Link to="/ferramentas" search={{ modo: undefined }} onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">Ferramentas de Gestão</Link>
-              <Link to="/newsletters" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">Newsletters</Link>
-              <Link to="/boletins" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">Boletins Semanais</Link>
-              <Link to="/guia-gestao" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">Guia Gestão Completa para Crescer com Controle</Link>
+              <Link to="/ferramentas" search={{ modo: undefined }} onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">{t.contentMenu.tools}</Link>
+              <Link to="/newsletters" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">{t.contentMenu.newsletters}</Link>
+              <Link to="/boletins" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">{t.contentMenu.bulletins}</Link>
+              <Link to="/guia-gestao" onClick={closeAll} className="block py-1.5 text-sm text-muted-foreground">{t.contentMenu.guide}</Link>
             </div>
           </MobileAccordion>
 

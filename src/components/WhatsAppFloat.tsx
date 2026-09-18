@@ -29,7 +29,7 @@ export function WhatsAppFloat() {
       className="fixed bottom-28 right-4 z-30 h-auto gap-2.5 rounded-full bg-whatsapp px-4 py-3 text-whatsapp-foreground shadow-lg transition-transform hover:bg-whatsapp/90 hover:scale-[1.02] md:right-6"
     >
       <WhatsAppIcon className="size-6 shrink-0" />
-      <span className="hidden sm:inline font-semibold">Seja atendido por WhatsApp</span>
+      <span className="hidden font-semibold sm:inline">{t.whatsapp.floatingLabel}</span>
     </Button>
     <WhatsAppLeadDialog open={open} onOpenChange={setOpen} />
     </>
