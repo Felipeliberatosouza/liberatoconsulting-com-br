@@ -1,48 +1,43 @@
 /**
- * Conteúdo do e-mail de confirmação de conta: idioma do destinatário e texto
- * editável no painel (Configurações → E-mails automáticos), um modelo por idioma.
+ * Conteúdo do e-mail de confirmação de conta.
+ * Regra: existe um único modelo editável, em português (Configurações →
+ * E-mails automáticos). O texto é traduzido automaticamente por IA para o
+ * idioma do destinatário.
  */
 import { emailLang, type EmailLang } from "@/lib/email-i18n.server";
+import { translateContent } from "@/lib/ai-translate.server";
 
+export const SIGNUP_SLUG = "auth_signup";
+/** Compatibilidade com o formato antigo (um modelo por idioma). */
 export const SIGNUP_SLUG_PREFIX = "auth_signup_";
 
-const DEFAULTS: Record<EmailLang, { subject: string; body: string; button: string; lang: string }> =
-  {
-    pt: {
-      subject: "Confirme seu cadastro na Liberato Consulting",
-      body:
-        "Olá! Recebemos seu cadastro na Liberato Consulting.\n\nPara ativar sua conta e acessar a área de materiais e ferramentas de gestão, confirme seu e-mail ({{email}}) clicando no botão abaixo.\n\nSe você não criou esta conta, pode ignorar esta mensagem com segurança.",
-      button: "Confirmar meu e-mail",
-      lang: "pt-BR",
-    },
-    en: {
-      subject: "Confirm your Liberato Consulting account",
-      body:
-        "Hello! We received your registration at Liberato Consulting.\n\nTo activate your account and access the management tools and materials area, confirm your email ({{email}}) by clicking the button below.\n\nIf you did not create this account, you can safely ignore this message.",
-      button: "Confirm my email",
-      lang: "en-US",
-    },
-    es: {
-      subject: "Confirme su registro en Liberato Consulting",
-      body:
-        "¡Hola! Recibimos su registro en Liberato Consulting.\n\nPara activar su cuenta y acceder al área de materiales y herramientas de gestión, confirme su correo ({{email}}) haciendo clic en el botón de abajo.\n\nSi usted no creó esta cuenta, puede ignorar este mensaje con seguridad.",
-      button: "Confirmar mi correo",
-      lang: "es-ES",
-    },
-    zh: {
-      subject: "确认您的 Liberato Consulting 账户",
-      body:
-        "您好！我们收到了您在 Liberato Consulting 的注册申请。\n\n请点击下方按钮确认您的邮箱（{{email}}），以激活账户并访问管理工具与资料专区。\n\n如果这不是您本人的注册，请忽略此邮件。",
-      button: "确认邮箱",
-      lang: "zh-CN",
-    },
-  };
+const DEFAULT = {
+  subject: "Confirme seu cadastro na Liberato Consulting",
+  body:
+    "Olá! Recebemos seu cadastro na Liberato Consulting.\n\nPara ativar sua conta e acessar a área de materiais e ferramentas de gestão, confirme seu e-mail ({{email}}) clicando no botão abaixo.\n\nSe você não criou esta conta, pode ignorar esta mensagem com segurança.",
+  button: "Confirmar meu e-mail",
+};
+
+const LOCALES: Record<EmailLang, string> = {
+  pt: "pt-BR",
+  en: "en-US",
+  es: "es-ES",
+  zh: "zh-CN",
+};
 
 function fill(text: string, vars: Record<string, string>) {
   return Object.entries(vars).reduce(
     (acc, [key, value]) => acc.replaceAll(`{{${key}}}`, value),
     text,
   );
+}
+
+function hash(text: string) {
+  let h = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    h = (h * 31 + text.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h).toString(36);
 }
 
 /** Descobre o idioma do destinatário a partir dos cadastros existentes. */
@@ -75,15 +70,14 @@ async function languageFor(supabaseAdmin: any, email: string): Promise<EmailLang
 export async function getSignupEmailContent(email: string, confirmationUrl: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const lang = await languageFor(supabaseAdmin, email);
-  const fallback = DEFAULTS[lang];
 
-  let subject = fallback.subject;
-  let body = fallback.body;
+  let subject = DEFAULT.subject;
+  let body = DEFAULT.body;
   try {
     const { data } = await supabaseAdmin
       .from("email_templates")
       .select("subject, body, enabled")
-      .eq("slug", `${SIGNUP_SLUG_PREFIX}${lang}`)
+      .eq("slug", SIGNUP_SLUG)
       .maybeSingle();
     if (data?.enabled !== false) {
       subject = data?.subject || subject;
@@ -92,6 +86,13 @@ export async function getSignupEmailContent(email: string, confirmationUrl: stri
   } catch {
     /* mantém o texto padrão */
   }
+
+  const source = { subject, body, button: DEFAULT.button };
+  const translated = await translateContent(
+    `auth_signup:${hash(`${subject}\n${body}`)}`,
+    lang,
+    source,
+  );
 
   let brandFooter: string | undefined;
   try {
@@ -103,10 +104,10 @@ export async function getSignupEmailContent(email: string, confirmationUrl: stri
 
   const vars = { email, link: confirmationUrl };
   return {
-    subject: fill(subject, vars),
-    body: fill(body, vars),
-    buttonLabel: fallback.button,
-    htmlLang: fallback.lang,
+    subject: fill(translated.subject || subject, vars),
+    body: fill(translated.body || body, vars),
+    buttonLabel: translated.button || DEFAULT.button,
+    htmlLang: LOCALES[lang],
     brandFooter,
   };
 }

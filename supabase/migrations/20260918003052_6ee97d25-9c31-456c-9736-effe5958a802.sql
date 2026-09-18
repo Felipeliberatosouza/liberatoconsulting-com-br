@@ -1,0 +1,2 @@
+UPDATE public.email_templates SET slug = 'auth_signup', label = 'Confirmação de conta' WHERE slug = 'auth_signup_pt';
+DELETE FROM public.email_templates WHERE slug IN ('auth_signup_en','auth_signup_es','auth_signup_zh');
