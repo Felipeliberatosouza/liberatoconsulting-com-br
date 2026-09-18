@@ -28,14 +28,28 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
           sendUrl: process.env['LOVABLE_SEND_URL'],
           emails: {
             signup: {
-              subject: 'Confirm your email',
-              render: (data) =>
-                React.createElement(SignupEmail, {
-                  siteName: SITE_NAME,
-                  siteUrl: SITE_URL,
-                  recipient: data.email,
-                  confirmationUrl: data.url,
-                }),
+              subject: 'Confirme seu cadastro na Liberato Consulting',
+              render: async (data) => {
+                try {
+                  const { getSignupEmailContent } = await import('@/lib/auth-email-content.server')
+                  const content = await getSignupEmailContent(data.email, data.url)
+                  return React.createElement(AuthSignupEmail, {
+                    subject: content.subject,
+                    body: content.body,
+                    buttonLabel: content.buttonLabel,
+                    confirmationUrl: data.url,
+                    lang: content.htmlLang,
+                    brandFooter: content.brandFooter,
+                  })
+                } catch {
+                  return React.createElement(SignupEmail, {
+                    siteName: SITE_NAME,
+                    siteUrl: SITE_URL,
+                    recipient: data.email,
+                    confirmationUrl: data.url,
+                  })
+                }
+              },
             },
             invite: {
               subject: "You've been invited",
