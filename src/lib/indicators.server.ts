@@ -170,6 +170,8 @@ type RefreshOut = {
     note?: string;
     source_name: string;
     source_url: string;
+    /** true = veio direto da série oficial (fonte primária), não de estimativa por IA. */
+    official?: boolean;
   }>;
 };
 
@@ -243,6 +245,7 @@ export async function refreshIndicatorsFromSources() {
       trend: item.trend,
       source_name: item.source_name,
       source_url: item.source_url,
+      official: true,
     });
   }
 
@@ -308,10 +311,12 @@ export async function refreshIndicatorsFromSources() {
     const newPeriod = (item.reference_period ?? "").trim();
     if (!newValue) continue;
 
-    // Nunca substituir um dado publicado por outro mais antigo.
+    // Nunca substituir um dado publicado por outro mais antigo — exceto quando o novo
+    // dado vem da série oficial (fonte primária), que é sempre a verdade. Isso evita
+    // que um período incorreto/futuro gravado antes trave as atualizações seguintes.
     const newRank = periodRank(newPeriod);
     const currentRank = periodRank(target.reference_period ?? "");
-    if (newRank > 0 && currentRank > 0 && newRank < currentRank) continue;
+    if (!item.official && newRank > 0 && currentRank > 0 && newRank < currentRank) continue;
 
     const changed =
       (!!target.value && newValue !== target.value.trim()) ||
