@@ -200,12 +200,11 @@ const HTML_LANG: Record<string, string> = {
 };
 
 function RootShell({ children }: { children: ReactNode }) {
-  const langParam = useRouterState({
-    select: (s) => (s.location.search as Record<string, unknown> | undefined)?.["lang"],
-  });
-  const htmlLang = HTML_LANG[normalizeLang(langParam)] ?? "pt-BR";
   return (
-    <html lang={htmlLang}>
+    // Idioma padrão no HTML servidor (pt-BR); o effect do LanguageProvider
+    // (src/i18n/index.tsx) atualiza document.documentElement.lang no cliente
+    // conforme o idioma escolhido pelo visitante.
+    <html lang="pt-BR">
       <head>
         {/* Google Tag Manager */}
         <script
