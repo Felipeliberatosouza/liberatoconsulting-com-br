@@ -5,7 +5,7 @@ import { useLanguage } from "@/i18n";
 import resultImage from "@/assets/resultados-consultoria.jpg";
 
 /** Velocidade do carrossel de clientes, em pixels por segundo. */
-const SPEED = 45;
+const SPEED = 65;
 
 function ClientMarquee({ logos }: { logos: Array<{ name: string; imageUrl: string }> }) {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -15,7 +15,6 @@ function ClientMarquee({ logos }: { logos: Array<{ name: string; imageUrl: strin
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let offset = 0;
     let last = performance.now();
     let frame = 0;
