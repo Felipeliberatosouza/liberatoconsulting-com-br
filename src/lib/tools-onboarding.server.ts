@@ -21,6 +21,12 @@ const WELCOME_SLUG = "tools_welcome";
 /** Validade do link do material enviado no e-mail (7 dias). */
 const LINK_TTL_SECONDS = 60 * 60 * 24 * 7;
 
+/** "A", "A e B", "A, B e C". */
+export function joinNames(names: string[]) {
+  if (names.length <= 1) return names[0] ?? "";
+  return `${names.slice(0, -1).join(", ")} e ${names[names.length - 1]}`;
+}
+
 function fill(text: string, vars: Record<string, string>) {
   return Object.entries(vars).reduce(
     (acc, [key, value]) => acc.replaceAll(`{{${key}}}`, value),
@@ -147,28 +153,33 @@ async function sendWelcome(
       .maybeSingle();
     if (tpl && !tpl.enabled) return;
 
-    const { data: material } = await supabaseAdmin
+    // Todos os materiais marcados no painel acompanham o e-mail de boas-vindas.
+    const { data: selected } = await supabaseAdmin
       .from("management_tools")
       .select("title, file_path, file_name")
       .eq("welcome_attachment", true)
       .eq("published", true)
-      .order("position")
-      .limit(1)
-      .maybeSingle();
+      .order("position");
 
-    let link = "";
-    if (material?.file_path) {
-      const signed = await supabaseAdmin.storage
-        .from("management-tools")
-        .createSignedUrl(material.file_path, LINK_TTL_SECONDS, { download: material.file_name });
-      link = signed.data?.signedUrl ?? "";
+    const materials: Array<{ title: string; link: string }> = [];
+    for (const item of (selected ?? []) as Array<{ title: string; file_path: string; file_name: string }>) {
+      let link = "";
+      if (item.file_path) {
+        const signed = await supabaseAdmin.storage
+          .from("management-tools")
+          .createSignedUrl(item.file_path, LINK_TTL_SECONDS, { download: item.file_name });
+        link = signed.data?.signedUrl ?? "";
+      }
+      materials.push({ title: item.title, link });
     }
 
+    const names = joinNames(materials.map((m) => m.title));
     const vars = {
       nome: fullName.split(" ")[0] || fullName,
       empresa: profile.company,
-      material: material?.title ?? "",
-      link: link || "https://liberatoconsulting.com.br/ferramentas",
+      material: names,
+      materiais: names,
+      link: materials[0]?.link || "https://liberatoconsulting.com.br/ferramentas",
     };
 
     const subject = fill(
@@ -176,7 +187,7 @@ async function sendWelcome(
       vars,
     );
     let body = fill(tpl?.body || "", vars);
-    if (!material) {
+    if (!materials.length) {
       // Sem material marcado no painel, a frase do anexo é removida do texto.
       body = body
         .split(/\n{2,}/)
@@ -186,7 +197,13 @@ async function sendWelcome(
 
     const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
     await sendTemplateEmail("tools-welcome", email, {
-      templateData: { subject, body, material: material?.title ?? "", link },
+      templateData: {
+        subject,
+        body,
+        material: names,
+        link: materials[0]?.link ?? "",
+        materials,
+      },
       idempotencyKey: `tools-welcome-${userId}`,
     });
 

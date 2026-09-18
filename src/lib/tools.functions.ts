@@ -22,11 +22,17 @@ export const getToolsAccount = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const [profile, tools] = await Promise.all([
       context.supabase.from("tool_user_profiles").select("*").eq("user_id", context.userId).maybeSingle(),
-      context.supabase.from("management_tools").select("id, slug, title, summary, category, cover_url, file_name, position, translations").eq("published", true).order("position"),
+      context.supabase.from("management_tools").select("id, slug, title, summary, category, cover_url, file_name, position, translations, welcome_attachment").eq("published", true).order("position"),
     ]);
     if (profile.error) throw new Error(profile.error.message);
     if (tools.error) throw new Error(tools.error.message);
-    return { profile: profile.data, tools: tools.data ?? [] };
+    const list = tools.data ?? [];
+    return {
+      profile: profile.data,
+      tools: list,
+      // Materiais marcados no painel para acompanhar o e-mail de boas-vindas.
+      welcomeMaterials: list.filter((tool: any) => tool.welcome_attachment).map((tool: any) => tool.title as string),
+    };
   });
 
 export const saveToolsProfile = createServerFn({ method: "POST" })
@@ -152,13 +158,7 @@ export const setToolWelcomeAttachment = createServerFn({ method: "POST" })
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    // Apenas um material acompanha o e-mail de boas-vindas.
-    if (data.welcome_attachment) {
-      await supabaseAdmin
-        .from("management_tools")
-        .update({ welcome_attachment: false })
-        .eq("welcome_attachment", true);
-    }
+    // Vários materiais podem acompanhar o e-mail de boas-vindas.
     const { error } = await supabaseAdmin
       .from("management_tools")
       .update({ welcome_attachment: data.welcome_attachment })
@@ -228,9 +228,6 @@ export const saveAdminTool = createServerFn({ method: "POST" })
     }
 
     const slug = data.title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 120);
-    if (data.welcome_attachment) {
-      await supabaseAdmin.from("management_tools").update({ welcome_attachment: false }).eq("welcome_attachment", true);
-    }
     const base = {
       title: data.title,
       summary: data.summary,
