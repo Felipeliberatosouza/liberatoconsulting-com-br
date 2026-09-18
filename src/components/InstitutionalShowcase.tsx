@@ -1,44 +1,18 @@
-import { useEffect, useRef } from "react";
 import { ArrowRight, Download } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n";
 import resultImage from "@/assets/resultados-consultoria.jpg";
 
-/** Velocidade do carrossel de clientes, em pixels por segundo. */
-const SPEED = 65;
-
 function ClientMarquee({ logos }: { logos: Array<{ name: string; imageUrl: string }> }) {
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  // Rolagem contínua feita em JavaScript: funciona em qualquer navegador e não
-  // depende de a animação em CSS ser preservada no build publicado.
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    let offset = 0;
-    let last = performance.now();
-    let frame = 0;
-    const step = (now: number) => {
-      const delta = (now - last) / 1000;
-      last = now;
-      const half = track.scrollWidth / 2 || 1;
-      offset = (offset + SPEED * delta) % half;
-      track.style.transform = `translate3d(${-offset}px, 0, 0)`;
-      frame = requestAnimationFrame(step);
-    };
-    frame = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(frame);
-  }, [logos.length]);
-
   // Duas cópias da lista garantem o loop sem emenda visível.
   const sets = [...logos, ...logos];
 
   return (
     <div
-      className="mt-7 overflow-hidden"
+      className="client-logo-marquee mt-7 overflow-hidden"
       aria-label="Clientes da Liberato Consulting"
     >
-      <div ref={trackRef} className="flex w-max items-center will-change-transform">
+      <div className="client-logo-track flex w-max items-center will-change-transform">
         {sets.map((logo, index) => (
           <div key={`logo-${index}`} className="flex h-20 w-44 shrink-0 items-center justify-center px-6 sm:w-52">
             <img
