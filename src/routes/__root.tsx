@@ -21,7 +21,6 @@ import { CookieConsent } from "@/components/CookieConsent";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { CrmTracker } from "@/components/CrmTracker";
 import { CopyProtection } from "@/components/CopyProtection";
-import { normalizeLang } from "@/lib/seo";
 import { trackPageView } from "@/lib/gtag";
 import { getPublicCompanyAddress } from "@/lib/company-public.functions";
 import { ALL_KEYWORDS_MULTILINGUAL } from "@/lib/keywords";
@@ -192,20 +191,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-const HTML_LANG: Record<string, string> = {
-  pt: "pt-BR",
-  en: "en",
-  es: "es",
-  zh: "zh-Hans",
-};
-
 function RootShell({ children }: { children: ReactNode }) {
-  const langParam = useRouterState({
-    select: (s) => (s.location.search as Record<string, unknown> | undefined)?.["lang"],
-  });
-  const htmlLang = HTML_LANG[normalizeLang(langParam)] ?? "pt-BR";
   return (
-    <html lang={htmlLang}>
+    // Idioma padrão no HTML servidor (pt-BR); o effect do LanguageProvider
+    // (src/i18n/index.tsx) atualiza document.documentElement.lang no cliente
+    // conforme o idioma escolhido pelo visitante.
+    <html lang="pt-BR">
       <head>
         {/* Google Tag Manager */}
         <script
