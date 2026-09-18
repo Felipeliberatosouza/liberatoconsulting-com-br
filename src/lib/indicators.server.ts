@@ -245,6 +245,7 @@ export async function refreshIndicatorsFromSources() {
       trend: item.trend,
       source_name: item.source_name,
       source_url: item.source_url,
+      official: true,
     });
   }
 
