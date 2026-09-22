@@ -48,12 +48,33 @@ export const Route = createFileRoute("/escopoinicial")({
   component: ScopePage,
 });
 
+const SITE = "https://liberatoconsulting.com.br";
+
 const FREE_LINKS = [
-  { to: "/guia-gestao", label: "Guia de Gestão Completa", icon: BookOpen },
-  { to: "/newsletters", label: "Newsletter", icon: Mail },
-  { to: "/content", label: "Artigos", icon: FileText },
-  { to: "/boletins", label: "Boletim Semanal", icon: Newspaper },
+  { href: `${SITE}/ferramentas`, label: "Guia de Gestão Completa", icon: BookOpen },
+  { href: `${SITE}/newsletters`, label: "Newsletter", icon: Mail },
+  { href: `${SITE}/content`, label: "Artigos", icon: FileText },
+  { href: `${SITE}/boletins`, label: "Boletim Semanal", icon: Newspaper },
 ] as const;
+
+function QuestionHelp({ text }: { text: string }) {
+  return (
+    <TooltipProvider delayDuration={100}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            aria-label="Objetivo da pergunta"
+            className="text-muted-foreground transition-colors hover:text-accent"
+          >
+            <HelpCircle className="size-4" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-xs text-xs leading-5">{text}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
 
 function ScopePage() {
   const { logoUrl } = useLanguage();
