@@ -159,7 +159,7 @@ export function SiteFooter() {
               to="/admin"
               className="text-ink-foreground/60 transition-colors hover:text-accent"
             >
-              Área administrativa
+              {pageText(lang).misc.adminArea}
             </Link>
           </div>
           {c?.legalName ? (
