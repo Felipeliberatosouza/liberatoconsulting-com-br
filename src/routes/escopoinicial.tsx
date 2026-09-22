@@ -272,10 +272,12 @@ function ScopePage() {
             Receba ferramentas gratuitas de gestão
           </p>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {FREE_LINKS.map(({ to, label, icon: Icon }) => (
-              <Link
-                key={to}
-                to={to}
+            {FREE_LINKS.map(({ href, label, icon: Icon }) => (
+              <a
+                key={href}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group flex flex-col items-center gap-3 rounded-2xl border border-border p-5 transition-colors hover:border-accent hover:bg-accent/5"
               >
                 <span className="inline-flex size-12 items-center justify-center rounded-full bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
