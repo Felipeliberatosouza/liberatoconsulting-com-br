@@ -69,6 +69,7 @@ import { Route as NewsletterSlugRouteImport } from './routes/newsletter.$slug'
 import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
+import { Route as AdminProjetosDiagnosticoRouteImport } from './routes/admin.projetos_.diagnostico'
 import { Route as AdminProjetosEscoposRouteImport } from './routes/admin.projetos_.escopos'
 import { Route as ApiPublicBulletinWeeklyRouteImport } from './routes/api/public/bulletin-weekly'
 import { Route as ApiPublicCrmBirthdaysRouteImport } from './routes/api/public/crm-birthdays'
@@ -382,6 +383,12 @@ const ServicesSlugRoute = ServicesSlugRouteImport.update({
   path: '/services/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminProjetosDiagnosticoRoute =
+  AdminProjetosDiagnosticoRouteImport.update({
+    id: '/admin/projetos_/diagnostico',
+    path: '/admin/projetos/diagnostico',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminProjetosEscoposRoute = AdminProjetosEscoposRouteImport.update({
   id: '/admin/projetos_/escopos',
   path: '/admin/projetos/escopos',
@@ -503,6 +510,7 @@ export interface FileRoutesByFullPath {
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/admin/projetos/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
@@ -576,6 +584,7 @@ export interface FileRoutesByTo {
   '/services/$slug': typeof ServicesSlugRoute
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
+  '/admin/projetos/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
@@ -650,6 +659,7 @@ export interface FileRoutesById {
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/admin/projetos_/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos_/escopos': typeof AdminProjetosEscoposRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
@@ -725,6 +735,7 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/admin/'
     | '/services/'
+    | '/admin/projetos/diagnostico'
     | '/admin/projetos/escopos'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
@@ -798,6 +809,7 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/admin'
     | '/services'
+    | '/admin/projetos/diagnostico'
     | '/admin/projetos/escopos'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
@@ -871,6 +883,7 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/admin/'
     | '/services/'
+    | '/admin/projetos_/diagnostico'
     | '/admin/projetos_/escopos'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
@@ -945,6 +958,7 @@ export interface RootRouteChildren {
   ServicesSlugRoute: typeof ServicesSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
+  AdminProjetosDiagnosticoRoute: typeof AdminProjetosDiagnosticoRoute
   AdminProjetosEscoposRoute: typeof AdminProjetosEscoposRoute
   ApiPublicBulletinWeeklyRoute: typeof ApiPublicBulletinWeeklyRoute
   ApiPublicCrmBirthdaysRoute: typeof ApiPublicCrmBirthdaysRoute
@@ -1380,6 +1394,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/projetos_/diagnostico': {
+      id: '/admin/projetos_/diagnostico'
+      path: '/admin/projetos/diagnostico'
+      fullPath: '/admin/projetos/diagnostico'
+      preLoaderRoute: typeof AdminProjetosDiagnosticoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/projetos_/escopos': {
       id: '/admin/projetos_/escopos'
       path: '/admin/projetos/escopos'
@@ -1521,6 +1542,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesSlugRoute: ServicesSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
+  AdminProjetosDiagnosticoRoute: AdminProjetosDiagnosticoRoute,
   AdminProjetosEscoposRoute: AdminProjetosEscoposRoute,
   ApiPublicBulletinWeeklyRoute: ApiPublicBulletinWeeklyRoute,
   ApiPublicCrmBirthdaysRoute: ApiPublicCrmBirthdaysRoute,
