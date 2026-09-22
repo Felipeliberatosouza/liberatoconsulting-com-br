@@ -1,17 +1,30 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { BookOpen, FileText, Mail, Newspaper, CheckCircle2 } from "lucide-react";
+import { BookOpen, FileText, HelpCircle, Mail, Newspaper, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useLanguage } from "@/i18n";
 import { getPublicCompanyIdentity } from "@/lib/company-public.functions";
 import { submitScopeForm } from "@/lib/projects.functions";
 import { SCOPE_HELP, SCOPE_INTRO, SCOPE_NOTE, SCOPE_QUESTIONS } from "@/lib/scope-form";
+import {
+  formatPhone,
+  isValidEmail,
+  isValidPhone,
+  PHONE_ERROR,
+  PHONE_PLACEHOLDER,
+} from "@/lib/validation";
 
 export const Route = createFileRoute("/escopoinicial")({
   head: () => ({
