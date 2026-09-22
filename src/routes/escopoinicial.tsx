@@ -112,10 +112,13 @@ function ScopePage() {
     onError: () => toast.error("Verifique os campos obrigatórios e tente novamente."),
   });
 
+  const emailInvalid = form.email.trim().length > 0 && !isValidEmail(form.email);
+  const phoneInvalid = !isValidPhone(form.phone);
   const missing =
     form.company.trim().length < 2 ||
     form.respondent_name.trim().length < 2 ||
-    !form.email.includes("@") ||
+    !isValidEmail(form.email) ||
+    phoneInvalid ||
     SCOPE_QUESTIONS.some((q) => !answers[q.id]);
 
   return (
