@@ -15,11 +15,12 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
 type Section = "ferramentas" | "guia" | "servicos" | "newsletter" | "boletim" | "insights" | "artigos" | "perfil";
-const sections: Array<{ id: Section; label: string; icon: typeof Wrench }> = [
-  { id: "ferramentas", label: "Ferramentas de Gestão", icon: Wrench }, { id: "guia", label: "Guia Gestão Completa", icon: BookOpen },
-  { id: "servicos", label: "Serviços", icon: FileText }, { id: "newsletter", label: "Newsletter", icon: Mail },
-  { id: "boletim", label: "Boletim Semanal", icon: Newspaper }, { id: "insights", label: "Insights", icon: BookOpen },
-  { id: "artigos", label: "Artigos", icon: FileText }, { id: "perfil", label: "Configurar meus dados", icon: Settings },
+type MenuKey = "tools" | "guide" | "services" | "newsletter" | "bulletin" | "insights" | "articles" | "settings";
+const sections: Array<{ id: Section; key: MenuKey; icon: typeof Wrench }> = [
+  { id: "ferramentas", key: "tools", icon: Wrench }, { id: "guia", key: "guide", icon: BookOpen },
+  { id: "servicos", key: "services", icon: FileText }, { id: "newsletter", key: "newsletter", icon: Mail },
+  { id: "boletim", key: "bulletin", icon: Newspaper }, { id: "insights", key: "insights", icon: BookOpen },
+  { id: "artigos", key: "articles", icon: FileText }, { id: "perfil", key: "settings", icon: Settings },
 ];
 const EMPTY = { first_name: "", last_name: "", email: "", phone: "", company: "", job_title: "", revenue_range: "", segment: "", receive_newsletter: true, receive_bulletin: true, receive_insights: true };
 const field = "mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
