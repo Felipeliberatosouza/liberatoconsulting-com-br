@@ -39,7 +39,14 @@ import {
   type PricingSettings,
 } from "@/lib/pricing-catalog";
 
+const TABS = ["rates", "stages", "quote", "history"] as const;
+type PricingTab = (typeof TABS)[number];
+
 export const Route = createFileRoute("/admin/precificacao")({
+  validateSearch: (search: Record<string, unknown>): { aba?: PricingTab } => {
+    const aba = String(search["aba"] ?? "");
+    return TABS.includes(aba as PricingTab) ? { aba: aba as PricingTab } : {};
+  },
   head: () => ({
     meta: [
       { title: "Precificação e orçamentos — Painel Liberato Consulting" },
