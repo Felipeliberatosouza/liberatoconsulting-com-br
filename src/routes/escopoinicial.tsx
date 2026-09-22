@@ -305,7 +305,8 @@ function ScopePage() {
             </Button>
             {missing ? (
               <p className="mt-2 text-xs text-muted-foreground">
-                Preencha empresa, nome, e-mail e todas as 10 perguntas para enviar.
+                Preencha empresa, nome, e-mail válido, celular com DDI e todas as 10 perguntas
+                para enviar.
               </p>
             ) : null}
           </>
