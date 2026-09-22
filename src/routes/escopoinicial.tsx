@@ -284,7 +284,7 @@ function ScopePage() {
                   <Icon className="size-5" />
                 </span>
                 <span className="text-sm font-medium">{label}</span>
-              </Link>
+              </a>
             ))}
           </div>
         </div>
