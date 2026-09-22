@@ -233,7 +233,13 @@ function ScopePage() {
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
                     {q.index}. {q.theme}
                   </p>
-                  <p className="mt-2 font-medium">{q.question}</p>
+                  <div className="mt-2 flex items-start gap-2">
+                    <p className="font-medium">{q.question}</p>
+                    <QuestionHelp text={q.purpose} />
+                  </div>
+                  {q.hint ? (
+                    <p className="mt-1 text-xs text-muted-foreground/80">{q.hint}</p>
+                  ) : null}
                   <div className="mt-4 space-y-2">
                     {q.options.map((opt) => (
                       <label
