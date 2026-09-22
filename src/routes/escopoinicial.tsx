@@ -185,16 +185,40 @@ function ScopePage() {
                     id="email"
                     type="email"
                     value={form.email}
+                    aria-invalid={emailInvalid}
+                    className={
+                      emailInvalid ? "border-destructive ring-1 ring-destructive" : undefined
+                    }
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                   />
+                  {emailInvalid ? (
+                    <span className="mt-1 block text-xs text-destructive">
+                      Informe um e-mail válido, por exemplo nome@empresa.com.br.
+                    </span>
+                  ) : null}
                 </div>
                 <div>
-                  <Label htmlFor="phone">Celular</Label>
+                  <Label htmlFor="phone">Celular *</Label>
                   <Input
                     id="phone"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    maxLength={25}
+                    placeholder={PHONE_PLACEHOLDER}
                     value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    aria-invalid={phoneInvalid && form.phone.trim().length > 0}
+                    className={
+                      phoneInvalid && form.phone.trim().length > 0
+                        ? "border-destructive ring-1 ring-destructive"
+                        : undefined
+                    }
+                    onFocus={() => !form.phone && setForm({ ...form, phone: "+55" })}
+                    onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })}
                   />
+                  {phoneInvalid && form.phone.trim().length > 0 ? (
+                    <span className="mt-1 block text-xs text-destructive">{PHONE_ERROR}</span>
+                  ) : null}
                 </div>
               </div>
             </section>
