@@ -17,7 +17,8 @@ import {
 import { useLanguage } from "@/i18n";
 import { getPublicCompanyIdentity } from "@/lib/company-public.functions";
 import { submitScopeForm } from "@/lib/projects.functions";
-import { SCOPE_HELP, SCOPE_INTRO, SCOPE_NOTE, SCOPE_QUESTIONS } from "@/lib/scope-form";
+import { scopeQuestions, scopeTexts } from "@/lib/scope-form-i18n";
+import { pageText } from "@/lib/page-translations";
 import {
   formatPhone,
   isValidEmail,
@@ -51,20 +52,20 @@ export const Route = createFileRoute("/escopoinicial")({
 const SITE = "https://liberatoconsulting.com.br";
 
 const FREE_LINKS = [
-  { href: `${SITE}/ferramentas`, label: "Guia de Gestão Completa", icon: BookOpen },
-  { href: `${SITE}/newsletters`, label: "Newsletter", icon: Mail },
-  { href: `${SITE}/content`, label: "Artigos", icon: FileText },
-  { href: `${SITE}/boletins`, label: "Boletim Semanal", icon: Newspaper },
+  { href: `${SITE}/ferramentas`, key: "freeGuide", icon: BookOpen },
+  { href: `${SITE}/newsletters`, key: "freeNewsletter", icon: Mail },
+  { href: `${SITE}/content`, key: "freeArticles", icon: FileText },
+  { href: `${SITE}/boletins`, key: "freeBulletin", icon: Newspaper },
 ] as const;
 
-function QuestionHelp({ text }: { text: string }) {
+function QuestionHelp({ text, label }: { text: string; label: string }) {
   return (
     <TooltipProvider delayDuration={100}>
       <Tooltip>
         <TooltipTrigger asChild>
           <button
             type="button"
-            aria-label="Objetivo da pergunta"
+            aria-label={label}
             className="text-muted-foreground transition-colors hover:text-accent"
           >
             <HelpCircle className="size-4" />
@@ -77,7 +78,10 @@ function QuestionHelp({ text }: { text: string }) {
 }
 
 function ScopePage() {
-  const { logoUrl } = useLanguage();
+  const { lang, logoUrl } = useLanguage();
+  const p = pageText(lang).scope;
+  const texts = scopeTexts(lang);
+  const questions = scopeQuestions(lang);
   const company = useQuery({
     queryKey: ["public-company-identity"],
     queryFn: () => getPublicCompanyIdentity(),
@@ -99,17 +103,17 @@ function ScopePage() {
   const send = useMutation({
     mutationFn: () =>
       submitScopeForm({
-        data: { ...form, answers, comments, lang: "pt" },
+        data: { ...form, answers, comments, lang },
       }),
     onSuccess: (res) => {
       if (!res.ok) {
-        toast.error("Não foi possível enviar. Tente novamente.");
+        toast.error(p.sendError);
         return;
       }
       setSent(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-    onError: () => toast.error("Verifique os campos obrigatórios e tente novamente."),
+    onError: () => toast.error(p.fieldError),
   });
 
   const emailInvalid = form.email.trim().length > 0 && !isValidEmail(form.email);
@@ -119,7 +123,7 @@ function ScopePage() {
     form.respondent_name.trim().length < 2 ||
     !isValidEmail(form.email) ||
     phoneInvalid ||
-    SCOPE_QUESTIONS.some((q) => !answers[q.id]);
+    questions.some((q) => !answers[q.id]);
 
   return (
     <div className="min-h-screen bg-secondary/30">
@@ -129,7 +133,7 @@ function ScopePage() {
             <img src={logoUrl} alt="Liberato Consulting" className="h-10 w-auto" />
           </Link>
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-            Escopo inicial
+            {p.eyebrow}
           </span>
         </div>
       </header>
@@ -138,25 +142,22 @@ function ScopePage() {
         {sent ? (
           <div className="rounded-2xl border border-border bg-background p-8 text-center shadow-sm">
             <CheckCircle2 className="mx-auto size-10 text-accent" />
-            <h1 className="mt-4 font-display text-2xl font-bold">Recebemos suas respostas!</h1>
+            <h1 className="mt-4 font-display text-2xl font-bold">{p.sentTitle}</h1>
             <p className="mt-3 text-sm text-muted-foreground">
-              Obrigado por compartilhar o contexto do seu projeto. Nossa equipe vai analisar as
-              informações e entrar em contato pelo e-mail informado.
+              {p.sentText}
             </p>
           </div>
         ) : (
           <>
-            <h1 className="font-display text-3xl font-bold">
-              Escopo inicial de necessidade do cliente
-            </h1>
-            <p className="mt-3 text-sm text-muted-foreground">{SCOPE_INTRO}</p>
-            <p className="mt-2 text-sm text-muted-foreground">{SCOPE_HELP}</p>
+            <h1 className="font-display text-3xl font-bold">{p.title}</h1>
+            <p className="mt-3 text-sm text-muted-foreground">{texts.intro}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{texts.help}</p>
 
             <section className="mt-8 rounded-2xl border border-border bg-background p-6 shadow-sm">
-              <h2 className="font-display text-lg font-semibold">Identificação do contato</h2>
+              <h2 className="font-display text-lg font-semibold">{p.contactTitle}</h2>
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 <div>
-                  <Label htmlFor="company">Empresa *</Label>
+                  <Label htmlFor="company">{p.company}</Label>
                   <Input
                     id="company"
                     value={form.company}
@@ -164,7 +165,7 @@ function ScopePage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="name">Nome de quem responde *</Label>
+                  <Label htmlFor="name">{p.name}</Label>
                   <Input
                     id="name"
                     value={form.respondent_name}
@@ -172,7 +173,7 @@ function ScopePage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="role">Cargo</Label>
+                  <Label htmlFor="role">{p.role}</Label>
                   <Input
                     id="role"
                     value={form.respondent_role}
@@ -180,7 +181,7 @@ function ScopePage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="email">E-mail *</Label>
+                  <Label htmlFor="email">{p.email}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -193,12 +194,12 @@ function ScopePage() {
                   />
                   {emailInvalid ? (
                     <span className="mt-1 block text-xs text-destructive">
-                      Informe um e-mail válido, por exemplo nome@empresa.com.br.
+                      {p.emailError}
                     </span>
                   ) : null}
                 </div>
                 <div>
-                  <Label htmlFor="phone">Celular *</Label>
+                  <Label htmlFor="phone">{p.phone}</Label>
                   <Input
                     id="phone"
                     type="tel"
@@ -224,8 +225,8 @@ function ScopePage() {
             </section>
 
             <section className="mt-6 space-y-4">
-              <h2 className="font-display text-lg font-semibold">Perguntas essenciais</h2>
-              {SCOPE_QUESTIONS.map((q) => (
+              <h2 className="font-display text-lg font-semibold">{p.questionsTitle}</h2>
+              {questions.map((q) => (
                 <div
                   key={q.id}
                   className="rounded-2xl border border-border bg-background p-6 shadow-sm"
@@ -235,7 +236,7 @@ function ScopePage() {
                   </p>
                   <div className="mt-2 flex items-start gap-2">
                     <p className="font-medium">{q.question}</p>
-                    <QuestionHelp text={q.purpose} />
+                    <QuestionHelp text={q.purpose} label={p.helpAria} />
                   </div>
                   {q.hint ? (
                     <p className="mt-1 text-xs text-muted-foreground/80">{q.hint}</p>
@@ -264,7 +265,7 @@ function ScopePage() {
                   {q.dateWhen && answers[q.id] === q.dateWhen ? (
                     <div className="mt-4">
                       <Label htmlFor={`d-${q.id}`} className="text-xs text-muted-foreground">
-                        Informe a data limite
+                        {p.dateLabel}
                       </Label>
                       <Input
                         id={`d-${q.id}`}
@@ -279,7 +280,7 @@ function ScopePage() {
                   ) : null}
                   <div className="mt-4">
                     <Label htmlFor={`c-${q.id}`} className="text-xs text-muted-foreground">
-                      Comentários (opcional)
+                      {p.comments}
                     </Label>
                     <Textarea
                       id={`c-${q.id}`}
@@ -293,7 +294,7 @@ function ScopePage() {
             </section>
 
             <p className="mt-6 rounded-xl bg-secondary p-4 text-sm text-muted-foreground">
-              {SCOPE_NOTE}
+              {texts.note}
             </p>
 
             <Button
@@ -301,12 +302,11 @@ function ScopePage() {
               disabled={missing || send.isPending}
               onClick={() => send.mutate()}
             >
-              {send.isPending ? "Enviando…" : "Enviar respostas"}
+              {send.isPending ? p.sending : p.submit}
             </Button>
             {missing ? (
               <p className="mt-2 text-xs text-muted-foreground">
-                Preencha empresa, nome, e-mail válido, celular com DDI e todas as 10 perguntas
-                para enviar.
+                {p.missing}
               </p>
             ) : null}
           </>
@@ -316,10 +316,10 @@ function ScopePage() {
       <section className="border-t border-border bg-background">
         <div className="mx-auto max-w-3xl px-6 py-10 text-center">
           <p className="font-display text-lg font-semibold">
-            Receba ferramentas gratuitas de gestão
+            {p.freeTitle}
           </p>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {FREE_LINKS.map(({ href, label, icon: Icon }) => (
+            {FREE_LINKS.map(({ href, key, icon: Icon }) => (
               <a
                 key={href}
                 href={href}
@@ -330,7 +330,7 @@ function ScopePage() {
                 <span className="inline-flex size-12 items-center justify-center rounded-full bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
                   <Icon className="size-5" />
                 </span>
-                <span className="text-sm font-medium">{label}</span>
+                <span className="text-sm font-medium">{p[key]}</span>
               </a>
             ))}
           </div>
