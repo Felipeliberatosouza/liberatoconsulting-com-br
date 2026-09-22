@@ -25,7 +25,7 @@ const NAV: Array<{ to: string; label: string; exact?: boolean }> = [
   { to: "/admin/applications", label: "Candidaturas" },
   { to: "/admin/empresa", label: "Dados da consultoria" },
   { to: "/admin/servicos", label: "Cadastro de serviços" },
-  { to: "/admin/precificacao", label: "Precificação e orçamentos" },
+  { to: "/admin/projetos", label: "Projetos" },
   { to: "/admin/institucional", label: "Site institucional" },
   { to: "/admin/ferramentas", label: "Ferramentas gratuitas" },
   { to: "/admin/ferramentas-clientes", label: "Clientes de materiais" },

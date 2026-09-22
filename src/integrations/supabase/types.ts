@@ -1479,6 +1479,131 @@ export type Database = {
         }
         Relationships: []
       }
+      project_diagnostic_templates: {
+        Row: {
+          created_at: string
+          id: string
+          questions: Json
+          service_slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          questions?: Json
+          service_slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          questions?: Json
+          service_slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      project_diagnostics: {
+        Row: {
+          answers: Json
+          budget: Json
+          client_name: string
+          consultant_notes: Json
+          created_at: string
+          id: string
+          modules: Json
+          scope_submission_id: string | null
+          scores: Json
+          service_slug: string
+          service_title: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          answers?: Json
+          budget?: Json
+          client_name?: string
+          consultant_notes?: Json
+          created_at?: string
+          id?: string
+          modules?: Json
+          scope_submission_id?: string | null
+          scores?: Json
+          service_slug?: string
+          service_title?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          answers?: Json
+          budget?: Json
+          client_name?: string
+          consultant_notes?: Json
+          created_at?: string
+          id?: string
+          modules?: Json
+          scope_submission_id?: string | null
+          scores?: Json
+          service_slug?: string
+          service_title?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_diagnostics_scope_submission_id_fkey"
+            columns: ["scope_submission_id"]
+            isOneToOne: false
+            referencedRelation: "project_scope_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_scope_submissions: {
+        Row: {
+          answers: Json
+          comments: Json
+          company: string
+          created_at: string
+          email: string
+          id: string
+          lang: string
+          notes: string
+          phone: string
+          respondent_name: string
+          respondent_role: string
+          updated_at: string
+        }
+        Insert: {
+          answers?: Json
+          comments?: Json
+          company?: string
+          created_at?: string
+          email?: string
+          id?: string
+          lang?: string
+          notes?: string
+          phone?: string
+          respondent_name?: string
+          respondent_role?: string
+          updated_at?: string
+        }
+        Update: {
+          answers?: Json
+          comments?: Json
+          company?: string
+          created_at?: string
+          email?: string
+          id?: string
+          lang?: string
+          notes?: string
+          phone?: string
+          respondent_name?: string
+          respondent_role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       quotes: {
         Row: {
           client_name: string

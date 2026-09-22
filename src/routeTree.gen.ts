@@ -18,6 +18,7 @@ import { Route as BrasilRouteImport } from './routes/brasil'
 import { Route as CareersRouteImport } from './routes/careers'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContentRouteImport } from './routes/content'
+import { Route as EscopoinicialRouteImport } from './routes/escopoinicial'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
 import { Route as GuiaGestaoRouteImport } from './routes/guia-gestao'
 import { Route as NewslettersRouteImport } from './routes/newsletters'
@@ -52,6 +53,7 @@ import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
 import { Route as AdminPrecificacaoRouteImport } from './routes/admin.precificacao'
+import { Route as AdminProjetosRouteImport } from './routes/admin.projetos'
 import { Route as AdminPropagandaRouteImport } from './routes/admin.propaganda'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as AdminServicosRouteImport } from './routes/admin.servicos'
@@ -67,6 +69,8 @@ import { Route as NewsletterSlugRouteImport } from './routes/newsletter.$slug'
 import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
+import { Route as AdminProjetosDiagnosticoRouteImport } from './routes/admin.projetos_.diagnostico'
+import { Route as AdminProjetosEscoposRouteImport } from './routes/admin.projetos_.escopos'
 import { Route as ApiPublicBulletinWeeklyRouteImport } from './routes/api/public/bulletin-weekly'
 import { Route as ApiPublicCrmBirthdaysRouteImport } from './routes/api/public/crm-birthdays'
 import { Route as ApiPublicIndicatorsRefreshRouteImport } from './routes/api/public/indicators-refresh'
@@ -121,6 +125,11 @@ const ContactRoute = ContactRouteImport.update({
 const ContentRoute = ContentRouteImport.update({
   id: '/content',
   path: '/content',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EscopoinicialRoute = EscopoinicialRouteImport.update({
+  id: '/escopoinicial',
+  path: '/escopoinicial',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FerramentasRoute = FerramentasRouteImport.update({
@@ -294,6 +303,11 @@ const AdminPrecificacaoRoute = AdminPrecificacaoRouteImport.update({
   path: '/admin/precificacao',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminProjetosRoute = AdminProjetosRouteImport.update({
+  id: '/admin/projetos',
+  path: '/admin/projetos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminPropagandaRoute = AdminPropagandaRouteImport.update({
   id: '/admin/propaganda',
   path: '/admin/propaganda',
@@ -369,6 +383,17 @@ const ServicesSlugRoute = ServicesSlugRouteImport.update({
   path: '/services/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminProjetosDiagnosticoRoute =
+  AdminProjetosDiagnosticoRouteImport.update({
+    id: '/admin/projetos_/diagnostico',
+    path: '/admin/projetos/diagnostico',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AdminProjetosEscoposRoute = AdminProjetosEscoposRouteImport.update({
+  id: '/admin/projetos_/escopos',
+  path: '/admin/projetos/escopos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicBulletinWeeklyRoute = ApiPublicBulletinWeeklyRouteImport.update({
   id: '/api/public/bulletin-weekly',
   path: '/api/public/bulletin-weekly',
@@ -434,6 +459,7 @@ export interface FileRoutesByFullPath {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/escopoinicial': typeof EscopoinicialRoute
   '/ferramentas': typeof FerramentasRoute
   '/guia-gestao': typeof GuiaGestaoRoute
   '/newsletters': typeof NewslettersRoute
@@ -467,6 +493,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/precificacao': typeof AdminPrecificacaoRoute
+  '/admin/projetos': typeof AdminProjetosRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/servicos': typeof AdminServicosRoute
@@ -483,6 +510,8 @@ export interface FileRoutesByFullPath {
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/admin/projetos/diagnostico': typeof AdminProjetosDiagnosticoRoute
+  '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
@@ -504,6 +533,7 @@ export interface FileRoutesByTo {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/escopoinicial': typeof EscopoinicialRoute
   '/ferramentas': typeof FerramentasRoute
   '/guia-gestao': typeof GuiaGestaoRoute
   '/newsletters': typeof NewslettersRoute
@@ -537,6 +567,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/precificacao': typeof AdminPrecificacaoRoute
+  '/admin/projetos': typeof AdminProjetosRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/servicos': typeof AdminServicosRoute
@@ -553,6 +584,8 @@ export interface FileRoutesByTo {
   '/services/$slug': typeof ServicesSlugRoute
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
+  '/admin/projetos/diagnostico': typeof AdminProjetosDiagnosticoRoute
+  '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
@@ -575,6 +608,7 @@ export interface FileRoutesById {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/escopoinicial': typeof EscopoinicialRoute
   '/ferramentas': typeof FerramentasRoute
   '/guia-gestao': typeof GuiaGestaoRoute
   '/newsletters': typeof NewslettersRoute
@@ -608,6 +642,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/precificacao': typeof AdminPrecificacaoRoute
+  '/admin/projetos': typeof AdminProjetosRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/servicos': typeof AdminServicosRoute
@@ -624,6 +659,8 @@ export interface FileRoutesById {
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/admin/projetos_/diagnostico': typeof AdminProjetosDiagnosticoRoute
+  '/admin/projetos_/escopos': typeof AdminProjetosEscoposRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
@@ -647,6 +684,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/escopoinicial'
     | '/ferramentas'
     | '/guia-gestao'
     | '/newsletters'
@@ -680,6 +718,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/newsletter'
     | '/admin/precificacao'
+    | '/admin/projetos'
     | '/admin/propaganda'
     | '/admin/reset-password'
     | '/admin/servicos'
@@ -696,6 +735,8 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/admin/'
     | '/services/'
+    | '/admin/projetos/diagnostico'
+    | '/admin/projetos/escopos'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
@@ -717,6 +758,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/escopoinicial'
     | '/ferramentas'
     | '/guia-gestao'
     | '/newsletters'
@@ -750,6 +792,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/newsletter'
     | '/admin/precificacao'
+    | '/admin/projetos'
     | '/admin/propaganda'
     | '/admin/reset-password'
     | '/admin/servicos'
@@ -766,6 +809,8 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/admin'
     | '/services'
+    | '/admin/projetos/diagnostico'
+    | '/admin/projetos/escopos'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
@@ -787,6 +832,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/escopoinicial'
     | '/ferramentas'
     | '/guia-gestao'
     | '/newsletters'
@@ -820,6 +866,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/newsletter'
     | '/admin/precificacao'
+    | '/admin/projetos'
     | '/admin/propaganda'
     | '/admin/reset-password'
     | '/admin/servicos'
@@ -836,6 +883,8 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/admin/'
     | '/services/'
+    | '/admin/projetos_/diagnostico'
+    | '/admin/projetos_/escopos'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
@@ -858,6 +907,7 @@ export interface RootRouteChildren {
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   ContentRoute: typeof ContentRoute
+  EscopoinicialRoute: typeof EscopoinicialRoute
   FerramentasRoute: typeof FerramentasRoute
   GuiaGestaoRoute: typeof GuiaGestaoRoute
   NewslettersRoute: typeof NewslettersRoute
@@ -891,6 +941,7 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AdminNewsletterRoute: typeof AdminNewsletterRoute
   AdminPrecificacaoRoute: typeof AdminPrecificacaoRoute
+  AdminProjetosRoute: typeof AdminProjetosRoute
   AdminPropagandaRoute: typeof AdminPropagandaRoute
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
   AdminServicosRoute: typeof AdminServicosRoute
@@ -907,6 +958,8 @@ export interface RootRouteChildren {
   ServicesSlugRoute: typeof ServicesSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
+  AdminProjetosDiagnosticoRoute: typeof AdminProjetosDiagnosticoRoute
+  AdminProjetosEscoposRoute: typeof AdminProjetosEscoposRoute
   ApiPublicBulletinWeeklyRoute: typeof ApiPublicBulletinWeeklyRoute
   ApiPublicCrmBirthdaysRoute: typeof ApiPublicCrmBirthdaysRoute
   ApiPublicIndicatorsRefreshRoute: typeof ApiPublicIndicatorsRefreshRoute
@@ -982,6 +1035,13 @@ declare module '@tanstack/react-router' {
       path: '/content'
       fullPath: '/content'
       preLoaderRoute: typeof ContentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/escopoinicial': {
+      id: '/escopoinicial'
+      path: '/escopoinicial'
+      fullPath: '/escopoinicial'
+      preLoaderRoute: typeof EscopoinicialRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ferramentas': {
@@ -1222,6 +1282,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPrecificacaoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/projetos': {
+      id: '/admin/projetos'
+      path: '/admin/projetos'
+      fullPath: '/admin/projetos'
+      preLoaderRoute: typeof AdminProjetosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/propaganda': {
       id: '/admin/propaganda'
       path: '/admin/propaganda'
@@ -1327,6 +1394,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/projetos_/diagnostico': {
+      id: '/admin/projetos_/diagnostico'
+      path: '/admin/projetos/diagnostico'
+      fullPath: '/admin/projetos/diagnostico'
+      preLoaderRoute: typeof AdminProjetosDiagnosticoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/projetos_/escopos': {
+      id: '/admin/projetos_/escopos'
+      path: '/admin/projetos/escopos'
+      fullPath: '/admin/projetos/escopos'
+      preLoaderRoute: typeof AdminProjetosEscoposRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/bulletin-weekly': {
       id: '/api/public/bulletin-weekly'
       path: '/api/public/bulletin-weekly'
@@ -1410,6 +1491,7 @@ const rootRouteChildren: RootRouteChildren = {
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   ContentRoute: ContentRoute,
+  EscopoinicialRoute: EscopoinicialRoute,
   FerramentasRoute: FerramentasRoute,
   GuiaGestaoRoute: GuiaGestaoRoute,
   NewslettersRoute: NewslettersRoute,
@@ -1443,6 +1525,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AdminNewsletterRoute: AdminNewsletterRoute,
   AdminPrecificacaoRoute: AdminPrecificacaoRoute,
+  AdminProjetosRoute: AdminProjetosRoute,
   AdminPropagandaRoute: AdminPropagandaRoute,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
   AdminServicosRoute: AdminServicosRoute,
@@ -1459,6 +1542,8 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesSlugRoute: ServicesSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
+  AdminProjetosDiagnosticoRoute: AdminProjetosDiagnosticoRoute,
+  AdminProjetosEscoposRoute: AdminProjetosEscoposRoute,
   ApiPublicBulletinWeeklyRoute: ApiPublicBulletinWeeklyRoute,
   ApiPublicCrmBirthdaysRoute: ApiPublicCrmBirthdaysRoute,
   ApiPublicIndicatorsRefreshRoute: ApiPublicIndicatorsRefreshRoute,

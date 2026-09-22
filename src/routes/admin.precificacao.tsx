@@ -39,7 +39,14 @@ import {
   type PricingSettings,
 } from "@/lib/pricing-catalog";
 
+const TABS = ["rates", "stages", "quote", "history"] as const;
+type PricingTab = (typeof TABS)[number];
+
 export const Route = createFileRoute("/admin/precificacao")({
+  validateSearch: (search: Record<string, unknown>): { aba?: PricingTab } => {
+    const aba = String(search["aba"] ?? "");
+    return TABS.includes(aba as PricingTab) ? { aba: aba as PricingTab } : {};
+  },
   head: () => ({
     meta: [
       { title: "Precificação e orçamentos — Painel Liberato Consulting" },
@@ -73,6 +80,7 @@ function Num({
 }
 
 function PricingPage() {
+  const { aba } = Route.useSearch();
   const [settings, setSettings] = useState<PricingSettings>(DEFAULT_PRICING);
   const [slug, setSlug] = useState("");
   const [activities, setActivities] = useState<PricedActivity[]>([]);
@@ -247,11 +255,11 @@ function PricingPage() {
 
   return (
     <AdminShell
-      title="Precificação e orçamentos"
+      title="Projetos — Organização, precificação e orçamento"
       description="Defina o valor do homem-hora, as etapas de cada serviço e gere o orçamento com cronograma em PDF para enviar ao cliente. O valor calculado alimenta automaticamente os preços do Cadastro de serviços."
       requireAdmin
     >
-      <Tabs defaultValue="rates">
+      <Tabs defaultValue={aba ?? "rates"}>
         <TabsList className="mb-6 flex-wrap">
           <TabsTrigger value="rates">Valor do homem-hora</TabsTrigger>
           <TabsTrigger value="stages">Etapas por serviço</TabsTrigger>

@@ -36,6 +36,8 @@ export const getPublicCompanyAddress = createServerFn({ method: "GET" }).handler
 
 export type PublicCompanyIdentity = {
   legalName: string;
+  tradeName: string;
+  website: string;
   cnpj: string;
   address: string;
   phone: string;
@@ -45,13 +47,21 @@ export type PublicCompanyIdentity = {
 /** Dados institucionais exibidos no rodapé (razão social, CNPJ, endereço e contatos). */
 export const getPublicCompanyIdentity = createServerFn({ method: "GET" }).handler(
   async (): Promise<PublicCompanyIdentity> => {
-    const empty: PublicCompanyIdentity = { legalName: "", cnpj: "", address: "", phone: "", email: "" };
+    const empty: PublicCompanyIdentity = {
+      legalName: "",
+      tradeName: "",
+      website: "",
+      cnpj: "",
+      address: "",
+      phone: "",
+      email: "",
+    };
     try {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       const { data } = await supabaseAdmin
         .from("company_profile")
         .select(
-          "trade_name, legal_name, cnpj, phone, email, address_street, address_number, address_complement, address_district, address_city, address_state, address_zip, address_country",
+          "trade_name, legal_name, website, cnpj, phone, email, address_street, address_number, address_complement, address_district, address_city, address_state, address_zip, address_country",
         )
         .limit(1)
         .maybeSingle();
@@ -72,6 +82,8 @@ export const getPublicCompanyIdentity = createServerFn({ method: "GET" }).handle
         .join(" — ");
       return {
         legalName: val("legal_name") || val("trade_name"),
+        tradeName: val("trade_name") || val("legal_name"),
+        website: val("website"),
         cnpj: val("cnpj"),
         address,
         phone: val("phone"),
