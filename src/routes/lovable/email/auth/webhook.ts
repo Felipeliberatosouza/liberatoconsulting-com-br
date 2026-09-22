@@ -3,6 +3,7 @@ import { createAuthEmailHandler } from '@lovable.dev/email-js'
 import { createFileRoute } from '@tanstack/react-router'
 import { AuthSignupEmail } from '@/lib/email-templates/auth-signup'
 import { AuthActionEmail } from '@/lib/email-templates/auth-action'
+import type { AuthEmailKind } from '@/lib/auth-email-content.server'
 
 // Configuration
 const SITE_NAME = "Liberato Consulting"
@@ -22,6 +23,44 @@ async function loadBrand() {
   return { brandFooter, logoUrl: brand.logoUrl }
 }
 
+/**
+ * Todos os e-mails de conta usam o modelo em português salvo no painel
+ * (Configurações → E-mails automáticos), traduzido para o idioma do
+ * destinatário e renderizado com a moldura da marca.
+ */
+function accountEmail(kind: AuthEmailKind, fallback: { subject: string; body: string; button: string }) {
+  return async (data: { email: string; url: string }) => {
+    try {
+      const { getAuthEmailContent } = await import('@/lib/auth-email-content.server')
+      const content = await getAuthEmailContent(kind, data.email, data.url)
+      return {
+        subject: content.subject,
+        element: React.createElement(AuthSignupEmail, {
+          subject: content.subject,
+          body: content.body,
+          buttonLabel: content.buttonLabel,
+          confirmationUrl: data.url,
+          lang: content.htmlLang,
+          brandFooter: content.brandFooter,
+          logoUrl: content.logoUrl,
+        }),
+      }
+    } catch {
+      const brand = await loadBrand()
+      return {
+        subject: fallback.subject,
+        element: React.createElement(AuthSignupEmail, {
+          subject: fallback.subject,
+          body: fallback.body,
+          buttonLabel: fallback.button,
+          confirmationUrl: data.url,
+          ...brand,
+        }),
+      }
+    }
+  }
+}
+
 // The SDK handler owns verification, dispatch, and retry semantics; this file
 // owns only the email decisions: subjects, templates, and per-type props.
 export const Route = createFileRoute("/lovable/email/auth/webhook")({
@@ -34,49 +73,31 @@ export const Route = createFileRoute("/lovable/email/auth/webhook")({
           senderDomain: SENDER_DOMAIN,
           sendUrl: process.env['LOVABLE_SEND_URL'],
           emails: {
-            signup: {
+            signup: accountEmail('signup', {
               subject: 'Confirme seu cadastro na Liberato Consulting',
-              render: async (data) => {
-                try {
-                  const { getSignupEmailContent } = await import('@/lib/auth-email-content.server')
-                  const content = await getSignupEmailContent(data.email, data.url)
-                  return React.createElement(AuthSignupEmail, {
-                    subject: content.subject,
-                    body: content.body,
-                    buttonLabel: content.buttonLabel,
-                    confirmationUrl: data.url,
-                    lang: content.htmlLang,
-                    brandFooter: content.brandFooter,
-                    logoUrl: content.logoUrl,
-                  })
-                } catch {
-                  const brand = await loadBrand()
-                  return React.createElement(AuthSignupEmail, {
-                    subject: 'Confirme seu cadastro na Liberato Consulting',
-                    body: 'Recebemos seu cadastro. Para ativar sua conta, confirme seu e-mail usando o botão abaixo.',
-                    buttonLabel: 'Confirmar meu e-mail',
-                    confirmationUrl: data.url,
-                    ...brand,
-                  })
-                }
-              },
-            },
-            invite: {
+              body: 'Recebemos seu cadastro. Para ativar sua conta, confirme seu e-mail usando o botão abaixo.',
+              button: 'Confirmar meu e-mail',
+            }),
+            invite: accountEmail('invite', {
               subject: 'Convite para acessar a Liberato Consulting',
-              render: async (data) => React.createElement(AuthActionEmail, { kind: 'invite', confirmationUrl: data.url, ...(await loadBrand()) }),
-            },
-            magiclink: {
+              body: 'Você recebeu um convite para acessar a Liberato Consulting. Use o botão abaixo para aceitar o convite e criar sua conta.',
+              button: 'Aceitar convite',
+            }),
+            magiclink: accountEmail('magiclink', {
               subject: 'Seu link de acesso à Liberato Consulting',
-              render: async (data) => React.createElement(AuthActionEmail, { kind: 'magiclink', confirmationUrl: data.url, ...(await loadBrand()) }),
-            },
-            recovery: {
+              body: 'Use o botão abaixo para acessar sua conta. Por segurança, este link expira em breve.',
+              button: 'Acessar minha conta',
+            }),
+            recovery: accountEmail('recovery', {
               subject: 'Redefina sua senha da Liberato Consulting',
-              render: async (data) => React.createElement(AuthActionEmail, { kind: 'recovery', confirmationUrl: data.url, ...(await loadBrand()) }),
-            },
-            email_change: {
+              body: 'Recebemos uma solicitação para redefinir sua senha. Use o botão abaixo para escolher uma nova senha.',
+              button: 'Redefinir minha senha',
+            }),
+            email_change: accountEmail('email_change', {
               subject: 'Confirme a alteração do seu e-mail',
-              render: async (data) => React.createElement(AuthActionEmail, { kind: 'email_change', confirmationUrl: data.url, ...(await loadBrand()) }),
-            },
+              body: 'Recebemos uma solicitação para alterar o e-mail da sua conta. Use o botão abaixo para confirmar a mudança.',
+              button: 'Confirmar alteração',
+            }),
             reauthentication: {
               subject: 'Confirme sua identidade',
               render: async (data) => React.createElement(AuthActionEmail, { kind: 'reauthentication', token: data.token ?? '', ...(await loadBrand()) }),

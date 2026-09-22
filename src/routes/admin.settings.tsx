@@ -63,6 +63,16 @@ const LINKS = [
   { to: "/admin/hero", title: "Carrossel da página inicial", text: "Imagens e frases dos banners." },
 ];
 
+/** Rótulo do botão mostrado na pré-visualização de cada modelo. */
+const PREVIEW_BUTTONS: Record<string, string | undefined> = {
+  tools_welcome: "Baixar material",
+  auth_signup: "Confirmar meu e-mail",
+  auth_recovery: "Redefinir minha senha",
+  auth_magiclink: "Acessar minha conta",
+  auth_invite: "Aceitar convite",
+  auth_email_change: "Confirmar alteração",
+};
+
 const input =
   "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
 
@@ -326,12 +336,7 @@ function EmailTemplatesBlock() {
                     body: open === t.id ? draft.body : t.body,
                     identity: identityQ.data ?? undefined,
                     logoUrl: brandingQ.data?.branding?.logoUrl,
-                    buttonLabel:
-                      t.slug === "tools_welcome"
-                        ? "Baixar material"
-                        : t.slug === "auth_signup"
-                          ? "Confirmar meu e-mail"
-                          : undefined,
+                    buttonLabel: PREVIEW_BUTTONS[t.slug],
                   })}
                 />
                 <p className="mt-2 text-xs text-muted-foreground">
