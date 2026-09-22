@@ -8,8 +8,17 @@ export type ScopeQuestion = {
   index: number;
   theme: string;
   question: string;
+  /** Texto do ícone de ajuda (aparece ao passar o mouse). */
+  purpose: string;
+  /** Orientação curta exibida abaixo da pergunta. */
+  hint?: string;
+  /** Abre campo de data quando a opção escolhida for esta. */
+  dateWhen?: string;
   options: string[];
 };
+
+export const MULTI_HINT =
+  "Assinale a principal opção de acordo com sua necessidade e, se achar importante, descreva em Comentários outras opções.";
 
 export const SCOPE_INTRO =
   "Objetivo: entender rapidamente a sua necessidade para preparar uma proposta adequada. O preenchimento leva de 3 a 5 minutos.";
@@ -23,6 +32,8 @@ export const SCOPE_NOTE =
 export const SCOPE_QUESTIONS: ScopeQuestion[] = [
   {
     id: "q1",
+    purpose: "Entender o foco central do trabalho para orientar a abordagem da consultoria.",
+    hint: MULTI_HINT,
     index: 1,
     theme: "Objetivo",
     question: "Qual é o principal objetivo da consultoria?",
@@ -37,6 +48,8 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
   },
   {
     id: "q2",
+    purpose: "Definir o entregável principal que será usado para tomar decisão.",
+    hint: MULTI_HINT,
     index: 2,
     theme: "Resultado esperado",
     question: "Qual resultado principal você espera receber ao final?",
@@ -51,6 +64,8 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
   },
   {
     id: "q3",
+    purpose: "Situar o momento da empresa ou da oferta e o ponto de partida do projeto.",
+    hint: MULTI_HINT,
     index: 3,
     theme: "Empresa e oferta",
     question: "Qual descrição melhor representa a empresa ou serviço neste momento?",
@@ -65,6 +80,8 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
   },
   {
     id: "q4",
+    purpose: "Delimitar o público-alvo que será estudado ou abordado.",
+    hint: MULTI_HINT,
     index: 4,
     theme: "Cliente-alvo",
     question: "Quem é o principal público ou perfil de empresa que se pretende atender?",
@@ -79,6 +96,7 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
   },
   {
     id: "q5",
+    purpose: "Dimensionar a abrangência geográfica e o esforço de coleta de dados.",
     index: 5,
     theme: "Abrangência",
     question: "Qual será a abrangência geográfica inicial?",
@@ -92,6 +110,8 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
   },
   {
     id: "q6",
+    purpose: "Avaliar a necessidade de pesquisa primária (entrevistas ou survey) e seu custo.",
+    hint: "Se tiver uma amostra que deseja (número de respondentes), sinalize em Comentários.",
     index: 6,
     theme: "Pesquisa com o mercado",
     question: "Qual nível de contato direto com o mercado é esperado?",
@@ -106,6 +126,7 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
   },
   {
     id: "q7",
+    purpose: "Verificar se o projeto exige estimativa de mercado (TAM/SAM/SOM) e por qual método.",
     index: 7,
     theme: "Dimensionamento",
     question: "É necessário estimar o tamanho do mercado?",
@@ -119,6 +140,8 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
   },
   {
     id: "q8",
+    purpose: "Ajustar o formato dos entregáveis ao uso que será dado ao resultado.",
+    hint: MULTI_HINT,
     index: 8,
     theme: "Entregáveis",
     question: "Qual formato é mais importante para apresentar o resultado?",
@@ -133,6 +156,8 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
   },
   {
     id: "q9",
+    purpose: "Planejar o cronograma e a disponibilidade da equipe.",
+    dateWhen: "Tenho uma data fixa",
     index: 9,
     theme: "Prazo",
     question: "Quando o trabalho precisa estar concluído?",
@@ -147,6 +172,8 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
   },
   {
     id: "q10",
+    purpose: "Ajustar o escopo e o formato de contratação à capacidade de investimento.",
+    hint: "Se achar interessante, indique no campo Comentários o orçamento que tem para esse projeto.",
     index: 10,
     theme: "Investimento",
     question: "Como está a definição do investimento para este trabalho?",

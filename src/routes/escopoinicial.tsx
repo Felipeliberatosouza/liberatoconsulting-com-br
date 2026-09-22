@@ -1,17 +1,30 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { BookOpen, FileText, Mail, Newspaper, CheckCircle2 } from "lucide-react";
+import { BookOpen, FileText, HelpCircle, Mail, Newspaper, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useLanguage } from "@/i18n";
 import { getPublicCompanyIdentity } from "@/lib/company-public.functions";
 import { submitScopeForm } from "@/lib/projects.functions";
 import { SCOPE_HELP, SCOPE_INTRO, SCOPE_NOTE, SCOPE_QUESTIONS } from "@/lib/scope-form";
+import {
+  formatPhone,
+  isValidEmail,
+  isValidPhone,
+  PHONE_ERROR,
+  PHONE_PLACEHOLDER,
+} from "@/lib/validation";
 
 export const Route = createFileRoute("/escopoinicial")({
   head: () => ({
@@ -35,12 +48,33 @@ export const Route = createFileRoute("/escopoinicial")({
   component: ScopePage,
 });
 
+const SITE = "https://liberatoconsulting.com.br";
+
 const FREE_LINKS = [
-  { to: "/guia-gestao", label: "Guia de Gestão Completa", icon: BookOpen },
-  { to: "/newsletters", label: "Newsletter", icon: Mail },
-  { to: "/content", label: "Artigos", icon: FileText },
-  { to: "/boletins", label: "Boletim Semanal", icon: Newspaper },
+  { href: `${SITE}/ferramentas`, label: "Guia de Gestão Completa", icon: BookOpen },
+  { href: `${SITE}/newsletters`, label: "Newsletter", icon: Mail },
+  { href: `${SITE}/content`, label: "Artigos", icon: FileText },
+  { href: `${SITE}/boletins`, label: "Boletim Semanal", icon: Newspaper },
 ] as const;
+
+function QuestionHelp({ text }: { text: string }) {
+  return (
+    <TooltipProvider delayDuration={100}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            aria-label="Objetivo da pergunta"
+            className="text-muted-foreground transition-colors hover:text-accent"
+          >
+            <HelpCircle className="size-4" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-xs text-xs leading-5">{text}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
 
 function ScopePage() {
   const { logoUrl } = useLanguage();
@@ -78,10 +112,13 @@ function ScopePage() {
     onError: () => toast.error("Verifique os campos obrigatórios e tente novamente."),
   });
 
+  const emailInvalid = form.email.trim().length > 0 && !isValidEmail(form.email);
+  const phoneInvalid = !isValidPhone(form.phone);
   const missing =
     form.company.trim().length < 2 ||
     form.respondent_name.trim().length < 2 ||
-    !form.email.includes("@") ||
+    !isValidEmail(form.email) ||
+    phoneInvalid ||
     SCOPE_QUESTIONS.some((q) => !answers[q.id]);
 
   return (
@@ -148,16 +185,40 @@ function ScopePage() {
                     id="email"
                     type="email"
                     value={form.email}
+                    aria-invalid={emailInvalid}
+                    className={
+                      emailInvalid ? "border-destructive ring-1 ring-destructive" : undefined
+                    }
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                   />
+                  {emailInvalid ? (
+                    <span className="mt-1 block text-xs text-destructive">
+                      Informe um e-mail válido, por exemplo nome@empresa.com.br.
+                    </span>
+                  ) : null}
                 </div>
                 <div>
-                  <Label htmlFor="phone">Celular</Label>
+                  <Label htmlFor="phone">Celular *</Label>
                   <Input
                     id="phone"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    maxLength={25}
+                    placeholder={PHONE_PLACEHOLDER}
                     value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    aria-invalid={phoneInvalid && form.phone.trim().length > 0}
+                    className={
+                      phoneInvalid && form.phone.trim().length > 0
+                        ? "border-destructive ring-1 ring-destructive"
+                        : undefined
+                    }
+                    onFocus={() => !form.phone && setForm({ ...form, phone: "+55" })}
+                    onChange={(e) => setForm({ ...form, phone: formatPhone(e.target.value) })}
                   />
+                  {phoneInvalid && form.phone.trim().length > 0 ? (
+                    <span className="mt-1 block text-xs text-destructive">{PHONE_ERROR}</span>
+                  ) : null}
                 </div>
               </div>
             </section>
@@ -172,7 +233,13 @@ function ScopePage() {
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">
                     {q.index}. {q.theme}
                   </p>
-                  <p className="mt-2 font-medium">{q.question}</p>
+                  <div className="mt-2 flex items-start gap-2">
+                    <p className="font-medium">{q.question}</p>
+                    <QuestionHelp text={q.purpose} />
+                  </div>
+                  {q.hint ? (
+                    <p className="mt-1 text-xs text-muted-foreground/80">{q.hint}</p>
+                  ) : null}
                   <div className="mt-4 space-y-2">
                     {q.options.map((opt) => (
                       <label
@@ -194,6 +261,22 @@ function ScopePage() {
                       </label>
                     ))}
                   </div>
+                  {q.dateWhen && answers[q.id] === q.dateWhen ? (
+                    <div className="mt-4">
+                      <Label htmlFor={`d-${q.id}`} className="text-xs text-muted-foreground">
+                        Informe a data limite
+                      </Label>
+                      <Input
+                        id={`d-${q.id}`}
+                        type="date"
+                        className="mt-1 w-full sm:w-56"
+                        value={answers[`${q.id}_data`] ?? ""}
+                        onChange={(e) =>
+                          setAnswers({ ...answers, [`${q.id}_data`]: e.target.value })
+                        }
+                      />
+                    </div>
+                  ) : null}
                   <div className="mt-4">
                     <Label htmlFor={`c-${q.id}`} className="text-xs text-muted-foreground">
                       Comentários (opcional)
@@ -222,7 +305,8 @@ function ScopePage() {
             </Button>
             {missing ? (
               <p className="mt-2 text-xs text-muted-foreground">
-                Preencha empresa, nome, e-mail e todas as 10 perguntas para enviar.
+                Preencha empresa, nome, e-mail válido, celular com DDI e todas as 10 perguntas
+                para enviar.
               </p>
             ) : null}
           </>
@@ -235,17 +319,19 @@ function ScopePage() {
             Receba ferramentas gratuitas de gestão
           </p>
           <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {FREE_LINKS.map(({ to, label, icon: Icon }) => (
-              <Link
-                key={to}
-                to={to}
+            {FREE_LINKS.map(({ href, label, icon: Icon }) => (
+              <a
+                key={href}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group flex flex-col items-center gap-3 rounded-2xl border border-border p-5 transition-colors hover:border-accent hover:bg-accent/5"
               >
                 <span className="inline-flex size-12 items-center justify-center rounded-full bg-accent/10 text-accent transition-colors group-hover:bg-accent group-hover:text-accent-foreground">
                   <Icon className="size-5" />
                 </span>
                 <span className="text-sm font-medium">{label}</span>
-              </Link>
+              </a>
             ))}
           </div>
         </div>
