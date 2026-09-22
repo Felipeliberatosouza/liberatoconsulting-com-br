@@ -53,6 +53,7 @@ import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
 import { Route as AdminPrecificacaoRouteImport } from './routes/admin.precificacao'
+import { Route as AdminProjetosRouteImport } from './routes/admin.projetos'
 import { Route as AdminPropagandaRouteImport } from './routes/admin.propaganda'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as AdminServicosRouteImport } from './routes/admin.servicos'
@@ -68,6 +69,7 @@ import { Route as NewsletterSlugRouteImport } from './routes/newsletter.$slug'
 import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
+import { Route as AdminProjetosEscoposRouteImport } from './routes/admin.projetos_.escopos'
 import { Route as ApiPublicBulletinWeeklyRouteImport } from './routes/api/public/bulletin-weekly'
 import { Route as ApiPublicCrmBirthdaysRouteImport } from './routes/api/public/crm-birthdays'
 import { Route as ApiPublicIndicatorsRefreshRouteImport } from './routes/api/public/indicators-refresh'
@@ -300,6 +302,11 @@ const AdminPrecificacaoRoute = AdminPrecificacaoRouteImport.update({
   path: '/admin/precificacao',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminProjetosRoute = AdminProjetosRouteImport.update({
+  id: '/admin/projetos',
+  path: '/admin/projetos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminPropagandaRoute = AdminPropagandaRouteImport.update({
   id: '/admin/propaganda',
   path: '/admin/propaganda',
@@ -373,6 +380,11 @@ const ServicesIndexRoute = ServicesIndexRouteImport.update({
 const ServicesSlugRoute = ServicesSlugRouteImport.update({
   id: '/services/$slug',
   path: '/services/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminProjetosEscoposRoute = AdminProjetosEscoposRouteImport.update({
+  id: '/admin/projetos_/escopos',
+  path: '/admin/projetos/escopos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicBulletinWeeklyRoute = ApiPublicBulletinWeeklyRouteImport.update({
@@ -474,6 +486,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/precificacao': typeof AdminPrecificacaoRoute
+  '/admin/projetos': typeof AdminProjetosRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/servicos': typeof AdminServicosRoute
@@ -490,6 +503,7 @@ export interface FileRoutesByFullPath {
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
@@ -545,6 +559,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/precificacao': typeof AdminPrecificacaoRoute
+  '/admin/projetos': typeof AdminProjetosRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/servicos': typeof AdminServicosRoute
@@ -561,6 +576,7 @@ export interface FileRoutesByTo {
   '/services/$slug': typeof ServicesSlugRoute
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
+  '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
@@ -617,6 +633,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/precificacao': typeof AdminPrecificacaoRoute
+  '/admin/projetos': typeof AdminProjetosRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/servicos': typeof AdminServicosRoute
@@ -633,6 +650,7 @@ export interface FileRoutesById {
   '/services/$slug': typeof ServicesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/admin/projetos_/escopos': typeof AdminProjetosEscoposRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
@@ -690,6 +708,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/newsletter'
     | '/admin/precificacao'
+    | '/admin/projetos'
     | '/admin/propaganda'
     | '/admin/reset-password'
     | '/admin/servicos'
@@ -706,6 +725,7 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/admin/'
     | '/services/'
+    | '/admin/projetos/escopos'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
@@ -761,6 +781,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/newsletter'
     | '/admin/precificacao'
+    | '/admin/projetos'
     | '/admin/propaganda'
     | '/admin/reset-password'
     | '/admin/servicos'
@@ -777,6 +798,7 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/admin'
     | '/services'
+    | '/admin/projetos/escopos'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
@@ -832,6 +854,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/newsletter'
     | '/admin/precificacao'
+    | '/admin/projetos'
     | '/admin/propaganda'
     | '/admin/reset-password'
     | '/admin/servicos'
@@ -848,6 +871,7 @@ export interface FileRouteTypes {
     | '/services/$slug'
     | '/admin/'
     | '/services/'
+    | '/admin/projetos_/escopos'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
@@ -904,6 +928,7 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AdminNewsletterRoute: typeof AdminNewsletterRoute
   AdminPrecificacaoRoute: typeof AdminPrecificacaoRoute
+  AdminProjetosRoute: typeof AdminProjetosRoute
   AdminPropagandaRoute: typeof AdminPropagandaRoute
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
   AdminServicosRoute: typeof AdminServicosRoute
@@ -920,6 +945,7 @@ export interface RootRouteChildren {
   ServicesSlugRoute: typeof ServicesSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
+  AdminProjetosEscoposRoute: typeof AdminProjetosEscoposRoute
   ApiPublicBulletinWeeklyRoute: typeof ApiPublicBulletinWeeklyRoute
   ApiPublicCrmBirthdaysRoute: typeof ApiPublicCrmBirthdaysRoute
   ApiPublicIndicatorsRefreshRoute: typeof ApiPublicIndicatorsRefreshRoute
@@ -1242,6 +1268,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPrecificacaoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/projetos': {
+      id: '/admin/projetos'
+      path: '/admin/projetos'
+      fullPath: '/admin/projetos'
+      preLoaderRoute: typeof AdminProjetosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/propaganda': {
       id: '/admin/propaganda'
       path: '/admin/propaganda'
@@ -1345,6 +1378,13 @@ declare module '@tanstack/react-router' {
       path: '/services/$slug'
       fullPath: '/services/$slug'
       preLoaderRoute: typeof ServicesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/projetos_/escopos': {
+      id: '/admin/projetos_/escopos'
+      path: '/admin/projetos/escopos'
+      fullPath: '/admin/projetos/escopos'
+      preLoaderRoute: typeof AdminProjetosEscoposRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/bulletin-weekly': {
@@ -1464,6 +1504,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AdminNewsletterRoute: AdminNewsletterRoute,
   AdminPrecificacaoRoute: AdminPrecificacaoRoute,
+  AdminProjetosRoute: AdminProjetosRoute,
   AdminPropagandaRoute: AdminPropagandaRoute,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
   AdminServicosRoute: AdminServicosRoute,
@@ -1480,6 +1521,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesSlugRoute: ServicesSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
+  AdminProjetosEscoposRoute: AdminProjetosEscoposRoute,
   ApiPublicBulletinWeeklyRoute: ApiPublicBulletinWeeklyRoute,
   ApiPublicCrmBirthdaysRoute: ApiPublicCrmBirthdaysRoute,
   ApiPublicIndicatorsRefreshRoute: ApiPublicIndicatorsRefreshRoute,
