@@ -18,6 +18,7 @@ import { Route as BrasilRouteImport } from './routes/brasil'
 import { Route as CareersRouteImport } from './routes/careers'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContentRouteImport } from './routes/content'
+import { Route as EscopoinicialRouteImport } from './routes/escopoinicial'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
 import { Route as GuiaGestaoRouteImport } from './routes/guia-gestao'
 import { Route as NewslettersRouteImport } from './routes/newsletters'
@@ -121,6 +122,11 @@ const ContactRoute = ContactRouteImport.update({
 const ContentRoute = ContentRouteImport.update({
   id: '/content',
   path: '/content',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EscopoinicialRoute = EscopoinicialRouteImport.update({
+  id: '/escopoinicial',
+  path: '/escopoinicial',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FerramentasRoute = FerramentasRouteImport.update({
@@ -434,6 +440,7 @@ export interface FileRoutesByFullPath {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/escopoinicial': typeof EscopoinicialRoute
   '/ferramentas': typeof FerramentasRoute
   '/guia-gestao': typeof GuiaGestaoRoute
   '/newsletters': typeof NewslettersRoute
@@ -504,6 +511,7 @@ export interface FileRoutesByTo {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/escopoinicial': typeof EscopoinicialRoute
   '/ferramentas': typeof FerramentasRoute
   '/guia-gestao': typeof GuiaGestaoRoute
   '/newsletters': typeof NewslettersRoute
@@ -575,6 +583,7 @@ export interface FileRoutesById {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/escopoinicial': typeof EscopoinicialRoute
   '/ferramentas': typeof FerramentasRoute
   '/guia-gestao': typeof GuiaGestaoRoute
   '/newsletters': typeof NewslettersRoute
@@ -647,6 +656,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/escopoinicial'
     | '/ferramentas'
     | '/guia-gestao'
     | '/newsletters'
@@ -717,6 +727,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/escopoinicial'
     | '/ferramentas'
     | '/guia-gestao'
     | '/newsletters'
@@ -787,6 +798,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/escopoinicial'
     | '/ferramentas'
     | '/guia-gestao'
     | '/newsletters'
@@ -858,6 +870,7 @@ export interface RootRouteChildren {
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   ContentRoute: typeof ContentRoute
+  EscopoinicialRoute: typeof EscopoinicialRoute
   FerramentasRoute: typeof FerramentasRoute
   GuiaGestaoRoute: typeof GuiaGestaoRoute
   NewslettersRoute: typeof NewslettersRoute
@@ -982,6 +995,13 @@ declare module '@tanstack/react-router' {
       path: '/content'
       fullPath: '/content'
       preLoaderRoute: typeof ContentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/escopoinicial': {
+      id: '/escopoinicial'
+      path: '/escopoinicial'
+      fullPath: '/escopoinicial'
+      preLoaderRoute: typeof EscopoinicialRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ferramentas': {
@@ -1410,6 +1430,7 @@ const rootRouteChildren: RootRouteChildren = {
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   ContentRoute: ContentRoute,
+  EscopoinicialRoute: EscopoinicialRoute,
   FerramentasRoute: FerramentasRoute,
   GuiaGestaoRoute: GuiaGestaoRoute,
   NewslettersRoute: NewslettersRoute,
