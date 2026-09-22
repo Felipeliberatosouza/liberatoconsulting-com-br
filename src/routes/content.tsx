@@ -7,6 +7,7 @@ import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { seoPageMeta } from "@/lib/seo-meta";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
+import { pageText } from "@/lib/page-translations";
 import { READ_COUNT_BASE } from "@/lib/site-config";
 
 type ContentSearch = {
@@ -117,7 +118,7 @@ function ContentPage() {
       </AreaBannerSection>
 
       <section className="mx-auto max-w-7xl px-6 py-20">
-        <label className="mb-6 block max-w-xl text-sm font-medium">Pesquisar em todos os artigos publicados<input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Digite um tema, título ou autor" className="mt-2 w-full rounded-md border border-input bg-background px-4 py-3 outline-none focus:border-accent" /></label>
+        <label className="mb-6 block max-w-xl text-sm font-medium">{pageText(lang).misc.searchLabel}<input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={pageText(lang).misc.searchPlaceholder} className="mt-2 w-full rounded-md border border-input bg-background px-4 py-3 outline-none focus:border-accent" /></label>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setFilter("all")}

@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Linkedin, Youtube } from "lucide-react";
 import { useLanguage } from "@/i18n";
+import { pageText } from "@/lib/page-translations";
 import { getPublicCompanyIdentity } from "@/lib/company-public.functions";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { legal } from "@/i18n/legal";
@@ -159,7 +160,7 @@ export function SiteFooter() {
               to="/admin"
               className="text-ink-foreground/60 transition-colors hover:text-accent"
             >
-              Área administrativa
+              {pageText(lang).misc.adminArea}
             </Link>
           </div>
           {c?.legalName ? (
