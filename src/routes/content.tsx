@@ -7,6 +7,7 @@ import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { seoPageMeta } from "@/lib/seo-meta";
 import { breadcrumb, jsonLd, webPageSchema } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
+import { pageText } from "@/lib/page-translations";
 import { READ_COUNT_BASE } from "@/lib/site-config";
 
 type ContentSearch = {
