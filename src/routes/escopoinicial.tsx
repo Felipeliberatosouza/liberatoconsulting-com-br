@@ -261,6 +261,22 @@ function ScopePage() {
                       </label>
                     ))}
                   </div>
+                  {q.dateWhen && answers[q.id] === q.dateWhen ? (
+                    <div className="mt-4">
+                      <Label htmlFor={`d-${q.id}`} className="text-xs text-muted-foreground">
+                        Informe a data limite
+                      </Label>
+                      <Input
+                        id={`d-${q.id}`}
+                        type="date"
+                        className="mt-1 w-full sm:w-56"
+                        value={answers[`${q.id}_data`] ?? ""}
+                        onChange={(e) =>
+                          setAnswers({ ...answers, [`${q.id}_data`]: e.target.value })
+                        }
+                      />
+                    </div>
+                  ) : null}
                   <div className="mt-4">
                     <Label htmlFor={`c-${q.id}`} className="text-xs text-muted-foreground">
                       Comentários (opcional)
