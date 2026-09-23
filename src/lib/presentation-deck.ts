@@ -445,14 +445,14 @@ export async function prepareImage(src: string, removeBackground: boolean): Prom
           const a = px.data as unknown as number[];
           const at = (x: number, y: number) => (y * w + x) * 4;
           const corners: number[] = [at(0, 0), at(w - 1, 0), at(0, h - 1), at(w - 1, h - 1)];
-          const opaque = corners.every((i) => a[i + 3] > 240);
-          const c0 = corners[0] as number; const r0 = a[c0] as number, g0 = a[c0 + 1] as number, b0 = a[c0 + 2] as number;
-          const uniform = corners.every((i) => Math.abs(a[i] - r0) + Math.abs(a[i + 1] - g0) + Math.abs(a[i + 2] - b0) < 30);
+          const opaque = corners.every((i) => (a[i + 3] ?? 0) > 240);
+          const c0 = corners[0] as number; const r0 = (a[c0] ?? 0) as number, g0 = (a[c0 + 1] ?? 0) as number, b0 = (a[c0 + 2] ?? 0) as number;
+          const uniform = corners.every((i) => Math.abs((a[i] ?? 0) - r0) + Math.abs((a[i + 1] ?? 0) - g0) + Math.abs((a[i + 2] ?? 0) - b0) < 30);
           if (opaque && uniform) {
             for (let i = 0; i < a.length; i += 4) {
-              const dist = Math.abs(a[i] - r0) + Math.abs(a[i + 1] - g0) + Math.abs(a[i + 2] - b0);
-              if (dist < 36) a[i + 3] = 0;
-              else if (dist < 70) a[i + 3] = Math.round(a[i + 3] * ((dist - 36) / 34));
+              const dist = Math.abs((a[i] ?? 0) - r0) + Math.abs((a[i + 1] ?? 0) - g0) + Math.abs((a[i + 2] ?? 0) - b0);
+              if (dist < 36) (a[i + 3] ?? 0) = 0;
+              else if (dist < 70) (a[i + 3] ?? 0) = Math.round((a[i + 3] ?? 0) * ((dist - 36) / 34));
             }
             ctx.putImageData(px, 0, 0);
           }
