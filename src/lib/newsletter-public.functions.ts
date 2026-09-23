@@ -70,10 +70,10 @@ export const listRecentNewsletters = createServerFn({ method: "GET" }).handler(a
   const { publicClient } = await import("./admin.server");
   const { data, error } = await publicClient()
     .from("newsletter_campaigns")
-    .select("id, slug, subject, preheader, reference_date, published_at")
-    .not("published_at", "is", null)
-    .gte("published_at", since.toISOString())
-    .order("published_at", { ascending: false });
+    .select("id, slug, subject, preheader, reference_date, published_at, sent_at, created_at")
+    .or("published_at.not.is.null,status.eq.sent")
+    .gte("created_at", since.toISOString())
+    .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
   return data ?? [];
 });
@@ -86,7 +86,7 @@ export const listRecentBulletins = createServerFn({ method: "GET" }).handler(asy
   const { data, error } = await supabaseAdmin
     .from("bulletin_dispatches")
     .select("id, subject, date_label, created_at")
-    .eq("status", "sent")
+    .in("status", ["sent", "enviado"])
     .eq("is_test", false)
     .gte("created_at", since.toISOString())
     .order("created_at", { ascending: false });
