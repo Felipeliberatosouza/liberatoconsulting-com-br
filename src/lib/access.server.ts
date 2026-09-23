@@ -64,3 +64,15 @@ export async function queueChangeRequest(
   if (error) return { ok: false as const, error: error.message };
   return { ok: true as const, pending: true as const };
 }
+
+/** O usuário tem papel de administrador, mas ainda não concluiu a verificação em dois fatores? */
+export async function needsAdminMfa(context: Ctx): Promise<boolean> {
+  if (String(context.claims?.aal ?? "") === "aal2") return false;
+  const { data } = await context.supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", context.userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  return Boolean(data);
+}
