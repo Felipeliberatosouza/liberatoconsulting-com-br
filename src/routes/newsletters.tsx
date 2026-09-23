@@ -36,7 +36,7 @@ function NewslettersPage() {
             <article key={item.id} className="border-t-2 border-accent py-6">
               <p className="flex items-center gap-2 text-xs text-muted-foreground">
                 <CalendarDays className="size-4" />
-                {new Date(item.reference_date || item.published_at || "").toLocaleDateString(LANG_HTML[lang])}
+                {new Date(item.reference_date || item.published_at || item.sent_at || item.created_at).toLocaleDateString(LANG_HTML[lang])}
               </p>
               <h2 className="mt-3 text-xl font-bold">{item.subject}</h2>
               <p className="mt-3 text-sm text-muted-foreground">{item.preheader}</p>
