@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, ClipboardList, Copy, FileSpreadsheet, Receipt, Wallet } from "lucide-react";
+import { ArrowRight, ClipboardList, Copy, FileSpreadsheet, Presentation, Receipt, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
@@ -59,13 +59,13 @@ function ProjectsPage() {
     },
     {
       n: 4,
-      title: "Orçamento",
-      description: "Montagem e geração do orçamento em PDF para o cliente.",
+      title: "Apresentação e Orçamento",
+      description: "Orçamento em PDF e material de apresentação comercial personalizado.",
       icon: Receipt,
       to: "/admin/precificacao",
       search: { aba: "quote" } as never,
       badge: "",
-      items: ["Gerar orçamento"],
+      items: ["Gerar orçamento", "Material para Apresentação"],
     },
   ];
 
@@ -111,7 +111,23 @@ function ProjectsPage() {
         ))}
       </div>
 
-      <div className="mt-8 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-background p-5">
+      <div className="mt-8 flex flex-wrap items-center gap-3 rounded-2xl border border-accent/40 bg-accent/5 p-5">
+        <Presentation className="size-5 text-accent" />
+        <div className="mr-auto">
+          <p className="font-medium">Etapa 4 · Material para Apresentação</p>
+          <p className="text-sm text-muted-foreground">
+            Gere uma apresentação comercial personalizada (PowerPoint e PDF) para o cliente.
+          </p>
+        </div>
+        <Link
+          to="/admin/projetos/apresentacao"
+          className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:opacity-90"
+        >
+          Abrir
+        </Link>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-background p-5">
         <Receipt className="size-5 text-accent" />
         <div className="mr-auto">
           <p className="font-medium">Orçamentos emitidos</p>
