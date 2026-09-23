@@ -96,6 +96,9 @@ export const getPanelSession = createServerFn({ method: "GET" })
       }
     }
 
+    const { needsAdminMfa } = await import("./access.server");
+    const needsMfa = await needsAdminMfa(context);
+
     return {
       userId: context.userId,
       roles,
@@ -103,6 +106,7 @@ export const getPanelSession = createServerFn({ method: "GET" })
       name: (profile?.full_name as string) ?? "",
       email: (profile?.email as string) ?? "",
       needsContract,
+      needsMfa,
     };
   });
 

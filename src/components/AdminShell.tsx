@@ -67,9 +67,11 @@ export function AdminShell({
   const allowed = Boolean(session.data) && (requireAdmin ? isAdmin : canAccess(roles, pathname));
   const needsContract = session.data?.needsContract ?? null;
 
+  const needsMfa = Boolean(session.data?.needsMfa);
+
   useEffect(() => {
     if (!session.isSuccess) return;
-    if (!session.data || roles.length === 0) {
+    if (!session.data || needsMfa || roles.length === 0) {
       navigate({ to: "/admin/login", replace: true });
       return;
     }
@@ -78,12 +80,12 @@ export function AdminShell({
       return;
     }
     if (!allowed && pathname !== "/admin") navigate({ to: "/admin", replace: true });
-  }, [session.isSuccess, session.data, roles.length, allowed, needsContract, pathname, navigate]);
+  }, [session.isSuccess, session.data, needsMfa, roles.length, allowed, needsContract, pathname, navigate]);
 
   if (session.isLoading) {
     return <div className="p-16 text-sm text-muted-foreground">Carregando painel…</div>;
   }
-  if (!session.data || roles.length === 0) {
+  if (!session.data || needsMfa || roles.length === 0) {
     return <div className="p-16 text-sm text-muted-foreground">Redirecionando…</div>;
   }
   if (needsContract && pathname !== "/admin/contrato") {

@@ -49,4 +49,6 @@ export type SessionInfo = {
   name: string;
   email: string;
   needsContract: null | { audience: string; title: string; body: string; version: number };
+  /** Administrador que ainda precisa concluir a verificação em dois fatores. */
+  needsMfa?: boolean;
 };
