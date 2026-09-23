@@ -1559,6 +1559,48 @@ export type Database = {
           },
         ]
       }
+      project_presentations: {
+        Row: {
+          client_name: string
+          created_at: string
+          created_by: string | null
+          format: string
+          id: string
+          sector: string
+          service_title: string
+          used_diagnostic: boolean
+          used_quote: boolean
+          used_scope: boolean
+          website: string
+        }
+        Insert: {
+          client_name: string
+          created_at?: string
+          created_by?: string | null
+          format: string
+          id?: string
+          sector?: string
+          service_title?: string
+          used_diagnostic?: boolean
+          used_quote?: boolean
+          used_scope?: boolean
+          website?: string
+        }
+        Update: {
+          client_name?: string
+          created_at?: string
+          created_by?: string | null
+          format?: string
+          id?: string
+          sector?: string
+          service_title?: string
+          used_diagnostic?: boolean
+          used_quote?: boolean
+          used_scope?: boolean
+          website?: string
+        }
+        Relationships: []
+      }
       project_scope_submissions: {
         Row: {
           answers: Json
