@@ -1,14 +1,19 @@
 import type { PanelRole } from "./roles";
 
-type Ctx = { supabase: any; userId: string };
+type Ctx = { supabase: any; userId: string; claims?: any };
 
-/** Todos os papéis do usuário autenticado. */
+/**
+ * Todos os papéis do usuário autenticado.
+ * O papel de administrador só vale após a verificação em dois fatores (aal2).
+ */
 export async function getRoles(context: Ctx): Promise<string[]> {
   const { data } = await context.supabase
     .from("user_roles")
     .select("role")
     .eq("user_id", context.userId);
-  return ((data ?? []) as Array<{ role: string }>).map((r) => r.role);
+  const roles = ((data ?? []) as Array<{ role: string }>).map((r) => r.role);
+  const aal = String(context.claims?.aal ?? "");
+  return aal === "aal2" ? roles : roles.filter((r) => r !== "admin");
 }
 
 export async function isAdmin(context: Ctx): Promise<boolean> {
@@ -58,4 +63,16 @@ export async function queueChangeRequest(
   });
   if (error) return { ok: false as const, error: error.message };
   return { ok: true as const, pending: true as const };
+}
+
+/** O usuário tem papel de administrador, mas ainda não concluiu a verificação em dois fatores? */
+export async function needsAdminMfa(context: Ctx): Promise<boolean> {
+  if (String(context.claims?.aal ?? "") === "aal2") return false;
+  const { data } = await context.supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", context.userId)
+    .eq("role", "admin")
+    .maybeSingle();
+  return Boolean(data);
 }
