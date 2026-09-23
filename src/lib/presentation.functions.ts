@@ -55,7 +55,7 @@ export const getPresentationContext = createServerFn({ method: "GET" })
     await guard(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { getPublicCompanyIdentity } = await import("./company-public.functions");
-    const [services, settings, tools, quotes, identity] = await Promise.all([
+    const [services, settings, tools, quotes, identity, crm, scopes, diags] = await Promise.all([
       supabaseAdmin
         .from("service_products")
         .select("slug, title, family_title, lead, problem, body, audience, duration, bullets, results, modules, ai, published, position")
@@ -68,6 +68,17 @@ export const getPresentationContext = createServerFn({ method: "GET" })
         .order("created_at", { ascending: false })
         .limit(40),
       getPublicCompanyIdentity(),
+      supabaseAdmin.from("crm_companies").select("id, name, trade_name, segment, city, state, website").order("name").limit(1000),
+      supabaseAdmin
+        .from("project_scope_submissions")
+        .select("id, company, respondent_name, answers, comments, notes, created_at")
+        .order("created_at", { ascending: false })
+        .limit(300),
+      supabaseAdmin
+        .from("project_diagnostics")
+        .select("id, title, client_name, service_slug, service_title, answers, consultant_notes, modules, updated_at")
+        .order("updated_at", { ascending: false })
+        .limit(300),
     ]);
     const map = new Map((settings.data ?? []).map((r: any) => [r.key, r.value]));
     const branding = (map.get("branding") ?? {}) as { logoUrl?: string };
@@ -85,6 +96,9 @@ export const getPresentationContext = createServerFn({ method: "GET" })
       tools: (tools.data ?? []) as Array<{ title: string; summary: string | null; category: string | null }>,
       quotes: (quotes.data ?? []) as any[],
       identity,
+      crm: (crm.data ?? []) as Array<{ id: string; name: string; trade_name: string; segment: string; city: string; state: string; website: string }>,
+      scopes: (scopes.data ?? []) as any[],
+      diagnostics: (diags.data ?? []) as any[],
       liberatoLogo,
       liberatoLogoLight,
       institutional: {
@@ -215,6 +229,7 @@ const draftSchema = z.object({
     results: z.array(z.string().max(300)).max(20),
     modules: z.array(z.string().max(300)).max(20),
   }),
+  extra: z.string().max(12000).optional(),
 });
 
 export type PresentationDraft = {
@@ -239,10 +254,70 @@ export const draftPresentationContent = createServerFn({ method: "POST" })
     try {
       const draft = await askJson<PresentationDraft>(
         `Você é sócio da Liberato Consulting e escreve apresentações comerciais de consultoria no padrão das grandes consultorias (Princípio da Pirâmide de Minto, estrutura Situação–Complicação–Resolução, títulos de ação, foco no valor para o cliente). Escreva em português do Brasil, com tom confiante, comercial e positivo. Use SEMPRE o nome "${data.clientName}" em vez de "cliente" ou "empresa". Nunca invente números, percentuais ou fatos sobre ${data.clientName}; use apenas o que foi informado. Frases curtas, próprias para slides.`,
-        `Cliente: ${data.clientName}\nSetor: ${data.sector}\nLocalização: ${data.location}\nPúblico: ${data.audience}\nSobre: ${data.description}\nOfertas: ${data.offerings.join("; ")}\nDestaques do site: ${data.highlights.join("; ")}\n\nServiço proposto: ${data.service.title}\nResumo: ${data.service.lead}\nProblema que resolve: ${data.service.problem}\nDescrição: ${data.service.body}\nResultados típicos: ${data.service.results.join("; ")}\nMódulos: ${data.service.modules.join("; ")}\n\nDevolva JSON com:\nheadline (título de capa impactante, até 90 caracteres, citando ${data.clientName}),\naboutClient (2 frases mostrando que entendemos o negócio de ${data.clientName}),\nsectorContext (2 frases sobre o momento do setor na localização informada),\nsectorTrends (4 tendências/oportunidades do setor na região, até 90 caracteres cada),\nchallenges (4 desafios prováveis de ${data.clientName} que o serviço resolve, até 90 caracteres cada),\napproach (2 frases sobre como o serviço será adaptado a ${data.clientName}),\nimpacts (4 itens {title até 40 caracteres, body até 140 caracteres} com impactos no negócio de ${data.clientName}),\nwhyLiberato (4 razões para ${data.clientName} escolher a Liberato, até 90 caracteres),\nnextSteps (4 próximos passos curtos).`,
+        `Cliente: ${data.clientName}\nSetor: ${data.sector}\nLocalização: ${data.location}\nPúblico: ${data.audience}\nSobre: ${data.description}\nOfertas: ${data.offerings.join("; ")}\nDestaques do site: ${data.highlights.join("; ")}\n\nServiço proposto: ${data.service.title}\nResumo: ${data.service.lead}\nProblema que resolve: ${data.service.problem}\nDescrição: ${data.service.body}\nResultados típicos: ${data.service.results.join("; ")}\nMódulos: ${data.service.modules.join("; ")}${data.extra ? `\n\nInformações levantadas com ${data.clientName} pela consultoria (use para personalizar desafios, abordagem, impactos e próximos passos; não invente números):\n${data.extra}` : ""}\n\nDevolva JSON com:\nheadline (título de capa impactante, até 90 caracteres, citando ${data.clientName}),\naboutClient (2 frases mostrando que entendemos o negócio de ${data.clientName}),\nsectorContext (2 frases sobre o momento do setor na localização informada),\nsectorTrends (4 tendências/oportunidades do setor na região, até 90 caracteres cada),\nchallenges (4 desafios prováveis de ${data.clientName} que o serviço resolve, até 90 caracteres cada),\napproach (2 frases sobre como o serviço será adaptado a ${data.clientName}),\nimpacts (4 itens {title até 40 caracteres, body até 140 caracteres} com impactos no negócio de ${data.clientName}),\nwhyLiberato (4 razões para ${data.clientName} escolher a Liberato, até 90 caracteres),\nnextSteps (4 próximos passos curtos).`,
       );
       return { ok: true as const, draft };
     } catch (err) {
       return { ok: false as const, error: (err as Error).message || "Falha ao gerar os textos." };
     }
+  });
+
+/** Registra uma apresentação gerada. */
+export const logPresentation = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        client_name: z.string().trim().min(1).max(200),
+        service_title: z.string().max(300),
+        format: z.enum(["pptx", "pdf"]),
+        website: z.string().max(300),
+        sector: z.string().max(200),
+        used_quote: z.boolean(),
+        used_scope: z.boolean(),
+        used_diagnostic: z.boolean(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await guard(context);
+    const { error } = await (context.supabase as any).from("project_presentations").insert(data);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+export type PresentationRow = {
+  id: string;
+  client_name: string;
+  service_title: string;
+  format: string;
+  website: string;
+  sector: string;
+  used_quote: boolean;
+  used_scope: boolean;
+  used_diagnostic: boolean;
+  created_at: string;
+};
+
+export const listPresentations = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await guard(context);
+    const { data, error } = await (context.supabase as any)
+      .from("project_presentations")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(500);
+    if (error) throw new Error(error.message);
+    return (data ?? []) as PresentationRow[];
+  });
+
+export const deletePresentation = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await guard(context);
+    const { error } = await (context.supabase as any).from("project_presentations").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
   });
