@@ -41,7 +41,7 @@ function CustomerArea() {
   useEffect(() => { void supabase.auth.getSession().then(({ data }) => { setSignedIn(Boolean(data.session)); setReady(true); }); }, []);
   useEffect(() => { if (account.data?.profile) setProfile({ ...EMPTY, ...account.data.profile }); }, [account.data?.profile]);
   const articles = useMemo(() => { const needle = search.trim().toLocaleLowerCase(); return (content.data?.articles ?? []).filter((item) => !needle || `${item.title} ${item.summary} ${item.authors}`.toLocaleLowerCase().includes(needle)); }, [content.data?.articles, search]);
-  const recent = (content.data?.articles ?? []).filter((item) => new Date(item.article_date || item.created_at).getTime() >= Date.now() - 92 * 86400000);
+  const guideTool = (account.data?.tools ?? []).find((tool) => tool.category?.toLocaleLowerCase().includes("guia") || tool.title?.toLocaleLowerCase().includes("guia"));
   if (!ready) return <div className="mx-auto max-w-7xl px-6 py-20">{p.loading}</div>;
   if (!signedIn) return <section className="mx-auto max-w-3xl px-6 py-24 text-center"><h1 className="text-4xl font-bold">{p.signedOutTitle}</h1><p className="mt-4 text-muted-foreground">{p.signedOutText}</p><Button asChild className="mt-7 bg-accent text-accent-foreground hover:bg-accent/90"><Link to="/ferramentas" search={{ modo: undefined }}>{p.signedOutCta}</Link></Button></section>;
   const current = sections.some((item) => item.id === secao) ? secao : "ferramentas";

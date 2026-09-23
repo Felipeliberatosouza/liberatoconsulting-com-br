@@ -15,7 +15,6 @@ const links = [
   { labelKey: "services", section: "servicos", icon: FileText },
   { labelKey: "newsletter", section: "newsletter", icon: Mail },
   { labelKey: "bulletin", section: "boletim", icon: Newspaper },
-  { labelKey: "insights", section: "insights", icon: BookOpen },
   { labelKey: "articles", section: "artigos", icon: FileText },
   { labelKey: "settings", section: "perfil", icon: Settings },
 ] as const;
