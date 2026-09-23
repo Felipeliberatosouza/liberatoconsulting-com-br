@@ -57,8 +57,9 @@ export const getPresentationContext = createServerFn({ method: "GET" })
     const { DEFAULT_INSTITUTIONAL } = await import("./site-config");
     const institutional = { ...DEFAULT_INSTITUTIONAL, ...inst };
     const logos = (institutional.logos ?? []).slice(0, 8) as Array<{ name: string; imageUrl: string }>;
-    const [liberatoLogo, ...clientLogos] = await Promise.all([
+    const [liberatoLogo, liberatoLogoLight, ...clientLogos] = await Promise.all([
       toDataUrl(branding.logoUrl || "https://liberatoconsulting.com.br/logo.png"),
+      toDataUrl("https://liberatoconsulting.com.br/logo-light.png"),
       ...logos.map((l) => (l.imageUrl ? toDataUrl(l.imageUrl) : Promise.resolve(""))),
     ]);
     return {
@@ -67,6 +68,7 @@ export const getPresentationContext = createServerFn({ method: "GET" })
       quotes: (quotes.data ?? []) as any[],
       identity,
       liberatoLogo,
+      liberatoLogoLight,
       institutional: {
         introduction: institutional.introduction,
         metrics: institutional.metrics ?? [],
