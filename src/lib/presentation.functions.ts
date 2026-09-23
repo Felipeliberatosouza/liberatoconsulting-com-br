@@ -10,6 +10,24 @@ async function guard(context: Ctx) {
   await assertAdmin(context);
 }
 
+/** Aceita apenas sites públicos (http/https, porta padrão, sem IPs ou nomes internos). */
+function isPublicWebUrl(raw: string): boolean {
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    return false;
+  }
+  if (u.protocol !== "https:" && u.protocol !== "http:") return false;
+  if (u.username || u.password) return false;
+  if (u.port && u.port !== "80" && u.port !== "443") return false;
+  const host = u.hostname.toLowerCase().replace(/^\[|\]$/g, "");
+  if (!host.includes(".")) return false;
+  if (/^[\d.]+$/.test(host) || host.includes(":")) return false;
+  if (/(^|\.)(localhost|local|internal|intranet|lan|home|corp)$/.test(host)) return false;
+  return true;
+}
+
 /** Baixa uma imagem e devolve data URL (limite de 3 MB). */
 async function toDataUrl(url: string): Promise<string> {
   try {
