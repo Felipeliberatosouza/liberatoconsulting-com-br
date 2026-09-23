@@ -62,9 +62,30 @@ export async function translateNewsletter(
   const pending = inflight.get(cacheKey);
   if (pending) return pending;
 
+  // Cache durável: cada edição publicada é traduzida no máximo uma vez por idioma.
+  const settingKey = `newsletter_i18n:${cacheKey}`;
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: stored } = await supabaseAdmin
+    .from("site_settings")
+    .select("value")
+    .eq("key", settingKey)
+    .maybeSingle();
+  const storedValue = stored?.value as NewsletterText | undefined;
+  if (storedValue && typeof storedValue === "object" && typeof storedValue.subject === "string") {
+    cache.set(cacheKey, storedValue);
+    return storedValue;
+  }
+
   const promise = run(source, lang)
-    .then((r) => {
+    .then(async (r) => {
       cache.set(cacheKey, r);
+      try {
+        await supabaseAdmin
+          .from("site_settings")
+          .upsert({ key: settingKey, value: r as never }, { onConflict: "key" });
+      } catch (e) {
+        console.error("[newsletter i18n] cache save failed", e);
+      }
       return r;
     })
     .catch((err) => {

@@ -350,7 +350,9 @@ export const uploadSignedContract = createServerFn({ method: "POST" })
       .object({
         user_id: z.string().uuid(),
         file_name: z.string().trim().min(1).max(200),
-        content_type: z.string().trim().max(120).default("application/pdf"),
+        content_type: z
+          .enum(["application/pdf", "image/png", "image/jpeg", "image/webp"])
+          .default("application/pdf"),
         file_base64: z.string().min(16).max(15_000_000),
       })
       .parse(d),

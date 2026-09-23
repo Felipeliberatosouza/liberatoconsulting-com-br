@@ -389,12 +389,22 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
       // Empresa do CRM com orçamento emitido passa automaticamente a "cliente".
       const clientName = data.clientName.trim();
       if (clientName) {
-        const { data: match } = await context.supabase
+        const byName = await context.supabase
           .from("crm_companies")
           .select("id, status")
-          .or(`name.eq.${clientName},trade_name.eq.${clientName}`)
+          .eq("name", clientName)
           .limit(1)
           .maybeSingle();
+        const match =
+          byName.data ??
+          (
+            await context.supabase
+              .from("crm_companies")
+              .select("id, status")
+              .eq("trade_name", clientName)
+              .limit(1)
+              .maybeSingle()
+          ).data;
         if (match && (match as any).status !== "cliente") {
           await context.supabase
             .from("crm_companies")

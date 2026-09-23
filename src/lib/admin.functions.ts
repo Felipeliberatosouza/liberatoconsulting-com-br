@@ -94,30 +94,17 @@ const credentials = z.object({
   password: z.string().min(8).max(200),
 });
 
-/** Cria o primeiro administrador. Só funciona enquanto não existir nenhum. */
+/**
+ * Cadastro público do primeiro administrador desativado por segurança.
+ * Novos administradores são criados apenas por administradores existentes (inviteAdmin).
+ */
 export const bootstrapAdmin = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => credentials.parse(d))
-  .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { count } = await supabaseAdmin
-      .from("user_roles")
-      .select("id", { count: "exact", head: true })
-      .eq("role", "admin");
-    if ((count ?? 0) > 0) return { ok: false as const, error: "Já existe um administrador." };
-
-    const created = await supabaseAdmin.auth.admin.createUser({
-      email: data.email,
-      password: data.password,
-      email_confirm: true,
-    });
-    if (created.error || !created.data.user) {
-      return { ok: false as const, error: created.error?.message ?? "Falha ao criar usuário." };
-    }
-    const { error } = await supabaseAdmin
-      .from("user_roles")
-      .insert({ user_id: created.data.user.id, role: "admin" });
-    if (error) return { ok: false as const, error: error.message };
-    return { ok: true as const };
+  .handler(async () => {
+    return {
+      ok: false as const,
+      error: "O cadastro inicial de administrador está desativado. Peça acesso a um administrador.",
+    };
   });
 
 /** Convida um novo administrador (somente admins). */
@@ -325,6 +312,14 @@ export const uploadArticleFile = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const match = /^data:([^;]+);base64,(.+)$/.exec(data.dataUrl);
     if (!match) return { ok: false as const, error: "Arquivo inválido." };
+    const ALLOWED = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    if (!ALLOWED.includes(match[1]!.toLowerCase())) {
+      return { ok: false as const, error: "Envie um arquivo PDF ou Word (DOC/DOCX)." };
+    }
     const bytes = Buffer.from(match[2]!, "base64");
     if (bytes.byteLength > 10_000_000) return { ok: false as const, error: "Arquivo acima de 10 MB." };
     const safe = data.name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-80);

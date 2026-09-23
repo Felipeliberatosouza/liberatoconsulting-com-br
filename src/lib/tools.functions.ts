@@ -48,7 +48,9 @@ export const saveToolsProfile = createServerFn({ method: "POST" })
     // Boas-vindas, newsletter, boletim e registro como lead — falhas não bloqueiam o acesso.
     try {
       const { runToolsOnboarding } = await import("./tools-onboarding.server");
-      await runToolsOnboarding(context.userId, email, data);
+      // Boas-vindas só para o e-mail verificado da conta autenticada.
+      const verifiedEmail = String((context.claims as any)?.email ?? "").toLowerCase();
+      if (verifiedEmail) await runToolsOnboarding(context.userId, verifiedEmail, { ...data, email: verifiedEmail });
     } catch (onboardingError) {
       console.error("tools onboarding failed", onboardingError);
     }
