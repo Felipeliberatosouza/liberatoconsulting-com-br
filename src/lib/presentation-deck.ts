@@ -451,8 +451,8 @@ export async function prepareImage(src: string, removeBackground: boolean): Prom
           if (opaque && uniform) {
             for (let i = 0; i < a.length; i += 4) {
               const dist = Math.abs((a[i] ?? 0) - r0) + Math.abs((a[i + 1] ?? 0) - g0) + Math.abs((a[i + 2] ?? 0) - b0);
-              if (dist < 36) (a[i + 3] ?? 0) = 0;
-              else if (dist < 70) (a[i + 3] ?? 0) = Math.round((a[i + 3] ?? 0) * ((dist - 36) / 34));
+              if (dist < 36) a[i + 3] = 0;
+              else if (dist < 70) a[i + 3] = Math.round((a[i + 3] ?? 0) * ((dist - 36) / 34));
             }
             ctx.putImageData(px, 0, 0);
           }
