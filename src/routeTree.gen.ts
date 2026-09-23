@@ -70,6 +70,7 @@ import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.u
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as AdminProjetosApresentacaoRouteImport } from './routes/admin.projetos_.apresentacao'
+import { Route as AdminProjetosApresentacoesRouteImport } from './routes/admin.projetos_.apresentacoes'
 import { Route as AdminProjetosDiagnosticoRouteImport } from './routes/admin.projetos_.diagnostico'
 import { Route as AdminProjetosEscoposRouteImport } from './routes/admin.projetos_.escopos'
 import { Route as ApiPublicBulletinWeeklyRouteImport } from './routes/api/public/bulletin-weekly'
@@ -390,6 +391,12 @@ const AdminProjetosApresentacaoRoute =
     path: '/admin/projetos/apresentacao',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AdminProjetosApresentacoesRoute =
+  AdminProjetosApresentacoesRouteImport.update({
+    id: '/admin/projetos_/apresentacoes',
+    path: '/admin/projetos/apresentacoes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminProjetosDiagnosticoRoute =
   AdminProjetosDiagnosticoRouteImport.update({
     id: '/admin/projetos_/diagnostico',
@@ -518,6 +525,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/admin/projetos/apresentacao': typeof AdminProjetosApresentacaoRoute
+  '/admin/projetos/apresentacoes': typeof AdminProjetosApresentacoesRoute
   '/admin/projetos/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
@@ -593,6 +601,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
   '/admin/projetos/apresentacao': typeof AdminProjetosApresentacaoRoute
+  '/admin/projetos/apresentacoes': typeof AdminProjetosApresentacoesRoute
   '/admin/projetos/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
@@ -669,6 +678,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/admin/projetos_/apresentacao': typeof AdminProjetosApresentacaoRoute
+  '/admin/projetos_/apresentacoes': typeof AdminProjetosApresentacoesRoute
   '/admin/projetos_/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos_/escopos': typeof AdminProjetosEscoposRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
@@ -746,6 +756,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/services/'
     | '/admin/projetos/apresentacao'
+    | '/admin/projetos/apresentacoes'
     | '/admin/projetos/diagnostico'
     | '/admin/projetos/escopos'
     | '/api/public/bulletin-weekly'
@@ -821,6 +832,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/services'
     | '/admin/projetos/apresentacao'
+    | '/admin/projetos/apresentacoes'
     | '/admin/projetos/diagnostico'
     | '/admin/projetos/escopos'
     | '/api/public/bulletin-weekly'
@@ -896,6 +908,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/services/'
     | '/admin/projetos_/apresentacao'
+    | '/admin/projetos_/apresentacoes'
     | '/admin/projetos_/diagnostico'
     | '/admin/projetos_/escopos'
     | '/api/public/bulletin-weekly'
@@ -972,6 +985,7 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
   AdminProjetosApresentacaoRoute: typeof AdminProjetosApresentacaoRoute
+  AdminProjetosApresentacoesRoute: typeof AdminProjetosApresentacoesRoute
   AdminProjetosDiagnosticoRoute: typeof AdminProjetosDiagnosticoRoute
   AdminProjetosEscoposRoute: typeof AdminProjetosEscoposRoute
   ApiPublicBulletinWeeklyRoute: typeof ApiPublicBulletinWeeklyRoute
@@ -1415,6 +1429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProjetosApresentacaoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/projetos_/apresentacoes': {
+      id: '/admin/projetos_/apresentacoes'
+      path: '/admin/projetos/apresentacoes'
+      fullPath: '/admin/projetos/apresentacoes'
+      preLoaderRoute: typeof AdminProjetosApresentacoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/projetos_/diagnostico': {
       id: '/admin/projetos_/diagnostico'
       path: '/admin/projetos/diagnostico'
@@ -1564,6 +1585,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
   AdminProjetosApresentacaoRoute: AdminProjetosApresentacaoRoute,
+  AdminProjetosApresentacoesRoute: AdminProjetosApresentacoesRoute,
   AdminProjetosDiagnosticoRoute: AdminProjetosDiagnosticoRoute,
   AdminProjetosEscoposRoute: AdminProjetosEscoposRoute,
   ApiPublicBulletinWeeklyRoute: ApiPublicBulletinWeeklyRoute,

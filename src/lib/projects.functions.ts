@@ -196,14 +196,16 @@ export const getProjectsOverview = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
-    const [scopes, diags, quotes] = await Promise.all([
+    const [scopes, diags, quotes, pres] = await Promise.all([
       context.supabase.from("project_scope_submissions").select("id", { count: "exact", head: true }),
       context.supabase.from("project_diagnostics").select("id", { count: "exact", head: true }),
       context.supabase.from("quotes").select("id", { count: "exact", head: true }),
+      (context.supabase as any).from("project_presentations").select("id", { count: "exact", head: true }),
     ]);
     return {
       scopes: scopes.count ?? 0,
       diagnostics: diags.count ?? 0,
       quotes: quotes.count ?? 0,
+      presentations: (pres.count as number | null) ?? 0,
     };
   });
