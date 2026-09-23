@@ -442,11 +442,11 @@ export async function prepareImage(src: string, removeBackground: boolean): Prom
         ctx.drawImage(img, 0, 0, w, h);
         if (removeBackground) {
           const px = ctx.getImageData(0, 0, w, h);
-          const a = px.data;
+          const a = px.data as unknown as number[];
           const at = (x: number, y: number) => (y * w + x) * 4;
-          const corners = [at(0, 0), at(w - 1, 0), at(0, h - 1), at(w - 1, h - 1)];
+          const corners: number[] = [at(0, 0), at(w - 1, 0), at(0, h - 1), at(w - 1, h - 1)];
           const opaque = corners.every((i) => a[i + 3] > 240);
-          const [r0, g0, b0] = [a[corners[0]], a[corners[0] + 1], a[corners[0] + 2]];
+          const c0 = corners[0] as number; const r0 = a[c0] as number, g0 = a[c0 + 1] as number, b0 = a[c0 + 2] as number;
           const uniform = corners.every((i) => Math.abs(a[i] - r0) + Math.abs(a[i + 1] - g0) + Math.abs(a[i + 2] - b0) < 30);
           if (opaque && uniform) {
             for (let i = 0; i < a.length; i += 4) {
