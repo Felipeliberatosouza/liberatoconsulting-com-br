@@ -74,6 +74,20 @@ export const getScopedBrazilSections = createServerFn({ method: "POST" })
 
     if (missing.length === 0) return rows.map(toScoped);
 
+    // Geração com IA limita-se a combinações válidas e a poucos temas por chamada,
+    // evitando que requisições públicas consumam o serviço pago sem limite.
+    const { SEGMENTS, REGIONS, UFS } = await import("./brazil-scope-allowlist");
+    if (!SEGMENTS.includes(segment) || !REGIONS.includes(region) || !UFS.includes(uf)) {
+      return rows.map(toScoped);
+    }
+    const { supabaseAdmin: counter } = await import("@/integrations/supabase/client.server");
+    const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count: recent } = await counter
+      .from("brazil_scope_content")
+      .select("id", { count: "exact", head: true })
+      .gte("created_at", since);
+    if ((recent ?? 0) >= 60) return rows.map(toScoped);
+
     try {
       const { askJson } = await import("./ai.server");
       const langName = { pt: "português do Brasil", en: "inglês", es: "espanhol", zh: "mandarim" }[

@@ -50,7 +50,7 @@ export const saveToolsProfile = createServerFn({ method: "POST" })
       const { runToolsOnboarding } = await import("./tools-onboarding.server");
       // Boas-vindas só para o e-mail verificado da conta autenticada.
       const verifiedEmail = String((context.claims as any)?.email ?? "").toLowerCase();
-      if (verifiedEmail) await runToolsOnboarding(context.userId, verifiedEmail, { ...data, email: verifiedEmail });
+      if (verifiedEmail) await runToolsOnboarding(context.userId, verifiedEmail, data);
     } catch (onboardingError) {
       console.error("tools onboarding failed", onboardingError);
     }
