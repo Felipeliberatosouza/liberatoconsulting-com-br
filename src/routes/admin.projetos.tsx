@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, ClipboardList, Copy, FileSpreadsheet, Presentation, Receipt, Wallet } from "lucide-react";
+import { ArrowRight, ClipboardList, Copy, FileSpreadsheet, Presentation, Receipt, Wallet, Inbox, FileSearch } from "lucide-react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
@@ -65,7 +65,7 @@ function ProjectsPage() {
       to: "/admin/precificacao",
       search: { aba: "quote" } as never,
       badge: "",
-      items: ["Gerar orçamento", "Material para Apresentação"],
+      items: ["Valor do homem-hora", "Etapas por serviço", "Gerar orçamento", "Material para Apresentação"],
     },
   ];
 
@@ -111,23 +111,7 @@ function ProjectsPage() {
         ))}
       </div>
 
-      <div className="mt-8 flex flex-wrap items-center gap-3 rounded-2xl border border-accent/40 bg-accent/5 p-5">
-        <Presentation className="size-5 text-accent" />
-        <div className="mr-auto">
-          <p className="font-medium">Etapa 4 · Material para Apresentação</p>
-          <p className="text-sm text-muted-foreground">
-            Gere uma apresentação comercial personalizada (PowerPoint e PDF) para o cliente.
-          </p>
-        </div>
-        <Link
-          to="/admin/projetos/apresentacao"
-          className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:opacity-90"
-        >
-          Abrir
-        </Link>
-      </div>
-
-      <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-background p-5">
+      <div className="mt-8 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-background p-5">
         <Receipt className="size-5 text-accent" />
         <div className="mr-auto">
           <p className="font-medium">Orçamentos emitidos</p>
@@ -143,6 +127,26 @@ function ProjectsPage() {
           Abrir
         </Link>
       </div>
+
+      {[
+        { icon: Presentation, title: "Apresentações geradas", text: `Listagem de todos os materiais de apresentação gerados${counts ? ` (${counts.presentations})` : ""}.`, to: "/admin/projetos/apresentacoes" },
+        { icon: Inbox, title: "Escopos iniciais recebidos", text: `Formulários de escopo enviados pelos clientes${counts ? ` (${counts.scopes})` : ""}.`, to: "/admin/projetos/escopos" },
+        { icon: FileSearch, title: "Diagnósticos recebidos", text: `Diagnósticos detalhados registrados${counts ? ` (${counts.diagnostics})` : ""}.`, to: "/admin/projetos/diagnostico" },
+      ].map((row) => (
+        <div key={row.to} className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-background p-5">
+          <row.icon className="size-5 text-accent" />
+          <div className="mr-auto">
+            <p className="font-medium">{row.title}</p>
+            <p className="text-sm text-muted-foreground">{row.text}</p>
+          </div>
+          <Link
+            to={row.to as never}
+            className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-ink-foreground hover:bg-accent hover:text-accent-foreground"
+          >
+            Abrir
+          </Link>
+        </div>
+      ))}
 
       <div className="mt-6 flex flex-wrap items-center gap-3 rounded-2xl border border-dashed border-border p-5 text-sm">
         <span className="text-muted-foreground">Link do formulário para enviar ao cliente:</span>
