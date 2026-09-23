@@ -65,11 +65,11 @@ function PresentationPage() {
   }, [ctx.data?.quotes, name]);
 
   async function readSite() {
-    if (!site.trim()) return toast.error("Informe o site do cliente.");
+    if (!site.trim()) { toast.error("Informe o site do cliente."); return; }
     setBusy("site");
     try {
       const r = await analyzeClientSite({ data: { url: site } });
-      if (!r.ok) return toast.error(r.error);
+      if (!r.ok) { toast.error(r.error); return; }
       setName(r.name || name);
       setSector(r.sector || sector);
       setLocation(r.location || location);
@@ -99,8 +99,8 @@ function PresentationPage() {
   }
 
   async function makeDraft() {
-    if (!name.trim()) return toast.error("Informe o nome do cliente.");
-    if (!service) return toast.error("Selecione o serviço a ser apresentado.");
+    if (!name.trim()) { toast.error("Informe o nome do cliente."); return null; }
+    if (!service) { toast.error("Selecione o serviço a ser apresentado."); return null; }
     setBusy("draft");
     try {
       const r = await draftPresentationContent({
@@ -134,9 +134,9 @@ function PresentationPage() {
   }
 
   async function download(format: "pptx" | "pdf") {
-    if (!ctx.data || !service) return toast.error("Selecione o serviço.");
-    if (useQuote && !quoteId) return toast.error("Selecione o orçamento a usar ou desmarque a opção.");
-    const d = draft ?? (await makeDraft());
+    if (!ctx.data || !service) { toast.error("Selecione o serviço."); return; }
+    if (useQuote && !quoteId) { toast.error("Selecione o orçamento a usar ou desmarque a opção."); return; }
+    const d: PresentationDraft | null = draft ?? (await makeDraft()) ?? null;
     if (!d) return;
     setBusy(format);
     try {
