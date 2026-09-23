@@ -9,8 +9,12 @@ import {
   analyzeClientSite,
   draftPresentationContent,
   getPresentationContext,
+  logPresentation,
   type PresentationDraft,
 } from "@/lib/presentation.functions";
+import { SCOPE_QUESTIONS } from "@/lib/scope-form";
+import { activeSignals } from "@/lib/scope-guide";
+import { BASE_BLOCKS, FAMILY_BLOCKS, DEFAULT_MODULES } from "@/lib/diagnostic-catalog";
 import { exportDeck, prepareImage, type DeckInput } from "@/lib/presentation-deck";
 
 export const Route = createFileRoute("/admin/projetos_/apresentacao")({
@@ -22,6 +26,43 @@ export const Route = createFileRoute("/admin/projetos_/apresentacao")({
   }),
   component: PresentationPage,
 });
+
+const DIAG_Q = new Map([...BASE_BLOCKS, ...Object.values(FAMILY_BLOCKS).flat()].map((q) => [q.id, q.question]));
+const MOD_LABEL = new Map(DEFAULT_MODULES.map((m) => [m.id, m.label]));
+const txt = (v: unknown) => (typeof v === "string" ? v : v == null ? "" : JSON.stringify(v)).trim();
+
+function scopeText(s: any): string {
+  const answers = (s?.answers ?? {}) as Record<string, string>;
+  const comments = (s?.comments ?? {}) as Record<string, string>;
+  const out: string[] = ["Escopo Inicial — respostas:"];
+  for (const q of SCOPE_QUESTIONS) {
+    const a = answers[q.id];
+    if (a) out.push(`- ${q.question} ${a}${comments[q.id] ? ` (comentário: ${comments[q.id]})` : ""}`);
+  }
+  const sig = activeSignals(answers);
+  if (sig.length) {
+    out.push("Guia do Consultor — sinais e ações:");
+    for (const g of sig) out.push(`- ${g.signal}: ${g.meaning} Ação: ${g.action}`);
+  }
+  if (txt(s?.notes)) out.push(`Análise do consultor: ${txt(s.notes)}`);
+  return out.join("\n");
+}
+
+function diagText(d: any): string {
+  const out: string[] = [`Diagnóstico Detalhado (${d?.service_title || d?.title || ""}):`];
+  const answers = (d?.answers ?? {}) as Record<string, unknown>;
+  for (const [k, v] of Object.entries(answers)) {
+    const a = txt(v);
+    if (a) out.push(`- ${DIAG_Q.get(k) ?? k} ${a}`);
+  }
+  const notes = d?.consultant_notes;
+  if (notes && typeof notes === "object") {
+    for (const [k, v] of Object.entries(notes)) if (txt(v)) out.push(`- Nota do consultor (${DIAG_Q.get(k) ?? k}): ${txt(v)}`);
+  } else if (txt(notes)) out.push(`Notas do consultor: ${txt(notes)}`);
+  const mods = Array.isArray(d?.modules) ? d.modules.filter((m: any) => m?.include) : [];
+  if (mods.length) out.push(`Módulos previstos: ${mods.map((m: any) => m.label || MOD_LABEL.get(m.id) || m.id).join("; ")}`);
+  return out.join("\n");
+}
 
 const lines = (s: string) => s.split("\n").map((l) => l.trim()).filter(Boolean);
 const input = "w-full rounded-lg border border-border bg-background px-3 py-2 text-sm";
@@ -50,6 +91,52 @@ function PresentationPage() {
   const [useQuote, setUseQuote] = useState(false);
   const [quoteId, setQuoteId] = useState("");
   const [draft, setDraft] = useState<PresentationDraft | null>(null);
+  const [pick, setPick] = useState("");
+  const [useScope, setUseScope] = useState(false);
+  const [scopeId, setScopeId] = useState("");
+  const [useDiag, setUseDiag] = useState(false);
+  const [diagId, setDiagId] = useState("");
+
+  const clientOptions = useMemo(() => {
+    const d = ctx.data;
+    if (!d) return [];
+    const opts = [
+      ...d.crm.map((c) => ({ key: `crm:${c.id}`, label: `${c.trade_name || c.name} · CRM`, name: c.trade_name || c.name, sector: c.segment, location: [c.city, c.state].filter(Boolean).join(" / "), website: c.website })),
+      ...d.scopes.map((s: any) => ({ key: `scope:${s.id}`, label: `${s.company} · Escopo inicial (${new Date(s.created_at).toLocaleDateString("pt-BR")})`, name: s.company, sector: "", location: "", website: "" })),
+      ...d.diagnostics.map((g: any) => ({ key: `diag:${g.id}`, label: `${g.client_name || g.title} · Diagnóstico (${g.service_title || ""})`, name: g.client_name || g.title, sector: "", location: "", website: "" })),
+    ];
+    return opts.sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+  }, [ctx.data]);
+
+  function pickClient(key: string) {
+    setPick(key);
+    const o = clientOptions.find((x) => x.key === key);
+    if (!o) return;
+    setName(o.name);
+    if (o.sector) setSector(o.sector);
+    if (o.location) setLocation(o.location);
+    if (o.website && !site) setSite(o.website);
+    const [kind, id] = key.split(":");
+    const n = o.name.trim().toLowerCase();
+    const sc = kind === "scope" ? id : ctx.data?.scopes.find((s: any) => String(s.company).trim().toLowerCase() === n)?.id;
+    const dg = kind === "diag" ? id : ctx.data?.diagnostics.find((g: any) => String(g.client_name).trim().toLowerCase() === n)?.id;
+    if (sc) { setScopeId(sc); setUseScope(true); }
+    if (dg) { setDiagId(dg); setUseDiag(true); }
+    setDraft(null);
+  }
+
+  function extraContext(): string {
+    const parts: string[] = [];
+    if (useScope && scopeId) {
+      const s = ctx.data?.scopes.find((x: any) => x.id === scopeId);
+      if (s) parts.push(scopeText(s));
+    }
+    if (useDiag && diagId) {
+      const g = ctx.data?.diagnostics.find((x: any) => x.id === diagId);
+      if (g) parts.push(diagText(g));
+    }
+    return parts.join("\n\n").slice(0, 12000);
+  }
   const [busy, setBusy] = useState<"" | "site" | "draft" | "pptx" | "pdf">("");
 
   const services = ctx.data?.services ?? [];
@@ -112,6 +199,7 @@ function PresentationPage() {
           offerings: lines(offerings).slice(0, 10),
           highlights: lines(highlights).slice(0, 10),
           audience,
+          extra: extraContext() || undefined,
           service: {
             title: service.title ?? "",
             lead: service.lead ?? "",
@@ -136,6 +224,8 @@ function PresentationPage() {
   async function download(format: "pptx" | "pdf") {
     if (!ctx.data || !service) { toast.error("Selecione o serviço."); return; }
     if (useQuote && !quoteId) { toast.error("Selecione o orçamento a usar ou desmarque a opção."); return; }
+    if (useScope && !scopeId) { toast.error("Selecione o escopo inicial ou desmarque a opção."); return; }
+    if (useDiag && !diagId) { toast.error("Selecione o diagnóstico ou desmarque a opção."); return; }
     const d: PresentationDraft | null = draft ?? (await makeDraft()) ?? null;
     if (!d) return;
     setBusy(format);
@@ -194,6 +284,18 @@ function PresentationPage() {
           : null,
       };
       await exportDeck(deck, format);
+      void logPresentation({
+        data: {
+          client_name: name.trim(),
+          service_title: service.title ?? "",
+          format,
+          website: site.slice(0, 300),
+          sector: sector.slice(0, 200),
+          used_quote: !!q,
+          used_scope: useScope && !!scopeId,
+          used_diagnostic: useDiag && !!diagId,
+        },
+      }).catch(() => undefined);
       toast.success(format === "pptx" ? "PowerPoint gerado." : "PDF gerado.");
     } catch (err) {
       console.error(err);
@@ -253,7 +355,13 @@ function PresentationPage() {
               </select>
             </Field>
             <Field label="Nome do cliente">
-              <input className={input} value={name} onChange={(e) => setName(e.target.value)} />
+              <select className={`${input} mb-2`} value={pick} onChange={(e) => pickClient(e.target.value)}>
+                <option value="">Selecionar do CRM, escopos iniciais ou diagnósticos…</option>
+                {clientOptions.map((o) => (
+                  <option key={o.key} value={o.key}>{o.label}</option>
+                ))}
+              </select>
+              <input className={input} placeholder="Ou digite / ajuste o nome" value={name} onChange={(e) => setName(e.target.value)} />
             </Field>
             <Field label="Setor (segmento de mercado)">
               <input className={input} value={sector} onChange={(e) => setSector(e.target.value)} />
@@ -298,6 +406,34 @@ function PresentationPage() {
               ) : (
                 <p className="text-xs text-muted-foreground">Sem orçamento, o material terá um slide avisando que a proposta será enviada.</p>
               )}
+            </div>
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <input type="checkbox" checked={useScope} onChange={(e) => { setUseScope(e.target.checked); setDraft(null); }} />
+                Usar informações do Guia do Consultor (Escopo Inicial)
+              </label>
+              {useScope ? (
+                <select className={input} value={scopeId} onChange={(e) => { setScopeId(e.target.value); setDraft(null); }}>
+                  <option value="">Selecione o escopo inicial…</option>
+                  {(ctx.data?.scopes ?? []).map((s: any) => (
+                    <option key={s.id} value={s.id}>{s.company} · {s.respondent_name} · {new Date(s.created_at).toLocaleDateString("pt-BR")}</option>
+                  ))}
+                </select>
+              ) : null}
+            </div>
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-medium">
+                <input type="checkbox" checked={useDiag} onChange={(e) => { setUseDiag(e.target.checked); setDraft(null); }} />
+                Usar informações do Diagnóstico Detalhado
+              </label>
+              {useDiag ? (
+                <select className={input} value={diagId} onChange={(e) => { setDiagId(e.target.value); setDraft(null); }}>
+                  <option value="">Selecione o diagnóstico…</option>
+                  {(ctx.data?.diagnostics ?? []).map((g: any) => (
+                    <option key={g.id} value={g.id}>{g.client_name || g.title} · {g.service_title} · {new Date(g.updated_at).toLocaleDateString("pt-BR")}</option>
+                  ))}
+                </select>
+              ) : null}
             </div>
           </section>
 
