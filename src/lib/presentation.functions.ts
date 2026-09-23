@@ -10,6 +10,24 @@ async function guard(context: Ctx) {
   await assertAdmin(context);
 }
 
+/** Aceita apenas sites públicos (http/https, porta padrão, sem IPs ou nomes internos). */
+function isPublicWebUrl(raw: string): boolean {
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    return false;
+  }
+  if (u.protocol !== "https:" && u.protocol !== "http:") return false;
+  if (u.username || u.password) return false;
+  if (u.port && u.port !== "80" && u.port !== "443") return false;
+  const host = u.hostname.toLowerCase().replace(/^\[|\]$/g, "");
+  if (!host.includes(".")) return false;
+  if (/^[\d.]+$/.test(host) || host.includes(":")) return false;
+  if (/(^|\.)(localhost|local|internal|intranet|lan|home|corp)$/.test(host)) return false;
+  return true;
+}
+
 /** Baixa uma imagem e devolve data URL (limite de 3 MB). */
 async function toDataUrl(url: string): Promise<string> {
   try {
@@ -92,13 +110,23 @@ export const analyzeClientSite = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ url: z.string().trim().min(4).max(300) }).parse(d))
   .handler(async ({ data, context }) => {
     await guard(context);
-    const url = /^https?:\/\//i.test(data.url) ? data.url : `https://${data.url}`;
+    let url = /^https?:\/\//i.test(data.url) ? data.url : `https://${data.url}`;
+    if (!isPublicWebUrl(url)) return { ok: false as const, error: "Endereço de site inválido." };
     let html = "";
     try {
-      const res = await fetch(url, {
-        headers: { "User-Agent": "Mozilla/5.0 (compatible; LiberatoBot/1.0)", Accept: "text/html" },
-        redirect: "follow",
-      });
+      let res: Response | null = null;
+      for (let hop = 0; hop < 5; hop += 1) {
+        res = await fetch(url, {
+          headers: { "User-Agent": "Mozilla/5.0 (compatible; LiberatoBot/1.0)", Accept: "text/html" },
+          redirect: "manual",
+        });
+        const loc = res.status >= 300 && res.status < 400 ? res.headers.get("location") : null;
+        if (!loc) break;
+        const next = new URL(loc, url).toString();
+        if (!isPublicWebUrl(next)) return { ok: false as const, error: "Endereço de site inválido." };
+        url = next;
+      }
+      if (!res) throw new Error("no response");
       if (!res.ok) return { ok: false as const, error: `O site respondeu com erro (${res.status}).` };
       html = (await res.text()).slice(0, 600_000);
     } catch {

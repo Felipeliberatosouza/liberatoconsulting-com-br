@@ -51,15 +51,8 @@ export const subscribeBulletin = createServerFn({ method: "POST" })
       .ilike("email", email)
       .maybeSingle();
 
-    if (existing?.status === "unsubscribed" && data.viaEmail) {
-      try {
-        const { setRecipientEmailConsent } = await import("./email-consent.server");
-        await setRecipientEmailConsent(email, true);
-      } catch (error) {
-        const { consentErrorMessage } = await import("./email-consent.server");
-        return { ok: false as const, error: consentErrorMessage(error) };
-      }
-    }
+    // Cadastro público não altera inscrições existentes (evita sobrescrever dados de terceiros).
+    if (existing) return { ok: true as const };
 
     const payload = {
       full_name: data.fullName,
@@ -75,9 +68,7 @@ export const subscribeBulletin = createServerFn({ method: "POST" })
       unsubscribed_at: null,
     };
 
-    const { error } = existing
-      ? await supabaseAdmin.from("bulletin_subscribers").update(payload).eq("id", existing.id)
-      : await supabaseAdmin.from("bulletin_subscribers").insert(payload);
+    const { error } = await supabaseAdmin.from("bulletin_subscribers").insert(payload);
 
     if (error) return { ok: false as const, error: "Não foi possível concluir o cadastro." };
     return { ok: true as const };
