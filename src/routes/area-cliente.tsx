@@ -14,12 +14,12 @@ import { formatPhone, isValidPhone } from "@/lib/validation";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
-type Section = "ferramentas" | "guia" | "servicos" | "newsletter" | "boletim" | "insights" | "artigos" | "perfil";
-type MenuKey = "tools" | "guide" | "services" | "newsletter" | "bulletin" | "insights" | "articles" | "settings";
+type Section = "ferramentas" | "guia" | "servicos" | "newsletter" | "boletim" | "artigos" | "perfil";
+type MenuKey = "tools" | "guide" | "services" | "newsletter" | "bulletin" | "articles" | "settings";
 const sections: Array<{ id: Section; key: MenuKey; icon: typeof Wrench }> = [
   { id: "ferramentas", key: "tools", icon: Wrench }, { id: "guia", key: "guide", icon: BookOpen },
   { id: "servicos", key: "services", icon: FileText }, { id: "newsletter", key: "newsletter", icon: Mail },
-  { id: "boletim", key: "bulletin", icon: Newspaper }, { id: "insights", key: "insights", icon: BookOpen },
+  { id: "boletim", key: "bulletin", icon: Newspaper },
   { id: "artigos", key: "articles", icon: FileText }, { id: "perfil", key: "settings", icon: Settings },
 ];
 const EMPTY = { first_name: "", last_name: "", email: "", phone: "", company: "", job_title: "", revenue_range: "", segment: "", receive_newsletter: true, receive_bulletin: true, receive_insights: true };
