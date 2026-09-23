@@ -78,8 +78,9 @@ export const getMemberContent = createServerFn({ method: "GET" })
         .order("created_at", { ascending: false }),
       supabaseAdmin
         .from("bulletin_dispatches")
-        .select("id, subject, date_label, created_at")
-        .in("status", ["sent", "enviado"])
+        .select("id, subject, date_label, created_at, body_html")
+        // Último boletim disponível (enviado ou publicado/gerado).
+        .in("status", ["sent", "enviado", "gerado", "publicado"])
         .eq("is_test", false)
         .order("created_at", { ascending: false })
         .limit(1),
