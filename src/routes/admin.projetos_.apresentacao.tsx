@@ -274,7 +274,7 @@ function PresentationPage() {
       const payload = (q?.payload ?? {}) as any;
       const ratio = q && Number(q.total_brl) > 0 ? Number(q.total_currency) / Number(q.total_brl) : 1;
       const deck: DeckInput = {
-        clientName: name.trim(),
+        clientName: name.trim() || String(ctx.data.scopes.find((x: any) => x.id === scopeId)?.company ?? ""),
         sector,
         location,
         website: site,

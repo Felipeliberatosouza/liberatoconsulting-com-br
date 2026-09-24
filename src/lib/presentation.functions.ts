@@ -229,7 +229,7 @@ async function findCompanySite(company: string): Promise<string> {
     const html = await res.text();
     const skip = /(linkedin|facebook|instagram|youtube|wikipedia|twitter|x\.com|glassdoor|reclameaqui|duckduckgo|jusbrasil|econodata|cnpj)/i;
     for (const m of html.matchAll(/uddg=([^&"']+)/g)) {
-      const u = decodeURIComponent(m[1]);
+      const u = decodeURIComponent(m[1] ?? "");
       if (/^https?:\/\//.test(u) && !skip.test(u) && isPublicWebUrl(u)) return new URL(u).origin;
     }
   } catch {
