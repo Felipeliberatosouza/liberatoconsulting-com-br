@@ -124,7 +124,12 @@ export const analyzeClientSite = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ url: z.string().trim().min(4).max(300) }).parse(d))
   .handler(async ({ data, context }) => {
     await guard(context);
-    let url = /^https?:\/\//i.test(data.url) ? data.url : `https://${data.url}`;
+    return analyzeUrl(data.url);
+  });
+
+async function analyzeUrl(input: string) {
+  {
+    let url = /^https?:\/\//i.test(input) ? input : `https://${input}`;
     if (!isPublicWebUrl(url)) return { ok: false as const, error: "Endereço de site inválido." };
     let html = "";
     try {
@@ -210,6 +215,69 @@ export const analyzeClientSite = createServerFn({ method: "POST" })
       highlights: (info.highlights ?? []).slice(0, 5),
       audience: info.audience ?? "",
       logo,
+    };
+  }
+}
+
+/** Procura o site oficial da empresa numa busca pública na internet. */
+async function findCompanySite(company: string): Promise<string> {
+  try {
+    const res = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(`${company} site oficial`)}`, {
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; LiberatoBot/1.0)" },
+    });
+    if (!res.ok) return "";
+    const html = await res.text();
+    const skip = /(linkedin|facebook|instagram|youtube|wikipedia|twitter|x\.com|glassdoor|reclameaqui|duckduckgo|jusbrasil|econodata|cnpj)/i;
+    for (const m of html.matchAll(/uddg=([^&"']+)/g)) {
+      const u = decodeURIComponent(m[1]);
+      if (/^https?:\/\//.test(u) && !skip.test(u) && isPublicWebUrl(u)) return new URL(u).origin;
+    }
+  } catch {
+    /* ignore */
+  }
+  return "";
+}
+
+/**
+ * Preenche os dados do cliente a partir do Escopo Inicial + Guia do Consultor,
+ * complementando com o site encontrado na internet (quando houver).
+ */
+export const prefillFromScope = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ company: z.string().trim().min(1).max(200), context: z.string().max(12000), website: z.string().max(300).optional() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await guard(context);
+    const website = data.website?.trim() || (await findCompanySite(data.company));
+    const site = website ? await analyzeUrl(website).catch(() => null) : null;
+    const web = site && site.ok ? site : null;
+    const { askJson } = await import("./ai.server");
+    const info = await askJson<{ sector: string; location: string; description: string; offerings: string[]; highlights: string[]; audience: string }>(
+      "Você é analista de negócios da Liberato Consulting. Preencha o perfil de uma empresa em português do Brasil usando apenas as informações fornecidas. Não invente números nem fatos; deixe vazio o que não houver.",
+      `Empresa: ${data.company}
+
+${data.context}
+
+${web ? `Dados do site (${web.website}):
+Setor: ${web.sector}
+Localização: ${web.location}
+Sobre: ${web.description}
+Ofertas: ${web.offerings.join("; ")}
+Destaques: ${web.highlights.join("; ")}
+Público: ${web.audience}` : "Site não encontrado na internet."}
+
+Devolva JSON com: sector, location, description (2-3 frases), offerings (até 6), highlights (até 5, incluindo necessidades e objetivos declarados no escopo), audience.`,
+    ).catch(() => null);
+    return {
+      website: web?.website ?? "",
+      logo: web?.logo ?? "",
+      sector: info?.sector || web?.sector || "",
+      location: info?.location || web?.location || "",
+      description: info?.description || web?.description || "",
+      offerings: (info?.offerings?.length ? info.offerings : web?.offerings ?? []).slice(0, 6),
+      highlights: (info?.highlights?.length ? info.highlights : web?.highlights ?? []).slice(0, 5),
+      audience: info?.audience || web?.audience || "",
     };
   });
 
