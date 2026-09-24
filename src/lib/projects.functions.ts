@@ -209,3 +209,55 @@ export const getProjectsOverview = createServerFn({ method: "GET" })
       presentations: (pres.count as number | null) ?? 0,
     };
   });
+
+/* ------------------------------------------------------------------ */
+/* Lista única de clientes (CRM + escopos + diagnósticos identificados) */
+/* ------------------------------------------------------------------ */
+
+export type ProjectClient = {
+  key: string;
+  name: string;
+  source: "crm" | "scope" | "diag";
+  label: string;
+  crmId?: string;
+  sector: string;
+  location: string;
+  website: string;
+  size?: string;
+  country?: string;
+};
+
+export const listProjectClients = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { assertAdmin } = await import("./access.server");
+    await assertAdmin(context);
+    const sb = context.supabase as any;
+    const [crm, scopes, diags] = await Promise.all([
+      sb.from("crm_companies").select("id, name, trade_name, segment, city, state, website, size, country").order("name").limit(2000),
+      sb.from("project_scope_submissions").select("id, company, created_at").order("created_at", { ascending: false }).limit(500),
+      sb.from("project_diagnostics").select("id, client_name, service_title, updated_at").order("updated_at", { ascending: false }).limit(500),
+    ]);
+    return buildProjectClients(crm.data ?? [], scopes.data ?? [], diags.data ?? []);
+  });
+
+export function buildProjectClients(crm: any[], scopes: any[], diags: any[]): ProjectClient[] {
+  const clean = (v: unknown) => String(v ?? "").trim();
+  const out: ProjectClient[] = [];
+  for (const c of crm) {
+    const name = clean(c.trade_name) || clean(c.name);
+    if (!name) continue;
+    out.push({ key: `crm:${c.id}`, name, source: "crm", label: `${name} · CRM`, crmId: c.id, sector: clean(c.segment), location: [c.city, c.state].map(clean).filter(Boolean).join(" / "), website: clean(c.website), size: c.size, country: c.country });
+  }
+  for (const s of scopes) {
+    const name = clean(s.company);
+    if (!name) continue;
+    out.push({ key: `scope:${s.id}`, name, source: "scope", label: `${name} · Escopo inicial (${new Date(s.created_at).toLocaleDateString("pt-BR")})`, sector: "", location: "", website: "" });
+  }
+  for (const g of diags) {
+    const name = clean(g.client_name);
+    if (!name) continue;
+    out.push({ key: `diag:${g.id}`, name, source: "diag", label: `${name} · Diagnóstico${g.service_title ? ` (${g.service_title})` : ""}`, sector: "", location: "", website: "" });
+  }
+  return out.sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+}

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Download, Globe, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
@@ -10,13 +10,16 @@ import {
   draftPresentationContent,
   prefillFromScope,
   getPresentationContext,
-  logPresentation,
+  savePresentation,
+  getPresentation,
+  getPresentationFileUrl,
   type PresentationDraft,
 } from "@/lib/presentation.functions";
 import { SCOPE_QUESTIONS } from "@/lib/scope-form";
 import { activeSignals } from "@/lib/scope-guide";
 import { BASE_BLOCKS, FAMILY_BLOCKS, DEFAULT_MODULES } from "@/lib/diagnostic-catalog";
-import { exportDeck, prepareImage, type DeckInput } from "@/lib/presentation-deck";
+import { buildDeckFiles, prepareImage, type DeckInput } from "@/lib/presentation-deck";
+import { buildProjectClients } from "@/lib/projects.functions";
 
 export const Route = createFileRoute("/admin/projetos_/apresentacao")({
   head: () => ({
@@ -25,6 +28,7 @@ export const Route = createFileRoute("/admin/projetos_/apresentacao")({
       { name: "robots", content: "noindex" },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>): { id?: string } => (typeof s["id"] === "string" ? { id: s["id"] } : {}),
   component: PresentationPage,
 });
 
@@ -101,13 +105,37 @@ function PresentationPage() {
   const clientOptions = useMemo(() => {
     const d = ctx.data;
     if (!d) return [];
-    const opts = [
-      ...d.crm.map((c) => ({ key: `crm:${c.id}`, label: `${c.trade_name || c.name} · CRM`, name: c.trade_name || c.name, sector: c.segment, location: [c.city, c.state].filter(Boolean).join(" / "), website: c.website })),
-      ...d.scopes.map((s: any) => ({ key: `scope:${s.id}`, label: `${s.company} · Escopo inicial (${new Date(s.created_at).toLocaleDateString("pt-BR")})`, name: s.company, sector: "", location: "", website: "" })),
-      ...d.diagnostics.map((g: any) => ({ key: `diag:${g.id}`, label: `${g.client_name || g.title} · Diagnóstico (${g.service_title || ""})`, name: g.client_name || g.title, sector: "", location: "", website: "" })),
-    ];
-    return opts.sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+    return buildProjectClients(d.crm, d.scopes, d.diagnostics);
   }, [ctx.data]);
+
+  const search = Route.useSearch();
+  const [savedId, setSavedId] = useState<string | undefined>(search.id);
+  const [saved, setSaved] = useState(false);
+  const [loadedId, setLoadedId] = useState("");
+  useEffect(() => {
+    if (!search.id || loadedId === search.id) return;
+    setLoadedId(search.id);
+    void getPresentation({ data: { id: search.id } }).then((r) => {
+      const p = r?.payload as any;
+      if (!p || !p.name) { toast.info("Esta apresentação é antiga e não tem dados salvos para edição."); return; }
+      setSite(p.site ?? ""); setName(p.name ?? ""); setSector(p.sector ?? ""); setLocation(p.location ?? "");
+      setDescription(p.description ?? ""); setOfferings(p.offerings ?? ""); setHighlights(p.highlights ?? "");
+      setAudience(p.audience ?? ""); setLogo(p.logo ?? ""); setServiceSlug(p.serviceSlug ?? "");
+      setUseQuote(!!p.useQuote); setQuoteId(p.quoteId ?? ""); setUseScope(!!p.useScope); setScopeId(p.scopeId ?? "");
+      setUseDiag(!!p.useDiag); setDiagId(p.diagId ?? ""); setDraft(p.draft ?? null); setSavedId(search.id); setSaved(true);
+      toast.success("Apresentação carregada para edição.");
+    }).catch((e) => toast.error((e as Error).message));
+  }, [search.id, loadedId]);
+
+  async function openFile(format: "pptx" | "pdf") {
+    if (!savedId) return;
+    try {
+      const { url } = await getPresentationFileUrl({ data: { id: savedId, format } });
+      window.location.href = url;
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
 
   function pickClient(key: string) {
     setPick(key);
@@ -168,7 +196,7 @@ function PresentationPage() {
     }
     return parts.join("\n\n").slice(0, 12000);
   }
-  const [busy, setBusy] = useState<"" | "site" | "draft" | "pptx" | "pdf">("");
+  const [busy, setBusy] = useState<"" | "site" | "draft" | "files">("");
 
   const services = ctx.data?.services ?? [];
   const service = services.find((s) => s.slug === serviceSlug);
@@ -255,14 +283,14 @@ function PresentationPage() {
     }
   }
 
-  async function download(format: "pptx" | "pdf") {
+  async function generate() {
     if (!ctx.data || !service) { toast.error("Selecione o serviço."); return; }
     if (useQuote && !quoteId) { toast.error("Selecione o orçamento a usar ou desmarque a opção."); return; }
     if (useScope && !scopeId) { toast.error("Selecione o escopo inicial ou desmarque a opção."); return; }
     if (useDiag && !diagId) { toast.error("Selecione o diagnóstico ou desmarque a opção."); return; }
     const d: PresentationDraft | null = draft ?? (await makeDraft()) ?? null;
     if (!d) return;
-    setBusy(format);
+    setBusy("files");
     try {
       const [clientLogo, libLogo, libLight, ...clientImgs] = await Promise.all([
         logo ? prepareImage(logo, false) : Promise.resolve(null),
@@ -317,23 +345,28 @@ function PresentationPage() {
             }
           : null,
       };
-      await exportDeck(deck, format);
-      void logPresentation({
+      const files = await buildDeckFiles(deck);
+      const r = await savePresentation({
         data: {
-          client_name: name.trim(),
+          id: savedId,
+          client_name: deck.clientName || "Cliente",
           service_title: service.title ?? "",
-          format,
           website: site.slice(0, 300),
           sector: sector.slice(0, 200),
           used_quote: !!q,
           used_scope: useScope && !!scopeId,
           used_diagnostic: useDiag && !!diagId,
+          pptx: files.pptx,
+          pdf: files.pdf,
+          payload: { site, name, sector, location, description, offerings, highlights, audience, logo, serviceSlug, useQuote, quoteId, useScope, scopeId, useDiag, diagId, draft: d },
         },
-      }).catch(() => undefined);
-      toast.success(format === "pptx" ? "PowerPoint gerado." : "PDF gerado.");
+      });
+      setSavedId(r.id);
+      setSaved(true);
+      toast.success(savedId ? "Apresentação atualizada (PowerPoint e PDF)." : "Apresentação gerada (PowerPoint e PDF).");
     } catch (err) {
       console.error(err);
-      toast.error("Falha ao gerar o arquivo.");
+      toast.error("Falha ao gerar os arquivos.");
     } finally {
       setBusy("");
     }
@@ -515,17 +548,25 @@ function PresentationPage() {
             <p className="mr-auto text-sm text-muted-foreground">
               15 slides: capa, agenda, cliente, mercado, desafios, Liberato, resultados, casos, serviço, jornada, impactos, ferramentas, diferenciais, proposta e próximos passos.
             </p>
-            {(["pptx", "pdf"] as const).map((f) => (
-              <button
-                key={f}
-                onClick={() => void download(f)}
-                disabled={busy !== ""}
-                className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-60"
-              >
-                {busy === f ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />}
-                Baixar {f === "pptx" ? "PowerPoint" : "PDF"}
-              </button>
-            ))}
+            <button
+              onClick={() => void generate()}
+              disabled={busy !== ""}
+              className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2 text-sm font-medium text-accent-foreground hover:opacity-90 disabled:opacity-60"
+            >
+              {busy === "files" ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+              {savedId ? "Salvar alterações e gerar de novo" : "Gerar apresentação"}
+            </button>
+            {saved && savedId
+              ? (["pptx", "pdf"] as const).map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => void openFile(f)}
+                    className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium hover:border-accent"
+                  >
+                    <Download className="size-4" /> {f === "pptx" ? "PowerPoint" : "PDF"}
+                  </button>
+                ))
+              : null}
           </section>
         </div>
       )}

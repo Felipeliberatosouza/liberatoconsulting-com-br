@@ -1566,8 +1566,12 @@ export type Database = {
           created_by: string | null
           format: string
           id: string
+          payload: Json
+          pdf_path: string | null
+          pptx_path: string | null
           sector: string
           service_title: string
+          updated_at: string
           used_diagnostic: boolean
           used_quote: boolean
           used_scope: boolean
@@ -1579,8 +1583,12 @@ export type Database = {
           created_by?: string | null
           format: string
           id?: string
+          payload?: Json
+          pdf_path?: string | null
+          pptx_path?: string | null
           sector?: string
           service_title?: string
+          updated_at?: string
           used_diagnostic?: boolean
           used_quote?: boolean
           used_scope?: boolean
@@ -1592,8 +1600,12 @@ export type Database = {
           created_by?: string | null
           format?: string
           id?: string
+          payload?: Json
+          pdf_path?: string | null
+          pptx_path?: string | null
           sector?: string
           service_title?: string
+          updated_at?: string
           used_diagnostic?: boolean
           used_quote?: boolean
           used_scope?: boolean

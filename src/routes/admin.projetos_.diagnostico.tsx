@@ -15,6 +15,7 @@ import { listServiceProducts } from "@/lib/services.functions";
 import {
   deleteDiagnostic,
   listDiagnostics,
+  listProjectClients,
   saveDiagnostic,
   type DiagnosticRow,
 } from "@/lib/projects.functions";
@@ -51,6 +52,7 @@ function DiagnosticPage() {
   const [id, setId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [clientName, setClientName] = useState("");
+  const clientList = useQuery({ queryKey: ["project-clients"], queryFn: () => listProjectClients() });
   const [serviceSlug, setServiceSlug] = useState("");
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [consultantNotes, setConsultantNotes] = useState<Record<string, string>>({});
@@ -175,7 +177,20 @@ function DiagnosticPage() {
       <div className="mb-6 grid gap-4 rounded-2xl border border-border bg-background p-5 md:grid-cols-4">
         <div>
           <Label>Cliente</Label>
-          <Input value={clientName} onChange={(e) => setClientName(e.target.value)} />
+          <select
+            className="mb-2 h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+            value=""
+            onChange={(e) => {
+              const c = (clientList.data ?? []).find((x) => x.key === e.target.value);
+              if (c) setClientName(c.name);
+            }}
+          >
+            <option value="">Selecionar do CRM, escopos ou diagnósticos…</option>
+            {(clientList.data ?? []).map((c) => (
+              <option key={c.key} value={c.key}>{c.label}</option>
+            ))}
+          </select>
+          <Input placeholder="Ou digite / ajuste o nome" value={clientName} onChange={(e) => setClientName(e.target.value)} />
         </div>
         <div>
           <Label>Título do diagnóstico</Label>
