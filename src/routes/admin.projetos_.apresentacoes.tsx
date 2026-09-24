@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Download, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
-import { deletePresentation, listPresentations } from "@/lib/presentation.functions";
+import { deletePresentation, getPresentationFileUrl, listPresentations } from "@/lib/presentation.functions";
 
 export const Route = createFileRoute("/admin/projetos_/apresentacoes")({
   head: () => ({
@@ -27,6 +27,15 @@ function PresentationsList() {
       await deletePresentation({ data: { id } });
       await qc.invalidateQueries({ queryKey: ["presentations"] });
       toast.success("Registro removido.");
+    } catch (e) {
+      toast.error((e as Error).message);
+    }
+  }
+
+  async function open(id: string, format: "pptx" | "pdf") {
+    try {
+      const { url } = await getPresentationFileUrl({ data: { id, format } });
+      window.location.href = url;
     } catch (e) {
       toast.error((e as Error).message);
     }
@@ -56,7 +65,7 @@ function PresentationsList() {
                 <th className="p-3">Data</th>
                 <th className="p-3">Cliente</th>
                 <th className="p-3">Serviço</th>
-                <th className="p-3">Formato</th>
+                <th className="p-3">Arquivos</th>
                 <th className="p-3">Fontes usadas</th>
                 <th className="p-3" />
               </tr>
@@ -70,7 +79,27 @@ function PresentationsList() {
                     {r.website ? <div className="text-xs text-muted-foreground">{r.website}</div> : null}
                   </td>
                   <td className="p-3">{r.service_title}</td>
-                  <td className="p-3 uppercase">{r.format}</td>
+                  <td className="p-3">
+                    {r.pptx_path || r.pdf_path ? (
+                      <div className="flex flex-wrap gap-2">
+                        {r.pptx_path ? (
+                          <button onClick={() => void open(r.id, "pptx")} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1 text-xs hover:border-accent">
+                            <Download className="size-3" /> PowerPoint
+                          </button>
+                        ) : null}
+                        {r.pdf_path ? (
+                          <button onClick={() => void open(r.id, "pdf")} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1 text-xs hover:border-accent">
+                            <Download className="size-3" /> PDF
+                          </button>
+                        ) : null}
+                        <Link to="/admin/projetos/apresentacao" search={{ id: r.id }} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1 text-xs hover:border-accent">
+                          <Pencil className="size-3" /> Editar
+                        </Link>
+                      </div>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">Registro antigo ({r.format.toUpperCase()}), sem arquivo salvo</span>
+                    )}
+                  </td>
                   <td className="p-3 text-xs text-muted-foreground">
                     {[r.used_quote && "Orçamento", r.used_scope && "Escopo inicial", r.used_diagnostic && "Diagnóstico"].filter(Boolean).join(", ") || "—"}
                   </td>
