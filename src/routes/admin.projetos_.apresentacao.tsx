@@ -8,6 +8,7 @@ import { AdminShell } from "@/components/AdminShell";
 import {
   analyzeClientSite,
   draftPresentationContent,
+  prefillFromScope,
   getPresentationContext,
   logPresentation,
   type PresentationDraft,
@@ -123,6 +124,36 @@ function PresentationPage() {
     if (sc) { setScopeId(sc); setUseScope(true); }
     if (dg) { setDiagId(dg); setUseDiag(true); }
     setDraft(null);
+    if (sc) void fillFromScope(sc, o.name, o.website || site);
+  }
+
+  async function fillFromScope(id: string, company?: string, website?: string) {
+    const s = ctx.data?.scopes.find((x: any) => x.id === id);
+    if (!s) return;
+    const n = (company || name || s.company || "").trim();
+    if (!n) return;
+    if (!name.trim()) setName(n);
+    setBusy("site");
+    const t = toast.loading("Preenchendo com o Escopo Inicial, o Guia do Consultor e dados da internet…");
+    try {
+      const r = await prefillFromScope({ data: { company: n, context: scopeText(s).slice(0, 12000), website: website || undefined } });
+      if (r.website && !site) setSite(r.website);
+      if (r.sector) setSector(r.sector);
+      if (r.location) setLocation(r.location);
+      if (r.description) setDescription(r.description);
+      if (r.offerings.length) setOfferings(r.offerings.join("\n"));
+      if (r.highlights.length) setHighlights(r.highlights.join("\n"));
+      if (r.audience) setAudience(r.audience);
+      if (r.logo && !logo) {
+        const img = await prepareImage(r.logo, true);
+        if (img) setLogo(img.data);
+      }
+      toast.success(r.website ? "Campos preenchidos. Revise e ajuste." : "Campos preenchidos com o escopo (site não encontrado na internet).", { id: t });
+    } catch {
+      toast.error("Não foi possível preencher automaticamente. Complete à mão.", { id: t });
+    } finally {
+      setBusy("");
+    }
   }
 
   function extraContext(): string {
@@ -186,13 +217,16 @@ function PresentationPage() {
   }
 
   async function makeDraft() {
-    if (!name.trim()) { toast.error("Informe o nome do cliente."); return null; }
+    const scopeCompany = useScope && scopeId ? String(ctx.data?.scopes.find((x: any) => x.id === scopeId)?.company ?? "") : "";
+    const clientName = name.trim() || scopeCompany.trim();
+    if (!clientName) { toast.error("Informe o nome do cliente."); return null; }
+    if (!name.trim()) setName(clientName);
     if (!service) { toast.error("Selecione o serviço a ser apresentado."); return null; }
     setBusy("draft");
     try {
       const r = await draftPresentationContent({
         data: {
-          clientName: name,
+          clientName,
           sector,
           location,
           description,
@@ -240,7 +274,7 @@ function PresentationPage() {
       const payload = (q?.payload ?? {}) as any;
       const ratio = q && Number(q.total_brl) > 0 ? Number(q.total_currency) / Number(q.total_brl) : 1;
       const deck: DeckInput = {
-        clientName: name.trim(),
+        clientName: name.trim() || String(ctx.data.scopes.find((x: any) => x.id === scopeId)?.company ?? ""),
         sector,
         location,
         website: site,
@@ -413,7 +447,7 @@ function PresentationPage() {
                 Usar informações do Guia do Consultor (Escopo Inicial)
               </label>
               {useScope ? (
-                <select className={input} value={scopeId} onChange={(e) => { setScopeId(e.target.value); setDraft(null); }}>
+                <select className={input} value={scopeId} onChange={(e) => { setScopeId(e.target.value); setDraft(null); if (e.target.value) void fillFromScope(e.target.value); }}>
                   <option value="">Selecione o escopo inicial…</option>
                   {(ctx.data?.scopes ?? []).map((s: any) => (
                     <option key={s.id} value={s.id}>{s.company} · {s.respondent_name} · {new Date(s.created_at).toLocaleDateString("pt-BR")}</option>
