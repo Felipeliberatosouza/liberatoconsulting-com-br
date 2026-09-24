@@ -150,7 +150,11 @@ export async function buildBulletinContent(segment: string): Promise<BulletinCon
     ]);
 
   const all = (indicatorRows ?? []) as Array<Indicator & { position: number }>;
-  const isGeneral = !segment || segment === "Todos" || segment === "Geral";
+  const requestedGeneral = !segment || segment === "Todos" || segment === "Geral";
+  // Regra: só usa o boletim do segmento quando há indicadores próprios dele;
+  // caso contrário, envia o Boletim Semanal geral.
+  const hasSegmentData = !requestedGeneral && all.some((i) => i.segment === segment);
+  const isGeneral = requestedGeneral || !hasSegmentData;
   const scoped = isGeneral
     ? all
     : all.filter((i) => !i.segment || i.segment === "Todos" || i.segment === segment);
