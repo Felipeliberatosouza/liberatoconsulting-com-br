@@ -330,28 +330,89 @@ export const draftPresentationContent = createServerFn({ method: "POST" })
     }
   });
 
-/** Registra uma apresentação gerada. */
-export const logPresentation = createServerFn({ method: "POST" })
+/** Salva (ou atualiza) uma apresentação com os dois arquivos: PowerPoint e PDF. */
+export const savePresentation = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
     z
       .object({
+        id: z.string().uuid().optional(),
         client_name: z.string().trim().min(1).max(200),
         service_title: z.string().max(300),
-        format: z.enum(["pptx", "pdf"]),
         website: z.string().max(300),
         sector: z.string().max(200),
         used_quote: z.boolean(),
         used_scope: z.boolean(),
         used_diagnostic: z.boolean(),
+        pptx: z.string().max(40_000_000),
+        pdf: z.string().max(40_000_000),
+        payload: z.record(z.string(), z.unknown()),
       })
       .parse(d),
   )
   .handler(async ({ data, context }) => {
     await guard(context);
-    const { error } = await (context.supabase as any).from("project_presentations").insert(data);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const id = data.id ?? crypto.randomUUID();
+    const bytes = (b64: string) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+    const pptx_path = `${id}/apresentacao.pptx`;
+    const pdf_path = `${id}/apresentacao.pdf`;
+    const up = await Promise.all([
+      supabaseAdmin.storage.from("presentations").upload(pptx_path, bytes(data.pptx), {
+        upsert: true,
+        contentType: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      }),
+      supabaseAdmin.storage.from("presentations").upload(pdf_path, bytes(data.pdf), { upsert: true, contentType: "application/pdf" }),
+    ]);
+    const upErr = up.find((r) => r.error)?.error;
+    if (upErr) throw new Error(upErr.message);
+    const row = {
+      id,
+      client_name: data.client_name,
+      service_title: data.service_title,
+      format: "pptx+pdf",
+      website: data.website,
+      sector: data.sector,
+      used_quote: data.used_quote,
+      used_scope: data.used_scope,
+      used_diagnostic: data.used_diagnostic,
+      pptx_path,
+      pdf_path,
+      payload: data.payload,
+      updated_at: new Date().toISOString(),
+    };
+    const { error } = await (supabaseAdmin as any).from("project_presentations").upsert(row);
     if (error) throw new Error(error.message);
-    return { ok: true as const };
+    return { ok: true as const, id };
+  });
+
+/** Dados salvos de uma apresentação, para reabrir e editar. */
+export const getPresentation = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await guard(context);
+    const { data: row, error } = await (context.supabase as any).from("project_presentations").select("id, payload").eq("id", data.id).maybeSingle();
+    if (error) throw new Error(error.message);
+    return (row ?? null) as { id: string; payload: Record<string, any> } | null;
+  });
+
+/** Link temporário para baixar um dos arquivos. */
+export const getPresentationFileUrl = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), format: z.enum(["pptx", "pdf"]) }).parse(d))
+  .handler(async ({ data, context }) => {
+    await guard(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row } = await (supabaseAdmin as any).from("project_presentations").select("client_name, pptx_path, pdf_path").eq("id", data.id).maybeSingle();
+    const path = data.format === "pptx" ? row?.pptx_path : row?.pdf_path;
+    if (!path) throw new Error("Arquivo não disponível.");
+    const safe = String(row.client_name).replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "cliente";
+    const { data: signed, error } = await supabaseAdmin.storage
+      .from("presentations")
+      .createSignedUrl(path, 300, { download: `Apresentacao-Liberato-${safe}.${data.format}` });
+    if (error || !signed) throw new Error(error?.message ?? "Falha ao gerar link.");
+    return { url: signed.signedUrl };
   });
 
 export type PresentationRow = {
@@ -365,6 +426,8 @@ export type PresentationRow = {
   used_scope: boolean;
   used_diagnostic: boolean;
   created_at: string;
+  pptx_path: string | null;
+  pdf_path: string | null;
 };
 
 export const listPresentations = createServerFn({ method: "GET" })
@@ -373,7 +436,7 @@ export const listPresentations = createServerFn({ method: "GET" })
     await guard(context);
     const { data, error } = await (context.supabase as any)
       .from("project_presentations")
-      .select("*")
+      .select("id, client_name, service_title, format, website, sector, used_quote, used_scope, used_diagnostic, created_at, pptx_path, pdf_path")
       .order("created_at", { ascending: false })
       .limit(500);
     if (error) throw new Error(error.message);
@@ -385,6 +448,8 @@ export const deletePresentation = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
     await guard(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.storage.from("presentations").remove([`${data.id}/apresentacao.pptx`, `${data.id}/apresentacao.pdf`]);
     const { error } = await (context.supabase as any).from("project_presentations").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true as const };
