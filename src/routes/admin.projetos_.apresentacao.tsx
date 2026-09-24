@@ -28,7 +28,7 @@ export const Route = createFileRoute("/admin/projetos_/apresentacao")({
       { name: "robots", content: "noindex" },
     ],
   }),
-  validateSearch: (s: Record<string, unknown>) => ({ id: typeof s.id === "string" ? s.id : undefined }),
+  validateSearch: (s: Record<string, unknown>): { id?: string } => (typeof s["id"] === "string" ? { id: s["id"] } : {}),
   component: PresentationPage,
 });
 
