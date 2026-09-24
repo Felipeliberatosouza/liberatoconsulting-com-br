@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { listServiceProducts } from "@/lib/services.functions";
 import { listCrmCompanies } from "@/lib/crm.functions";
+import { listProjectClients } from "@/lib/projects.functions";
 import {
   buildQuotePdf,
   getFxRate,
@@ -102,6 +103,7 @@ function PricingPage() {
   const stored = useQuery({ queryKey: ["pricing-settings"], queryFn: () => getPricingSettings() });
   const history = useQuery({ queryKey: ["quotes"], queryFn: () => listQuotes() });
   const crmCompanies = useQuery({ queryKey: ["crm-companies"], queryFn: () => listCrmCompanies() });
+  const clientList = useQuery({ queryKey: ["project-clients"], queryFn: () => listProjectClients() });
 
   useEffect(() => {
     if (stored.data) setSettings(stored.data);
@@ -511,7 +513,7 @@ function PricingPage() {
               </select>
             </div>
             <div className="space-y-1.5">
-              <Label>Cliente (CRM)</Label>
+              <Label>Cliente (CRM, escopos e diagnósticos)</Label>
               <select
                 className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                 value={clientId}
@@ -522,11 +524,14 @@ function PricingPage() {
                     setClientName("");
                     return;
                   }
-                  const c = (crmCompanies.data ?? []).find((x: any) => x.id === id);
-                  if (!c) {
+                  const opt = (clientList.data ?? []).find((x) => x.key === id);
+                  if (!opt) {
                     setClientName("");
                     return;
                   }
+                  setClientName(opt.name);
+                  const c = opt.crmId ? (crmCompanies.data ?? []).find((x: any) => x.id === opt.crmId) : null;
+                  if (!c) return;
                   setClientName(c.trade_name || c.name);
                   if (c.size === "corporacao" || c.size === "pme") {
                     setCompanyType(c.size === "corporacao" ? "corporate" : "sme");
@@ -543,10 +548,10 @@ function PricingPage() {
                   }
                 }}
               >
-                <option value="">Escolha um cliente do CRM…</option>
-                {(crmCompanies.data ?? []).map((c: any) => (
-                  <option key={c.id} value={c.id}>
-                    {c.trade_name || c.name}
+                <option value="">Escolha um cliente…</option>
+                {(clientList.data ?? []).map((c) => (
+                  <option key={c.key} value={c.key}>
+                    {c.label}
                   </option>
                 ))}
                 <option value="manual">Outro (digitar nome)</option>
