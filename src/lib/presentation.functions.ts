@@ -31,6 +31,8 @@ function isPublicWebUrl(raw: string): boolean {
 /** Baixa uma imagem e devolve data URL (limite de 3 MB). */
 async function toDataUrl(url: string): Promise<string> {
   try {
+    if (/^data:image\//i.test(url)) return url.length < 4_000_000 ? url : "";
+    if (url.startsWith("/")) url = `https://liberatoconsulting.com.br${url}`;
     if (!/^https?:\/\//i.test(url)) return "";
     const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 LiberatoBot" } });
     if (!res.ok) return "";
