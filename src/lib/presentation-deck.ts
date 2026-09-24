@@ -126,7 +126,11 @@ async function pptBoard() {
       slide.addImage({ data: img.data, ...f });
     },
   };
-  return { board, save: (name: string) => pptx.writeFile({ fileName: name }) };
+  return {
+    board,
+    save: (name: string) => pptx.writeFile({ fileName: name }),
+    base64: async () => String(await pptx.write({ outputType: "base64" })),
+  };
 }
 
 // ---------- PDF ----------
@@ -178,7 +182,11 @@ async function pdfBoard() {
       }
     },
   };
-  return { board, save: (name: string) => doc.save(name) };
+  return {
+    board,
+    save: (name: string) => doc.save(name),
+    base64: async () => doc.output("datauristring").split(",")[1] ?? "",
+  };
 }
 
 // ---------- Slides ----------
@@ -315,16 +323,14 @@ function drawDeck(b: Board, d: DeckInput) {
   cards(d.institutional.impact.slice(0, 6), 0.7, 2.15, 11.9, 4.4, 3);
 
   // 8. Clientes
-  const withLogos = d.institutional.clients.filter((c) => c.name || c.logo);
+  const withLogos = d.institutional.clients.filter((c) => c.logo);
   if (withLogos.length > 0) {
     light("Casos de sucesso", "Empresas que já confiam na Liberato Consulting");
     withLogos.slice(0, 8).forEach((c, i) => {
       const x = 0.7 + (i % 4) * 3.0;
       const y = 2.3 + Math.floor(i / 4) * 2.0;
       b.rect(x, y, 2.75, 1.7, C.white, true);
-      if (c.logo) b.image(c.logo, x + 0.3, y + 0.25, 2.15, 1.0);
-      else b.text(c.name, x + 0.2, y + 0.6, 2.35, 0.5, { size: 15, bold: true, color: C.navy, align: "center" });
-      if (c.logo && c.name) b.text(c.name, x + 0.1, y + 1.3, 2.55, 0.3, { size: 10, color: C.muted, align: "center" });
+      if (c.logo) b.image(c.logo, x + 0.3, y + 0.25, 2.15, 1.2);
     });
   }
 
@@ -421,6 +427,15 @@ export async function exportDeck(d: DeckInput, format: "pptx" | "pdf") {
   const { board, save } = format === "pptx" ? await pptBoard() : await pdfBoard();
   drawDeck(board, d);
   await save(name);
+}
+
+/** Gera PowerPoint e PDF de uma vez, devolvendo os dois em base64. */
+export async function buildDeckFiles(d: DeckInput): Promise<{ pptx: string; pdf: string }> {
+  const ppt = await pptBoard();
+  drawDeck(ppt.board, d);
+  const pdf = await pdfBoard();
+  drawDeck(pdf.board, d);
+  return { pptx: await ppt.base64(), pdf: await pdf.base64() };
 }
 
 /** Carrega uma imagem, converte para PNG e remove fundo liso (branco ou uniforme). */
