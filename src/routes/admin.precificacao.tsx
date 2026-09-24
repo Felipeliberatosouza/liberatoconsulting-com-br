@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { Sparkles, FileDown, RefreshCw } from "lucide-react";
@@ -264,7 +264,15 @@ function PricingPage() {
           <TabsTrigger value="rates">Valor do homem-hora</TabsTrigger>
           <TabsTrigger value="stages">Etapas por serviço</TabsTrigger>
           <TabsTrigger value="quote">Gerar orçamento</TabsTrigger>
-          <TabsTrigger value="history">Orçamentos emitidos</TabsTrigger>
+          {aba === "history" ? (
+            <TabsTrigger value="history">Orçamentos emitidos</TabsTrigger>
+          ) : null}
+          <Link
+            to="/admin/projetos/apresentacao"
+            className="inline-flex items-center rounded-sm px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+          >
+            Gerar apresentação
+          </Link>
         </TabsList>
 
         {/* ---------------- Valor-hora ---------------- */}
