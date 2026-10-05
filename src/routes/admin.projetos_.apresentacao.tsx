@@ -18,6 +18,7 @@ import {
 import { SCOPE_QUESTIONS } from "@/lib/scope-form";
 import { activeSignals } from "@/lib/scope-guide";
 import { BASE_BLOCKS, FAMILY_BLOCKS, DEFAULT_MODULES } from "@/lib/diagnostic-catalog";
+import { listConsultants } from "@/lib/consultants.functions";
 import { buildDeckFiles, prepareImage, type DeckInput } from "@/lib/presentation-deck";
 import { buildProjectClients } from "@/lib/projects.functions";
 
@@ -83,6 +84,8 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function PresentationPage() {
   const ctx = useQuery({ queryKey: ["presentation-context"], queryFn: () => getPresentationContext(), retry: false });
+  const consultants = useQuery({ queryKey: ["presentation-consultants"], queryFn: () => listConsultants(), retry: false });
+  const [consultantId, setConsultantId] = useState("");
   const [site, setSite] = useState("");
   const [name, setName] = useState("");
   const [sector, setSector] = useState("");
@@ -122,7 +125,7 @@ function PresentationPage() {
       setDescription(p.description ?? ""); setOfferings(p.offerings ?? ""); setHighlights(p.highlights ?? "");
       setAudience(p.audience ?? ""); setLogo(p.logo ?? ""); setServiceSlug(p.serviceSlug ?? "");
       setUseQuote(!!p.useQuote); setQuoteId(p.quoteId ?? ""); setUseScope(!!p.useScope); setScopeId(p.scopeId ?? "");
-      setUseDiag(!!p.useDiag); setDiagId(p.diagId ?? ""); setDraft(p.draft ?? null); setSavedId(search.id); setSaved(true);
+      setUseDiag(!!p.useDiag); setDiagId(p.diagId ?? ""); setDraft(p.draft ?? null); setConsultantId(p.consultantId ?? ""); setSavedId(search.id); setSaved(true);
       toast.success("Apresentação carregada para edição.");
     }).catch((e) => toast.error((e as Error).message));
   }, [search.id, loadedId]);
@@ -298,6 +301,8 @@ function PresentationPage() {
         prepareImage(ctx.data.liberatoLogoLight, false),
         ...ctx.data.institutional.clients.map((c) => prepareImage(c.logo, false)),
       ]);
+      const cons = (consultants.data ?? []).find((c) => c.id === consultantId);
+      const consPhoto = cons?.photo_url ? await prepareImage(cons.photo_url, false) : null;
       const q = useQuote ? ctx.data.quotes.find((x) => x.id === quoteId) : null;
       const payload = (q?.payload ?? {}) as any;
       const ratio = q && Number(q.total_brl) > 0 ? Number(q.total_currency) / Number(q.total_brl) : 1;
@@ -328,6 +333,18 @@ function PresentationPage() {
           clients: ctx.data.institutional.clients.map((c, i) => ({ name: c.name, logo: clientImgs[i] ?? null })),
         },
         tools: ctx.data.tools,
+        consultant: cons
+          ? {
+              name: cons.full_name,
+              headline: cons.headline ?? "",
+              photo: consPhoto,
+              education: cons.education ?? "",
+              experience: cons.experience ?? "",
+              clients: cons.clients ?? "",
+              specialties: Array.isArray(cons.specialties) ? (cons.specialties as string[]) : [],
+              segments: Array.isArray(cons.segments) ? (cons.segments as string[]) : [],
+            }
+          : null,
         identity: ctx.data.identity,
         quote: q
           ? {
@@ -358,7 +375,7 @@ function PresentationPage() {
           used_diagnostic: useDiag && !!diagId,
           pptx: files.pptx,
           pdf: files.pdf,
-          payload: { site, name, sector, location, description, offerings, highlights, audience, logo, serviceSlug, useQuote, quoteId, useScope, scopeId, useDiag, diagId, draft: d },
+          payload: { site, name, sector, location, description, offerings, highlights, audience, logo, serviceSlug, useQuote, quoteId, useScope, scopeId, useDiag, diagId, consultantId, draft: d },
         },
       });
       setSavedId(r.id);
@@ -501,6 +518,16 @@ function PresentationPage() {
                   ))}
                 </select>
               ) : null}
+            </div>
+            <div className="space-y-2">
+              <Field label="Consultor responsável pelo projeto (slide após “Quem somos”)">
+                <select className={input} value={consultantId} onChange={(e) => setConsultantId(e.target.value)}>
+                  <option value="">Sem slide de consultor</option>
+                  {(consultants.data ?? []).map((c) => (
+                    <option key={c.id} value={c.id}>{c.full_name}</option>
+                  ))}
+                </select>
+              </Field>
             </div>
           </section>
 
