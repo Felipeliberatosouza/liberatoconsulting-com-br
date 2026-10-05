@@ -294,6 +294,7 @@ function PresentationPage() {
     const d: PresentationDraft | null = draft ?? (await makeDraft()) ?? null;
     if (!d) return;
     setBusy("files");
+    let built: { pptx: string; pdf: string } | null = null;
     try {
       const [clientLogo, libLogo, libLight, ...clientImgs] = await Promise.all([
         logo ? prepareImage(logo, false) : Promise.resolve(null),
@@ -363,9 +364,10 @@ function PresentationPage() {
           : null,
       };
       const files = await buildDeckFiles(deck);
+      built = files;
       const r = await savePresentation({
         data: {
-          id: savedId,
+          id: savedId || null,
           client_name: deck.clientName || "Cliente",
           service_title: service.title ?? "",
           website: site.slice(0, 300),
@@ -383,7 +385,30 @@ function PresentationPage() {
       toast.success(savedId ? "Apresentação atualizada (PowerPoint e PDF)." : "Apresentação gerada (PowerPoint e PDF).");
     } catch (err) {
       console.error(err);
-      toast.error("Falha ao gerar os arquivos.");
+      const msg = (err as Error)?.message || "erro desconhecido";
+      if (built) {
+        const f = built;
+        const dl = (b64: string, ext: string, mime: string) => {
+          const bin = atob(b64);
+          const arr = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+          const url = URL.createObjectURL(new Blob([arr], { type: mime }));
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `apresentacao.${ext}`;
+          a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 5000);
+        };
+        toast.error(`Arquivos gerados, mas não foi possível salvar: ${msg}`, {
+          duration: 30000,
+          action: { label: "Baixar PPT e PDF", onClick: () => {
+            dl(f.pptx, "pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+            dl(f.pdf, "pdf", "application/pdf");
+          } },
+        });
+      } else {
+        toast.error(`Falha ao gerar os arquivos: ${msg}`);
+      }
     } finally {
       setBusy("");
     }

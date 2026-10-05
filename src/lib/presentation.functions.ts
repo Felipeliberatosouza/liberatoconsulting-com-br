@@ -344,11 +344,11 @@ export const savePresentation = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z
       .object({
-        id: z.string().uuid().optional(),
-        client_name: z.string().trim().min(1).max(200),
-        service_title: z.string().max(300),
-        website: z.string().max(300),
-        sector: z.string().max(200),
+        id: z.union([z.string().uuid(), z.literal(""), z.null()]).optional().transform((v) => v || undefined),
+        client_name: z.string().trim().transform((v) => (v || "Cliente").slice(0, 200)),
+        service_title: z.string().transform((v) => v.slice(0, 300)),
+        website: z.string().transform((v) => v.slice(0, 300)),
+        sector: z.string().transform((v) => v.slice(0, 200)),
         used_quote: z.boolean(),
         used_scope: z.boolean(),
         used_diagnostic: z.boolean(),
@@ -362,7 +362,8 @@ export const savePresentation = createServerFn({ method: "POST" })
     await guard(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const id = data.id ?? crypto.randomUUID();
-    const bytes = (b64: string) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+    const { Buffer } = await import("node:buffer");
+    const bytes = (b64: string) => new Uint8Array(Buffer.from(b64, "base64"));
     const pptx_path = `${id}/apresentacao.pptx`;
     const pdf_path = `${id}/apresentacao.pdf`;
     const up = await Promise.all([
