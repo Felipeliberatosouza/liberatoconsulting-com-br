@@ -113,6 +113,22 @@ function wrapLines(str: string, w: number, size: number, bold: boolean) {
   }
   return n;
 }
+/** Quebra o texto em linhas explícitas, para o PowerPoint não refazer a quebra (evita repetir palavras). */
+function breakLines(str: string, w: number, size: number, bold: boolean) {
+  const cw = (size / 72) * (bold ? 0.6 : 0.55);
+  const max = Math.max(1, Math.floor(w / cw));
+  const out: string[] = [];
+  for (const para of str.split("\n")) {
+    let line = "";
+    for (const word of para.split(/\s+/).filter(Boolean)) {
+      if (!line) line = word;
+      else if (line.length + 1 + word.length <= max) line += " " + word;
+      else { out.push(line); line = word; }
+    }
+    out.push(line);
+  }
+  return out.join("\n");
+}
 function fitSize(str: string, w: number, h: number, size: number, bold: boolean) {
   for (let s = size; s > 7; s -= 0.5) {
     if (wrapLines(str, w, s, bold) * ((s * 1.22) / 72) <= h) return s;
@@ -149,9 +165,11 @@ async function pptBoard() {
     text(str, x, y, w, h, o) {
       if (!str) return;
       str = clean(str);
-      slide.addText(str, {
+      const fs = fitSize(str, w, h, o.size, !!o.bold);
+      slide.addText(breakLines(str, w, fs, !!o.bold), {
         x, y, w, h,
-        fontSize: fitSize(str, w, h, o.size, !!o.bold),
+        lang: "pt-BR",
+        fontSize: Math.floor(fs),
         bold: !!o.bold,
         color: o.color ?? C.ink,
         align: o.align ?? "left",
