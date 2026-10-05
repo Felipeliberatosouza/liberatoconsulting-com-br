@@ -39,6 +39,16 @@ export type DeckInput = {
     clients: Array<{ name: string; logo: Img }>;
   };
   tools: Array<{ title: string; summary: string | null }>;
+  consultant?: null | {
+    name: string;
+    headline: string;
+    photo: Img;
+    education: string;
+    experience: string;
+    clients: string;
+    specialties: string[];
+    segments: string[];
+  };
   identity: { tradeName: string; website: string; phone: string; email: string; address: string; cnpj: string };
   quote: null | {
     currency: string;
@@ -79,6 +89,37 @@ interface Board {
   image(img: Img, x: number, y: number, w: number, h: number): void;
 }
 
+/** Remove palavras repetidas em sequência ("vantagem vantagem"). */
+function clean(str: string) {
+  return str.replace(/(^|[^\p{L}])(\p{L}+)((?:\s+\2)+)(?=[^\p{L}]|$)/giu, "$1$2").trim();
+}
+
+/** Estima quebra de linhas para escolher um tamanho de fonte que caiba de verdade na caixa. */
+function wrapLines(str: string, w: number, size: number, bold: boolean) {
+  const cw = (size / 72) * (bold ? 0.58 : 0.53);
+  const max = Math.max(1, Math.floor(w / cw));
+  let n = 0;
+  for (const para of str.split("\n")) {
+    let line = 0;
+    let count = 1;
+    for (const word of para.split(/\s+/).filter(Boolean)) {
+      const len = word.length;
+      if (line === 0) line = len;
+      else if (line + 1 + len <= max) line += 1 + len;
+      else { count += 1; line = len; }
+      if (line > max) { count += Math.floor(line / max); line = line % max; }
+    }
+    n += count;
+  }
+  return n;
+}
+function fitSize(str: string, w: number, h: number, size: number, bold: boolean) {
+  for (let s = size; s > 7; s -= 0.5) {
+    if (wrapLines(str, w, s, bold) * ((s * 1.22) / 72) <= h) return s;
+  }
+  return 7;
+}
+
 function fit(img: NonNullable<Img>, x: number, y: number, w: number, h: number) {
   const r = Math.min(w / img.w, h / img.h);
   const iw = img.w * r;
@@ -107,9 +148,10 @@ async function pptBoard() {
     },
     text(str, x, y, w, h, o) {
       if (!str) return;
+      str = clean(str);
       slide.addText(str, {
         x, y, w, h,
-        fontSize: o.size,
+        fontSize: fitSize(str, w, h, o.size, !!o.bold),
         bold: !!o.bold,
         color: o.color ?? C.ink,
         align: o.align ?? "left",
@@ -117,7 +159,6 @@ async function pptBoard() {
         margin: 0,
         fontFace: o.display ? "Space Grotesk" : "DM Sans",
         lineSpacingMultiple: 1.05,
-        fit: "shrink",
       });
     },
     image(img, x, y, w, h) {
@@ -153,7 +194,8 @@ async function pdfBoard() {
     },
     text(str, x, y, w, h, o) {
       if (!str) return;
-      let size = o.size;
+      str = clean(str);
+      let size = Math.floor(fitSize(str, w, h, o.size, !!o.bold));
       doc.setFont("helvetica", o.bold ? "bold" : "normal");
       let lines: string[] = [];
       let lh = 0;
@@ -192,6 +234,11 @@ async function pdfBoard() {
 // ---------- Slides ----------
 function drawDeck(b: Board, d: DeckInput) {
   const client = d.clientName;
+  const g = d.draft.clientGender === "m" ? "o" : "a";
+  const A = `${g} ${client}`; // a Mark Up
+  const Acap = `${g.toUpperCase()} ${client}`;
+  const DE = `d${g} ${client}`; // da Mark Up
+  const NA = `n${g} ${client}`; // na Mark Up
   const total = { n: 0 };
   const date = new Date().toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
 
@@ -223,7 +270,7 @@ function drawDeck(b: Board, d: DeckInput) {
   };
   function footer(onDark: boolean) {
     b.image(onDark ? d.liberatoLogoLight ?? d.liberatoLogo : d.liberatoLogo, 0.7, 6.9, 1.4, 0.38);
-    b.text(`Liberato Consulting · Proposta exclusiva para ${client}`, 3.5, 7.0, 6.3, 0.25, {
+    b.text(`Liberato Consulting · Proposta exclusiva para ${A}`, 3.5, 7.0, 6.3, 0.25, {
       size: 9,
       color: onDark ? "C9CFDA" : C.muted,
       align: "center",
@@ -266,43 +313,43 @@ function drawDeck(b: Board, d: DeckInput) {
     b.image(d.clientLogo, 9.8, 0.65, 2.6, 1.2);
   }
   b.text(`PROPOSTA DE VALOR · ${(d.service.family || "CONSULTORIA").toUpperCase()}`, 0.9, 2.5, 11, 0.35, { size: 13, bold: true, color: C.accent });
-  b.text(d.draft.headline || `${d.service.title} para ${client}`, 0.9, 2.95, 11.2, 1.9, { size: 40, bold: true, color: C.white, display: true });
-  b.text(`${d.service.title} · preparado para ${client}`, 0.9, 5.0, 11, 0.5, { size: 18, color: "D5DAE3" });
+  b.text(d.draft.headline || `${d.service.title} para ${A}`, 0.9, 2.95, 11.2, 1.9, { size: 40, bold: true, color: C.white, display: true });
+  b.text(`${d.service.title} · preparado para ${A}`, 0.9, 5.0, 11, 0.5, { size: 18, color: "D5DAE3" });
   b.text([d.sector, d.location, date].filter(Boolean).join("  ·  "), 0.9, 5.6, 11, 0.4, { size: 14, color: C.accent });
 
   // 2. Agenda
-  light("Agenda", `O que vamos apresentar a ${client}`);
+  light("Agenda", `O que vamos apresentar para ${A}`);
   numbered(
     [
-      `O que entendemos sobre ${client}`,
-      `O mercado de ${d.sector || "atuação"} e os desafios de ${client}`,
+      `O que entendemos sobre ${A}`,
+      `O mercado de ${d.sector || "atuação"} e os desafios ${DE}`,
       "Quem é a Liberato Consulting e os resultados que entregamos",
-      `${d.service.title}: a solução desenhada para ${client}`,
-      `Impactos esperados no negócio de ${client}`,
+      `${d.service.title}: a solução desenhada para ${A}`,
+      `Impactos esperados no negócio ${DE}`,
       "Proposta comercial e próximos passos",
     ],
     0.9, 2.2, 11, 0.72,
   );
 
   // 3. Sobre o cliente
-  light("Entendimento do negócio", `O que entendemos sobre ${client}`);
+  light("Entendimento do negócio", `O que entendemos sobre ${A}`);
   b.text(d.draft.aboutClient, 0.7, 2.15, 6.2, 1.4, { size: 18, color: C.navy, bold: true });
   b.text(d.description, 0.7, 3.65, 6.2, 2.8, { size: 14, color: C.muted });
   const facts = [...d.offerings.slice(0, 3), ...d.highlights.slice(0, 3)].slice(0, 5);
   b.rect(7.4, 2.15, 5.3, 4.4, C.white, true);
-  b.text(`${client} em destaque`, 7.7, 2.35, 4.8, 0.4, { size: 15, bold: true, color: C.accent });
+  b.text(`${Acap} em destaque`, 7.7, 2.35, 4.8, 0.4, { size: 15, bold: true, color: C.accent });
   facts.forEach((f, i) => {
     b.rect(7.7, 2.98 + i * 0.7, 0.12, 0.12, C.accent);
     b.text(f, 8.0, 2.85 + i * 0.7, 4.5, 0.62, { size: 13, color: C.ink });
   });
 
   // 4. Setor e região
-  light("Contexto de mercado", `${d.sector || "O setor"}${d.location ? ` em ${d.location}` : ""}: o momento de ${client}`);
+  light("Contexto de mercado", `${d.sector || "O setor"}${d.location ? ` em ${d.location}` : ""}: o momento ${DE}`);
   b.text(d.draft.sectorContext, 0.7, 2.1, 11.8, 0.9, { size: 16, color: C.muted });
   cards(d.draft.sectorTrends.slice(0, 4).map((t, i) => ({ title: `Oportunidade ${i + 1}`, body: t })), 0.7, 3.15, 11.9, 3.4, 2);
 
   // 5. Desafios
-  light("Desafios", `Os desafios que ${client} pode transformar em vantagem`);
+  light("Desafios", `Os desafios que ${A} pode transformar em vantagem competitiva`);
   numbered(d.draft.challenges.slice(0, 4), 0.9, 2.3, 11.4, 1.0);
 
   // 6. Liberato
@@ -317,6 +364,29 @@ function drawDeck(b: Board, d: DeckInput) {
     b.text(m.value, x + 0.15, y + 0.3, 1.7, 0.7, { size: 28, bold: true, color: C.accent, align: "center", display: true });
     b.text(m.label, x + 0.15, y + 1.05, 1.7, 0.7, { size: 12, color: C.white, align: "center" });
   });
+
+  // 6b. Consultor responsável
+  const cons = d.consultant;
+  if (cons) {
+    light("Quem conduz o projeto", `${cons.name}: consultor responsável pelo projeto ${NA}`);
+    b.rect(0.7, 2.15, 3.4, 4.4, C.white, true);
+    if (cons.photo) b.image(cons.photo, 0.9, 2.35, 3.0, 2.9);
+    b.text(cons.name, 0.9, 5.35, 3.0, 0.45, { size: 16, bold: true, color: C.navy, align: "center", display: true });
+    b.text(cons.headline, 0.9, 5.8, 3.0, 0.65, { size: 11, color: C.muted, align: "center" });
+    const blocks = [
+      { t: "Formação acadêmica", v: cons.education },
+      { t: "Áreas de atuação", v: [...cons.specialties, ...cons.segments].filter(Boolean).join(" · ") || cons.experience },
+      { t: "Clientes atendidos", v: cons.clients },
+    ].filter((x) => x.v && x.v.trim());
+    const bh = blocks.length ? (4.4 - 0.2 * (blocks.length - 1)) / blocks.length : 0;
+    blocks.forEach((bl, i) => {
+      const y = 2.15 + i * (bh + 0.2);
+      b.rect(4.4, y, 8.3, bh, C.white, true);
+      b.rect(4.4, y + 0.2, 0.08, 0.45, C.accent);
+      b.text(bl.t, 4.7, y + 0.18, 7.8, 0.4, { size: 14, bold: true, color: C.accent });
+      b.text(bl.v, 4.7, y + 0.62, 7.8, bh - 0.75, { size: 12, color: C.ink });
+    });
+  }
 
   // 7. Resultados
   light("Resultados alcançados", "O que a Liberato entrega aos seus clientes");
@@ -335,7 +405,7 @@ function drawDeck(b: Board, d: DeckInput) {
   }
 
   // 9. Serviço
-  light("A solução", `${d.service.title} para ${client}`);
+  light("A solução", `${d.service.title} para ${A}`);
   b.text(d.service.lead, 0.7, 2.1, 6.6, 1.3, { size: 18, bold: true, color: C.navy });
   b.text(d.draft.approach, 0.7, 3.5, 6.6, 2.4, { size: 15, color: C.muted });
   b.rect(7.8, 2.1, 4.9, 4.5, C.navy, true);
@@ -346,30 +416,60 @@ function drawDeck(b: Board, d: DeckInput) {
   });
 
   // 10. Metodologia
-  light("Como vamos trabalhar", `A jornada de ${client} com a Liberato`);
-  const mods = d.service.modules.slice(0, 6);
-  if (mods.length) {
-    const gap = 0.2;
-    const mw = (11.9 - gap * (mods.length - 1)) / mods.length;
-    mods.forEach((m, i) => {
-      const x = 0.7 + i * (mw + gap);
-      b.rect(x, 2.4, mw, 0.7, i % 2 ? C.navy : C.accent, true);
-      b.text(`Etapa ${i + 1}`, x, 2.6, mw, 0.35, { size: 14, bold: true, color: C.white, align: "center" });
-      b.rect(x, 3.25, mw, 2.6, C.white, true);
-      b.text(m, x + 0.15, 3.45, mw - 0.3, 2.3, { size: 13, color: C.ink });
-    });
+  const plan = (d.draft.workPlan ?? []).filter((p) => p && p.stage).slice(0, 6);
+  if (plan.length) {
+    for (let start = 0; start < plan.length; start += 3) {
+      const part = plan.slice(start, start + 3);
+      const suffix = plan.length > 3 ? ` (${start / 3 + 1}/${Math.ceil(plan.length / 3)})` : "";
+      light("Como vamos trabalhar", `A jornada ${DE} com a Liberato${suffix}`);
+      const gap = 0.25;
+      const cw = (11.9 - gap * 2) / 3;
+      part.forEach((p, i) => {
+        const x = 0.7 + i * (cw + gap);
+        const n = start + i + 1;
+        b.rect(x, 2.15, cw, 0.6, n % 2 ? C.accent : C.navy, true);
+        b.text(`Etapa ${n} · ${p.stage}`, x + 0.15, 2.28, cw - 0.3, 0.38, { size: 13, bold: true, color: C.white });
+        b.rect(x, 2.85, cw, 3.75, C.white, true);
+        const rows = [
+          { t: "Como faremos", v: p.how, h: 1.25 },
+          { t: "Pesquisas e levantamentos", v: p.research, h: 1.0 },
+          { t: "Quem participa", v: p.stakeholders, h: 0.95 },
+        ];
+        let yy = 2.97;
+        rows.forEach((r) => {
+          b.text(r.t.toUpperCase(), x + 0.2, yy, cw - 0.4, 0.25, { size: 9, bold: true, color: C.accent });
+          b.text(r.v || "", x + 0.2, yy + 0.27, cw - 0.4, r.h - 0.3, { size: 11, color: C.ink });
+          yy += r.h + 0.05;
+        });
+      });
+      if (d.service.duration && start + 3 >= plan.length) b.text(`Duração de referência: ${d.service.duration}`, 0.7, 6.65, 11.9, 0.25, { size: 11, bold: true, color: C.accent });
+    }
+  } else {
+    light("Como vamos trabalhar", `A jornada ${DE} com a Liberato`);
+    const mods = d.service.modules.slice(0, 6);
+    if (mods.length) {
+      const gap = 0.2;
+      const mw = (11.9 - gap * (mods.length - 1)) / mods.length;
+      mods.forEach((m, i) => {
+        const x = 0.7 + i * (mw + gap);
+        b.rect(x, 2.4, mw, 0.7, i % 2 ? C.navy : C.accent, true);
+        b.text(`Etapa ${i + 1}`, x, 2.6, mw, 0.35, { size: 14, bold: true, color: C.white, align: "center" });
+        b.rect(x, 3.25, mw, 2.6, C.white, true);
+        b.text(m, x + 0.15, 3.45, mw - 0.3, 2.3, { size: 13, color: C.ink });
+      });
+    }
+    if (d.service.duration) b.text(`Duração de referência: ${d.service.duration}`, 0.7, 6.1, 11.9, 0.4, { size: 14, bold: true, color: C.accent });
   }
-  if (d.service.duration) b.text(`Duração de referência: ${d.service.duration}`, 0.7, 6.1, 11.9, 0.4, { size: 14, bold: true, color: C.accent });
 
   // 11. Impactos
-  dark("Impactos no negócio", `O que muda para ${client}`);
+  dark("Impactos no negócio", `O que muda para ${A}`);
   cards(d.draft.impacts.slice(0, 4), 0.7, 2.15, 11.9, 3.5, 4, true);
   if (d.service.results.length) {
-    b.text(`Indicadores que ${client} passará a acompanhar: ${d.service.results.slice(0, 5).join(" · ")}`, 0.7, 5.9, 11.9, 0.7, { size: 13, color: C.accent, bold: true });
+    b.text(`Indicadores que ${A} passará a acompanhar: ${d.service.results.slice(0, 5).join(" · ")}`, 0.7, 5.9, 11.9, 0.7, { size: 13, color: C.accent, bold: true });
   }
 
   // 12. Ferramentas
-  light("Ferramentas e autonomia", `Ferramentas e IA que dão autonomia a ${client}`);
+  light("Ferramentas e autonomia", `Ferramentas e IA que dão autonomia ${g === "a" ? "à" : "ao"} ${client}`);
   if (d.service.ai) b.text(d.service.ai, 0.7, 2.1, 11.9, 0.9, { size: 15, color: C.muted });
   cards(
     d.tools.slice(0, 6).map((t) => ({ title: t.title, body: t.summary ?? "" })),
@@ -377,13 +477,13 @@ function drawDeck(b: Board, d: DeckInput) {
   );
 
   // 13. Por que a Liberato
-  light("Por que a Liberato", `Por que ${client} deve escolher a Liberato Consulting`);
+  light("Por que a Liberato", `Por que ${A} deve escolher a Liberato Consulting`);
   cards(d.draft.whyLiberato.slice(0, 4).map((t, i) => ({ title: `${String(i + 1).padStart(2, "0")}`, body: t })), 0.7, 2.2, 11.9, 4.3, 2);
 
   // 14. Proposta comercial
   if (d.quote) {
     const q = d.quote;
-    dark("Proposta comercial", `Investimento para ${client}`);
+    dark("Proposta comercial", `Investimento para ${A}`);
     b.rect(0.7, 2.1, 4.4, 4.4, C.accent, true);
     b.text("Investimento total", 0.95, 2.35, 3.9, 0.4, { size: 15, bold: true, color: C.white });
     b.text(formatMoney(q.total, q.currency), 0.95, 2.85, 3.9, 1.0, { size: 34, bold: true, color: C.white, display: true });
@@ -401,10 +501,10 @@ function drawDeck(b: Board, d: DeckInput) {
       b.text(formatMoney(p.price, q.currency), 11.0, y + 0.13, 1.55, 0.3, { size: 13, color: C.white, align: "right" });
     });
   } else {
-    dark("Proposta comercial", `Proposta comercial para ${client}`);
+    dark("Proposta comercial", `Proposta comercial para ${A}`);
     b.rect(0.7, 2.4, 11.9, 3.4, "243553", true);
-    b.text(`A proposta comercial detalhada será enviada a ${client} em seguida.`, 1.2, 2.9, 10.9, 1.2, { size: 28, bold: true, color: C.white, display: true });
-    b.text(`Ela trará o investimento, o cronograma e as condições ajustadas ao escopo validado com ${client}, com foco no retorno sobre o investimento.`, 1.2, 4.3, 10.9, 1.2, { size: 16, color: "D5DAE3" });
+    b.text(`A proposta comercial detalhada será enviada para ${A} em seguida.`, 1.2, 2.9, 10.9, 1.2, { size: 28, bold: true, color: C.white, display: true });
+    b.text(`Ela trará o investimento, o cronograma e as condições ajustadas ao escopo validado com ${A}, com foco no retorno sobre o investimento.`, 1.2, 4.3, 10.9, 1.2, { size: 16, color: "D5DAE3" });
   }
 
   // 15. Próximos passos e contato
