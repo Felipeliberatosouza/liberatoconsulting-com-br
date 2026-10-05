@@ -294,6 +294,7 @@ function PresentationPage() {
     const d: PresentationDraft | null = draft ?? (await makeDraft()) ?? null;
     if (!d) return;
     setBusy("files");
+    let built: { pptx: string; pdf: string } | null = null;
     try {
       const [clientLogo, libLogo, libLight, ...clientImgs] = await Promise.all([
         logo ? prepareImage(logo, false) : Promise.resolve(null),
