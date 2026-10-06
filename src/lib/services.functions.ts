@@ -60,9 +60,10 @@ export const listPublicServiceSlugs = createServerFn({ method: "GET" }).handler(
     const { publicClient } = await import("./admin.server");
     const { data } = await publicClient()
       .from("service_products")
-      .select("slug")
+      .select("slug, family_id")
       .eq("published", true);
-    return ((data ?? []) as { slug: string }[]).map((r) => r.slug);
+    const rows = (data ?? []) as { slug: string; family_id: string }[];
+    return [...new Set(rows.flatMap((r) => [r.slug, r.family_id]).filter(Boolean))];
   },
 );
 

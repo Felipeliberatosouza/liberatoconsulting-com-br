@@ -1,6 +1,7 @@
+import { useServiceOptions } from "@/lib/use-service-options";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
@@ -52,12 +53,6 @@ export const Route = createFileRoute("/admin/propaganda")({
   component: AdPage,
 });
 
-const SERVICES = [
-  ...pt.megaMenu.groups.flatMap((g) =>
-    g.items.map((i) => ({ id: i.id, label: `${g.title} · ${i.label}` })),
-  ),
-  { id: "trabalhe-conosco", label: "Trabalhe conosco" },
-];
 
 const FORMATS: SocialFormatKey[] = ["linkedin", "instagram", "whatsapp"];
 
@@ -125,7 +120,12 @@ function AdPage() {
   const [mode, setMode] = useState<Mode>("servico");
   const [articleId, setArticleId] = useState("");
   const article = published.find((a) => a.id === articleId);
-  const [service, setService] = useState(SERVICES[0]?.label ?? "");
+  const serviceOptions = useServiceOptions();
+  const SERVICES = [...serviceOptions, { id: "trabalhe-conosco", label: "Trabalhe conosco", kind: "family" as const }];
+  const [service, setService] = useState("");
+  useEffect(() => {
+    if (!service && SERVICES[0]) setService(SERVICES[0].label);
+  }, [service, serviceOptions]); // eslint-disable-line react-hooks/exhaustive-deps
   const [areaId, setAreaId] = useState<string>(SERVICE_AREAS[0].id);
   const areaLabel =
     SERVICE_AREAS.find((a) => a.id === areaId)?.labels.pt ?? SERVICE_AREAS[0].labels.pt;
