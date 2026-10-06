@@ -17,7 +17,7 @@ export const SCOPE_SIGNALS: ScopeSignal[] = [
   {
     id: "obj-indef",
     question: "q1",
-    matches: ["Ainda não definido / outro"],
+    matches: ["Outro"],
     signal: "Objetivo “ainda não definido”",
     meaning: "O cliente ainda não formulou a decisão ou a pergunta de negócio.",
     action: "Propor uma fase curta de definição de escopo e hipóteses antes da pesquisa completa.",
@@ -25,7 +25,7 @@ export const SCOPE_SIGNALS: ScopeSignal[] = [
   {
     id: "alvo-indef",
     question: "q4",
-    matches: ["Ainda não definido"],
+    matches: ["Outro"],
     signal: "Cliente-alvo “ainda não definido”",
     meaning: "O universo de empresas e respondentes ainda não está delimitado.",
     action: "Incluir definição de mercado e segmentação como primeiro módulo.",

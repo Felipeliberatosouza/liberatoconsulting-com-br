@@ -27,7 +27,7 @@ export const SCOPE_HELP =
   "Selecione uma alternativa por pergunta. O campo de comentários é opcional e pode ser usado para acrescentar contexto, datas, setores, números ou links.";
 
 export const SCOPE_NOTE =
-  "Se alguma definição ainda estiver em aberto, isso é normal. A resposta “Ainda não definido” ajuda a indicar se o primeiro passo deverá ser uma fase curta de definição e pesquisa exploratória.";
+  "Se alguma definição ainda estiver em aberto, isso é normal. A resposta “Outro”, com a sua descrição, ajuda a indicar se o primeiro passo deverá ser uma fase curta de definição e pesquisa exploratória.";
 
 export const SCOPE_QUESTIONS: ScopeQuestion[] = [
   {
@@ -43,7 +43,7 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
       "Validar o modelo de negócio",
       "Dimensionar mercado e concorrência",
       "Preparar lançamento ou captação",
-      "Ainda não definido / outro",
+      "Outro",
     ],
   },
   {
@@ -91,7 +91,7 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
       "Pequenas e médias empresas em geral",
       "Empresas familiares",
       "Setores específicos",
-      "Ainda não definido",
+      "Outro",
     ],
   },
   {
@@ -105,7 +105,7 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
       "Uma ou mais regiões do Brasil",
       "Um estado ou mercado local",
       "Brasil e operações internacionais",
-      "Ainda não definido",
+      "Outro",
     ],
   },
   {
@@ -121,7 +121,7 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
       "Entrevistas com mais de 10 pessoas",
       "Pesquisa quantitativa / survey",
       "Pesquisa pública mais entrevistas ou survey",
-      "Ainda não definido",
+      "Outro",
     ],
   },
   {
@@ -135,7 +135,7 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
       "Sim, com fontes públicas",
       "Sim, com levantamento empresa a empresa",
       "Sim, mas ainda não sei qual método",
-      "Ainda não definido",
+      "Outro",
     ],
   },
   {
@@ -151,7 +151,7 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
       "Planilha ou modelo editável",
       "Relatório mais apresentação",
       "Workshop de decisão",
-      "Ainda não definido",
+      "Outro",
     ],
   },
   {
@@ -167,7 +167,7 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
       "Em 5 a 8 semanas",
       "Após 8 semanas",
       "Tenho uma data fixa",
-      "Ainda não definido",
+      "Outro",
     ],
   },
   {
