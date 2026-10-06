@@ -295,7 +295,7 @@ function ScopePage() {
                               required
                               autoFocus
                               maxLength={300}
-                              placeholder={OTHER_PLACEHOLDER[lang] ?? OTHER_PLACEHOLDER.pt}
+                              placeholder={OTHER_PLACEHOLDER[lang] ?? OTHER_PLACEHOLDER["pt"]}
                               aria-invalid={!answers[`${q.id}_outro`]?.trim()}
                               className={`sm:flex-1 ${!answers[`${q.id}_outro`]?.trim() ? "border-destructive" : ""}`}
                               value={answers[`${q.id}_outro`] ?? ""}
