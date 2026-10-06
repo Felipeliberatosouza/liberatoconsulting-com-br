@@ -7,6 +7,7 @@ import {
   SOCIAL_IMAGE_FORMATS,
   composeAdArt,
   downloadDataUrl,
+  copyDataUrlImage,
   type IndicatorArtRow,
   type SocialFormatKey,
 } from "@/lib/social-image";
@@ -58,6 +59,13 @@ function AdminBulletin() {
   const [testEmail, setTestEmail] = useState("");
   const [testWhatsApp, setTestWhatsApp] = useState("");
   const [busy, setBusy] = useState(false);
+  const [zoom, setZoom] = useState<string | null>(null);
+
+  async function copyArt(dataUrl: string) {
+    const ok = await copyDataUrlImage(dataUrl);
+    if (ok) toast.success("Imagem copiada — cole direto no LinkedIn, WhatsApp ou Instagram.");
+    else toast.error("Seu navegador não permite copiar imagens. Use o botão Baixar.");
+  }
 
   async function refresh() {
     try {
@@ -321,6 +329,22 @@ function AdminBulletin() {
                         >
                           Baixar {SOCIAL_IMAGE_FORMATS[a.key].label}
                         </button>
+                        <div className="mt-2 grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => copyArt(a.dataUrl)}
+                            className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold hover:border-accent"
+                          >
+                            Copiar imagem
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setZoom(a.dataUrl)}
+                            className="rounded-md border border-border px-3 py-1.5 text-xs font-semibold hover:border-accent"
+                          >
+                            Visualizar
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -433,6 +457,23 @@ function AdminBulletin() {
           </table>
         </div>
       </div>
+      {zoom && (
+        <div
+          role="dialog"
+          aria-label="Visualizar imagem"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/80 p-4"
+          onClick={() => setZoom(null)}
+        >
+          <img src={zoom} alt="Arte dos indicadores ampliada" className="max-h-full max-w-full rounded shadow-lg" />
+          <button
+            type="button"
+            onClick={() => setZoom(null)}
+            className="absolute right-4 top-4 rounded-md bg-background px-3 py-1 text-sm font-semibold"
+          >
+            Fechar
+          </button>
+        </div>
+      )}
     </AdminShell>
   );
 }
