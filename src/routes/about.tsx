@@ -74,8 +74,8 @@ function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-24">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Nossa essência</p>
+      <section id="nossa-essencia" className="mx-auto max-w-7xl scroll-mt-28 px-6 py-24">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{essenceTitle}</p>
         <div className="mt-8 grid gap-10 md:grid-cols-3">
           {[
             ["Missão", institutional.mission],
