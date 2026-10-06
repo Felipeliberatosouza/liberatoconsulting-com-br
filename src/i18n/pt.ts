@@ -65,6 +65,7 @@ export const pt = {
     items: [
       { id: "sobre", label: "Sobre" },
       { id: "o-que-fazemos", label: "O que fazemos" },
+      { id: "nossa-essencia", label: "Nossa essência – DNA" },
       { id: "equipe", label: "Equipe" },
       { id: "sustentabilidade-e-inclusao", label: "Sustentabilidade e Inclusão" },
       { id: "etica", label: "Ética" },

@@ -125,6 +125,10 @@ export const dict: Dict = {
         "label": "Qué hacemos"
       },
       {
+        "id": "nossa-essencia",
+        "label": "Nuestra esencia – ADN"
+      },
+      {
         "id": "equipe",
         "label": "Equipo"
       },

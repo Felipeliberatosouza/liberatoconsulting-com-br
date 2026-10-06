@@ -39,7 +39,10 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
-  const { t, institutional } = useLanguage();
+  const { t, institutional, lang } = useLanguage();
+  const essenceTitle =
+    ({ en: "Our essence – Liberato Consulting DNA", es: "Nuestra esencia – ADN Liberato Consulting", zh: "我们的精髓 – Liberato Consulting 的 DNA" } as Record<string, string>)[lang] ??
+    "Nossa essência – DNA Liberato Consulting";
   const s = t.about.sections;
 
   return (
@@ -71,8 +74,8 @@ function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-24">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">Nossa essência</p>
+      <section id="nossa-essencia" className="mx-auto max-w-7xl scroll-mt-28 px-6 py-24">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{essenceTitle}</p>
         <div className="mt-8 grid gap-10 md:grid-cols-3">
           {[
             ["Missão", institutional.mission],
