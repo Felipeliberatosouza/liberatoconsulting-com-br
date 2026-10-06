@@ -112,7 +112,7 @@ function AdminBulletin() {
         variant: "indicadores",
         format: key,
         lines: ["Boletim Semanal - Indicadores Econômicos", `${segLabel} · ${preview.dateLabel}`],
-        indicators: preview.rows.slice(0, 6).map((r) => ({
+        indicators: preview.rows.slice(0, 5).map((r) => ({
           slug: r.slug ?? "",
           polarity: r.polarity ?? "auto",
           label: r.label,
