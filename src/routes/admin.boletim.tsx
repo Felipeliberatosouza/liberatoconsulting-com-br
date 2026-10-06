@@ -2,11 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import bulletinBg from "@/assets/bulletin-indicators-bg.jpg";
 import { AdminShell } from "@/components/AdminShell";
 import {
   SOCIAL_IMAGE_FORMATS,
-  composeIndicatorsImage,
+  composeAdArt,
   downloadDataUrl,
   type IndicatorArtRow,
   type SocialFormatKey,
@@ -19,6 +18,7 @@ import {
   type BulletinSubscriberRow,
 } from "@/lib/bulletin.functions";
 import { useLanguage } from "@/i18n";
+import { getCompany } from "@/lib/company.functions";
 import { formatPhone, isValidPhone, PHONE_ERROR, PHONE_PLACEHOLDER } from "@/lib/validation";
 
 export const Route = createFileRoute("/admin/boletim")({
@@ -40,7 +40,11 @@ export const Route = createFileRoute("/admin/boletim")({
 });
 
 function AdminBulletin() {
-  const { segments } = useLanguage();
+  const { segments, logoUrl } = useLanguage();
+  const [company, setCompany] = useState<{ website?: string | null; phone?: string | null } | null>(null);
+  useEffect(() => {
+    getCompany().then((c) => setCompany(c as never)).catch(() => {});
+  }, []);
   const [rows, setRows] = useState<BulletinSubscriberRow[]>([]);
   const [segment, setSegment] = useState("Todos");
   const [preview, setPreview] = useState<{
@@ -101,13 +105,26 @@ function AdminBulletin() {
     }
     setArt(key);
     try {
-      const dataUrl = await composeIndicatorsImage(
-        bulletinBg,
-        key,
-        "Indicadores econômicos do Brasil",
-        `${segment === "Todos" ? "Todos os segmentos" : segment} · ${preview.dateLabel}`,
-        preview.rows,
-      );
+      const site = (company?.website || "liberatoconsulting.com.br").replace(/^https?:\/\//, "");
+      const footer = ["Liberato Consulting", site, company?.phone || ""].filter(Boolean).join(" · ");
+      const segLabel = segment === "Todos" ? "Todos os segmentos" : segment;
+      const dataUrl = await composeAdArt({
+        variant: "indicadores",
+        format: key,
+        lines: ["Boletim Semanal - Indicadores Econômicos", `${segLabel} · ${preview.dateLabel}`],
+        indicators: preview.rows.slice(0, 5).map((r) => ({
+          slug: r.slug ?? "",
+          polarity: r.polarity ?? "auto",
+          label: r.label,
+          value: r.value,
+          unit: r.unit,
+          previous_value: r.previous_value,
+          previous_period: r.previous_period,
+        })),
+        currentDate: new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" }),
+        ...(logoUrl ? { logoUrl } : {}),
+        footer,
+      });
       setArts((prev) => [...prev.filter((a) => a.key !== key), { key, dataUrl }]);
     } catch {
       toast.error("Não foi possível gerar a imagem.");
