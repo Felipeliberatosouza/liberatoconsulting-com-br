@@ -172,6 +172,8 @@ function ScopesPage() {
                   <p className="text-sm">{q.question}</p>
                   <p className="mt-1 text-sm font-medium">
                     {open.answers?.[q.id] ?? "—"}
+                    {open.answers?.[`${q.id}_outro`] ? `: ${open.answers[`${q.id}_outro`]}` : ""}
+                    {open.answers?.[`${q.id}_data`] ? ` (${open.answers[`${q.id}_data`]})` : ""}
                   </p>
                   {open.comments?.[q.id] ? (
                     <p className="mt-1 text-sm italic text-muted-foreground">

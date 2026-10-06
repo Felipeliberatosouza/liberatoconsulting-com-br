@@ -38,7 +38,7 @@ const EN: QuestionText[] = [
       "Validate the business model",
       "Size the market and competition",
       "Prepare a launch or fundraising",
-      "Not defined yet / other",
+      "Other",
     ],
   },
   {
@@ -80,7 +80,7 @@ const EN: QuestionText[] = [
       "Small and mid-sized companies in general",
       "Family businesses",
       "Specific industries",
-      "Not defined yet",
+      "Other",
     ],
   },
   {
@@ -92,7 +92,7 @@ const EN: QuestionText[] = [
       "One or more regions of Brazil",
       "A state or local market",
       "Brazil and international operations",
-      "Not defined yet",
+      "Other",
     ],
   },
   {
@@ -106,7 +106,7 @@ const EN: QuestionText[] = [
       "Interviews with more than 10 people",
       "Quantitative research / survey",
       "Public research plus interviews or survey",
-      "Not defined yet",
+      "Other",
     ],
   },
   {
@@ -118,7 +118,7 @@ const EN: QuestionText[] = [
       "Yes, using public sources",
       "Yes, with a company-by-company survey",
       "Yes, but I don't know which method yet",
-      "Not defined yet",
+      "Other",
     ],
   },
   {
@@ -132,7 +132,7 @@ const EN: QuestionText[] = [
       "Spreadsheet or editable model",
       "Report plus presentation",
       "Decision workshop",
-      "Not defined yet",
+      "Other",
     ],
   },
   {
@@ -146,7 +146,7 @@ const EN: QuestionText[] = [
       "In 5 to 8 weeks",
       "After 8 weeks",
       "I have a fixed date",
-      "Not defined yet",
+      "Other",
     ],
   },
   {
@@ -176,7 +176,7 @@ const ES: QuestionText[] = [
       "Validar el modelo de negocio",
       "Dimensionar mercado y competencia",
       "Preparar lanzamiento o captación",
-      "Aún no definido / otro",
+      "Otro",
     ],
   },
   {
@@ -218,7 +218,7 @@ const ES: QuestionText[] = [
       "Pequeñas y medianas empresas en general",
       "Empresas familiares",
       "Sectores específicos",
-      "Aún no definido",
+      "Otro",
     ],
   },
   {
@@ -230,7 +230,7 @@ const ES: QuestionText[] = [
       "Una o más regiones de Brasil",
       "Un estado o mercado local",
       "Brasil y operaciones internacionales",
-      "Aún no definido",
+      "Otro",
     ],
   },
   {
@@ -244,7 +244,7 @@ const ES: QuestionText[] = [
       "Entrevistas con más de 10 personas",
       "Investigación cuantitativa / encuesta",
       "Investigación pública más entrevistas o encuesta",
-      "Aún no definido",
+      "Otro",
     ],
   },
   {
@@ -256,7 +256,7 @@ const ES: QuestionText[] = [
       "Sí, con fuentes públicas",
       "Sí, con levantamiento empresa por empresa",
       "Sí, pero aún no sé qué método",
-      "Aún no definido",
+      "Otro",
     ],
   },
   {
@@ -270,7 +270,7 @@ const ES: QuestionText[] = [
       "Planilla o modelo editable",
       "Informe más presentación",
       "Taller de decisión",
-      "Aún no definido",
+      "Otro",
     ],
   },
   {
@@ -284,7 +284,7 @@ const ES: QuestionText[] = [
       "En 5 a 8 semanas",
       "Después de 8 semanas",
       "Tengo una fecha fija",
-      "Aún no definido",
+      "Otro",
     ],
   },
   {
@@ -314,7 +314,7 @@ const ZH: QuestionText[] = [
       "验证商业模式",
       "测算市场规模与竞争格局",
       "筹备发布或融资",
-      "尚未确定／其他",
+      "其他",
     ],
   },
   {
@@ -350,7 +350,7 @@ const ZH: QuestionText[] = [
     question: "希望服务的主要客户群体或企业类型是？",
     purpose: "界定将要研究或接触的目标客户。",
     hint: MULTI_ZH,
-    options: ["小型企业", "中型企业", "中小型企业整体", "家族企业", "特定行业", "尚未确定"],
+    options: ["小型企业", "中型企业", "中小型企业整体", "家族企业", "特定行业", "其他"],
   },
   {
     theme: "覆盖范围",
@@ -361,7 +361,7 @@ const ZH: QuestionText[] = [
       "巴西的一个或多个地区",
       "某一州或本地市场",
       "巴西及国际业务",
-      "尚未确定",
+      "其他",
     ],
   },
   {
@@ -375,7 +375,7 @@ const ZH: QuestionText[] = [
       "访谈超过 10 人",
       "定量调研／问卷",
       "公开资料研究加访谈或问卷",
-      "尚未确定",
+      "其他",
     ],
   },
   {
@@ -387,7 +387,7 @@ const ZH: QuestionText[] = [
       "需要，基于公开资料",
       "需要，逐家企业调研",
       "需要，但尚不确定方法",
-      "尚未确定",
+      "其他",
     ],
   },
   {
@@ -401,7 +401,7 @@ const ZH: QuestionText[] = [
       "表格或可编辑模型",
       "报告加演示",
       "决策工作坊",
-      "尚未确定",
+      "其他",
     ],
   },
   {
@@ -415,7 +415,7 @@ const ZH: QuestionText[] = [
       "5 至 8 周",
       "8 周以后",
       "有固定截止日期",
-      "尚未确定",
+      "其他",
     ],
   },
   {
@@ -439,18 +439,18 @@ const TEXTS = {
     intro:
       "Purpose: quickly understand your need so we can prepare a suitable proposal. It takes 3 to 5 minutes.",
     help: "Select one option per question. The comments field is optional and can be used to add context, dates, industries, figures or links.",
-    note: "It is normal for some decisions to still be open. Answering “Not defined yet” helps us tell whether the first step should be a short definition and exploratory research phase.",
+    note: "It is normal for some decisions to still be open. Answering “Other” and describing it helps us tell whether the first step should be a short definition and exploratory research phase.",
   },
   es: {
     intro:
       "Objetivo: entender rápidamente su necesidad para preparar una propuesta adecuada. Completarlo toma de 3 a 5 minutos.",
     help: "Seleccione una alternativa por pregunta. El campo de comentarios es opcional y puede usarse para agregar contexto, fechas, sectores, cifras o enlaces.",
-    note: "Si alguna definición aún está abierta, es normal. La respuesta “Aún no definido” ayuda a indicar si el primer paso debe ser una fase corta de definición e investigación exploratoria.",
+    note: "Si alguna definición aún está abierta, es normal. La respuesta “Otro”, con su descripción, ayuda a indicar si el primer paso debe ser una fase corta de definición e investigación exploratoria.",
   },
   zh: {
     intro: "目的：快速了解您的需求，以便准备合适的方案。填写约需 3 至 5 分钟。",
     help: "每题请选择一个选项。备注为选填，可补充背景、日期、行业、数据或链接。",
-    note: "部分事项尚未确定是正常的。选择“尚未确定”有助于判断第一步是否应为简短的需求界定与探索性研究。",
+    note: "部分事项尚未确定是正常的。选择“其他”并加以说明有助于判断第一步是否应为简短的需求界定与探索性研究。",
   },
 } satisfies Record<Lang, { intro: string; help: string; note: string }>;
 
