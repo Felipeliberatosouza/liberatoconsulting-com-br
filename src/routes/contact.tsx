@@ -37,7 +37,7 @@ export const Route = createFileRoute("/contact")({
           email: "contato@liberatoconsulting.com.br",
           telephone: "+5511913258668",
           priceRange: "$$",
-          image: ["https://liberatoconsulting.com.br/og-default.jpg"],
+          image: ["https://liberatoconsulting.com.br/og-liberato.jpg"],
           logo: "https://liberatoconsulting.com.br/logo.png",
           address: postalAddressSchema(ctx.loaderData),
 
