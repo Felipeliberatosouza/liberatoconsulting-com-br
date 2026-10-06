@@ -62,7 +62,7 @@ function OnboardingAdmin() {
             : await rejectOnboarding({ data: { id: open.id, review_note: note } });
       if (!r.ok) toast.error(r.error);
       else {
-        const w = "warning" in r ? r.warning : "";
+        const w = "warning" in r ? String(r.warning ?? "") : "";
         toast.success(kind === "approve" ? "Cadastro aprovado e contrato enviado." : kind === "reject" ? "Cadastro recusado." : "Alterações salvas.");
         if (w) toast.warning(w);
         await refresh();
