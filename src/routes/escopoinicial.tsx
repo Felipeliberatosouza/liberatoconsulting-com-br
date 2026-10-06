@@ -27,6 +27,17 @@ import {
   PHONE_PLACEHOLDER,
 } from "@/lib/validation";
 
+/** Opção "Outro" (em qualquer idioma) abre campo obrigatório de descrição. */
+function isOtherOption(opt: string) {
+  return /^(outro|other|otro|其他)/i.test(opt.trim());
+}
+const OTHER_PLACEHOLDER: Record<string, string> = {
+  pt: "Descreva (obrigatório)",
+  en: "Please describe (required)",
+  es: "Describa (obligatorio)",
+  zh: "请说明（必填）",
+};
+
 export const Route = createFileRoute("/escopoinicial")({
   head: () => ({
     meta: [
