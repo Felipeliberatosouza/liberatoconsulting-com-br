@@ -160,7 +160,8 @@ function ScopesPage() {
             <p className="mt-1 text-sm text-muted-foreground">
               {open.respondent_name}
               {open.respondent_role ? ` · ${open.respondent_role}` : ""} · {open.email}
-              {open.phone ? ` · ${open.phone}` : ""} · {formatDate(open.created_at)}
+              {open.phone ? ` · ${open.phone}` : ""}
+              {open.employees ? ` · ${open.employees} funcionários` : ""} · {formatDate(open.created_at)}
             </p>
             <div className="mt-5 space-y-4">
               {SCOPE_QUESTIONS.map((q) => (

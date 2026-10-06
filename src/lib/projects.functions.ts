@@ -13,6 +13,7 @@ const scopeSchema = z.object({
   respondent_role: z.string().trim().max(160).default(""),
   email: z.string().trim().email().max(180),
   phone: z.string().trim().max(40).default(""),
+  employees: z.string().trim().max(20).default(""),
   answers: z.record(z.string().max(20), z.string().max(300)),
   comments: z.record(z.string().max(20), z.string().max(2000)),
   lang: z.string().trim().max(5).default("pt"),
@@ -25,6 +26,7 @@ export type ScopeSubmission = {
   respondent_role: string;
   email: string;
   phone: string;
+  employees?: string;
   answers: Record<string, string>;
   comments: Record<string, string>;
   notes: string;
@@ -42,6 +44,7 @@ export const submitScopeForm = createServerFn({ method: "POST" })
       respondent_role: data.respondent_role,
       email: data.email,
       phone: data.phone,
+      employees: data.employees,
       answers: data.answers as never,
       comments: data.comments as never,
       lang: data.lang,
