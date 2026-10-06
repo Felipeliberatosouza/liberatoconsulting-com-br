@@ -63,7 +63,8 @@ export const pt = {
   aboutMenu: {
     more: "ver página completa",
     items: [
-      { id: "sobre", label: "Sobre" },
+      { id: "o-que-fazemos", label: "O que fazemos" },
+      { id: "nossa-essencia", label: "Nossa essência – DNA" },
       { id: "o-que-fazemos", label: "O que fazemos" },
       { id: "equipe", label: "Equipe" },
       { id: "sustentabilidade-e-inclusao", label: "Sustentabilidade e Inclusão" },
