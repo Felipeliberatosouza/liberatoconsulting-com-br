@@ -91,6 +91,11 @@ const CARDS = [
     text: "Currículos enviados pelo formulário Trabalhe Conosco.",
   },
   {
+    to: "/admin/cadastros-consultores",
+    title: "Cadastros de consultores",
+    text: "Cadastros enviados por candidatos aprovados, para revisão, aprovação e contrato.",
+  },
+  {
     to: "/admin/empresa",
     title: "Dados da consultoria",
     text: "Razão social, CNPJ, sócios, logomarca e contratos de vínculo.",

@@ -1,10 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
 import { getResumeUrl, listApplications } from "@/lib/admin.functions";
+import { ONBOARDING_STATUS_LABEL } from "@/lib/onboarding-fields";
+import { listOnboardings, sendOnboardingInvite } from "@/lib/onboarding.functions";
 
 export const Route = createFileRoute("/admin/applications")({
   head: () => ({
@@ -32,6 +34,30 @@ function AdminApplications() {
     queryFn: () => listApplications(),
     retry: false,
   });
+
+  const onb = useQuery({ queryKey: ["onboardings"], queryFn: () => listOnboardings(), retry: false });
+  const [sending, setSending] = useState("");
+  const byApp = useMemo(() => {
+    const m = new Map<string, { status: string; sent_at: string | null }>();
+    for (const o of onb.data ?? []) if (o.application_id && !m.has(o.application_id)) m.set(o.application_id, o);
+    return m;
+  }, [onb.data]);
+
+  async function invite(id: string) {
+    setSending(id);
+    try {
+      const r = await sendOnboardingInvite({ data: { application_id: id } });
+      if (!r.ok) toast.error(r.error);
+      else {
+        toast.success("Link de cadastro enviado ao candidato.");
+        await onb.refetch();
+      }
+    } catch (e) {
+      toast.error((e as Error).message || "Falha ao enviar o link.");
+    } finally {
+      setSending("");
+    }
+  }
 
   const rows = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -83,7 +109,7 @@ function AdminApplications() {
 
       {rows.length > 0 && (
         <div className="mt-6 overflow-x-auto rounded-lg border border-border bg-background">
-          <table className="w-full min-w-[900px] text-left text-sm">
+          <table className="w-full min-w-[1050px] text-left text-sm">
             <thead className="bg-secondary/60 text-xs uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="px-4 py-3">Data</th>
@@ -92,6 +118,7 @@ function AdminApplications() {
                 <th className="px-4 py-3">Área</th>
                 <th className="px-4 py-3">LinkedIn</th>
                 <th className="px-4 py-3">Currículo</th>
+                <th className="px-4 py-3">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -131,6 +158,32 @@ function AdminApplications() {
                     ) : (
                       <span className="text-muted-foreground">—</span>
                     )}
+                  </td>
+                  <td className="px-4 py-3">
+                    {(() => {
+                      const o = byApp.get(a.id);
+                      if (o && o.status !== "sent") {
+                        return (
+                          <Link to="/admin/cadastros-consultores" className="text-xs font-semibold text-accent hover:underline">
+                            {ONBOARDING_STATUS_LABEL[o.status] ?? o.status}
+                          </Link>
+                        );
+                      }
+                      return (
+                        <div className="space-y-1">
+                          <button
+                            disabled={sending === a.id}
+                            onClick={() => invite(a.id)}
+                            className="whitespace-nowrap rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-ink-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-60"
+                          >
+                            {sending === a.id ? "Enviando…" : o ? "Reenviar link" : "Aprovar e enviar link"}
+                          </button>
+                          {o?.sent_at ? (
+                            <div className="text-xs text-muted-foreground">Enviado em {fmt(o.sent_at)}</div>
+                          ) : null}
+                        </div>
+                      );
+                    })()}
                   </td>
                 </tr>
               ))}

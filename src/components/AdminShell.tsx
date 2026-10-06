@@ -23,6 +23,7 @@ const NAV: Array<{ to: string; label: string; exact?: boolean }> = [
   { to: "/admin/crm", label: "CRM de clientes" },
   { to: "/admin/leads", label: "Leads" },
   { to: "/admin/applications", label: "Candidaturas" },
+  { to: "/admin/cadastros-consultores", label: "Cadastros de consultores" },
   { to: "/admin/empresa", label: "Dados da consultoria" },
   { to: "/admin/servicos", label: "Cadastro de serviços" },
   { to: "/admin/projetos", label: "Projetos" },
