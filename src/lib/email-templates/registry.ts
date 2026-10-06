@@ -4,6 +4,7 @@ import { template as leadNotification } from './lead-notification'
 import { template as applicationNotification } from './application-notification'
 import { template as crmBirthday } from './crm-birthday'
 import { template as toolsWelcome } from './tools-welcome'
+import { template as consultantNotice } from './consultant-notice'
 
 export interface TemplateEntry {
   component: ComponentType<any>
@@ -27,4 +28,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'application-notification': applicationNotification,
   'crm-birthday': crmBirthday,
   'tools-welcome': toolsWelcome,
+  'consultant-notice': consultantNotice,
 }

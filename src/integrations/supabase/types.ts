@@ -398,6 +398,69 @@ export type Database = {
         }
         Relationships: []
       }
+      consultant_onboarding: {
+        Row: {
+          application_id: string | null
+          approved_at: string | null
+          consultant_id: string | null
+          contract_path: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          full_name: string
+          id: string
+          payload: Json
+          phone: string
+          review_note: string
+          sent_at: string | null
+          status: string
+          submitted_at: string | null
+          token: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          application_id?: string | null
+          approved_at?: string | null
+          consultant_id?: string | null
+          contract_path?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          full_name?: string
+          id?: string
+          payload?: Json
+          phone?: string
+          review_note?: string
+          sent_at?: string | null
+          status?: string
+          submitted_at?: string | null
+          token?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          application_id?: string | null
+          approved_at?: string | null
+          consultant_id?: string | null
+          contract_path?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          full_name?: string
+          id?: string
+          payload?: Json
+          phone?: string
+          review_note?: string
+          sent_at?: string | null
+          status?: string
+          submitted_at?: string | null
+          token?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       consultants: {
         Row: {
           academic_logos: Json

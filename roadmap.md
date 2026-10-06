@@ -65,3 +65,6 @@
 - [x] Permitir edição do perfil e preferências de recebimento
 - [x] Reorganizar o menu Conteúdo com categorias de artigos, ferramentas, newsletters, boletins e guia
 - [x] Validar navegação e apresentação em computador e celular
+
+- [x] Artes de propaganda: rodapé com nome, site e telefone em uma linha (ou nome em cima, site+telefone embaixo), sem cortes
+- [x] Cadastro de novos consultores (Candidaturas → /novoconsultor → aprovação → contrato)

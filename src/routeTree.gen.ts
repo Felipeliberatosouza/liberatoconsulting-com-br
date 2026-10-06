@@ -22,6 +22,7 @@ import { Route as EscopoinicialRouteImport } from './routes/escopoinicial'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
 import { Route as GuiaGestaoRouteImport } from './routes/guia-gestao'
 import { Route as NewslettersRouteImport } from './routes/newsletters'
+import { Route as NovoconsultorRouteImport } from './routes/novoconsultor'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
@@ -38,6 +39,7 @@ import { Route as AdminApprovalsRouteImport } from './routes/admin.approvals'
 import { Route as AdminAreasRouteImport } from './routes/admin.areas'
 import { Route as AdminBoletimRouteImport } from './routes/admin.boletim'
 import { Route as AdminBrasilRouteImport } from './routes/admin.brasil'
+import { Route as AdminCadastrosConsultoresRouteImport } from './routes/admin.cadastros-consultores'
 import { Route as AdminConsultoresRouteImport } from './routes/admin.consultores'
 import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminContratoRouteImport } from './routes/admin.contrato'
@@ -149,6 +151,11 @@ const NewslettersRoute = NewslettersRouteImport.update({
   path: '/newsletters',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NovoconsultorRoute = NovoconsultorRouteImport.update({
+  id: '/novoconsultor',
+  path: '/novoconsultor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -229,6 +236,12 @@ const AdminBrasilRoute = AdminBrasilRouteImport.update({
   path: '/admin/brasil',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminCadastrosConsultoresRoute =
+  AdminCadastrosConsultoresRouteImport.update({
+    id: '/admin/cadastros-consultores',
+    path: '/admin/cadastros-consultores',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminConsultoresRoute = AdminConsultoresRouteImport.update({
   id: '/admin/consultores',
   path: '/admin/consultores',
@@ -477,6 +490,7 @@ export interface FileRoutesByFullPath {
   '/ferramentas': typeof FerramentasRoute
   '/guia-gestao': typeof GuiaGestaoRoute
   '/newsletters': typeof NewslettersRoute
+  '/novoconsultor': typeof NovoconsultorRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -492,6 +506,7 @@ export interface FileRoutesByFullPath {
   '/admin/areas': typeof AdminAreasRoute
   '/admin/boletim': typeof AdminBoletimRoute
   '/admin/brasil': typeof AdminBrasilRoute
+  '/admin/cadastros-consultores': typeof AdminCadastrosConsultoresRoute
   '/admin/consultores': typeof AdminConsultoresRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
@@ -553,6 +568,7 @@ export interface FileRoutesByTo {
   '/ferramentas': typeof FerramentasRoute
   '/guia-gestao': typeof GuiaGestaoRoute
   '/newsletters': typeof NewslettersRoute
+  '/novoconsultor': typeof NovoconsultorRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -568,6 +584,7 @@ export interface FileRoutesByTo {
   '/admin/areas': typeof AdminAreasRoute
   '/admin/boletim': typeof AdminBoletimRoute
   '/admin/brasil': typeof AdminBrasilRoute
+  '/admin/cadastros-consultores': typeof AdminCadastrosConsultoresRoute
   '/admin/consultores': typeof AdminConsultoresRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
@@ -630,6 +647,7 @@ export interface FileRoutesById {
   '/ferramentas': typeof FerramentasRoute
   '/guia-gestao': typeof GuiaGestaoRoute
   '/newsletters': typeof NewslettersRoute
+  '/novoconsultor': typeof NovoconsultorRoute
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -645,6 +663,7 @@ export interface FileRoutesById {
   '/admin/areas': typeof AdminAreasRoute
   '/admin/boletim': typeof AdminBoletimRoute
   '/admin/brasil': typeof AdminBrasilRoute
+  '/admin/cadastros-consultores': typeof AdminCadastrosConsultoresRoute
   '/admin/consultores': typeof AdminConsultoresRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
@@ -708,6 +727,7 @@ export interface FileRouteTypes {
     | '/ferramentas'
     | '/guia-gestao'
     | '/newsletters'
+    | '/novoconsultor'
     | '/privacy'
     | '/reset-password'
     | '/robots.txt'
@@ -723,6 +743,7 @@ export interface FileRouteTypes {
     | '/admin/areas'
     | '/admin/boletim'
     | '/admin/brasil'
+    | '/admin/cadastros-consultores'
     | '/admin/consultores'
     | '/admin/content'
     | '/admin/contrato'
@@ -784,6 +805,7 @@ export interface FileRouteTypes {
     | '/ferramentas'
     | '/guia-gestao'
     | '/newsletters'
+    | '/novoconsultor'
     | '/privacy'
     | '/reset-password'
     | '/robots.txt'
@@ -799,6 +821,7 @@ export interface FileRouteTypes {
     | '/admin/areas'
     | '/admin/boletim'
     | '/admin/brasil'
+    | '/admin/cadastros-consultores'
     | '/admin/consultores'
     | '/admin/content'
     | '/admin/contrato'
@@ -860,6 +883,7 @@ export interface FileRouteTypes {
     | '/ferramentas'
     | '/guia-gestao'
     | '/newsletters'
+    | '/novoconsultor'
     | '/privacy'
     | '/reset-password'
     | '/robots.txt'
@@ -875,6 +899,7 @@ export interface FileRouteTypes {
     | '/admin/areas'
     | '/admin/boletim'
     | '/admin/brasil'
+    | '/admin/cadastros-consultores'
     | '/admin/consultores'
     | '/admin/content'
     | '/admin/contrato'
@@ -937,6 +962,7 @@ export interface RootRouteChildren {
   FerramentasRoute: typeof FerramentasRoute
   GuiaGestaoRoute: typeof GuiaGestaoRoute
   NewslettersRoute: typeof NewslettersRoute
+  NovoconsultorRoute: typeof NovoconsultorRoute
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -952,6 +978,7 @@ export interface RootRouteChildren {
   AdminAreasRoute: typeof AdminAreasRoute
   AdminBoletimRoute: typeof AdminBoletimRoute
   AdminBrasilRoute: typeof AdminBrasilRoute
+  AdminCadastrosConsultoresRoute: typeof AdminCadastrosConsultoresRoute
   AdminConsultoresRoute: typeof AdminConsultoresRoute
   AdminContentRoute: typeof AdminContentRoute
   AdminContratoRoute: typeof AdminContratoRoute
@@ -1093,6 +1120,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewslettersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/novoconsultor': {
+      id: '/novoconsultor'
+      path: '/novoconsultor'
+      fullPath: '/novoconsultor'
+      preLoaderRoute: typeof NovoconsultorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacy': {
       id: '/privacy'
       path: '/privacy'
@@ -1203,6 +1237,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/brasil'
       fullPath: '/admin/brasil'
       preLoaderRoute: typeof AdminBrasilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/cadastros-consultores': {
+      id: '/admin/cadastros-consultores'
+      path: '/admin/cadastros-consultores'
+      fullPath: '/admin/cadastros-consultores'
+      preLoaderRoute: typeof AdminCadastrosConsultoresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/consultores': {
@@ -1537,6 +1578,7 @@ const rootRouteChildren: RootRouteChildren = {
   FerramentasRoute: FerramentasRoute,
   GuiaGestaoRoute: GuiaGestaoRoute,
   NewslettersRoute: NewslettersRoute,
+  NovoconsultorRoute: NovoconsultorRoute,
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
@@ -1552,6 +1594,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminAreasRoute: AdminAreasRoute,
   AdminBoletimRoute: AdminBoletimRoute,
   AdminBrasilRoute: AdminBrasilRoute,
+  AdminCadastrosConsultoresRoute: AdminCadastrosConsultoresRoute,
   AdminConsultoresRoute: AdminConsultoresRoute,
   AdminContentRoute: AdminContentRoute,
   AdminContratoRoute: AdminContratoRoute,
