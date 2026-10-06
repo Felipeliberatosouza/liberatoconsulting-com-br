@@ -1,3 +1,4 @@
+import { useServiceOptions } from "@/lib/use-service-options";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -30,9 +31,6 @@ export const Route = createFileRoute("/admin/consultores")({
   component: AdminConsultantsPage,
 });
 
-const SERVICES: string[] = pt.megaMenu.groups.flatMap((g) =>
-  g.items.map((i) => `${g.title} · ${i.label}`),
-);
 
 type CertificationDraft = {
   name: string;
@@ -313,6 +311,8 @@ function LogoEditor({
 }
 
 function AdminConsultantsPage() {
+  const serviceOptions = useServiceOptions();
+  const SERVICES: string[] = serviceOptions.filter((o) => o.kind === "family").map((o) => o.label);
   const qc = useQueryClient();
   const [draft, setDraft] = useState<ConsultantRecord | null>(null);
   const [saving, setSaving] = useState(false);
