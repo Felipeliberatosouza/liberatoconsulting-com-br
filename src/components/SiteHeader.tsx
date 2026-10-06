@@ -88,6 +88,13 @@ function AboutMenuLink({
       </Link>
     );
   }
+  if (item.id === "nossa-essencia") {
+    return (
+      <Link to="/about" hash="nossa-essencia" className={className} onClick={onClick}>
+        {item.label}
+      </Link>
+    );
+  }
   if (item.id === "fale-conosco") {
     return (
       <Link to="/contact" className={className} onClick={onClick}>
