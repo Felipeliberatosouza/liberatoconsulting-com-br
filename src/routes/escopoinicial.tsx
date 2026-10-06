@@ -124,7 +124,9 @@ function ScopePage() {
     form.respondent_name.trim().length < 2 ||
     !isValidEmail(form.email) ||
     phoneInvalid ||
-    questions.some((q) => !answers[q.id]);
+    questions.some(
+      (q) => !answers[q.id] || (isOtherOption(answers[q.id]!) && !answers[`${q.id}_outro`]?.trim()),
+    );
 
   return (
     <div className="min-h-screen bg-secondary/30">
@@ -255,25 +257,43 @@ function ScopePage() {
                     <p className="mt-1 text-xs text-muted-foreground/80">{q.hint}</p>
                   ) : null}
                   <div className="mt-4 space-y-2">
-                    {q.options.map((opt) => (
-                      <label
-                        key={opt}
-                        className={`flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-2.5 text-sm transition-colors ${
-                          answers[q.id] === opt
-                            ? "border-accent bg-accent/10 font-medium"
-                            : "border-border hover:border-accent/60"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name={q.id}
-                          className="accent-[hsl(var(--accent))]"
-                          checked={answers[q.id] === opt}
-                          onChange={() => setAnswers({ ...answers, [q.id]: opt })}
-                        />
-                        {opt}
-                      </label>
-                    ))}
+                    {q.options.map((opt) => {
+                      const selected = answers[q.id] === opt;
+                      const other = isOtherOption(opt);
+                      return (
+                        <div key={opt} className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                          <label
+                            className={`flex flex-1 cursor-pointer items-center gap-3 rounded-xl border px-4 py-2.5 text-sm transition-colors ${
+                              selected
+                                ? "border-accent bg-accent/10 font-medium"
+                                : "border-border hover:border-accent/60"
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name={q.id}
+                              className="accent-[hsl(var(--accent))]"
+                              checked={selected}
+                              onChange={() => setAnswers({ ...answers, [q.id]: opt })}
+                            />
+                            {opt}
+                          </label>
+                          {selected && other ? (
+                            <Input
+                              aria-label={opt}
+                              required
+                              autoFocus
+                              maxLength={300}
+                              placeholder={OTHER_PLACEHOLDER[lang] ?? OTHER_PLACEHOLDER.pt}
+                              aria-invalid={!answers[`${q.id}_outro`]?.trim()}
+                              className={`sm:flex-1 ${!answers[`${q.id}_outro`]?.trim() ? "border-destructive" : ""}`}
+                              value={answers[`${q.id}_outro`] ?? ""}
+                              onChange={(e) => setAnswers({ ...answers, [`${q.id}_outro`]: e.target.value })}
+                            />
+                          ) : null}
+                        </div>
+                      );
+                    })}
                   </div>
                   {q.dateWhen && answers[q.id] === q.dateWhen ? (
                     <div className="mt-4">
