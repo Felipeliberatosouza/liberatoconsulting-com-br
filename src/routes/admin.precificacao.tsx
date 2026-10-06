@@ -439,6 +439,14 @@ function PricingPage() {
             </p>
           )}
 
+          {slug && (
+            <div className="rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
+              <strong className="text-foreground">Como ler as colunas:</strong> Consultor, Assistente e Freelancer = <b>horas de trabalho</b> de cada perfil por realização (não é número de pessoas).
+              Terceiros = <b>custo em R$</b> de fornecedores por realização. Realizações = quantas vezes a atividade ocorre.
+              <br />
+              Preço da atividade = (horas × valor do homem-hora de cada perfil × fator do país + Terceiros × (1 + margem sobre terceiros)) × realizações, mais deslocamento quando presencial.
+            </div>
+          )}
           {slug &&
             PHASES.map((phase) => (
               <section key={phase.id} className="rounded-xl border border-border">
@@ -460,24 +468,24 @@ function PricingPage() {
                             <span className="ml-2 text-xs text-muted-foreground">presencial</span>
                           )}
                         </span>
-                        <label className="text-xs text-muted-foreground">
-                          Consultor
+                        <label className="text-xs text-muted-foreground" title="Horas de trabalho do consultor por realização">
+                          Consultor (h)
                           <Num value={a.consultant} onChange={(v) => patch(a.id, { consultant: v })} className="mt-1 w-20" />
                         </label>
-                        <label className="text-xs text-muted-foreground">
-                          Assistente
+                        <label className="text-xs text-muted-foreground" title="Horas de trabalho do assistente por realização">
+                          Assistente (h)
                           <Num value={a.assistant} onChange={(v) => patch(a.id, { assistant: v })} className="mt-1 w-20" />
                         </label>
-                        <label className="text-xs text-muted-foreground">
-                          Freelancer
+                        <label className="text-xs text-muted-foreground" title="Horas de trabalho do freelancer por realização">
+                          Freelancer (h)
                           <Num value={a.freelancer} onChange={(v) => patch(a.id, { freelancer: v })} className="mt-1 w-20" />
                         </label>
-                        <label className="text-xs text-muted-foreground">
+                        <label className="text-xs text-muted-foreground" title="Custo em reais de serviços de terceiros por realização (campo, ferramentas, etc.)">
                           Terceiros (R$)
                           <Num value={a.thirdParty} onChange={(v) => patch(a.id, { thirdParty: v })} className="mt-1 w-24" />
                         </label>
-                        <label className="text-xs text-muted-foreground">
-                          Realizações
+                        <label className="text-xs text-muted-foreground" title="Quantas vezes a atividade acontece no projeto">
+                          Realizações (nº)
                           <Num value={a.reps} onChange={(v) => patch(a.id, { reps: v })} className="mt-1 w-20" />
                         </label>
                       </div>

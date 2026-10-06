@@ -281,7 +281,8 @@ export function buildQuote(
         reps;
       const third = a.thirdParty * reps * (1 + settings.thirdPartyMarkup);
       const travel = !options.remoteOnly && a.onsite ? tripCost * reps : 0;
-      const price = (labor + third) * factor + travel;
+      // Fator do país ajusta só a mão de obra; terceiros já são custo em R$.
+      const price = labor * factor + third + travel;
       const days = Math.max(0.2, Math.round(((hours / hoursPerDay) * 10) / 10) / 1 || 0.2);
       const itemStart = new Date(cursor);
       const itemEnd = addBusinessDays(itemStart, days);
