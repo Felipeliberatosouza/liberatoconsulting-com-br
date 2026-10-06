@@ -735,10 +735,24 @@ function footerLayout(
   footer: string,
   maxWidth: number,
 ) {
-  const size = Math.round(w * (w > h ? 0.021 : 0.025));
-  ctx.font = `600 ${size}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
-  const lines = wrap(ctx, footer, maxWidth);
-  return { size, lines, height: Math.ceil(lines.length * size * 1.3) };
+  const base = Math.round(w * (w > h ? 0.021 : 0.025));
+  const font = (s: number) => `600 ${s}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+  const fits = (s: number, text: string) => {
+    ctx.font = font(s);
+    return ctx.measureText(text).width <= maxWidth;
+  };
+  // 1) Tudo em uma linha, reduzindo a letra até 65% do tamanho padrão.
+  for (let s = base; s >= Math.round(base * 0.65); s -= 1) {
+    if (fits(s, footer)) return { size: s, lines: [footer], height: Math.ceil(s * 1.3) };
+  }
+  // 2) Nome da empresa na primeira linha; site e telefone na segunda.
+  const parts = footer.split(/\s+·\s+/);
+  const lines = parts.length > 1 ? [parts[0]!, parts.slice(1).join(" · ")] : [footer];
+  let size = base;
+  while (size > Math.round(base * 0.55) && !lines.every((l) => fits(size, l))) size -= 1;
+  ctx.font = font(size);
+  const out = lines.every((l) => ctx.measureText(l).width <= maxWidth) ? lines : wrap(ctx, footer, maxWidth);
+  return { size, lines: out, height: Math.ceil(out.length * size * 1.3) };
 }
 
 function adFooter(
