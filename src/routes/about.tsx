@@ -39,7 +39,10 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
-  const { t, institutional } = useLanguage();
+  const { t, institutional, lang } = useLanguage();
+  const essenceTitle =
+    ({ en: "Our essence – Liberato Consulting DNA", es: "Nuestra esencia – ADN Liberato Consulting", zh: "我们的精髓 – Liberato Consulting 的 DNA" } as Record<string, string>)[lang] ??
+    "Nossa essência – DNA Liberato Consulting";
   const s = t.about.sections;
 
   return (
