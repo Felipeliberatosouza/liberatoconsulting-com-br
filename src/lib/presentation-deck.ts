@@ -296,8 +296,8 @@ function drawDeck(b: Board, d: DeckInput) {
   /** Garantias padrão do trabalho: NDA e pesquisas documentadas com evidências. */
   function assurances(y: number) {
     const items = [
-      "Confidencialidade: firmaremos um contrato de confidencialidade de informações (NDA).",
-      "Rastreabilidade: todos os processos de pesquisa são documentados, com evidências de execução.",
+      "Firmaremos contrato de confidencialidade de informações (NDA)",
+      "Todas as pesquisas são documentadas, com evidências de execução",
     ];
     const gap = 0.25;
     const w = (11.9 - gap) / 2;
