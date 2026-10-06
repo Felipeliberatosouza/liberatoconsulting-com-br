@@ -1,7 +1,7 @@
 import { useServiceOptions } from "@/lib/use-service-options";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
@@ -125,7 +125,7 @@ function AdPage() {
   const [service, setService] = useState("");
   useEffect(() => {
     if (!service && SERVICES[0]) setService(SERVICES[0].label);
-  }, [service, SERVICES]);
+  }, [service, serviceOptions]); // eslint-disable-line react-hooks/exhaustive-deps
   const [areaId, setAreaId] = useState<string>(SERVICE_AREAS[0].id);
   const areaLabel =
     SERVICE_AREAS.find((a) => a.id === areaId)?.labels.pt ?? SERVICE_AREAS[0].labels.pt;

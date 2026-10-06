@@ -39,6 +39,26 @@ export async function collectEntries(): Promise<SitemapEntry[]> {
   for (const page of pt.serviceDetail.pages) {
     entries.push({ path: `/services/${page.id}`, changefreq: "monthly", priority: "0.8" });
   }
+  // Serviços e famílias cadastrados no painel que ainda não estão no dicionário.
+  try {
+    const { publicClient } = await import("./admin.server");
+    const { data } = await publicClient()
+      .from("service_products")
+      .select("slug, family_id")
+      .eq("published", true);
+    const seen = new Set(entries.map((e) => e.path));
+    for (const r of (data ?? []) as { slug: string; family_id: string }[]) {
+      for (const slug of [r.family_id, r.slug]) {
+        const path = `/services/${slug}`;
+        if (slug && !seen.has(path)) {
+          seen.add(path);
+          entries.push({ path, changefreq: "monthly", priority: "0.8" });
+        }
+      }
+    }
+  } catch {
+    /* sitemap mantém a lista do dicionário */
+  }
   for (const page of pt.aboutDetail.pages) {
     entries.push({ path: `/about/${page.id}`, changefreq: "monthly", priority: "0.6" });
   }
