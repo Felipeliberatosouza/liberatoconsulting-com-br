@@ -94,40 +94,47 @@ function clean(str: string) {
   return str.replace(/(^|[^\p{L}])(\p{L}+)((?:\s+\2)+)(?=[^\p{L}]|$)/giu, "$1$2").trim();
 }
 
-/** Estima quebra de linhas para escolher um tamanho de fonte que caiba de verdade na caixa. */
-function wrapLines(str: string, w: number, size: number, bold: boolean) {
-  const cw = (size / 72) * (bold ? 0.58 : 0.53);
-  const max = Math.max(1, Math.floor(w / cw));
-  let n = 0;
-  for (const para of str.split("\n")) {
-    let line = 0;
-    let count = 1;
-    for (const word of para.split(/\s+/).filter(Boolean)) {
-      const len = word.length;
-      if (line === 0) line = len;
-      else if (line + 1 + len <= max) line += 1 + len;
-      else { count += 1; line = len; }
-      if (line > max) { count += Math.floor(line / max); line = line % max; }
-    }
-    n += count;
-  }
-  return n;
+/** Largura aproximada de cada caractere (em "em"), para medir a linha com mais precisão. */
+function charEm(c: string, bold: boolean) {
+  let e: number;
+  if (c === " ") e = 0.27;
+  else if ("iljI.,:;'!|".includes(c)) e = 0.26;
+  else if ("frt()-–".includes(c)) e = 0.36;
+  else if ("mwMW".includes(c)) e = 0.84;
+  else if (/[A-ZÀ-Ý0-9]/.test(c)) e = 0.64;
+  else e = 0.52;
+  return bold ? e * 1.06 : e;
 }
-/** Quebra o texto em linhas explícitas, para o PowerPoint não refazer a quebra (evita repetir palavras). */
-function breakLines(str: string, w: number, size: number, bold: boolean) {
-  const cw = (size / 72) * (bold ? 0.6 : 0.55);
-  const max = Math.max(1, Math.floor(w / cw));
+function textWidth(s: string, size: number, bold: boolean) {
+  let em = 0;
+  for (const c of s) em += charEm(c, bold);
+  return (em * size) / 72;
+}
+/** Divide em linhas: só passa para a próxima quando a palavra realmente não cabe na atual. */
+function splitLines(str: string, w: number, size: number, bold: boolean) {
+  const max = w * 0.93; // folga para margens internas da caixa
   const out: string[] = [];
   for (const para of str.split("\n")) {
     let line = "";
     for (const word of para.split(/\s+/).filter(Boolean)) {
-      if (!line) line = word;
-      else if (line.length + 1 + word.length <= max) line += " " + word;
+      const next = line ? line + " " + word : word;
+      if (!line || textWidth(next, size, bold) <= max) line = next;
       else { out.push(line); line = word; }
     }
     out.push(line);
   }
-  return out.join("\n");
+  return out;
+}
+/** Estima quebra de linhas para escolher um tamanho de fonte que caiba de verdade na caixa. */
+function wrapLines(str: string, w: number, size: number, bold: boolean) {
+  return splitLines(str, w, size, bold).reduce(
+    (n, l) => n + Math.max(1, Math.ceil(textWidth(l, size, bold) / (w * 0.93))),
+    0,
+  );
+}
+/** Quebra o texto em linhas explícitas, para o PowerPoint não refazer a quebra (evita repetir palavras). */
+function breakLines(str: string, w: number, size: number, bold: boolean) {
+  return splitLines(str, w, size, bold).join("\n");
 }
 function fitSize(str: string, w: number, h: number, size: number, bold: boolean) {
   for (let s = size; s > 7; s -= 0.5) {
