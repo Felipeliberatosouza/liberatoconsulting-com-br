@@ -40,8 +40,9 @@ function NewConsultantPage() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    if (invite.data?.ok) {
-      setForm((f) => ({ ...f, full_name: f.full_name || invite.data.full_name, email: f.email || invite.data.email, phone: f.phone || invite.data.phone }));
+    const d = invite.data;
+    if (d && d.ok) {
+      setForm((f) => ({ ...f, full_name: f.full_name || d.full_name, email: f.email || d.email, phone: f.phone || d.phone }));
     }
   }, [invite.data]);
 
@@ -60,7 +61,10 @@ function NewConsultantPage() {
         },
       }),
     onSuccess: (r) => {
-      if (!r.ok) return toast.error(r.error);
+      if (!r.ok) {
+        toast.error(r.error);
+        return;
+      }
       setDone(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
