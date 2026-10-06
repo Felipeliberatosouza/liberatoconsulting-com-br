@@ -95,6 +95,7 @@ function ScopePage() {
     respondent_role: "",
     email: "",
     phone: "",
+    employees: "",
   });
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [comments, setComments] = useState<Record<string, string>>({});
@@ -220,6 +221,18 @@ function ScopePage() {
                   {phoneInvalid && form.phone.trim().length > 0 ? (
                     <span className="mt-1 block text-xs text-destructive">{PHONE_ERROR}</span>
                   ) : null}
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="employees">
+                    {({ pt: "Número de funcionários", en: "Number of employees", es: "Número de empleados", zh: "员工人数" } as Record<string, string>)[lang] ?? "Número de funcionários"}
+                  </Label>
+                  <Input
+                    id="employees"
+                    inputMode="numeric"
+                    maxLength={20}
+                    value={form.employees}
+                    onChange={(e) => setForm({ ...form, employees: e.target.value.replace(/[^\d.\s-]/g, "") })}
+                  />
                 </div>
               </div>
             </section>

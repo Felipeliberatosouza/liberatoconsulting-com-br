@@ -1620,6 +1620,7 @@ export type Database = {
           company: string
           created_at: string
           email: string
+          employees: string
           id: string
           lang: string
           notes: string
@@ -1634,6 +1635,7 @@ export type Database = {
           company?: string
           created_at?: string
           email?: string
+          employees?: string
           id?: string
           lang?: string
           notes?: string
@@ -1648,6 +1650,7 @@ export type Database = {
           company?: string
           created_at?: string
           email?: string
+          employees?: string
           id?: string
           lang?: string
           notes?: string

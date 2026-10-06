@@ -1,0 +1,1 @@
+ALTER TABLE public.project_scope_submissions ADD COLUMN IF NOT EXISTS employees text NOT NULL DEFAULT '';
