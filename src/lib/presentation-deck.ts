@@ -293,6 +293,21 @@ function drawDeck(b: Board, d: DeckInput) {
     }
     footer(true);
   };
+  /** Garantias padrão do trabalho: NDA e pesquisas documentadas com evidências. */
+  function assurances(y: number) {
+    const items = [
+      "Firmaremos contrato de confidencialidade de informações (NDA)",
+      "Todas as pesquisas são documentadas, com evidências de execução",
+    ];
+    const gap = 0.25;
+    const w = (11.9 - gap) / 2;
+    items.forEach((t, i) => {
+      const x = 0.7 + i * (w + gap);
+      b.rect(x, y, w, 0.36, C.navy, true);
+      b.rect(x, y, 0.08, 0.36, C.accent);
+      b.text(t, x + 0.2, y + 0.07, w - 0.3, 0.26, { size: 10, bold: true, color: C.white });
+    });
+  }
   function footer(onDark: boolean) {
     b.image(onDark ? d.liberatoLogoLight ?? d.liberatoLogo : d.liberatoLogo, 0.7, 6.9, 1.4, 0.38);
     b.text(`Liberato Consulting · Proposta exclusiva para ${A}`, 3.5, 7.0, 6.3, 0.25, {
@@ -454,11 +469,11 @@ function drawDeck(b: Board, d: DeckInput) {
         const n = start + i + 1;
         b.rect(x, 2.15, cw, 0.6, n % 2 ? C.accent : C.navy, true);
         b.text(`Etapa ${n} · ${p.stage}`, x + 0.15, 2.28, cw - 0.3, 0.38, { size: 13, bold: true, color: C.white });
-        b.rect(x, 2.85, cw, 3.75, C.white, true);
+        b.rect(x, 2.85, cw, 3.35, C.white, true);
         const rows = [
-          { t: "Como faremos", v: p.how, h: 1.25 },
-          { t: "Pesquisas e levantamentos", v: p.research, h: 1.0 },
-          { t: "Quem participa", v: p.stakeholders, h: 0.95 },
+          { t: "Como faremos", v: p.how, h: 1.15 },
+          { t: "Pesquisas e levantamentos", v: p.research, h: 0.95 },
+          { t: "Quem participa", v: p.stakeholders, h: 0.85 },
         ];
         let yy = 2.97;
         rows.forEach((r) => {
@@ -467,7 +482,8 @@ function drawDeck(b: Board, d: DeckInput) {
           yy += r.h + 0.05;
         });
       });
-      if (d.service.duration && start + 3 >= plan.length) b.text(`Duração de referência: ${d.service.duration}`, 0.7, 6.65, 11.9, 0.25, { size: 11, bold: true, color: C.accent });
+      assurances(6.28);
+      if (d.service.duration && start + 3 >= plan.length) b.text(`Duração de referência: ${d.service.duration}`, 0.7, 6.68, 11.9, 0.2, { size: 10, bold: true, color: C.accent });
     }
   } else {
     light("Como vamos trabalhar", `A jornada ${DE} com a Liberato`);
@@ -479,11 +495,12 @@ function drawDeck(b: Board, d: DeckInput) {
         const x = 0.7 + i * (mw + gap);
         b.rect(x, 2.4, mw, 0.7, i % 2 ? C.navy : C.accent, true);
         b.text(`Etapa ${i + 1}`, x, 2.6, mw, 0.35, { size: 14, bold: true, color: C.white, align: "center" });
-        b.rect(x, 3.25, mw, 2.6, C.white, true);
-        b.text(m, x + 0.15, 3.45, mw - 0.3, 2.3, { size: 13, color: C.ink });
+        b.rect(x, 3.25, mw, 2.3, C.white, true);
+        b.text(m, x + 0.15, 3.45, mw - 0.3, 2.0, { size: 13, color: C.ink });
       });
     }
-    if (d.service.duration) b.text(`Duração de referência: ${d.service.duration}`, 0.7, 6.1, 11.9, 0.4, { size: 14, bold: true, color: C.accent });
+    assurances(5.7);
+    if (d.service.duration) b.text(`Duração de referência: ${d.service.duration}`, 0.7, 6.25, 11.9, 0.4, { size: 14, bold: true, color: C.accent });
   }
 
   // 11. Impactos
