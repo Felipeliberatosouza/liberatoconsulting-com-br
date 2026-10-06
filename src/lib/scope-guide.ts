@@ -42,8 +42,8 @@ export const SCOPE_SIGNALS: ScopeSignal[] = [
     id: "pesquisa-primaria",
     question: "q6",
     matches: [
-      "Entrevistas com até 10 pessoas",
-      "Entrevistas com mais de 10 pessoas",
+      "Entrevistas com até 10 pessoas", "Entrevistas com até 10 pessoas/empresas",
+      "Entrevistas com mais de 10 pessoas", "Entrevistas com mais de 10 pessoas/empresas",
       "Pesquisa quantitativa / survey",
       "Pesquisa pública mais entrevistas ou survey",
     ],

@@ -102,8 +102,8 @@ const EN: QuestionText[] = [
     hint: "If you have a target sample (number of respondents), note it under Comments.",
     options: [
       "Public sources research only",
-      "Interviews with up to 10 people",
-      "Interviews with more than 10 people",
+      "Interviews with up to 10 people/companies",
+      "Interviews with more than 10 people/companies",
       "Quantitative research / survey",
       "Public research plus interviews or survey",
       "Other",
@@ -240,8 +240,8 @@ const ES: QuestionText[] = [
     hint: "Si tiene una muestra deseada (número de respondentes), indíquelo en Comentarios.",
     options: [
       "Solo investigación en fuentes públicas",
-      "Entrevistas con hasta 10 personas",
-      "Entrevistas con más de 10 personas",
+      "Entrevistas con hasta 10 personas/empresas",
+      "Entrevistas con más de 10 personas/empresas",
       "Investigación cuantitativa / encuesta",
       "Investigación pública más entrevistas o encuesta",
       "Otro",
@@ -371,8 +371,8 @@ const ZH: QuestionText[] = [
     hint: "如已确定样本量（受访人数），请在“备注”中说明。",
     options: [
       "仅公开资料研究",
-      "访谈不超过 10 人",
-      "访谈超过 10 人",
+      "访谈不超过 10 人/家企业",
+      "访谈超过 10 人/家企业",
       "定量调研／问卷",
       "公开资料研究加访谈或问卷",
       "其他",

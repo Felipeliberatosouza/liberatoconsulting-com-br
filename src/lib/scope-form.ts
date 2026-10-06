@@ -117,8 +117,8 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
     question: "Qual nível de contato direto com o mercado é esperado?",
     options: [
       "Somente pesquisa em fontes públicas",
-      "Entrevistas com até 10 pessoas",
-      "Entrevistas com mais de 10 pessoas",
+      "Entrevistas com até 10 pessoas/empresas",
+      "Entrevistas com mais de 10 pessoas/empresas",
       "Pesquisa quantitativa / survey",
       "Pesquisa pública mais entrevistas ou survey",
       "Outro",
