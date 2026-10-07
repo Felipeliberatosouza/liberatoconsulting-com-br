@@ -1,7 +1,10 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 import type { OnboardingData, OnboardingLogo } from "@/lib/onboarding-fields";
+import { useServiceOptions } from "@/lib/use-service-options";
+import { formatCep, formatCpf, formatPhone, isValidCpf, isValidEmail, isValidPhone } from "@/lib/validation";
 
 /** Reduz a imagem enviada e devolve data URL (fotos e logomarcas). */
 async function toSmallDataUrl(file: File, max = 600): Promise<string> {
@@ -27,6 +30,40 @@ async function toSmallDataUrl(file: File, max = 600): Promise<string> {
 type Props = { value: OnboardingData; onChange: (v: OnboardingData) => void };
 
 export function ConsultantOnboardingForm({ value: v, onChange }: Props) {
+  const services = useServiceOptions().filter((o) => o.kind === "family").map((o) => o.label);
+  const [cepBusy, setCepBusy] = useState(false);
+  const lookupCep = async (zip: string) => {
+    const d = zip.replace(/\D+/g, "");
+    if (d.length !== 8) return;
+    setCepBusy(true);
+    try {
+      const r = (await (await fetch(`https://viacep.com.br/ws/${d}/json/`)).json()) as Record<string, string> & { erro?: boolean };
+      if (!r.erro)
+        onChange({
+          ...v,
+          address_zip: formatCep(zip),
+          address_street: r["logradouro"] || v.address_street,
+          address_district: r["bairro"] || v.address_district,
+          address_city: r["localidade"] || v.address_city,
+          address_state: r["uf"] || v.address_state,
+        });
+    } catch {
+      /* sem CEP automático */
+    } finally {
+      setCepBusy(false);
+    }
+  };
+  const masked = (k: "cpf" | "phone" | "address_zip" | "email", label: string, fmt: (s: string) => string, ok: (s: string) => boolean, required = false, onBlur?: () => void) => {
+    const val = String(v[k] ?? "");
+    const bad = val.length > 0 && !ok(val);
+    return (
+      <div className="space-y-1.5">
+        <Label htmlFor={`f-${k}`}>{label}{required ? " *" : ""}</Label>
+        <Input id={`f-${k}`} value={val} onBlur={onBlur} onChange={(e) => set(k, fmt(e.target.value) as never)} className={bad ? "border-destructive" : val ? "border-emerald-500" : ""} />
+        {bad ? <p className="text-xs text-destructive">Verifique este campo.</p> : null}
+      </div>
+    );
+  };
   const set = <K extends keyof OnboardingData>(k: K, val: OnboardingData[K]) => onChange({ ...v, [k]: val });
   const text = (k: keyof OnboardingData, label: string, opts: { area?: boolean; required?: boolean; type?: string; rows?: number } = {}) => (
     <div className="space-y-1.5">
@@ -95,7 +132,7 @@ export function ConsultantOnboardingForm({ value: v, onChange }: Props) {
           {text("headline", "Título profissional (ex.: Consultor sênior em estratégia)")}
           <div className="space-y-1.5">
             <Label htmlFor="f-years">Anos de experiência</Label>
-            <Input id="f-years" type="number" min={0} max={80} value={v.years_experience} onChange={(e) => set("years_experience", Math.max(0, Math.min(80, Number(e.target.value) || 0)))} />
+            <Input id="f-years" type="number" min={0} max={80} value={v.years_experience || ""} onChange={(e) => set("years_experience", Math.max(0, Math.min(80, Number(e.target.value) || 0)))} />
           </div>
           <div className="space-y-1.5">
             <Label>Foto</Label>
@@ -109,8 +146,21 @@ export function ConsultantOnboardingForm({ value: v, onChange }: Props) {
         {text("experience", "Experiência profissional", { area: true, rows: 6 })}
         {text("clients", "Principais clientes", { area: true })}
         {text("works", "Trabalhos e projetos relevantes", { area: true, rows: 5 })}
+        <div className="space-y-2">
+          <Label>Áreas que atende (serviços da Liberato Consulting)</Label>
+          <div className="flex flex-wrap gap-2">
+            {services.map((s) => {
+              const on = v.specialties.includes(s);
+              return (
+                <button key={s} type="button" onClick={() => set("specialties", on ? v.specialties.filter((x) => x !== s) : [...v.specialties, s])}
+                  className={`rounded-full border px-3 py-1.5 text-xs ${on ? "border-accent bg-accent text-accent-foreground" : "border-border bg-background text-muted-foreground hover:border-accent"}`}>
+                  {s}
+                </button>
+              );
+            })}
+          </div>
+        </div>
         <div className="grid gap-4 md:grid-cols-2">
-          {listField("specialties", "Áreas que atende / especialidades")}
           {listField("segments", "Segmentos de mercado")}
           {listField("certifications", "Certificações")}
           {listField("highlights", "Destaques")}
@@ -128,16 +178,16 @@ export function ConsultantOnboardingForm({ value: v, onChange }: Props) {
         <h2 className="font-display text-lg font-semibold">Dados pessoais e contratuais</h2>
         <p className="text-sm text-muted-foreground">Usados somente no contrato e no seu acesso ao painel. Não aparecem no site.</p>
         <div className="grid gap-4 md:grid-cols-3">
-          {text("email", "E-mail", { required: true, type: "email" })}
-          {text("phone", "Celular", { required: true })}
+          {masked("email", "E-mail", (x) => x.trim(), isValidEmail, true)}
+          {masked("phone", "Celular", formatPhone, isValidPhone, true)}
           {text("birth_date", "Data de nascimento", { type: "date" })}
-          {text("cpf", "CPF", { required: true })}
+          {masked("cpf", "CPF", formatCpf, isValidCpf, true)}
           {text("rg", "RG")}
           {text("nationality", "Nacionalidade")}
           {text("marital_status", "Estado civil")}
         </div>
         <div className="grid gap-4 md:grid-cols-3">
-          {text("address_zip", "CEP")}
+          {masked("address_zip", cepBusy ? "CEP (buscando…)" : "CEP (preenche o endereço)", formatCep, (x) => x.replace(/\D/g, "").length === 8, false, () => void lookupCep(v.address_zip))}
           {text("address_street", "Rua")}
           {text("address_number", "Número")}
           {text("address_complement", "Complemento")}
