@@ -29,7 +29,19 @@ const UUID = /^[0-9a-f-]{36}$/i;
 
 function NewConsultantPage() {
   const { c } = Route.useSearch();
-  const token = c && UUID.test(c) ? c : "";
+  const [token, setToken] = useState("");
+  const [ready, setReady] = useState(false);
+
+  // Guarda o código do convite e deixa o endereço limpo: /novoconsultor
+  useEffect(() => {
+    const KEY = "liberato-onboarding-token";
+    let t = c && UUID.test(c) ? c : "";
+    if (t) window.sessionStorage.setItem(KEY, t);
+    else t = window.sessionStorage.getItem(KEY) ?? "";
+    if (window.location.search) window.history.replaceState(null, "", "/novoconsultor");
+    setToken(UUID.test(t) ? t : "");
+    setReady(true);
+  }, [c]);
   const invite = useQuery({
     queryKey: ["onboarding-invite", token],
     queryFn: () => getOnboardingByToken({ data: { token } }),
@@ -79,6 +91,7 @@ function NewConsultantPage() {
     </div>
   );
 
+  if (!ready) return msg("Carregando…");
   if (!token) return msg("Este endereço precisa do link pessoal enviado por e-mail. Abra o link recebido.");
   if (invite.isLoading) return msg("Carregando…");
   if (!invite.data?.ok) {
