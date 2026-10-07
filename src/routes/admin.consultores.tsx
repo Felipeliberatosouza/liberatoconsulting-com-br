@@ -20,6 +20,102 @@ import {
 } from "@/lib/consultants.functions";
 import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
 import { pt } from "@/i18n/pt";
+import { approveOnboarding, listOnboardings, type OnboardingRow } from "@/lib/onboarding.functions";
+import { ONBOARDING_STATUS_LABEL } from "@/lib/onboarding-fields";
+
+/** Cadastros enviados pelos consultores aprovados (link /novoconsultor), com importação. */
+function ReceivedOnboardings() {
+  const qc = useQueryClient();
+  const q = useQuery({ queryKey: ["admin-onboardings"], queryFn: () => listOnboardings(), retry: false });
+  const [busy, setBusy] = useState<string | null>(null);
+  const [open, setOpen] = useState<string | null>(null);
+  const rows = (q.data ?? []).filter((r) => r.status === "submitted" || r.status === "approved");
+
+  async function importRow(r: OnboardingRow) {
+    if (!confirm(`Importar o cadastro de ${r.full_name}? Será criado em Usuários (Consultor) e em Consultores (oculto no site), e o contrato será enviado por e-mail.`)) return;
+    setBusy(r.id);
+    try {
+      const res = await approveOnboarding({ data: { id: r.id, data: r.payload, review_note: r.review_note ?? "" } });
+      if (!res.ok) toast.error(res.error);
+      else {
+        toast.success(res.warning ? `Importado. ${res.warning}` : "Importado em Usuários e Consultores. Contrato enviado.");
+        qc.invalidateQueries({ queryKey: ["admin-onboardings"] });
+        qc.invalidateQueries({ queryKey: ["admin-consultants"] });
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Falha ao importar.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  return (
+    <section className="mb-8 rounded-xl border border-border bg-background p-5">
+      <h2 className="text-lg font-semibold">Cadastros recebidos de novos consultores</h2>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Formulários preenchidos pelos consultores aprovados no link /novoconsultor. Importe para registrar em Usuários e em Consultores.
+      </p>
+      {q.isLoading && <p className="mt-4 text-sm text-muted-foreground">Carregando…</p>}
+      {!q.isLoading && rows.length === 0 && <p className="mt-4 text-sm text-muted-foreground">Nenhum cadastro recebido ainda.</p>}
+      <div className="mt-4 grid gap-3">
+        {rows.map((r) => {
+          const p = r.payload;
+          return (
+            <div key={r.id} className="rounded-lg border border-border p-4">
+              <div className="flex flex-wrap items-center gap-4">
+                {p.photo_url ? <img src={p.photo_url} alt="" className="size-12 rounded-full object-cover" /> : <div className="size-12 rounded-full bg-secondary" />}
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold">{r.full_name}</p>
+                  <p className="text-sm text-muted-foreground">{r.email} · {r.phone}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {ONBOARDING_STATUS_LABEL[r.status] ?? r.status}
+                    {r.submitted_at ? ` · recebido em ${new Date(r.submitted_at).toLocaleDateString("pt-BR")}` : ""}
+                  </p>
+                </div>
+                <Button variant="outline" size="sm" onClick={() => setOpen(open === r.id ? null : r.id)}>
+                  {open === r.id ? "Fechar" : "Ver informações"}
+                </Button>
+                {r.status === "submitted" ? (
+                  <Button size="sm" disabled={busy === r.id} onClick={() => importRow(r)}>
+                    {busy === r.id ? <Loader2 className="size-4 animate-spin" /> : null}
+                    Importar para Usuários e Consultores
+                  </Button>
+                ) : (
+                  <span className="text-xs font-medium text-accent">Já importado</span>
+                )}
+              </div>
+              {open === r.id && (
+                <dl className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+                  {([
+                    ["Título profissional", p.headline],
+                    ["Anos de experiência", String(p.years_experience || "")],
+                    ["Formação acadêmica", p.education],
+                    ["Experiência", p.experience],
+                    ["Principais clientes", p.clients],
+                    ["Trabalhos relevantes", p.works],
+                    ["Áreas que atende", p.specialties.join(", ")],
+                    ["Segmentos", p.segments.join(", ")],
+                    ["Certificações", p.certifications.join("; ")],
+                    ["ORCID / Lattes / Site", [p.orcid_url, p.lattes_url, p.website_url].filter(Boolean).join(" · ")],
+                    ["CPF / RG", [p.cpf, p.rg].filter(Boolean).join(" / ")],
+                    ["Nascimento", p.birth_date],
+                    ["Endereço", [p.address_street, p.address_number, p.address_complement, p.address_district, p.address_city, p.address_state, p.address_zip, p.address_country].filter(Boolean).join(", ")],
+                    ["Dados bancários", [p.bank_name, p.bank_branch, p.bank_account, p.pix_key && `Pix ${p.pix_key}`].filter(Boolean).join(" · ")],
+                  ] as Array<[string, string]>).map(([k, val]) => (
+                    <div key={k}>
+                      <dt className="text-xs text-muted-foreground">{k}</dt>
+                      <dd className="whitespace-pre-line">{val || "—"}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
 
 export const Route = createFileRoute("/admin/consultores")({
   head: () => ({
@@ -423,6 +519,7 @@ function AdminConsultantsPage() {
       description="Cadastro dos consultores exibidos na seção Equipe do site."
       requireAdmin
     >
+      <ReceivedOnboardings />
       <div className="mb-6 flex justify-end">
         <Button onClick={() => setDraft({ ...EMPTY })}>
           <Plus className="size-4" />
