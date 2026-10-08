@@ -1,6 +1,7 @@
 import { sendLovableEmail } from "@lovable.dev/email-js";
 
 import { companyFooterHtml, companyFooterText, loadCompanyFooter } from "./company-footer.server";
+import { linkifyEmailHtml } from "./email-brand";
 import { SENDER_DOMAIN } from "./email-templates/send-email";
 
 function escapeHtml(value: string) {
@@ -47,7 +48,7 @@ export async function sendContractEmail(input: {
     .filter(Boolean)
     .map(
       (p) =>
-        `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1f2328">${escapeHtml(p).replace(/\n/g, "<br />")}</p>`,
+        `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#1f2328">${linkifyEmailHtml(escapeHtml(p)).replace(/\n/g, "<br />")}</p>`,
     )
     .join("");
 
