@@ -1,7 +1,41 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { searchCrmLeads, importCrmLeads, type ProspectLead } from "@/lib/crm-prospect.functions";
 import { CRM_SEGMENTS } from "@/lib/crm-segments";
+import { STATES } from "@/lib/audience-filters";
+
+const COUNTRY_REGIONS: Record<string, { label: string; options: string[] }> = {
+  Brasil: { label: "Estado (UF)", options: STATES.map((s) => s.uf) },
+  Argentina: { label: "Província", options: ["Buenos Aires", "Ciudad Autónoma de Buenos Aires", "Catamarca", "Chaco", "Chubut", "Córdoba", "Corrientes", "Entre Ríos", "Formosa", "Jujuy", "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquén", "Río Negro", "Salta", "San Juan", "San Luis", "Santa Cruz", "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucumán"] },
+  Chile: { label: "Região", options: ["Arica y Parinacota", "Tarapacá", "Antofagasta", "Atacama", "Coquimbo", "Valparaíso", "Metropolitana de Santiago", "O'Higgins", "Maule", "Ñuble", "Biobío", "La Araucanía", "Los Ríos", "Los Lagos", "Aysén", "Magallanes"] },
+  Paraguai: { label: "Departamento", options: ["Asunción", "Alto Paraná", "Central", "Itapúa", "Caaguazú", "San Pedro", "Cordillera", "Guairá", "Paraguarí", "Concepción", "Amambay", "Canindeyú", "Misiones", "Ñeembucú", "Caazapá", "Presidente Hayes", "Boquerón", "Alto Paraguay"] },
+  Uruguai: { label: "Departamento", options: ["Montevideo", "Canelones", "Maldonado", "Colonia", "Salto", "Paysandú", "Rivera", "Tacuarembó", "Soriano", "San José", "Cerro Largo", "Rocha", "Florida", "Lavalleja", "Durazno", "Artigas", "Río Negro", "Treinta y Tres", "Flores"] },
+  Portugal: { label: "Distrito", options: ["Aveiro", "Beja", "Braga", "Bragança", "Castelo Branco", "Coimbra", "Évora", "Faro", "Guarda", "Leiria", "Lisboa", "Portalegre", "Porto", "Santarém", "Setúbal", "Viana do Castelo", "Vila Real", "Viseu", "Açores", "Madeira"] },
+  México: { label: "Estado", options: ["Ciudad de México", "Jalisco", "Nuevo León", "Estado de México", "Puebla", "Guanajuato", "Querétaro", "Veracruz", "Yucatán", "Baja California", "Chihuahua", "Sonora", "Coahuila", "Sinaloa", "Quintana Roo"] },
+  "Estados Unidos": { label: "Estado", options: ["California", "Texas", "Florida", "New York", "Illinois", "Pennsylvania", "Ohio", "Georgia", "North Carolina", "Michigan", "New Jersey", "Virginia", "Washington", "Arizona", "Massachusetts", "Colorado"] },
+  Canadá: { label: "Província", options: ["Ontario", "Quebec", "British Columbia", "Alberta", "Manitoba", "Saskatchewan", "Nova Scotia", "New Brunswick", "Newfoundland and Labrador", "Prince Edward Island"] },
+  China: { label: "Província", options: ["Beijing", "Shanghai", "Guangdong", "Zhejiang", "Jiangsu", "Shandong", "Sichuan", "Fujian", "Hubei", "Henan", "Tianjin", "Chongqing"] },
+};
+
+const REVENUE_RANGES = [
+  "Até R$ 360 mil por ano",
+  "R$ 360 mil a R$ 4,8 milhões por ano",
+  "R$ 4,8 mi a R$ 30 milhões por ano",
+  "R$ 30 mi a R$ 100 milhões por ano",
+  "R$ 100 mi a R$ 300 milhões por ano",
+  "R$ 300 mi a R$ 1 bilhão por ano",
+  "Acima de R$ 1 bilhão por ano",
+];
+
+const EMPLOYEE_RANGES: Array<{ label: string; min: string; max: string }> = [
+  { label: "1 a 9", min: "1", max: "9" },
+  { label: "10 a 49", min: "10", max: "49" },
+  { label: "50 a 99", min: "50", max: "99" },
+  { label: "100 a 499", min: "100", max: "499" },
+  { label: "500 a 999", min: "500", max: "999" },
+  { label: "1.000 a 4.999", min: "1000", max: "4999" },
+  { label: "5.000 ou mais", min: "5000", max: "" },
+];
 
 /** Prospecção de leads com IA: pesquisa empresas e pessoas na web e grava no CRM. */
 
@@ -11,6 +45,7 @@ const btnGhost = "rounded-full border border-border px-4 py-2 text-sm font-mediu
 
 type Filters = {
   segment: string;
+  companyName: string;
   country: string;
   state: string;
   city: string;
@@ -20,11 +55,12 @@ type Filters = {
   revenue: string;
   keywords: string;
   roles: string;
-  limit: number;
+  limit: string;
 };
 
 const initial: Filters = {
   segment: "",
+  companyName: "",
   country: "Brasil",
   state: "",
   city: "",
@@ -34,7 +70,7 @@ const initial: Filters = {
   revenue: "",
   keywords: "",
   roles: "",
-  limit: 6,
+  limit: "6",
 };
 
 function Label({ children }: { children: React.ReactNode }) {
@@ -53,6 +89,27 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
   const set = (key: keyof Filters, value: string | number) =>
     setFilters((prev) => ({ ...prev, [key]: value }) as Filters);
 
+  const [cities, setCities] = useState<string[]>([]);
+  const [citiesLoading, setCitiesLoading] = useState(false);
+  const region = COUNTRY_REGIONS[filters.country];
+
+  useEffect(() => {
+    setCities([]);
+    if (filters.country !== "Brasil" || !filters.state) return;
+    let alive = true;
+    setCitiesLoading(true);
+    fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${filters.state}/municipios?orderBy=nome`)
+      .then((r) => r.json())
+      .then((rows: Array<{ nome: string }>) => alive && setCities(rows.map((r) => r.nome)))
+      .catch(() => alive && setCities([]))
+      .finally(() => alive && setCitiesLoading(false));
+    return () => {
+      alive = false;
+    };
+  }, [filters.country, filters.state]);
+
+  const employeeRange = EMPLOYEE_RANGES.find((r) => r.min === filters.minEmployees && r.max === filters.maxEmployees)?.label ?? "";
+
   const num = (v: string) => {
     const n = Number(v.replace(/\D/g, ""));
     return Number.isFinite(n) && n > 0 ? n : null;
@@ -68,6 +125,7 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
       const res = await searchCrmLeads({
         data: {
           segment: filters.segment,
+          companyName: filters.companyName,
           country: filters.country,
           state: filters.state,
           city: filters.city,
@@ -77,7 +135,7 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
           revenue: filters.revenue,
           keywords: filters.keywords,
           roles: filters.roles,
-          limit: Number(filters.limit) || 6,
+          limit: Math.min(30, Math.max(1, Number(filters.limit) || 6)),
         },
       });
       if (!res.ok) {
@@ -154,43 +212,92 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
           </select>
         </label>
         <label>
-          <Label>Faixa de faturamento</Label>
-          <input
-            className={baseField}
-            value={filters.revenue}
-            onChange={(e) => set("revenue", e.target.value)}
-            placeholder="Ex.: R$ 10 mi a R$ 100 mi por ano"
-          />
+          <Label>Nome da empresa</Label>
+          <input className={baseField} value={filters.companyName} onChange={(e) => set("companyName", e.target.value)} placeholder="Ex.: Embraer (opcional)" />
         </label>
         <label>
           <Label>País</Label>
-          <input className={baseField} value={filters.country} onChange={(e) => set("country", e.target.value)} />
+          <select
+            className={baseField}
+            value={filters.country}
+            onChange={(e) => setFilters((prev) => ({ ...prev, country: e.target.value, state: "", city: "" }))}
+          >
+            {Object.keys(COUNTRY_REGIONS).map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
         </label>
         <label>
-          <Label>Estado / UF</Label>
-          <input className={baseField} value={filters.state} onChange={(e) => set("state", e.target.value)} placeholder="SP" />
-        </label>
-        <label>
-          <Label>Cidade</Label>
-          <input className={baseField} value={filters.city} onChange={(e) => set("city", e.target.value)} placeholder="Campinas" />
-        </label>
-        <label>
-          <Label>Funcionários (mínimo)</Label>
-          <input className={baseField} value={filters.minEmployees} onChange={(e) => set("minEmployees", e.target.value)} placeholder="50" />
-        </label>
-        <label>
-          <Label>Funcionários (máximo)</Label>
-          <input className={baseField} value={filters.maxEmployees} onChange={(e) => set("maxEmployees", e.target.value)} placeholder="500" />
-        </label>
-        <label>
-          <Label>Quantidade de empresas</Label>
-          <select className={baseField} value={filters.limit} onChange={(e) => set("limit", Number(e.target.value))}>
-            {[3, 6, 9, 12].map((n) => (
-              <option key={n} value={n}>
-                {n}
+          <Label>{region?.label ?? "Estado / Província"}</Label>
+          <select
+            className={baseField}
+            value={filters.state}
+            onChange={(e) => setFilters((prev) => ({ ...prev, state: e.target.value, city: "" }))}
+          >
+            <option value="">Qualquer {(region?.label ?? "estado").toLowerCase()}</option>
+            {(region?.options ?? []).map((o) => (
+              <option key={o} value={o}>
+                {filters.country === "Brasil" ? `${o} — ${STATES.find((s) => s.uf === o)?.name ?? ""}` : o}
               </option>
             ))}
           </select>
+        </label>
+        <label>
+          <Label>Cidade</Label>
+          {filters.country === "Brasil" ? (
+            <select
+              className={baseField}
+              value={filters.city}
+              disabled={!filters.state || citiesLoading}
+              onChange={(e) => set("city", e.target.value)}
+            >
+              <option value="">
+                {!filters.state ? "Escolha a UF primeiro" : citiesLoading ? "Carregando cidades…" : "Qualquer cidade"}
+              </option>
+              {cities.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          ) : (
+            <input className={baseField} value={filters.city} onChange={(e) => set("city", e.target.value)} placeholder="Cidade (opcional)" />
+          )}
+        </label>
+        <label>
+          <Label>Faixa de faturamento</Label>
+          <select className={baseField} value={filters.revenue} onChange={(e) => set("revenue", e.target.value)}>
+            <option value="">Qualquer faturamento</option>
+            {REVENUE_RANGES.map((r) => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <Label>Número de funcionários</Label>
+          <select
+            className={baseField}
+            value={employeeRange}
+            onChange={(e) => {
+              const r = EMPLOYEE_RANGES.find((x) => x.label === e.target.value);
+              setFilters((prev) => ({ ...prev, minEmployees: r?.min ?? "", maxEmployees: r?.max ?? "" }));
+            }}
+          >
+            <option value="">Qualquer quantidade</option>
+            {EMPLOYEE_RANGES.map((r) => (
+              <option key={r.label} value={r.label}>{r.label} funcionários</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <Label>Número de empresas (até 30)</Label>
+          <input
+            type="number"
+            min={1}
+            max={30}
+            className={baseField}
+            value={filters.limit}
+            onChange={(e) => set("limit", e.target.value.replace(/\D/g, ""))}
+            placeholder="6"
+          />
         </label>
         <label className="md:col-span-2">
           <Label>Outros critérios</Label>
