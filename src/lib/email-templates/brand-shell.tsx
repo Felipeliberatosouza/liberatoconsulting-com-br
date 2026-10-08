@@ -1,7 +1,7 @@
 import React, { type ReactNode } from 'react'
-import { Body, Container, Head, Heading, Hr, Html, Img, Preview, Text } from '@react-email/components'
+import { Body, Container, Head, Heading, Hr, Html, Img, Link, Preview, Text } from '@react-email/components'
 
-import { EMAIL_LOGO_URL, brandFooterText } from '@/lib/email-brand'
+import { EMAIL_LINK_RE, EMAIL_LOGO_URL, brandFooterText, emailLinkHref } from '@/lib/email-brand'
 
 /** Logomarca exibida no topo de todos os e-mails automáticos. */
 export const EMAIL_STYLES = {
@@ -81,7 +81,15 @@ export function BrandEmailLayout({
 export function EmailParagraphs({ body }: { body: string }) {
   return emailParagraphs(body).map((paragraph, index) => (
     <Text key={index} style={{ ...EMAIL_STYLES.text, whiteSpace: 'pre-line' as const }}>
-      {paragraph}
+      {paragraph.split(EMAIL_LINK_RE).map((part, i) =>
+        i % 2 === 1 ? (
+          <Link key={i} href={emailLinkHref(part)} style={{ color: '#E8630A', textDecoration: 'underline', wordBreak: 'break-all' as const }}>
+            {part}
+          </Link>
+        ) : (
+          part
+        ),
+      )}
     </Text>
   ))
 }

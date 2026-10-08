@@ -32,6 +32,23 @@ export function brandFooterText(identity: EmailBrandIdentity | undefined): strin
   return brandFooterLines(identity).join(" · ");
 }
 
+/** Padrão de endereços web e e-mails dentro de textos dos e-mails. */
+export const EMAIL_LINK_RE = /((?:https?:\/\/|www\.)[^\s<>()"]+[^\s<>().,;:!?"']|[\w.+-]+@[\w-]+\.[\w.-]*\w)/gi;
+
+export function emailLinkHref(raw: string): string {
+  if (raw.includes("@") && !/^https?:/i.test(raw)) return `mailto:${raw}`;
+  if (/^www\./i.test(raw)) return `https://${raw}`;
+  return raw;
+}
+
+/** Transforma endereços de um texto já escapado em links clicáveis. */
+export function linkifyEmailHtml(escaped: string): string {
+  return escaped.replace(EMAIL_LINK_RE, (m) => {
+    const href = emailLinkHref(m.replace(/&amp;/g, "&"));
+    return `<a href="${href.replace(/&(?!amp;)/g, "&amp;")}" style="color:#E8630A;text-decoration:underline;word-break:break-all">${m}</a>`;
+  });
+}
+
 const esc = (s: string) =>
   s
     .replace(/&/g, "&amp;")
@@ -60,7 +77,7 @@ export function buildEmailPreviewHtml(params: {
     .filter(Boolean)
     .map(
       (p) =>
-        `<p style="font-size:15px;line-height:24px;color:#1f2937;margin:0 0 14px">${esc(p).replace(
+        `<p style="font-size:15px;line-height:24px;color:#1f2937;margin:0 0 14px">${linkifyEmailHtml(esc(p)).replace(
           /\n/g,
           "<br />",
         )}</p>`,

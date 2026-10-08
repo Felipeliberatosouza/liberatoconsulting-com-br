@@ -7,6 +7,7 @@ import {
   loadEmailBrand,
   type CompanyFooter,
 } from "./company-footer.server";
+import { linkifyEmailHtml } from "./email-brand";
 import { emailLang, labelsFor, type EmailLang } from "./email-i18n.server";
 
 
@@ -47,9 +48,9 @@ export function renderCampaignHtml(input: {
     .filter(Boolean)
     .map(
       (p) =>
-        `<p style="margin:0 0 14px;font-size:15px;line-height:24px;color:#1f2937">${escapeHtml(
+        `<p style="margin:0 0 14px;font-size:15px;line-height:24px;color:#1f2937">${linkifyEmailHtml(escapeHtml(
           p,
-        ).replace(/\n/g, "<br />")}</p>`,
+        )).replace(/\n/g, "<br />")}</p>`,
     )
     .join("");
 
