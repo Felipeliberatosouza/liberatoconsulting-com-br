@@ -120,6 +120,7 @@ export const searchCrmLeads = createServerFn({ method: "POST" })
     z
       .object({
         segment: z.string().trim().max(160).default(""),
+        companyName: z.string().trim().max(160).default(""),
         country: z.string().trim().max(80).default("Brasil"),
         state: z.string().trim().max(80).default(""),
         city: z.string().trim().max(120).default(""),
@@ -129,7 +130,7 @@ export const searchCrmLeads = createServerFn({ method: "POST" })
         revenue: z.string().trim().max(160).default(""),
         keywords: z.string().trim().max(400).default(""),
         roles: z.string().trim().max(300).default(""),
-        limit: z.number().int().min(1).max(12).default(6),
+        limit: z.number().int().min(1).max(30).default(6),
       })
       .parse(d),
   )
@@ -140,6 +141,7 @@ export const searchCrmLeads = createServerFn({ method: "POST" })
 
     const filters = [
       data.segment ? `Segmento: ${data.segment}` : "",
+      data.companyName ? `Empresa específica (priorize esta empresa e similares pelo nome): ${data.companyName}` : "",
       `Local: ${[data.city, data.state, data.country].filter(Boolean).join(", ")}`,
       data.size ? `Porte desejado: ${data.size === "corporacao" ? "corporação/grande empresa" : "pequena ou média empresa"}` : "",
       data.minEmployees ? `Mínimo de funcionários: ${data.minEmployees}` : "",
