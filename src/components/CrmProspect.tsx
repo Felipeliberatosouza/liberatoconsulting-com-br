@@ -56,7 +56,10 @@ type Filters = {
   keywords: string;
   roles: string;
   limit: string;
+  excludeLarge: boolean;
 };
+
+const QUALITY_LABEL = { completo: "Lead completo", parcial: "Lead parcial", basico: "Apenas empresa" } as const;
 
 const initial: Filters = {
   segment: "",
@@ -71,6 +74,7 @@ const initial: Filters = {
   keywords: "",
   roles: "",
   limit: "6",
+  excludeLarge: true,
 };
 
 function Label({ children }: { children: React.ReactNode }) {
@@ -136,6 +140,7 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
           keywords: filters.keywords,
           roles: filters.roles,
           limit: Math.min(30, Math.max(1, Number(filters.limit) || 6)),
+          excludeLarge: filters.excludeLarge,
         },
       });
       if (!res.ok) {
@@ -317,6 +322,10 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
             placeholder="Diretor de operações, gerente comercial"
           />
         </label>
+        <label className="flex items-center gap-2 text-sm md:col-span-3">
+          <input type="checkbox" checked={filters.excludeLarge} onChange={(e) => setFilters((p) => ({ ...p, excludeLarge: e.target.checked }))} />
+          Excluir grandes empresas (multinacionais, listadas em bolsa, bancos e estatais) — foco em PMEs
+        </label>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -336,7 +345,24 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
         <div className="mt-6">
           <div className="flex flex-wrap items-center gap-3">
             <h3 className="font-display text-sm font-bold">Resultados ({leads.length})</h3>
-            <button className={`${btn} ml-auto`} onClick={importSelected} disabled={saving}>
+            <span className="text-xs text-muted-foreground">
+              {(["completo", "parcial", "basico"] as const)
+                .map((q) => `${QUALITY_LABEL[q]}: ${leads.filter((l) => l.quality === q).length}`)
+                .join(" · ")}
+            </span>
+            <button
+              className={`${btnGhost} ml-auto`}
+              onClick={() => {
+                const next: Record<number, boolean> = {};
+                leads.forEach((l, i) => {
+                  if (!l.duplicate && l.quality !== "basico") next[i] = true;
+                });
+                setPicked(next);
+              }}
+            >
+              Marcar só completos e parciais
+            </button>
+            <button className={btn} onClick={importSelected} disabled={saving}>
               {saving ? "Gravando…" : "Adicionar selecionados ao CRM"}
             </button>
           </div>
@@ -354,6 +380,19 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
                   <div className="min-w-0 flex-1">
                     <p className="font-medium">
                       {lead.name}
+                      {lead.quality && (
+                        <span
+                          className={`ml-2 rounded-full px-2 py-0.5 text-xs ${
+                            lead.quality === "completo"
+                              ? "bg-accent text-accent-foreground"
+                              : lead.quality === "parcial"
+                                ? "border border-accent text-foreground"
+                                : "bg-muted text-muted-foreground"
+                          }`}
+                        >
+                          {QUALITY_LABEL[lead.quality]}
+                        </span>
+                      )}
                       {lead.duplicate && (
                         <span className="ml-2 rounded-full bg-secondary px-2 py-0.5 text-xs">já cadastrada</span>
                       )}
