@@ -47,7 +47,10 @@ const leadSchema = z.object({
   contacts: z.array(personSchema).max(6).default([]),
 });
 
-export type ProspectLead = z.infer<typeof leadSchema> & { duplicate?: boolean };
+export type ProspectLead = z.infer<typeof leadSchema> & {
+  duplicate?: boolean;
+  quality?: "completo" | "parcial" | "basico";
+};
 
 type RawLead = Record<string, unknown> & { contacts?: unknown[]; sources?: unknown[] };
 
@@ -131,6 +134,7 @@ export const searchCrmLeads = createServerFn({ method: "POST" })
         keywords: z.string().trim().max(400).default(""),
         roles: z.string().trim().max(300).default(""),
         limit: z.number().int().min(1).max(30).default(6),
+        excludeLarge: z.boolean().default(true),
       })
       .parse(d),
   )
@@ -144,11 +148,18 @@ export const searchCrmLeads = createServerFn({ method: "POST" })
       data.companyName ? `Empresa específica (priorize esta empresa e similares pelo nome): ${data.companyName}` : "",
       `Local: ${[data.city, data.state, data.country].filter(Boolean).join(", ")}`,
       data.size ? `Porte desejado: ${data.size === "corporacao" ? "corporação/grande empresa" : "pequena ou média empresa"}` : "",
+      data.excludeLarge && data.size !== "corporacao"
+        ? "EXCLUA obrigatoriamente: multinacionais, empresas de capital aberto (listadas em bolsa), bancos, estatais, " +
+          "grupos econômicos nacionais e líderes de mercado conhecidos. Prefira empresas locais/regionais de pequeno e médio porte, " +
+          "familiares ou de dono, pouco conhecidas na mídia nacional (busque em diretórios setoriais, associações comerciais, " +
+          "feiras, Google Maps/Meu Negócio, listas de fornecedores e cadastros de CNPJ)."
+        : "",
       data.minEmployees ? `Mínimo de funcionários: ${data.minEmployees}` : "",
-      data.maxEmployees ? `Máximo de funcionários: ${data.maxEmployees}` : "",
-      data.revenue ? `Faixa de faturamento desejada: ${data.revenue}` : "",
+      data.maxEmployees ? `Máximo de funcionários: ${data.maxEmployees} (descarte empresas maiores)` : "",
+      data.revenue ? `Faixa de faturamento desejada: ${data.revenue} (descarte empresas fora da faixa)` : "",
       data.keywords ? `Outros critérios: ${data.keywords}` : "",
-      data.roles ? `Cargos/decisores procurados: ${data.roles}` : "Cargos procurados: diretoria, gerência de operações, comercial e financeiro",
+      data.roles ? `Cargos/decisores procurados: ${data.roles}` : "Cargos procurados: sócios, diretoria, gerência de operações, comercial e financeiro",
+      "Priorize empresas com canal de contato público (telefone, e-mail ou decisor identificado no LinkedIn/QSA do CNPJ).",
     ]
       .filter(Boolean)
       .join("\n");
@@ -184,10 +195,44 @@ Responda com JSON exatamente neste formato (strings vazias quando não souber):
 }]}`,
       );
 
-      const leads = (result?.leads ?? [])
+      const { leadQuality, isLargeCompany } = await import("./lead-quality");
+      let leads = (result?.leads ?? [])
         .map(normalizeLead)
-        .filter(Boolean)
-        .slice(0, data.limit) as ProspectLead[];
+        .filter(Boolean) as ProspectLead[];
+      if (data.excludeLarge && data.size !== "corporacao") {
+        leads = leads.filter((l) => !isLargeCompany(l, data.maxEmployees));
+      }
+      leads = leads.slice(0, data.limit);
+
+      // Segunda rodada: busca ativa de decisores e canais para os leads incompletos.
+      const weak = leads.filter((l) => leadQuality(l) !== "completo").slice(0, 12);
+      if (weak.length > 0) {
+        try {
+          const extra = await askJsonGrounded<{ items?: Array<{ name?: string; email?: string; phone?: string; contacts?: unknown[] }> }>(
+            "Você é pesquisador de contatos B2B. Para cada empresa, procure na web canais de contato PÚBLICOS: página " +
+              "'Fale conosco'/'Contato' do site oficial, rodapé do site, Google Meu Negócio, LinkedIn da empresa e de " +
+              "funcionários, Receita Federal/CNPJ (telefone e e-mail cadastrais), juntas comerciais, associações setoriais, " +
+              "listas de expositores de feiras e imprensa local. Identifique sócios/diretores (QSA do CNPJ, LinkedIn). " +
+              "NUNCA invente: deixe vazio se não encontrar.",
+            `Empresas:\n${weak.map((l) => `- ${l.name} | site: ${l.website || "?"} | CNPJ: ${l.cnpj || "?"} | ${l.city}/${l.state}`).join("\n")}
+Cargos de interesse: ${data.roles || "sócio, diretor, gerente comercial, operações, financeiro"}.
+Responda JSON: {"items":[{"name":"nome exatamente como listado","email":"e-mail público","phone":"telefone com DDI/DDD","contacts":[{"full_name":"","role_title":"","department":"${CRM_DEPARTMENTS.join(" | ")}","email":"","phone":"","linkedin_url":""}]}]}`,
+          );
+          for (const item of extra?.items ?? []) {
+            const lead = weak.find((l) => key(l.name) === key(String(item.name ?? "")));
+            if (!lead) continue;
+            const merged = normalizeLead({ name: lead.name, contacts: item.contacts ?? [] } as RawLead);
+            lead.email = lead.email || str(item.email, 255);
+            lead.phone = lead.phone || str(item.phone, 60);
+            const seen = new Set(lead.contacts.map((c) => key(c.full_name)));
+            for (const c of merged?.contacts ?? []) {
+              if (!seen.has(key(c.full_name)) && lead.contacts.length < 6) lead.contacts.push(c);
+            }
+          }
+        } catch {
+          /* enriquecimento é opcional */
+        }
+      }
 
       const { data: existing } = await context.supabase
         .from("crm_companies")
@@ -197,12 +242,16 @@ Responda com JSON exatamente neste formato (strings vazias quando não souber):
         for (const v of [row.name, row.trade_name, row.cnpj]) if (v) known.add(key(String(v)));
       }
 
+      const order = { completo: 0, parcial: 1, basico: 2 } as const;
       return {
         ok: true as const,
-        leads: leads.map((l) => ({
-          ...l,
-          duplicate: known.has(key(l.name)) || known.has(key(l.trade_name)) || (!!l.cnpj && known.has(key(l.cnpj))),
-        })),
+        leads: leads
+          .map((l) => ({
+            ...l,
+            quality: leadQuality(l),
+            duplicate: known.has(key(l.name)) || known.has(key(l.trade_name)) || (!!l.cnpj && known.has(key(l.cnpj))),
+          }))
+          .sort((a, b) => order[a.quality] - order[b.quality]),
       };
     } catch (err) {
       return { ok: false as const, error: err instanceof Error ? err.message : "Falha na pesquisa de leads." };
