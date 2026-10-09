@@ -212,7 +212,7 @@ Responda com JSON exatamente neste formato (strings vazias quando não souber):
 /** Grava no CRM os leads selecionados (empresa + pessoas), como status "lead". */
 export const importCrmLeads = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ leads: z.array(leadSchema).min(1).max(12) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ leads: z.array(leadSchema).min(1).max(30) }).parse(d))
   .handler(async ({ context, data }) => {
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
