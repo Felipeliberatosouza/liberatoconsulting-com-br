@@ -34,18 +34,19 @@ export const Route = createFileRoute("/services/$slug")({
         ],
       };
     }
-    const title = `${name} — Consultoria Liberato Consulting`;
+    const title = `${name} | Consultoria empresarial Liberato`;
+    const clip = (t: string) => (t.length <= 155 ? t : `${t.slice(0, 152).replace(/\s+\S*$/, "")}…`);
     return {
       meta: [
         { title },
-        { name: "description", content: description.slice(0, 155) },
+        { name: "description", content: clip(description) },
         { property: "og:title", content: title },
-        { property: "og:description", content: description.slice(0, 155) },
+        { property: "og:description", content: clip(description) },
         { property: "og:type", content: "website" },
         { property: "og:image", content: OG_IMAGE },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: title },
-        { name: "twitter:description", content: description.slice(0, 155) },
+        { name: "twitter:description", content: clip(description) },
         { name: "twitter:image", content: OG_IMAGE },
         ...seoLocaleMeta(headLang(ctx)),
       ],

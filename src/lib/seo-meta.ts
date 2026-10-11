@@ -22,9 +22,9 @@ type PageSeoByLang = Record<SeoLang, PageSeo>;
 export const PAGE_SEO: Record<string, PageSeoByLang> = {
   "/": {
     pt: {
-      title: "Pesquisas de mercado e gestão com IA — Liberato Consulting",
+      title: "Consultoria empresarial e gestão estratégica com IA | Liberato",
       description:
-        "Estudos e dados sobre o mercado brasileiro para investidores internacionais, abrangendo agronegócio, energia e indústria com gestão estratégica e IA.",
+        "Consultoria empresarial com inteligência artificial: diagnóstico empresarial, gestão estratégica, finanças e pesquisas de mercado no Brasil. Fale conosco.",
       ogTitle: "Pesquisas de mercado sobre o Brasil — Liberato Consulting",
       ogDescription:
         "Inteligência sobre setores da economia brasileira para empresas internacionais, com gestão estratégica e IA no centro.",
@@ -55,9 +55,9 @@ export const PAGE_SEO: Record<string, PageSeoByLang> = {
   },
   "/services": {
     pt: {
-      title: "Serviços de consultoria empresarial | Liberato Consulting",
+      title: "Consultoria empresarial, financeira e estratégica | Liberato",
       description:
-        "Consultoria em gestão empresarial no Brasil: eficiência operacional, crescimento, digital e IA, finanças, vendas, ESG, pessoas e inteligência de mercado.",
+        "Diagnóstico empresarial, consultoria financeira, estratégica e de negócios com IA: eficiência, vendas, ESG e pessoas. Escopo, prazo e metas definidos.",
       ogTitle: "Serviços de consultoria empresarial — Liberato Consulting",
       ogDescription:
         "Produtos de consultoria com escopo, prazo e indicadores definidos, com inteligência artificial aplicada ao método.",
