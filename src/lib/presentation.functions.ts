@@ -33,8 +33,11 @@ async function toDataUrl(url: string): Promise<string> {
   try {
     if (/^data:image\//i.test(url)) return url.length < 4_000_000 ? url : "";
     if (url.startsWith("/")) url = `https://liberatoconsulting.com.br${url}`;
-    if (!/^https?:\/\//i.test(url)) return "";
-    const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 LiberatoBot" } });
+    if (!isPublicWebUrl(url)) return "";
+    const res = await fetch(url, {
+      headers: { "User-Agent": "Mozilla/5.0 LiberatoBot" },
+      redirect: "manual",
+    });
     if (!res.ok) return "";
     const type = res.headers.get("content-type") ?? "image/png";
     if (!type.startsWith("image/")) return "";
