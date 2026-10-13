@@ -17,6 +17,9 @@ const scopeSchema = z.object({
   answers: z.record(z.string().max(20), z.string().max(300)),
   comments: z.record(z.string().max(20), z.string().max(2000)),
   lang: z.string().trim().max(5).default("pt"),
+  // Anti-spam: campo oculto (robôs preenchem) e tempo de preenchimento.
+  website: z.string().max(200).optional().default(""),
+  elapsedMs: z.number().int().min(0).optional(),
 });
 
 export type ScopeSubmission = {
@@ -33,11 +36,28 @@ export type ScopeSubmission = {
   created_at: string;
 };
 
+const SCOPE_MAX_PER_HOUR = 5;
+const SCOPE_MIN_FILL_MS = 2000;
+
 /** Envio público do formulário de escopo inicial (link enviado a clientes). */
 export const submitScopeForm = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => scopeSchema.parse(input))
   .handler(async ({ data }) => {
+    // Honeypot: responde como sucesso para não ensinar o robô.
+    if (data.website && data.website.trim() !== "") return { ok: true as const };
+    if (data.elapsedMs !== undefined && data.elapsedMs < SCOPE_MIN_FILL_MS) {
+      return { ok: false as const, error: "Envio muito rápido. Revise as respostas e tente novamente." };
+    }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    const { count } = await supabaseAdmin
+      .from("project_scope_submissions")
+      .select("id", { count: "exact", head: true })
+      .ilike("email", data.email)
+      .gte("created_at", since);
+    if ((count ?? 0) >= SCOPE_MAX_PER_HOUR) {
+      return { ok: false as const, error: "Muitos envios em pouco tempo. Tente novamente mais tarde." };
+    }
     const { error } = await supabaseAdmin.from("project_scope_submissions").insert({
       company: data.company,
       respondent_name: data.respondent_name,
@@ -49,7 +69,10 @@ export const submitScopeForm = createServerFn({ method: "POST" })
       comments: data.comments as never,
       lang: data.lang,
     });
-    if (error) return { ok: false as const, error: error.message };
+    if (error) {
+      console.error("[scope] insert failed", error);
+      return { ok: false as const, error: "Não foi possível enviar agora. Tente novamente." };
+    }
     return { ok: true as const };
   });
 
