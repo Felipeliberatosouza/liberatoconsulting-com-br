@@ -58,18 +58,15 @@ export const getSiteConfig = createServerFn({ method: "GET" }).handler(
   },
 );
 
-async function isAdmin(context: { supabase: any; userId: string }) {
-  const { data: row } = await context.supabase
-    .from("user_roles")
-    .select("role")
-    .eq("user_id", context.userId)
-    .eq("role", "admin")
-    .maybeSingle();
-  return Boolean(row);
+// Verificação central: administrador só vale após o segundo fator (aal2).
+async function isAdmin(context: { supabase: any; userId: string; claims?: any }) {
+  const access = await import("./access.server");
+  return access.isAdmin(context);
 }
 
-async function assertAdmin(context: { supabase: any; userId: string }) {
-  if (!(await isAdmin(context))) throw new Error("Forbidden");
+async function assertAdmin(context: { supabase: any; userId: string; claims?: any }) {
+  const access = await import("./access.server");
+  await access.assertAdmin(context);
 }
 
 /** Sessão atual: informa se o usuário logado é administrador. */

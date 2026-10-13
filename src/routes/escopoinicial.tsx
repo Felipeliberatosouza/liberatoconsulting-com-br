@@ -111,11 +111,12 @@ function ScopePage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [comments, setComments] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
+  const [startedAt] = useState(() => Date.now());
 
   const send = useMutation({
     mutationFn: () =>
       submitScopeForm({
-        data: { ...form, answers, comments, lang },
+        data: { ...form, answers, comments, lang, elapsedMs: Date.now() - startedAt },
       }),
     onSuccess: (res) => {
       if (!res.ok) {

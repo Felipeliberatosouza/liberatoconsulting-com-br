@@ -1,5 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+/** Só busca imagens em sites públicos (https, sem IPs nem nomes internos). */
+function isPublicImageUrl(raw: string): boolean {
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    return false;
+  }
+  if (u.protocol !== "https:") return false;
+  if (u.username || u.password) return false;
+  if (u.port && u.port !== "443") return false;
+  const host = u.hostname.toLowerCase().replace(/^\[|\]$/g, "");
+  if (!host.includes(".")) return false;
+  if (/^[\d.]+$/.test(host) || host.includes(":")) return false;
+  if (/(^|\.)(localhost|local|internal|intranet|lan|home|corp)$/.test(host)) return false;
+  return true;
+}
+
 /**
  * Serve a imagem de capa da newsletter publicada em um endereço público e estável,
  * para que as redes sociais mostrem a arte correta ao compartilhar o link.
@@ -40,8 +58,11 @@ export const Route = createFileRoute("/api/public/newsletter-image/$slug")({
           });
         }
 
-        const upstream = await fetch(src);
+        if (!isPublicImageUrl(src)) return new Response("Not found", { status: 404 });
+        const upstream = await fetch(src, { redirect: "manual" });
         if (!upstream.ok || !upstream.body) return new Response("Not found", { status: 404 });
+        const type = upstream.headers.get("content-type") ?? "";
+        if (!type.startsWith("image/")) return new Response("Not found", { status: 404 });
         return new Response(upstream.body, {
           headers: {
             "content-type": upstream.headers.get("content-type") ?? "image/jpeg",
