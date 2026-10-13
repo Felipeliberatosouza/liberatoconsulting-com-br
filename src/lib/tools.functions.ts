@@ -1,6 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
+/** Registra o erro técnico no servidor e devolve só uma mensagem genérica ao usuário. */
+const GENERIC_ERROR = "Não foi possível concluir agora. Tente novamente.";
+function safeMessage(err: unknown): string {
+  console.error("[tools]", err);
+  return GENERIC_ERROR;
+}
+function safeError(err: unknown): Error {
+  return new Error(safeMessage(err));
+}
 import { isValidPhone, PHONE_ERROR } from "@/lib/validation";
 
 const profileSchema = z.object({
@@ -24,8 +34,8 @@ export const getToolsAccount = createServerFn({ method: "GET" })
       context.supabase.from("tool_user_profiles").select("*").eq("user_id", context.userId).maybeSingle(),
       context.supabase.from("management_tools").select("id, slug, title, summary, category, cover_url, file_name, position, translations, welcome_attachment").eq("published", true).order("position"),
     ]);
-    if (profile.error) throw new Error(profile.error.message);
-    if (tools.error) throw new Error(tools.error.message);
+    if (profile.error) throw safeError(profile.error);
+    if (tools.error) throw safeError(tools.error);
     const list = tools.data ?? [];
     return {
       profile: profile.data,
@@ -44,7 +54,7 @@ export const saveToolsProfile = createServerFn({ method: "POST" })
       { ...data, email, user_id: context.userId },
       { onConflict: "user_id" },
     );
-    if (error) return { ok: false as const, error: error.message };
+    if (error) return { ok: false as const, error: safeMessage(error) };
     // Boas-vindas, newsletter, boletim e registro como lead — falhas não bloqueiam o acesso.
     try {
       const { runToolsOnboarding } = await import("./tools-onboarding.server");
@@ -87,8 +97,8 @@ export const getMemberContent = createServerFn({ method: "GET" })
         .order("created_at", { ascending: false })
         .limit(1),
     ]);
-    if (newsletters.error) throw new Error(newsletters.error.message);
-    if (bulletins.error) throw new Error(bulletins.error.message);
+    if (newsletters.error) throw safeError(newsletters.error);
+    if (bulletins.error) throw safeError(bulletins.error);
     return {
       articles,
       newsletters: newsletters.data ?? [],
@@ -144,7 +154,7 @@ export const listToolClients = createServerFn({ method: "GET" })
         .limit(1000),
       supabaseAdmin.from("tool_downloads").select("user_id"),
     ]);
-    if (error) throw new Error(error.message);
+    if (error) throw safeError(error);
     const counts = new Map<string, number>();
     for (const row of (downloads ?? []) as Array<{ user_id: string }>) {
       counts.set(row.user_id, (counts.get(row.user_id) ?? 0) + 1);
@@ -167,7 +177,7 @@ export const setToolWelcomeAttachment = createServerFn({ method: "POST" })
       .from("management_tools")
       .update({ welcome_attachment: data.welcome_attachment })
       .eq("id", data.id);
-    return error ? { ok: false as const, error: error.message } : { ok: true as const };
+    return error ? { ok: false as const, error: safeMessage(error) } : { ok: true as const };
   });
 
 export const getToolDownload = createServerFn({ method: "POST" })
@@ -204,7 +214,7 @@ export const listAdminTools = createServerFn({ method: "GET" }).middleware([requ
   const { assertAdmin } = await import("./access.server");
   await assertAdmin(context);
   const { data, error } = await context.supabase.from("management_tools").select("*").order("position");
-  if (error) throw new Error(error.message);
+  if (error) throw safeError(error);
   return data ?? [];
 });
 
@@ -226,7 +236,7 @@ export const saveAdminTool = createServerFn({ method: "POST" })
       const safe = data.file_name.replace(/[^a-zA-Z0-9._-]+/g, "-");
       filePath = `${crypto.randomUUID()}/${safe}`;
       const uploaded = await supabaseAdmin.storage.from("management-tools").upload(filePath, bytes, { contentType: data.content_type, upsert: false });
-      if (uploaded.error) return { ok: false as const, error: uploaded.error.message };
+      if (uploaded.error) return { ok: false as const, error: safeMessage(uploaded.error) };
     } else if (!data.id) {
       return { ok: false as const, error: "Selecione um arquivo." };
     }
@@ -247,7 +257,7 @@ export const saveAdminTool = createServerFn({ method: "POST" })
       const saved = await supabaseAdmin.from("management_tools").update(update).eq("id", data.id);
       if (saved.error) {
         if (filePath) await supabaseAdmin.storage.from("management-tools").remove([filePath]);
-        return { ok: false as const, error: saved.error.message };
+        return { ok: false as const, error: safeMessage(saved.error) };
       }
       // Arquivo antigo só é apagado depois que a troca deu certo.
       if (filePath && current.data?.file_path) {
@@ -260,7 +270,7 @@ export const saveAdminTool = createServerFn({ method: "POST" })
     const saved = await supabaseAdmin.from("management_tools").insert(row);
     if (saved.error) {
       if (filePath) await supabaseAdmin.storage.from("management-tools").remove([filePath]);
-      return { ok: false as const, error: saved.error.message };
+      return { ok: false as const, error: safeMessage(saved.error) };
     }
     return { ok: true as const };
   });
@@ -275,5 +285,5 @@ export const deleteAdminTool = createServerFn({ method: "POST" })
     const found = await supabaseAdmin.from("management_tools").select("file_path").eq("id", data.id).maybeSingle();
     if (found.data?.file_path) await supabaseAdmin.storage.from("management-tools").remove([found.data.file_path]);
     const deleted = await supabaseAdmin.from("management_tools").delete().eq("id", data.id);
-    return deleted.error ? { ok: false as const, error: deleted.error.message } : { ok: true as const };
+    return deleted.error ? { ok: false as const, error: safeMessage(deleted.error) } : { ok: true as const };
   });
