@@ -75,7 +75,8 @@ const SECURITY_HEADERS: Record<string, string> = {
   "X-Content-Type-Options": "nosniff",
   // Bloqueia o site dentro de iframes de terceiros (clickjacking), mantendo o editor Lovable.
   "Content-Security-Policy":
-    "frame-ancestors 'self' https://lovable.dev https://*.lovable.dev https://*.lovable.app",
+    "frame-ancestors 'self' https://lovable.dev https://*.lovable.dev https://*.lovable.app; object-src 'none'; base-uri 'self'; form-action 'self'",
+  "X-Permitted-Cross-Domain-Policies": "none",
   "Referrer-Policy": "strict-origin-when-cross-origin",
   "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
 };
