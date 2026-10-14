@@ -32,13 +32,15 @@ const subscribeInput = z.object({
   language: z.string().trim().max(8).optional().default("pt"),
   sourcePath: z.string().trim().max(300).optional().default(""),
   website: z.string().max(200).optional().default(""),
+  elapsedMs: z.number().int().min(0).optional(),
 });
 
 /** Cadastro público no Boletim Semanal. */
 export const subscribeBulletin = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => subscribeInput.parse(d))
   .handler(async ({ data }) => {
-    if (data.website) return { ok: true as const };
+    // Robôs: campo-isca preenchido ou envio em menos de 2 segundos.
+    if (data.website || (data.elapsedMs !== undefined && data.elapsedMs < 2000)) return { ok: true as const };
     if (!data.viaEmail && !data.viaWhatsApp) {
       return { ok: false as const, error: "Escolha ao menos uma forma de recebimento." };
     }

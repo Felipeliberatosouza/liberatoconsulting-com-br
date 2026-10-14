@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useLanguage } from "@/i18n";
 import { legal } from "@/i18n/legal";
+import { gtag } from "@/lib/gtag";
 
 const STORAGE_KEY = "liberato-cookie-consent";
 
@@ -24,6 +25,8 @@ export function CookieConsent() {
     } catch {
       /* storage unavailable */
     }
+    const g = value === "accepted" ? "granted" : "denied";
+    gtag("consent", "update", { ad_storage: g, analytics_storage: g, ad_user_data: g, ad_personalization: g });
     setVisible(false);
   }
 

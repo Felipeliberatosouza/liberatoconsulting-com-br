@@ -24,6 +24,7 @@ export function BulletinSignup() {
   const [viaEmail, setViaEmail] = useState(true);
   const [viaWhatsApp, setViaWhatsApp] = useState(false);
   const [website, setWebsite] = useState("");
+  const [startedAt] = useState(() => Date.now());
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const { validate, errorClass } = useFieldErrors();
@@ -79,6 +80,7 @@ export function BulletinSignup() {
                   language: lang,
                   sourcePath: pathname,
                   website,
+                  elapsedMs: Date.now() - startedAt,
                 },
               });
               if (!r.ok) toast.error(r.error);
