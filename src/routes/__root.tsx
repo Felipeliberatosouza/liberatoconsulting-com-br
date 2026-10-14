@@ -198,6 +198,12 @@ function RootShell({ children }: { children: ReactNode }) {
     // conforme o idioma escolhido pelo visitante.
     <html lang="pt-BR">
       <head>
+        {/* Consent Mode v2: rastreamento só após aceite de cookies */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}var c;try{c=localStorage.getItem('liberato-cookie-consent')}catch(e){}var g=c==='accepted'?'granted':'denied';gtag('consent','default',{ad_storage:g,analytics_storage:g,ad_user_data:g,ad_personalization:g,wait_for_update:500});`,
+          }}
+        />
         {/* Google Tag Manager */}
         <script
           dangerouslySetInnerHTML={{

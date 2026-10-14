@@ -1,0 +1,20 @@
+# Liberato Consulting
+
+> Consultoria em gestão empresarial com inteligência artificial aplicada à estratégia, operações, empreendedorismo e pesquisas de mercado sobre o Brasil. Atende em português, inglês, espanhol e chinês.
+
+A Liberato Consulting apoia empresas brasileiras e estrangeiras com diagnóstico, planejamento estratégico, melhoria de processos, vendas, margem e entrada no mercado brasileiro. Contato: contato@liberatoconsulting.com.br · +55 11 91325-8668.
+
+## Páginas
+
+- [Início](https://liberatoconsulting.com.br/): Visão geral da consultoria e resultados.
+- [Serviços](https://liberatoconsulting.com.br/services): Todas as soluções de consultoria.
+- [Quem somos](https://liberatoconsulting.com.br/about): História, DNA e equipe de consultores.
+- [Brasil](https://liberatoconsulting.com.br/brasil): Dados e pesquisas de mercado sobre o Brasil.
+- [Conteúdos](https://liberatoconsulting.com.br/content): Artigos sobre gestão e estratégia.
+- [Newsletters](https://liberatoconsulting.com.br/newsletters): Edições publicadas.
+- [Contato](https://liberatoconsulting.com.br/contact): Fale com a consultoria.
+
+## Optional
+
+- [Carreiras](https://liberatoconsulting.com.br/careers): Seja consultor parceiro.
+- [Privacidade](https://liberatoconsulting.com.br/privacy): Política de privacidade.

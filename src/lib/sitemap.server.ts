@@ -15,6 +15,7 @@ export interface SitemapEntry {
   path: string;
   changefreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
   priority?: string;
+  lastmod?: string;
 }
 
 export const SITEMAP_LANGS = HREFLANGS.map(([lang]) => lang);
@@ -76,14 +77,14 @@ export async function collectEntries(): Promise<SitemapEntry[]> {
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const [{ data: articles }, { data: campaigns }] = await Promise.all([
-      supabaseAdmin.from("content_articles").select("slug").eq("published", true),
-      supabaseAdmin.from("newsletter_campaigns").select("slug").not("published_at", "is", null),
+      supabaseAdmin.from("content_articles").select("slug, updated_at").eq("published", true),
+      supabaseAdmin.from("newsletter_campaigns").select("slug, published_at").not("published_at", "is", null),
     ]);
     for (const a of articles ?? []) {
-      if (a?.slug) entries.push({ path: `/content/${a.slug}`, changefreq: "monthly", priority: "0.6" });
+      if (a?.slug) entries.push({ path: `/content/${a.slug}`, changefreq: "monthly", priority: "0.6", lastmod: (a as any).updated_at });
     }
     for (const c of campaigns ?? []) {
-      if (c?.slug) entries.push({ path: `/newsletter/${c.slug}`, changefreq: "monthly", priority: "0.5" });
+      if (c?.slug) entries.push({ path: `/newsletter/${c.slug}`, changefreq: "monthly", priority: "0.5", lastmod: (c as any).published_at });
     }
   } catch {
     // Banco indisponível: o sitemap segue válido apenas com as rotas fixas.
@@ -114,6 +115,7 @@ export async function buildLanguageSitemap(lang: string, origin: string = SITE_U
           `    <xhtml:link rel="alternate" hreflang="${hreflang}" href="${localizedUrl(e.path, code, origin)}" />`,
       ),
       `    <xhtml:link rel="alternate" hreflang="x-default" href="${absoluteUrl(e.path, origin)}" />`,
+      e.lastmod ? `    <lastmod>${new Date(e.lastmod).toISOString().slice(0, 10)}</lastmod>` : null,
       e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
       e.priority ? `    <priority>${e.priority}</priority>` : null,
       `  </url>`,

@@ -13,18 +13,6 @@ export const Route = createFileRoute("/robots.txt")({
       GET: async ({ request }) => {
         const origin = requestOrigin(request);
         const body = [
-          "User-agent: Googlebot",
-          "Allow: /",
-          "",
-          "User-agent: Bingbot",
-          "Allow: /",
-          "",
-          "User-agent: Twitterbot",
-          "Allow: /",
-          "",
-          "User-agent: facebookexternalhit",
-          "Allow: /",
-          "",
           "User-agent: *",
           "Allow: /",
           "Disallow: /admin/",
