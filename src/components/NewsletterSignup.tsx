@@ -17,6 +17,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [website, setWebsite] = useState("");
+  const [startedAt] = useState(() => Date.now());
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const { validate, errorClass } = useFieldErrors();
@@ -54,7 +55,7 @@ export function NewsletterSignup({ variant = "footer" }: { variant?: "footer" | 
           setBusy(true);
           try {
             const r = await subscribeNewsletter({
-              data: { email, name, whatsapp, language: lang, sourcePath: pathname, website },
+              data: { email, name, whatsapp, language: lang, sourcePath: pathname, website, elapsedMs: Date.now() - startedAt },
             });
             if (!r.ok) {
               setDone(false);
