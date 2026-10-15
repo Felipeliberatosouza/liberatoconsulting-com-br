@@ -6,10 +6,13 @@ import { pageText } from "@/lib/page-translations";
 import { getPublicCompanyIdentity } from "@/lib/company-public.functions";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { legal } from "@/i18n/legal";
-import { normalizeWhatsApp, openWhatsApp, whatsappHref } from "@/lib/whatsapp";
+import { normalizeWhatsApp, whatsappHref } from "@/lib/whatsapp";
+import { useState } from "react";
+import { WhatsAppLeadDialog } from "@/components/WhatsAppLeadDialog";
 
 export function SiteFooter() {
   const { t, logoUrl, lang, whatsapp } = useLanguage();
+  const [waOpen, setWaOpen] = useState(false);
   const lg = (legal[lang] ?? legal.pt).footer;
   const whatsappNumber = normalizeWhatsApp(whatsapp);
   const whatsappMessage = t.whatsapp?.message ?? "";
@@ -70,7 +73,7 @@ export function SiteFooter() {
                 rel="noopener noreferrer"
                 onClick={(event) => {
                   event.preventDefault();
-                  openWhatsApp(whatsappHref(whatsappNumber, whatsappMessage));
+                  setWaOpen(true);
                 }}
                 aria-label="WhatsApp"
                 title="WhatsApp"
@@ -174,6 +177,7 @@ export function SiteFooter() {
           ) : null}
         </div>
       </div>
+      <WhatsAppLeadDialog open={waOpen} onOpenChange={setWaOpen} />
     </footer>
   );
 }
