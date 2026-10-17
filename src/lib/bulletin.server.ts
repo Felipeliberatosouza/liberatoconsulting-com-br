@@ -478,15 +478,40 @@ export async function sendWhatsAppMessage(params: {
   templateName?: string;
   templateParams?: string[];
 }) {
+  const to = normalizeWhatsAppNumber(params.to);
+  if (!to) throw new Error("Número de WhatsApp inválido.");
+
+  // Z-API (conexão por QR Code): envio ativo sem modelos da Meta.
+  const zInstance = process.env["ZAPI_INSTANCE_ID"];
+  const zToken = process.env["ZAPI_TOKEN"];
+  const zClient = process.env["ZAPI_CLIENT_TOKEN"];
+  if (zInstance && zToken) {
+    const res = await fetch(
+      `https://api.z-api.io/instances/${encodeURIComponent(zInstance)}/token/${encodeURIComponent(zToken)}/send-text`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(zClient ? { "Client-Token": zClient } : {}),
+        },
+        body: JSON.stringify({ phone: to, message: params.caption }),
+      },
+    );
+    const detail = await res.text();
+    if (!res.ok) {
+      console.error(`Z-API send failed [${res.status}]: ${detail}`);
+      throw new Error(`Falha no envio por WhatsApp (Z-API) [${res.status}]: ${detail.slice(0, 200)}`);
+    }
+    return { ok: true as const };
+  }
+
   const lovableKey = process.env["LOVABLE_API_KEY"];
   const connectionKey = process.env["WHATSAPP_API_KEY"];
   if (!lovableKey || !connectionKey) {
     throw new Error(
-      "WhatsApp não configurado. Conecte a conta do WhatsApp Business nas integrações do projeto.",
+      "WhatsApp não configurado. Informe as credenciais da Z-API nas configurações do projeto.",
     );
   }
-  const to = normalizeWhatsAppNumber(params.to);
-  if (!to) throw new Error("Número de WhatsApp inválido.");
 
   const templateName = params.templateName ?? "boletim_semanal";
   const templateParams = params.templateParams ?? [params.caption];
