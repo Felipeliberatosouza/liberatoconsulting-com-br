@@ -31,7 +31,7 @@ import {
   generateNewsletterAI,
   generateNewsletterImage,
 } from "@/lib/newsletter-ai.functions";
-import { listArticles } from "@/lib/admin.functions";
+import { listArticles, claimArticleCover } from "@/lib/admin.functions";
 import { listAuthorOptions } from "@/lib/users.functions";
 import { useAuthReady } from "@/hooks/useAuthReady";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
@@ -149,6 +149,24 @@ function AdminNewsletter() {
     retry: false,
     enabled: authReady,
   });
+
+  // Artigo vinculado (pelo título): sua imagem é fixa para todas as telas.
+  const linkedArticle = () =>
+    (publishedArticles.data ?? []).find(
+      (a) => a.title.trim().toLowerCase() === subject.trim().toLowerCase(),
+    );
+  const sharedArticleImage = async (generate: () => Promise<string | null>) => {
+    const a = linkedArticle();
+    if (a?.cover_url) return { url: a.cover_url, reused: true };
+    const url = await generate();
+    if (!url) return null;
+    if (a) {
+      const r = await claimArticleCover({ data: { id: a.id, imageUrl: url } }).catch(() => null);
+      void publishedArticles.refetch();
+      return { url: r?.coverUrl ?? url, reused: false };
+    }
+    return { url, reused: false };
+  };
 
   const authorOptions = useQuery({
     queryKey: ["nl-authors"],
@@ -338,7 +356,7 @@ function AdminNewsletter() {
                 setFullText(a.body || a.summary);
                 setAuthors(a.authors ?? "");
                 setAuthorContact(a.author_contact ?? "");
-                if (a.cover_url) setImageUrl(a.cover_url);
+                if (a.cover_url) { setImageUrl(a.cover_url); setSocialImage(a.cover_url); }
                 setLink(a.link_url || `https://liberatoconsulting.com.br/content/${a.slug}`);
                 setLinkTouched(true);
                 if (a.article_date) setReferenceDate(a.article_date);
@@ -403,12 +421,15 @@ function AdminNewsletter() {
                 onClick={async () => {
                   setAiBusy("image");
                   try {
-                    const r = await generateNewsletterImage({ data: { title: subject } });
-                    if (!r.ok) toast.error(r.error);
-                    else {
+                    const res = await sharedArticleImage(async () => {
+                      const r = await generateNewsletterImage({ data: { title: subject } });
+                      if (!r.ok) { toast.error(r.error); return null; }
                       // Aplica a logomarca (PNG sem fundo) no canto inferior direito.
-                      setImageUrl(await stampLogo(r.imageUrl).catch(() => r.imageUrl));
-                      toast.success("Imagem de cabeçalho gerada.");
+                      return await stampLogo(r.imageUrl).catch(() => r.imageUrl);
+                    });
+                    if (res) {
+                      setImageUrl(res.url);
+                      toast.success(res.reused ? "Usada a mesma imagem já gerada para o artigo." : "Imagem de cabeçalho gerada.");
                     }
                   } catch {
                     toast.error("Não foi possível gerar a imagem.");
@@ -744,17 +765,20 @@ function AdminNewsletter() {
                 }
                 setSocialBusy("image");
                 try {
-                  const r = await generateSocialImage({ data: { title: subject } });
-                  if (!r.ok) toast.error(r.error);
-                  else {
-                    setSocialImage(r.imageUrl);
-                    if (!imageUrl) setImageUrl(await stampLogo(r.imageUrl).catch(() => r.imageUrl));
+                  const res = await sharedArticleImage(async () => {
+                    const r = await generateSocialImage({ data: { title: subject } });
+                    if (!r.ok) { toast.error(r.error); return null; }
+                    return r.imageUrl;
+                  });
+                  if (res) {
+                    setSocialImage(res.url);
+                    if (!imageUrl) setImageUrl(res.reused ? res.url : await stampLogo(res.url).catch(() => res.url));
                     await renderArts(
-                      r.imageUrl,
+                      res.url,
                       headline || `Você sabe o que é ${subject}?`,
                       bullets,
                     );
-                    toast.success("Imagem gerada para todas as redes.");
+                    toast.success(res.reused ? "Usada a mesma imagem já gerada para o artigo." : "Imagem gerada para todas as redes.");
                   }
                 } catch (err) {
                   toast.error(err instanceof Error ? err.message : "Não foi possível gerar a imagem.");
