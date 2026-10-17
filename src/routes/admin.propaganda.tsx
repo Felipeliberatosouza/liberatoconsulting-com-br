@@ -58,7 +58,15 @@ export const Route = createFileRoute("/admin/propaganda")({
 const FORMATS: SocialFormatKey[] = ["linkedin", "instagram", "whatsapp"];
 
 type Mode =
-  "servico" | "area" | "areas" | "artigo" | "indicadores" | "brasil" | "gestao" | "insights";
+  | "servico"
+  | "area"
+  | "areas"
+  | "artigo"
+  | "indicadores"
+  | "brasil"
+  | "gestao"
+  | "insights"
+  | "seguidor";
 
 const MODE_LABELS: Record<Mode, string> = {
   servico: "Propaganda de serviço",
@@ -69,10 +77,11 @@ const MODE_LABELS: Record<Mode, string> = {
   brasil: "Dados do Brasil",
   gestao: "Conteúdos gerais sobre gestão",
   insights: "Insights",
+  seguidor: "Siga a Liberato Consulting (LinkedIn)",
 };
 
 /** Modos com título fixo e frase publicitária opcional em cada idioma. */
-const THEME_MODES = ["indicadores", "brasil", "gestao", "insights"] as const;
+const THEME_MODES = ["indicadores", "brasil", "gestao", "insights", "seguidor"] as const;
 type ThemeMode = (typeof THEME_MODES)[number];
 const isTheme = (m: Mode): m is ThemeMode => (THEME_MODES as readonly string[]).includes(m);
 
@@ -155,14 +164,17 @@ function AdPage() {
               ? "Conteúdos gerais sobre gestão empresarial"
               : mode === "insights"
                 ? "Insights da Liberato Consulting"
-                : service;
+                : mode === "seguidor"
+                  ? "Página da Liberato Consulting no LinkedIn"
+                  : service;
   const goalForAi = isTheme(mode)
     ? (AD_GOALS.find(
         (g) =>
           (mode === "indicadores" && g.id === "brasil") ||
           (mode === "brasil" && g.id === "brasil") ||
           (mode === "gestao" && g.id === "conteudos") ||
-          (mode === "insights" && g.id === "insights"),
+          (mode === "insights" && g.id === "insights") ||
+          (mode === "seguidor" && g.id === "seguidor"),
       )?.label ?? goal)
     : goal;
 
@@ -345,7 +357,8 @@ function AdPage() {
           variant:
             mode === "indicadores"
               ? "indicadores"
-              : (mode === "servico" || mode === "area") && goalId === "seguidor"
+              : mode === "seguidor" ||
+                  ((mode === "servico" || mode === "area") && goalId === "seguidor")
                 ? "seguidor"
                 : "card",
           format,
