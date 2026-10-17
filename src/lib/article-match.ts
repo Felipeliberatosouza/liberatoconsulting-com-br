@@ -26,7 +26,11 @@ export function textSimilarity(a: string, b: string): number {
   const B = new Set(tokens(b));
   if (A.size === 0 || B.size === 0) return 0;
   let inter = 0;
-  for (const t of A) if (B.has(t)) inter++;
+  // Palavra cortada no fim (ex.: "econo") conta como a palavra completa.
+  const hit = (t: string, other: Set<string>) =>
+    other.has(t) || (t.length >= 4 && [...other].some((o) => o.startsWith(t) || t.startsWith(o) && o.length >= 4));
+  const [small, big] = A.size <= B.size ? [A, B] : [B, A];
+  for (const t of small) if (hit(t, big)) inter++;
   const dice = (2 * inter) / (A.size + B.size);
   // Título digitado pela metade: todas as palavras (mín. 4) estão no artigo.
   const minSize = Math.min(A.size, B.size);
