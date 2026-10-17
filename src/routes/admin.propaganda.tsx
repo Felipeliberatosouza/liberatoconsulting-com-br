@@ -204,12 +204,25 @@ function AdPage() {
     toast.success("Frases geradas nos quatro idiomas.");
   }
 
+  // Artigo vinculado: o selecionado (modo artigo) ou o cujo título coincide com o foco.
+  function linkedArticle() {
+    if (mode === "artigo") return article;
+    const norm = (s: string) => s.toLowerCase().replace(/\s+/g, " ").trim();
+    const f = norm(topic);
+    if (f.length < 8) return undefined;
+    return published.find((a) => {
+      const t = norm(a.title);
+      return t === f || t.startsWith(f) || f.startsWith(t);
+    });
+  }
+
   async function makeImage() {
-    const existingCover = mode === "artigo" ? (article as { cover_url?: string | null } | undefined)?.cover_url : null;
+    const linked = linkedArticle();
+    const existingCover = (linked as { cover_url?: string | null } | undefined)?.cover_url;
     if (existingCover) {
       setBaseImage(existingCover);
       setArts({});
-      toast.success("Usada a mesma imagem de capa do artigo publicado.");
+      toast.success("Usada a mesma imagem já gerada para o artigo.");
       return;
     }
     setBusy("image");
@@ -229,8 +242,8 @@ function AdPage() {
       return;
     }
     let finalUrl = res.imageUrl;
-    if (mode === "artigo" && article) {
-      const c = await claimArticleCover({ data: { id: article.id, imageUrl: res.imageUrl } }).catch(() => null);
+    if (linked) {
+      const c = await claimArticleCover({ data: { id: linked.id, imageUrl: res.imageUrl } }).catch(() => null);
       if (c?.coverUrl) finalUrl = c.coverUrl;
       void articles.refetch();
     }
