@@ -32,6 +32,7 @@ import {
   generateNewsletterImage,
 } from "@/lib/newsletter-ai.functions";
 import { listArticles, claimArticleCover } from "@/lib/admin.functions";
+import { findSimilarArticle } from "@/lib/article-match";
 import { listAuthorOptions } from "@/lib/users.functions";
 import { useAuthReady } from "@/hooks/useAuthReady";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
@@ -152,11 +153,7 @@ function AdminNewsletter() {
 
   // Artigo vinculado (pelo título): sua imagem é fixa para todas as telas.
   const linkedArticle = () =>
-    (publishedArticles.data ?? []).find((a) => {
-      const norm = (x: string) => x.toLowerCase().replace(/\s+/g, " ").trim();
-      const t = norm(a.title), f = norm(subject);
-      return f.length >= 8 && (t === f || t.startsWith(f) || f.startsWith(t));
-    });
+    findSimilarArticle(subject, (publishedArticles.data ?? []).filter((a) => a.published));
   const sharedArticleImage = async (generate: () => Promise<string | null>) => {
     const a = linkedArticle();
     if (a?.cover_url) return { url: a.cover_url, reused: true };
