@@ -52,7 +52,7 @@ export const AREAS_POST_HEADLINES: Record<ArticlePostLang, string> = {
 
 /** Títulos fixos das demais peças temáticas, nos quatro idiomas. */
 export const THEME_POST_HEADLINES: Record<
-  "indicadores" | "brasil" | "gestao" | "insights",
+  "indicadores" | "brasil" | "gestao" | "insights" | "seguidor",
   Record<ArticlePostLang, string>
 > = {
   indicadores: {
@@ -78,5 +78,11 @@ export const THEME_POST_HEADLINES: Record<
     en: "Insights from Liberato Consulting",
     zh: "利伯拉托咨询 洞察",
     es: "Insights de Liberato Consulting",
+  },
+  seguidor: {
+    pt: "Siga a Liberato Consulting no LinkedIn",
+    en: "Follow Liberato Consulting on LinkedIn",
+    zh: "在领英关注利伯拉托咨询",
+    es: "Sigue a Liberato Consulting en LinkedIn",
   },
 };
