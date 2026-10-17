@@ -17,6 +17,7 @@ import { listAuthorOptions } from "@/lib/users.functions";
 import { useAuthReady } from "@/hooks/useAuthReady";
 import { stampLogo } from "@/lib/social-image";
 import { shortSlug } from "@/lib/short-slug";
+import { findSimilarArticle } from "@/lib/article-match";
 
 import type { ArticleRecord } from "@/lib/site-config";
 import { READ_COUNT_BASE } from "@/lib/site-config";
@@ -250,6 +251,16 @@ function AdminContent() {
   async function onGenerateCover() {
     if (draft.title.trim().length < 5) {
       toast.error("Informe o título antes de gerar a imagem.");
+      return;
+    }
+    // Mesmo artigo (ou título 80% parecido) já com imagem: reaproveita a mesma imagem.
+    const twin = findSimilarArticle(
+      draft.title,
+      items.filter((a) => a.id !== draft.id && a.published && a.cover_url),
+    );
+    if (twin?.cover_url) {
+      setDraft((d) => ({ ...d, cover_url: twin.cover_url ?? "" }));
+      toast.success("Usada a mesma imagem já gerada para este artigo.");
       return;
     }
     setCoverBusy(true);

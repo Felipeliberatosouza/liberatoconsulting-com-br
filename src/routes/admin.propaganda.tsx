@@ -24,6 +24,7 @@ import {
 } from "@/lib/ad-content";
 import { listPublicIndicators } from "@/lib/indicators.functions";
 import { listArticles, claimArticleCover } from "@/lib/admin.functions";
+import { findSimilarArticle } from "@/lib/article-match";
 import {
   SOCIAL_IMAGE_FORMATS,
   composeAdArt,
@@ -207,13 +208,7 @@ function AdPage() {
   // Artigo vinculado: o selecionado (modo artigo) ou o cujo título coincide com o foco.
   function linkedArticle() {
     if (mode === "artigo") return article;
-    const norm = (s: string) => s.toLowerCase().replace(/\s+/g, " ").trim();
-    const f = norm(topic);
-    if (f.length < 8) return undefined;
-    return published.find((a) => {
-      const t = norm(a.title);
-      return t === f || t.startsWith(f) || f.startsWith(t);
-    });
+    return findSimilarArticle(topic, published);
   }
 
   async function makeImage() {
