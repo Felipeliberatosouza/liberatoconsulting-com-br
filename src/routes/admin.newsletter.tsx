@@ -152,9 +152,11 @@ function AdminNewsletter() {
 
   // Artigo vinculado (pelo título): sua imagem é fixa para todas as telas.
   const linkedArticle = () =>
-    (publishedArticles.data ?? []).find(
-      (a) => a.title.trim().toLowerCase() === subject.trim().toLowerCase(),
-    );
+    (publishedArticles.data ?? []).find((a) => {
+      const norm = (x: string) => x.toLowerCase().replace(/\s+/g, " ").trim();
+      const t = norm(a.title), f = norm(subject);
+      return f.length >= 8 && (t === f || t.startsWith(f) || f.startsWith(t));
+    });
   const sharedArticleImage = async (generate: () => Promise<string | null>) => {
     const a = linkedArticle();
     if (a?.cover_url) return { url: a.cover_url, reused: true };
