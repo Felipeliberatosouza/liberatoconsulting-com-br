@@ -205,6 +205,13 @@ function AdPage() {
   }
 
   async function makeImage() {
+    const existingCover = mode === "artigo" ? (article as { cover_url?: string | null } | undefined)?.cover_url : null;
+    if (existingCover) {
+      setBaseImage(existingCover);
+      setArts({});
+      toast.success("Usada a mesma imagem de capa do artigo publicado.");
+      return;
+    }
     setBusy("image");
     const res = await generateAdBackground({
       data:
