@@ -205,6 +205,33 @@ export const listArticles = createServerFn({ method: "GET" })
     return (data ?? []) as unknown as ArticleRecord[];
   });
 
+/**
+ * Vincula uma imagem gerada a um artigo SOMENTE se ele ainda não tiver capa.
+ * Retorna a capa vigente (a já existente ou a recém-gravada), garantindo que
+ * todas as telas de geração de imagem usem a mesma arte para o artigo.
+ */
+export const claimArticleCover = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ id: z.string().uuid(), imageUrl: z.string().min(1).max(14_000_000) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { assertAnyRole } = await import("./access.server");
+    await assertAnyRole(context, ["consultor", "autor"]);
+    const { data: row } = await context.supabase
+      .from("content_articles")
+      .select("cover_url")
+      .eq("id", data.id)
+      .maybeSingle();
+    const current = (row as { cover_url?: string | null } | null)?.cover_url;
+    if (current) return { coverUrl: current };
+    await context.supabase
+      .from("content_articles")
+      .update({ cover_url: data.imageUrl })
+      .eq("id", data.id);
+    return { coverUrl: data.imageUrl };
+  });
+
 const articleSchema = z.object({
   id: z.string().uuid().optional(),
   slug: z

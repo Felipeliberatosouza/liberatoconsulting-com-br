@@ -23,7 +23,7 @@ import {
   THEME_POST_HEADLINES,
 } from "@/lib/ad-content";
 import { listPublicIndicators } from "@/lib/indicators.functions";
-import { listArticles } from "@/lib/admin.functions";
+import { listArticles, claimArticleCover } from "@/lib/admin.functions";
 import {
   SOCIAL_IMAGE_FORMATS,
   composeAdArt,
@@ -228,7 +228,13 @@ function AdPage() {
       toast.error(res.error);
       return;
     }
-    setBaseImage(res.imageUrl);
+    let finalUrl = res.imageUrl;
+    if (mode === "artigo" && article) {
+      const c = await claimArticleCover({ data: { id: article.id, imageUrl: res.imageUrl } }).catch(() => null);
+      if (c?.coverUrl) finalUrl = c.coverUrl;
+      void articles.refetch();
+    }
+    setBaseImage(finalUrl);
     setArts({});
     toast.success("Imagem de fundo gerada.");
   }
