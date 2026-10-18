@@ -59,7 +59,7 @@ export const Route = createFileRoute("/admin/users")({
     ],
   }),
   validateSearch: (s: Record<string, unknown>) => ({
-    aba: typeof s.aba === "string" ? s.aba : undefined,
+    aba: typeof s["aba"] === "string" ? s["aba"] : undefined,
   }),
   component: UsersPage,
 });

@@ -153,7 +153,7 @@ export function AdminShell({
               }`;
               if (g.items.length === 1) {
                 return (
-                  <Link key={g.label} to={g.items[0].to} className={cls}>
+                  <Link key={g.label} to={g.items[0]!.to} className={cls}>
                     {g.label}
                   </Link>
                 );
