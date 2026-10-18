@@ -45,6 +45,7 @@ import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminContratoRouteImport } from './routes/admin.contrato'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
 import { Route as AdminEmpresaRouteImport } from './routes/admin.empresa'
+import { Route as AdminEnviosRouteImport } from './routes/admin.envios'
 import { Route as AdminFerramentasRouteImport } from './routes/admin.ferramentas'
 import { Route as AdminFerramentasClientesRouteImport } from './routes/admin.ferramentas-clientes'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
@@ -265,6 +266,11 @@ const AdminCrmRoute = AdminCrmRouteImport.update({
 const AdminEmpresaRoute = AdminEmpresaRouteImport.update({
   id: '/admin/empresa',
   path: '/admin/empresa',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminEnviosRoute = AdminEnviosRouteImport.update({
+  id: '/admin/envios',
+  path: '/admin/envios',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminFerramentasRoute = AdminFerramentasRouteImport.update({
@@ -512,6 +518,7 @@ export interface FileRoutesByFullPath {
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
+  '/admin/envios': typeof AdminEnviosRoute
   '/admin/ferramentas': typeof AdminFerramentasRoute
   '/admin/ferramentas-clientes': typeof AdminFerramentasClientesRoute
   '/admin/hero': typeof AdminHeroRoute
@@ -590,6 +597,7 @@ export interface FileRoutesByTo {
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
+  '/admin/envios': typeof AdminEnviosRoute
   '/admin/ferramentas': typeof AdminFerramentasRoute
   '/admin/ferramentas-clientes': typeof AdminFerramentasClientesRoute
   '/admin/hero': typeof AdminHeroRoute
@@ -669,6 +677,7 @@ export interface FileRoutesById {
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/crm': typeof AdminCrmRoute
   '/admin/empresa': typeof AdminEmpresaRoute
+  '/admin/envios': typeof AdminEnviosRoute
   '/admin/ferramentas': typeof AdminFerramentasRoute
   '/admin/ferramentas-clientes': typeof AdminFerramentasClientesRoute
   '/admin/hero': typeof AdminHeroRoute
@@ -749,6 +758,7 @@ export interface FileRouteTypes {
     | '/admin/contrato'
     | '/admin/crm'
     | '/admin/empresa'
+    | '/admin/envios'
     | '/admin/ferramentas'
     | '/admin/ferramentas-clientes'
     | '/admin/hero'
@@ -827,6 +837,7 @@ export interface FileRouteTypes {
     | '/admin/contrato'
     | '/admin/crm'
     | '/admin/empresa'
+    | '/admin/envios'
     | '/admin/ferramentas'
     | '/admin/ferramentas-clientes'
     | '/admin/hero'
@@ -905,6 +916,7 @@ export interface FileRouteTypes {
     | '/admin/contrato'
     | '/admin/crm'
     | '/admin/empresa'
+    | '/admin/envios'
     | '/admin/ferramentas'
     | '/admin/ferramentas-clientes'
     | '/admin/hero'
@@ -984,6 +996,7 @@ export interface RootRouteChildren {
   AdminContratoRoute: typeof AdminContratoRoute
   AdminCrmRoute: typeof AdminCrmRoute
   AdminEmpresaRoute: typeof AdminEmpresaRoute
+  AdminEnviosRoute: typeof AdminEnviosRoute
   AdminFerramentasRoute: typeof AdminFerramentasRoute
   AdminFerramentasClientesRoute: typeof AdminFerramentasClientesRoute
   AdminHeroRoute: typeof AdminHeroRoute
@@ -1279,6 +1292,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/empresa'
       fullPath: '/admin/empresa'
       preLoaderRoute: typeof AdminEmpresaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/envios': {
+      id: '/admin/envios'
+      path: '/admin/envios'
+      fullPath: '/admin/envios'
+      preLoaderRoute: typeof AdminEnviosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/ferramentas': {
@@ -1600,6 +1620,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminContratoRoute: AdminContratoRoute,
   AdminCrmRoute: AdminCrmRoute,
   AdminEmpresaRoute: AdminEmpresaRoute,
+  AdminEnviosRoute: AdminEnviosRoute,
   AdminFerramentasRoute: AdminFerramentasRoute,
   AdminFerramentasClientesRoute: AdminFerramentasClientesRoute,
   AdminHeroRoute: AdminHeroRoute,
