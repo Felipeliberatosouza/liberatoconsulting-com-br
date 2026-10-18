@@ -39,6 +39,12 @@ function DeliveriesPage() {
   const [hideTests, setHideTests] = useState(true);
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState<string | null>(null);
+  const [filter, setFilter] = useState<"all" | "email" | "whatsapp" | "falhou">("all");
+  function toggle(key: string, f: "all" | "email" | "whatsapp" | "falhou") {
+    if (open === key && filter === f) { setOpen(null); return; }
+    setOpen(key); setFilter(f);
+  }
+  const FILTER_LABEL = { all: "Todos os destinatários", email: "Receberam por e-mail", whatsapp: "Receberam por WhatsApp", falhou: "Envios com falha" };
   const [busy, setBusy] = useState<string | null>(null);
   const [preview, setPreview] = useState<{ subject: string; html: string; whatsapp: string; recipient?: string | undefined } | null>(null);
 
@@ -134,9 +140,9 @@ function DeliveriesPage() {
                     {i.lastError && <p className="mt-1 text-xs text-destructive">{i.lastError}</p>}
                   </td>
                   <td className="whitespace-nowrap p-3">{SOURCE_LABEL[i.source] ?? i.source}</td>
-                  <td className="p-3 text-center">{i.sentEmail}</td>
-                  <td className="p-3 text-center">{i.sentWhatsApp}</td>
-                  <td className="p-3 text-center">{i.failed}</td>
+                  <td className="p-3 text-center">{i.sentEmail > 0 ? (<button type="button" title="Ver quem são" className="font-semibold text-accent underline" onClick={() => toggle(i.key, "email")}>{i.sentEmail}</button>) : 0}</td>
+                  <td className="p-3 text-center">{i.sentWhatsApp > 0 ? (<button type="button" title="Ver quem são" className="font-semibold text-accent underline" onClick={() => toggle(i.key, "whatsapp")}>{i.sentWhatsApp}</button>) : 0}</td>
+                  <td className="p-3 text-center">{i.failed > 0 ? (<button type="button" title="Ver quem são" className="font-semibold text-accent underline" onClick={() => toggle(i.key, "falhou")}>{i.failed}</button>) : 0}</td>
                   <td className="p-3">
                     {(i.source === "newsletter" || i.source === "boletim") && (
                       <button type="button" className="mb-1 block text-accent underline" disabled={busy === `p-${i.key}`} onClick={() => openPreview(i)}>
@@ -144,8 +150,8 @@ function DeliveriesPage() {
                       </button>
                     )}
                     {i.recipients.length > 0 ? (
-                      <button type="button" className="text-accent underline" onClick={() => setOpen(open === i.key ? null : i.key)}>
-                        {open === i.key ? "Ocultar" : `Ver ${i.recipients.length}`}
+                      <button type="button" className="text-accent underline" onClick={() => toggle(i.key, "all")}>
+                        {open === i.key && filter === "all" ? "Ocultar" : `Ver ${i.recipients.length}`}
                       </button>
                     ) : (
                       <span className="text-xs text-muted-foreground">Detalhe individual indisponível (envio anterior a 18/09/2026)</span>
@@ -155,12 +161,13 @@ function DeliveriesPage() {
                 {open === i.key && (
                   <tr className="bg-secondary/30">
                     <td colSpan={7} className="p-3">
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{FILTER_LABEL[filter]}</p>
                       <table className="w-full text-xs">
                         <thead className="text-left text-muted-foreground">
                           <tr><th className="p-2">Nome</th><th className="p-2">E-mail</th><th className="p-2">WhatsApp</th><th className="p-2">Forma</th><th className="p-2">Situação</th><th className="p-2">Horário</th><th className="p-2">Reenviar</th></tr>
                         </thead>
                         <tbody>
-                          {i.recipients.map((r) => (
+                          {i.recipients.filter((r) => filter === "all" || (filter === "falhou" ? r.status === "falhou" : r.channel === filter && r.status === "enviado")).map((r) => (
                             <tr key={r.id} className="border-t border-border">
                               <td className="p-2">{r.name || "—"}</td>
                               <td className="p-2">{r.email || "—"}</td>
