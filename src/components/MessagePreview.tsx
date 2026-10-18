@@ -24,7 +24,7 @@ export function MessagePreview({
   subject: string;
   html: string;
   whatsapp: string;
-  recipient?: string;
+  recipient?: string | undefined;
   onClose: () => void;
 }) {
   const [tab, setTab] = useState<"email" | "whatsapp">("email");

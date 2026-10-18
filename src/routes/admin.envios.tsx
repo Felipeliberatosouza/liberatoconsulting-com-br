@@ -40,13 +40,13 @@ function DeliveriesPage() {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
-  const [preview, setPreview] = useState<{ subject: string; html: string; whatsapp: string; recipient?: string } | null>(null);
+  const [preview, setPreview] = useState<{ subject: string; html: string; whatsapp: string; recipient?: string | undefined } | null>(null);
 
   async function openPreview(i: DeliveryItem, r?: DeliveryRecipient) {
     setBusy(`p-${i.key}`);
     const res = await previewDelivery({ data: { source: i.source as "newsletter", referenceId: i.key, email: r?.email || "" } });
     setBusy(null);
-    if (!res.ok) return toast.error(res.error);
+    if (!res.ok) { toast.error(res.error); return; }
     setPreview({ subject: res.subject, html: res.html, whatsapp: res.whatsapp, recipient: r?.name || r?.email });
   }
 
@@ -55,7 +55,7 @@ function DeliveriesPage() {
     setBusy(id);
     const res = await resendDelivery({ data: { source: i.source as "newsletter", referenceId: i.key, email: r.email || "", phone: r.phone, name: r.name, channel } });
     setBusy(null);
-    if (!res.ok) return toast.error(res.error);
+    if (!res.ok) { toast.error(res.error); return; }
     toast.success(channel === "email" ? `E-mail reenviado para ${r.email}` : `WhatsApp reenviado para ${r.phone}`);
     q.refetch();
   }
