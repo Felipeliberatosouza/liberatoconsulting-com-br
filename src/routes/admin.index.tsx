@@ -27,8 +27,8 @@ export const Route = createFileRoute("/admin/")({
 const CARDS = [
   {
     to: "/admin/users",
-    title: "Usuários",
-    text: "Equipe com acesso ao painel, assinantes da newsletter, candidatos e leads.",
+    title: "Central de usuários",
+    text: "Todas as pessoas em um só lugar: equipe, clientes, assinantes, leads e candidatos.",
   },
   {
     to: "/admin/consultores",
@@ -79,11 +79,6 @@ const CARDS = [
     to: "/admin/crm",
     title: "CRM de clientes",
     text: "Empresas e contatos, datas importantes, interações e orçamentos enviados.",
-  },
-  {
-    to: "/admin/leads",
-    title: "Leads recebidos",
-    text: "Contatos enviados pelos formulários das páginas de serviço.",
   },
   {
     to: "/admin/applications",

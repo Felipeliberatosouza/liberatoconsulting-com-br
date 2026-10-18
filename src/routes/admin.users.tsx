@@ -41,6 +41,7 @@ import {
   unsubscribeBulletinByAdmin,
 } from "@/lib/bulletin.functions";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
+import { AllPeopleTab, SimpleListTab } from "@/components/AllPeopleTab";
 
 export const Route = createFileRoute("/admin/users")({
   head: () => ({
@@ -57,19 +58,25 @@ export const Route = createFileRoute("/admin/users")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    aba: typeof s["aba"] === "string" ? s["aba"] : undefined,
+  }),
   component: UsersPage,
 });
 
-type Tab = "team" | "subscribers" | "bulletin" | "applicants" | "leads";
+type Tab = "all" | "team" | "subscribers" | "bulletin" | "tools" | "scopes" | "applicants" | "leads";
 
 const TABS: Array<{ id: Tab; label: string; hint: string }> = [
+  { id: "all", label: "Todos", hint: "Visão unificada: cada pessoa aparece uma vez, com todos os vínculos. Clique num vínculo para gerenciar." },
   { id: "team", label: "Equipe com acesso", hint: "Administradores, consultores e autores." },
-  { id: "subscribers", label: "Assinantes da newsletter", hint: "Nome, e-mail e origem." },
+  { id: "subscribers", label: "Newsletter", hint: "Nome, e-mail e origem." },
   {
     id: "bulletin",
-    label: "Assinantes do Boletim Semanal",
+    label: "Boletim Semanal",
     hint: "Nome, empresa, segmento, e-mail, WhatsApp, canais e situação.",
   },
+  { id: "tools", label: "Clientes de materiais", hint: "Quem criou conta para baixar as ferramentas gratuitas." },
+  { id: "scopes", label: "Clientes de escopo", hint: "Quem enviou o formulário de Escopo Inicial. Detalhes e orçamentos em Projetos." },
   { id: "applicants", label: "Candidatos", hint: "Currículos do Trabalhe Conosco." },
   { id: "leads", label: "Leads", hint: "Contatos dos formulários do site." },
 ];
@@ -172,13 +179,14 @@ function Field({
 
 
 function UsersPage() {
-  const [tab, setTab] = useState<Tab>("team");
+  const { aba } = Route.useSearch();
+  const [tab, setTab] = useState<Tab>((aba as Tab) ?? "all");
 
   return (
     <AdminShell
-      title="Usuários"
+      title="Central de usuários e contatos"
       requireAdmin
-      description="Todos os cadastros da plataforma. Somente equipe (administrador, consultor e autor de artigos) tem senha de acesso ao painel."
+      description="Todas as pessoas do site em um só lugar: equipe, clientes, assinantes, leads e candidatos. Somente a equipe tem senha de acesso ao painel."
     >
       <div className="flex flex-wrap gap-2">
         {TABS.map((t) => (
@@ -198,9 +206,12 @@ function UsersPage() {
       </p>
 
       <div className="mt-6">
+        {tab === "all" && <AllPeopleTab onOpenTab={(t) => setTab(t as Tab)} />}
         {tab === "team" && <TeamTab />}
         {tab === "subscribers" && <SubscribersTab />}
         {tab === "bulletin" && <BulletinTab />}
+        {tab === "tools" && <SimpleListTab kind="tools" />}
+        {tab === "scopes" && <SimpleListTab kind="scopes" />}
         {tab === "applicants" && <ApplicantsTab />}
         {tab === "leads" && <LeadsTab />}
       </div>

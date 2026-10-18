@@ -68,7 +68,7 @@ function AdminTools() {
       description="Cadastre PDFs e planilhas. Os arquivos ficam privados e são liberados por links temporários após o login."
     >
       <p className="mb-6 text-sm">
-        <Link to="/admin/ferramentas-clientes" className="font-semibold text-accent hover:underline">
+        <Link to="/admin/users" search={{ aba: "tools" }} className="font-semibold text-accent hover:underline">
           Ver clientes cadastrados para receber materiais →
         </Link>
       </p>
