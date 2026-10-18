@@ -15,6 +15,7 @@ const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
     items: [
       { to: "/admin/users", label: "Central de usuários" },
       { to: "/admin/consultores", label: "Consultores" },
+      { to: "/admin/applications", label: "Candidaturas" },
       { to: "/admin/cadastros-consultores", label: "Cadastros de novos consultores" },
       { to: "/admin/crm", label: "CRM de clientes" },
     ],

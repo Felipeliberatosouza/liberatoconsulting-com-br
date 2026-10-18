@@ -68,3 +68,8 @@
 
 - [x] Artes de propaganda: rodapé com nome, site e telefone em uma linha (ou nome em cima, site+telefone embaixo), sem cortes
 - [x] Cadastro de novos consultores (Candidaturas → /novoconsultor → aprovação → contrato)
+
+## Reorganização da área administrativa (18/10/2026)
+- [x] Menu superior agrupado em 6 áreas com submenus
+- [x] Central de usuários com visão unificada (Todos) e abas de materiais e escopo
+- [x] Telas repetidas de Leads e Clientes de materiais levadas para a Central
