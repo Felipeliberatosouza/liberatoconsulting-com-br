@@ -650,6 +650,15 @@ export async function dispatchBulletin(options?: {
   let failed = 0;
   let lastError: string | null = null;
   let snapshot: { subject: string; dateLabel: string; html: string } | null = null;
+  const deliveryLog: Array<{
+    recipient_name: string;
+    recipient_email: string;
+    recipient_phone?: string;
+    language: string;
+    channel: "email" | "whatsapp";
+    status: "enviado" | "falhou";
+    error?: string;
+  }> = [];
 
   for (const r of recipients) {
     const lang = emailLang(r.language);
@@ -665,6 +674,7 @@ export async function dispatchBulletin(options?: {
     }
 
     if (r.via_email && r.email) {
+      const who = { recipient_name: r.full_name ?? "", recipient_email: r.email, language: lang };
       try {
         await sendBulletinEmail({
           to: r.email,
@@ -673,13 +683,16 @@ export async function dispatchBulletin(options?: {
           text: renderBulletinText(content, unsubscribeUrl, lang),
         });
         sentEmail += 1;
+        deliveryLog.push({ ...who, channel: "email", status: "enviado" });
       } catch (err) {
         failed += 1;
         lastError = err instanceof Error ? err.message : String(err);
+        deliveryLog.push({ ...who, channel: "email", status: "falhou", error: lastError });
       }
     }
 
     if (WHATSAPP_SENDING_ENABLED && r.via_whatsapp && r.whatsapp) {
+      const who = { recipient_name: r.full_name ?? "", recipient_email: r.email ?? "", recipient_phone: r.whatsapp, language: lang };
       try {
         await sendWhatsAppMessage({
           to: r.whatsapp,
@@ -691,11 +704,14 @@ export async function dispatchBulletin(options?: {
           ],
         });
         sentWhatsApp += 1;
+        deliveryLog.push({ ...who, channel: "whatsapp", status: "enviado" });
       } catch (err) {
         failed += 1;
         lastError = err instanceof Error ? err.message : String(err);
+        deliveryLog.push({ ...who, channel: "whatsapp", status: "falhou", error: lastError });
       }
     }
+  
 
     if (r.id !== "test") {
       await supabaseAdmin
@@ -706,18 +722,30 @@ export async function dispatchBulletin(options?: {
   }
 
   // Registra o envio no histórico do painel administrativo.
-  await supabaseAdmin.from("bulletin_dispatches").insert({
+  const isTest = Boolean(options?.testEmail || options?.testWhatsApp);
+  const { data: dispatchRow } = await supabaseAdmin.from("bulletin_dispatches").insert({
     subject: snapshot?.subject ?? "Boletim Semanal",
     date_label: snapshot?.dateLabel ?? "",
     sent_email: sentEmail,
     sent_whatsapp: sentWhatsApp,
     failed,
     last_error: lastError,
-    is_test: Boolean(options?.testEmail || options?.testWhatsApp),
+    is_test: isTest,
     body_html: snapshot?.html ?? "",
     status: "enviado",
     segment: options?.testSegment ?? "",
-  });
+  }).select("id").maybeSingle();
+
+  const { logDeliveries } = await import("./delivery-log.server");
+  await logDeliveries(
+    deliveryLog.map((e) => ({
+      ...e,
+      source: "boletim",
+      reference_id: (dispatchRow?.id as string | undefined) ?? null,
+      subject: snapshot?.subject ?? "Boletim Semanal",
+      is_test: isTest,
+    })),
+  );
 
   if (sentEmail === 0 && sentWhatsApp === 0) {
     return { ok: false as const, error: lastError ?? "Nenhum envio pôde ser concluído." };
