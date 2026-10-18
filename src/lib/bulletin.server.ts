@@ -481,26 +481,23 @@ export async function sendWhatsAppMessage(params: {
   const to = normalizeWhatsAppNumber(params.to);
   if (!to) throw new Error("Número de WhatsApp inválido.");
 
-  // Z-API (conexão por QR Code): envio ativo sem modelos da Meta.
-  const zInstance = process.env["ZAPI_INSTANCE_ID"];
-  const zToken = process.env["ZAPI_TOKEN"];
-  const zClient = process.env["ZAPI_CLIENT_TOKEN"];
-  if (zInstance && zToken) {
+  // Evolution API própria (Google Cloud): envio ativo via QR Code.
+  const evoUrl = process.env["EVOLUTION_API_URL"];
+  const evoInstance = process.env["EVOLUTION_INSTANCE"];
+  const evoKey = process.env["EVOLUTION_API_KEY"];
+  if (evoUrl && evoInstance && evoKey) {
     const res = await fetch(
-      `https://api.z-api.io/instances/${encodeURIComponent(zInstance)}/token/${encodeURIComponent(zToken)}/send-text`,
+      `${evoUrl.replace(/\/+$/, "")}/message/sendText/${encodeURIComponent(evoInstance)}`,
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(zClient ? { "Client-Token": zClient } : {}),
-        },
-        body: JSON.stringify({ phone: to, message: params.caption }),
+        headers: { "Content-Type": "application/json", apikey: evoKey },
+        body: JSON.stringify({ number: to, text: params.caption }),
       },
     );
     const detail = await res.text();
     if (!res.ok) {
-      console.error(`Z-API send failed [${res.status}]: ${detail}`);
-      throw new Error(`Falha no envio por WhatsApp (Z-API) [${res.status}]: ${detail.slice(0, 200)}`);
+      console.error(`Evolution API send failed [${res.status}]: ${detail}`);
+      throw new Error(`Falha no envio por WhatsApp [${res.status}]: ${detail.slice(0, 200)}`);
     }
     return { ok: true as const };
   }
