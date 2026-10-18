@@ -237,9 +237,18 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
     return variants.get(lang)!;
   };
 
+  const log: import("./delivery-log.server").DeliveryEntry[] = [];
+  const base = {
+    source: "newsletter",
+    reference_id: campaignId,
+    subject: campaign.subject as string,
+    is_test: Boolean(testEmail),
+  };
+
   for (const r of recipients) {
     const lang = emailLang(r.language);
     const unsubscribeUrl = `${origin}/newsletter/unsubscribe?token=${r.unsubscribe_token}`;
+    const who = { recipient_name: r.name ?? "", recipient_email: r.email, language: lang };
     try {
       const v = await variantFor(lang);
       await sendNewsletterEmail({
@@ -260,10 +269,11 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
         idempotencyKey: `nl-${campaignId}-${runId}-${lang}-${r.unsubscribe_token}-${r.email}`.slice(0, 200),
       });
       sent += 1;
+      log.push({ ...base, ...who, channel: "email", status: "enviado" });
     } catch (err) {
       failed += 1;
       lastError = err instanceof Error ? err.message : String(err);
-
+      log.push({ ...base, ...who, channel: "email", status: "falhou", error: lastError });
     }
 
     // Quando o inscrito pediu para receber por WhatsApp, envia também por lá.
@@ -278,11 +288,16 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
           templateName: "boletim_semanal",
           templateParams: [(r.name || "").split(" ")[0] || "assinante", caption],
         });
+        log.push({ ...base, ...who, recipient_phone: r.whatsapp, channel: "whatsapp", status: "enviado" });
       } catch (err) {
         lastError = err instanceof Error ? err.message : String(err);
+        log.push({ ...base, ...who, recipient_phone: r.whatsapp, channel: "whatsapp", status: "falhou", error: lastError });
       }
     }
   }
+
+  const { logDeliveries } = await import("./delivery-log.server");
+  await logDeliveries(log);
 
   if (!testEmail) {
     await supabaseAdmin

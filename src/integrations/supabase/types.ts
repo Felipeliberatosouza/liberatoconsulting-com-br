@@ -1050,6 +1050,57 @@ export type Database = {
         }
         Relationships: []
       }
+      delivery_log: {
+        Row: {
+          channel: string
+          error: string
+          id: string
+          is_test: boolean
+          language: string
+          recipient_email: string
+          recipient_name: string
+          recipient_phone: string
+          reference_id: string | null
+          retroactive: boolean
+          sent_at: string
+          source: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          channel: string
+          error?: string
+          id?: string
+          is_test?: boolean
+          language?: string
+          recipient_email?: string
+          recipient_name?: string
+          recipient_phone?: string
+          reference_id?: string | null
+          retroactive?: boolean
+          sent_at?: string
+          source: string
+          status?: string
+          subject?: string
+        }
+        Update: {
+          channel?: string
+          error?: string
+          id?: string
+          is_test?: boolean
+          language?: string
+          recipient_email?: string
+          recipient_name?: string
+          recipient_phone?: string
+          reference_id?: string | null
+          retroactive?: boolean
+          sent_at?: string
+          source?: string
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
       economic_indicators: {
         Row: {
           created_at: string
