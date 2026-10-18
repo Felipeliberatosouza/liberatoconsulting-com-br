@@ -7,32 +7,62 @@ import { getPanelSession } from "@/lib/users.functions";
 import { canAccess } from "@/lib/roles";
 import { useLanguage } from "@/i18n";
 
-const NAV: Array<{ to: string; label: string; exact?: boolean }> = [
-  { to: "/admin", label: "Visão geral", exact: true },
-  { to: "/admin/users", label: "Usuários" },
-  { to: "/admin/consultores", label: "Consultores" },
-
-  { to: "/admin/approvals", label: "Aprovações" },
-  { to: "/admin/content", label: "Conteúdo" },
-  { to: "/admin/brasil", label: "Dados do Brasil" },
-  { to: "/admin/indicadores", label: "Indicadores" },
-  { to: "/admin/newsletter", label: "Newsletter" },
-  { to: "/admin/boletim", label: "Boletim Semanal" },
-  { to: "/admin/propaganda", label: "Propaganda" },
-  { to: "/admin/historico", label: "Histórico" },
-  { to: "/admin/envios", label: "Painel de envios" },
-  { to: "/admin/crm", label: "CRM de clientes" },
-  { to: "/admin/leads", label: "Leads" },
-  { to: "/admin/applications", label: "Candidaturas" },
-  { to: "/admin/cadastros-consultores", label: "Cadastros de consultores" },
-  { to: "/admin/empresa", label: "Dados da consultoria" },
-  { to: "/admin/servicos", label: "Cadastro de serviços" },
-  { to: "/admin/projetos", label: "Projetos" },
-  { to: "/admin/institucional", label: "Site institucional" },
-  { to: "/admin/ferramentas", label: "Ferramentas gratuitas" },
-  { to: "/admin/ferramentas-clientes", label: "Clientes de materiais" },
-  { to: "/admin/settings", label: "Configurações" },
+type NavItem = { to: string; label: string; exact?: boolean };
+const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
+  { label: "Visão geral", items: [{ to: "/admin", label: "Visão geral", exact: true }] },
+  {
+    label: "Pessoas e clientes",
+    items: [
+      { to: "/admin/users", label: "Central de usuários" },
+      { to: "/admin/consultores", label: "Consultores" },
+      { to: "/admin/cadastros-consultores", label: "Cadastros de novos consultores" },
+      { to: "/admin/crm", label: "CRM de clientes" },
+    ],
+  },
+  {
+    label: "Projetos",
+    items: [
+      { to: "/admin/projetos", label: "Visão das 4 etapas", exact: true },
+      { to: "/admin/projetos/escopos", label: "1. Escopos iniciais" },
+      { to: "/admin/projetos/diagnostico", label: "2. Diagnóstico detalhado" },
+      { to: "/admin/precificacao", label: "3. Precificação" },
+      { to: "/admin/projetos/apresentacoes", label: "4. Apresentações e orçamentos" },
+    ],
+  },
+  {
+    label: "Conteúdo",
+    items: [
+      { to: "/admin/content", label: "Artigos e estudos" },
+      { to: "/admin/brasil", label: "Dados do Brasil" },
+      { to: "/admin/indicadores", label: "Indicadores econômicos" },
+      { to: "/admin/ferramentas", label: "Ferramentas gratuitas" },
+      { to: "/admin/approvals", label: "Aprovações" },
+    ],
+  },
+  {
+    label: "Envios e marketing",
+    items: [
+      { to: "/admin/envios", label: "Painel de envios" },
+      { to: "/admin/newsletter", label: "Newsletter" },
+      { to: "/admin/boletim", label: "Boletim Semanal" },
+      { to: "/admin/propaganda", label: "Propaganda" },
+      { to: "/admin/historico", label: "Histórico de publicações" },
+    ],
+  },
+  {
+    label: "Site e sistema",
+    items: [
+      { to: "/admin/institucional", label: "Site institucional" },
+      { to: "/admin/servicos", label: "Cadastro de serviços" },
+      { to: "/admin/empresa", label: "Dados da consultoria" },
+      { to: "/admin/settings", label: "Configurações" },
+    ],
+  },
 ];
+
+function isActive(item: NavItem, pathname: string) {
+  return item.exact ? pathname === item.to || pathname === `${item.to}/` : pathname.startsWith(item.to);
+}
 
 export function AdminShell({
   title,
@@ -101,7 +131,10 @@ export function AdminShell({
     );
   }
 
-  const items = NAV.filter((item) => canAccess(roles, item.to));
+  const groups = NAV_GROUPS.map((g) => ({
+    ...g,
+    items: g.items.filter((item) => canAccess(roles, item.to)),
+  })).filter((g) => g.items.length > 0);
 
   return (
     <div className="min-h-screen bg-secondary/40">
@@ -112,20 +145,41 @@ export function AdminShell({
             <span className="text-sm font-semibold text-accent">admin</span>
           </Link>
           <nav className="flex flex-wrap gap-1">
-            {items.map((item) => {
-              const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+            {groups.map((g) => {
+              const active = g.items.some((i) => isActive(i, pathname));
+              const cls = `rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                active ? "bg-ink text-ink-foreground" : "text-muted-foreground hover:text-accent"
+              }`;
+              if (g.items.length === 1) {
+                return (
+                  <Link key={g.label} to={g.items[0].to} className={cls}>
+                    {g.label}
+                  </Link>
+                );
+              }
               return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-                    active
-                      ? "bg-ink text-ink-foreground"
-                      : "text-muted-foreground hover:text-accent"
-                  }`}
-                >
-                  {item.label}
-                </Link>
+                <div key={g.label} className="group relative">
+                  <button type="button" className={cls} aria-haspopup="true">
+                    {g.label} ▾
+                  </button>
+                  <div className="invisible absolute left-0 top-full z-50 pt-1 opacity-0 transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+                    <div className="min-w-60 rounded-lg border border-border bg-background p-1 shadow-lg">
+                      {g.items.map((item) => (
+                        <Link
+                          key={item.to}
+                          to={item.to}
+                          className={`block rounded-md px-3 py-2 text-sm ${
+                            isActive(item, pathname)
+                              ? "bg-secondary font-semibold text-accent"
+                              : "text-foreground hover:bg-secondary hover:text-accent"
+                          }`}
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               );
             })}
           </nav>
