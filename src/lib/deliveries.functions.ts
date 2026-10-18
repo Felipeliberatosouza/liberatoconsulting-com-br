@@ -49,6 +49,13 @@ export const listDeliveries = createServerFn({ method: "GET" })
       supabaseAdmin.from("delivery_log").select("*").order("sent_at", { ascending: true }).limit(5000),
     ]);
 
+    const [ns, bs] = await Promise.all([
+      supabaseAdmin.from("newsletter_subscribers").select("email, whatsapp"),
+      supabaseAdmin.from("bulletin_subscribers").select("email, whatsapp"),
+    ]);
+    const phones = new Map<string, string>();
+    for (const s of [...(ns.data ?? []), ...(bs.data ?? [])]) if (s.whatsapp && !phones.has(s.email)) phones.set(s.email, s.whatsapp);
+
     const byRef = new Map<string, DeliveryRecipient[]>();
     const loose: DeliveryItem[] = [];
     for (const l of log.data ?? []) {
@@ -56,7 +63,7 @@ export const listDeliveries = createServerFn({ method: "GET" })
         id: l.id,
         name: l.recipient_name,
         email: l.recipient_email,
-        phone: l.recipient_phone,
+        phone: l.recipient_phone || phones.get(l.recipient_email) || "",
         channel: l.channel,
         status: l.status,
         error: l.error,
