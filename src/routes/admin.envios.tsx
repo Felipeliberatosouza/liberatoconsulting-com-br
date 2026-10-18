@@ -3,7 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Fragment, useMemo, useState } from "react";
 
 import { AdminShell } from "@/components/AdminShell";
-import { listDeliveries } from "@/lib/deliveries.functions";
+import { toast } from "sonner";
+import { listDeliveries, previewDelivery, resendDelivery, type DeliveryItem, type DeliveryRecipient } from "@/lib/deliveries.functions";
+import { MessagePreview } from "@/components/MessagePreview";
 
 export const Route = createFileRoute("/admin/envios")({
   head: () => ({
@@ -37,6 +39,26 @@ function DeliveriesPage() {
   const [hideTests, setHideTests] = useState(true);
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [preview, setPreview] = useState<{ subject: string; html: string; whatsapp: string; recipient?: string | undefined } | null>(null);
+
+  async function openPreview(i: DeliveryItem, r?: DeliveryRecipient) {
+    setBusy(`p-${i.key}`);
+    const res = await previewDelivery({ data: { source: i.source as "newsletter", referenceId: i.key, email: r?.email || "" } });
+    setBusy(null);
+    if (!res.ok) { toast.error(res.error); return; }
+    setPreview({ subject: res.subject, html: res.html, whatsapp: res.whatsapp, recipient: r?.name || r?.email });
+  }
+
+  async function resend(i: DeliveryItem, r: DeliveryRecipient, channel: "email" | "whatsapp") {
+    const id = `${r.id}-${channel}`;
+    setBusy(id);
+    const res = await resendDelivery({ data: { source: i.source as "newsletter", referenceId: i.key, email: r.email || "", phone: r.phone, name: r.name, channel } });
+    setBusy(null);
+    if (!res.ok) { toast.error(res.error); return; }
+    toast.success(channel === "email" ? `E-mail reenviado para ${r.email}` : `WhatsApp reenviado para ${r.phone}`);
+    q.refetch();
+  }
 
   const items = useMemo(() => {
     const s = search.trim().toLowerCase();
@@ -116,6 +138,11 @@ function DeliveriesPage() {
                   <td className="p-3 text-center">{i.sentWhatsApp}</td>
                   <td className="p-3 text-center">{i.failed}</td>
                   <td className="p-3">
+                    {(i.source === "newsletter" || i.source === "boletim") && (
+                      <button type="button" className="mb-1 block text-accent underline" disabled={busy === `p-${i.key}`} onClick={() => openPreview(i)}>
+                        {busy === `p-${i.key}` ? "Abrindo…" : "Visualizar"}
+                      </button>
+                    )}
                     {i.recipients.length > 0 ? (
                       <button type="button" className="text-accent underline" onClick={() => setOpen(open === i.key ? null : i.key)}>
                         {open === i.key ? "Ocultar" : `Ver ${i.recipients.length}`}
@@ -130,7 +157,7 @@ function DeliveriesPage() {
                     <td colSpan={7} className="p-3">
                       <table className="w-full text-xs">
                         <thead className="text-left text-muted-foreground">
-                          <tr><th className="p-2">Nome</th><th className="p-2">E-mail</th><th className="p-2">WhatsApp</th><th className="p-2">Forma</th><th className="p-2">Situação</th><th className="p-2">Horário</th></tr>
+                          <tr><th className="p-2">Nome</th><th className="p-2">E-mail</th><th className="p-2">WhatsApp</th><th className="p-2">Forma</th><th className="p-2">Situação</th><th className="p-2">Horário</th><th className="p-2">Reenviar</th></tr>
                         </thead>
                         <tbody>
                           {i.recipients.map((r) => (
@@ -141,6 +168,23 @@ function DeliveriesPage() {
                               <td className="p-2">{r.channel === "whatsapp" ? "WhatsApp" : "E-mail"}</td>
                               <td className={`p-2 ${r.status === "falhou" ? "text-destructive" : ""}`}>{r.status === "falhou" ? `Falhou${r.error ? `: ${r.error}` : ""}` : "Entregue"}{r.retroactive ? " (registro retroativo)" : ""}</td>
                               <td className="p-2 whitespace-nowrap">{fmt(r.sentAt)}</td>
+                              <td className="p-2 whitespace-nowrap">
+                                {(i.source === "newsletter" || i.source === "boletim") ? (
+                                  <div className="flex gap-2">
+                                    {r.email && (
+                                      <button type="button" className="rounded border border-border px-2 py-1 hover:bg-secondary" disabled={busy === `${r.id}-email`} onClick={() => resend(i, r, "email")}>
+                                        {busy === `${r.id}-email` ? "Enviando…" : "E-mail"}
+                                      </button>
+                                    )}
+                                    {r.phone && (
+                                      <button type="button" className="rounded border border-border px-2 py-1 hover:bg-secondary" disabled={busy === `${r.id}-whatsapp`} onClick={() => resend(i, r, "whatsapp")}>
+                                        {busy === `${r.id}-whatsapp` ? "Enviando…" : "WhatsApp"}
+                                      </button>
+                                    )}
+                                    <button type="button" className="text-accent underline" onClick={() => openPreview(i, r)}>Prévia</button>
+                                  </div>
+                                ) : "—"}
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -153,6 +197,7 @@ function DeliveriesPage() {
           </tbody>
         </table>
       </div>
+      {preview && <MessagePreview {...preview} onClose={() => setPreview(null)} />}
     </AdminShell>
   );
 }
