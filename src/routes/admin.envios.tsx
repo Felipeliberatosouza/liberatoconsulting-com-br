@@ -56,6 +56,27 @@ function DeliveriesPage() {
     setPreview({ subject: res.subject, html: res.html, whatsapp: res.whatsapp, recipient: r?.name || r?.email });
   }
 
+  async function resendAll(i: DeliveryItem, list: DeliveryRecipient[]) {
+    const seen = new Set<string>();
+    const jobs = list.filter((r) => {
+      const ch = filter === "email" || filter === "whatsapp" ? filter : (r.channel as "email" | "whatsapp");
+      const k = `${ch}-${ch === "email" ? r.email : r.phone}`;
+      if (!(ch === "email" ? r.email : r.phone) || seen.has(k)) return false;
+      seen.add(k); return true;
+    });
+    if (!jobs.length || !confirm(`Reenviar para ${jobs.length} destinatário(s) agora?`)) return;
+    setBusy(`all-${i.key}`);
+    let ok = 0, fail = 0;
+    for (const r of jobs) {
+      const ch = filter === "email" || filter === "whatsapp" ? filter : (r.channel as "email" | "whatsapp");
+      const res = await resendDelivery({ data: { source: i.source as "newsletter", referenceId: i.key, email: r.email || "", phone: r.phone, name: r.name, channel: ch } });
+      if (res.ok) ok++; else fail++;
+    }
+    setBusy(null);
+    if (fail) toast.error(`${ok} reenviado(s), ${fail} com falha.`); else toast.success(`${ok} reenvio(s) concluído(s).`);
+    q.refetch();
+  }
+
   async function resend(i: DeliveryItem, r: DeliveryRecipient, channel: "email" | "whatsapp") {
     const id = `${r.id}-${channel}`;
     setBusy(id);
@@ -161,7 +182,15 @@ function DeliveriesPage() {
                 {open === i.key && (
                   <tr className="bg-secondary/30">
                     <td colSpan={7} className="p-3">
-                      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{FILTER_LABEL[filter]}</p>
+                      <div className="mb-2 flex items-center justify-between gap-3">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{FILTER_LABEL[filter]}</p>
+                        {(i.source === "newsletter" || i.source === "boletim") && (
+                          <button type="button" className="rounded-md bg-accent px-3 py-1.5 text-xs font-semibold text-accent-foreground disabled:opacity-60" disabled={busy === `all-${i.key}`}
+                            onClick={() => resendAll(i, i.recipients.filter((r) => filter === "all" || (filter === "falhou" ? r.status === "falhou" : r.channel === filter && r.status === "enviado")))}>
+                            {busy === `all-${i.key}` ? "Reenviando…" : "Reenviar para todos desta lista"}
+                          </button>
+                        )}
+                      </div>
                       <table className="w-full text-xs">
                         <thead className="text-left text-muted-foreground">
                           <tr><th className="p-2">Nome</th><th className="p-2">E-mail</th><th className="p-2">WhatsApp</th><th className="p-2">Forma</th><th className="p-2">Situação</th><th className="p-2">Horário</th><th className="p-2">Reenviar</th></tr>
