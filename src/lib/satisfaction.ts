@@ -65,7 +65,8 @@ export function surveyQuestions(kind: SurveyKind, lang: Lang): Q[] {
       ];
 }
 
-export const SURVEY_TEXTS: Record<Lang, Record<string, string>> = {
+type TK = "eyebrow"|"choose"|"exec"|"nonExec"|"execDesc"|"nonExecDesc"|"intro"|"company"|"name"|"email"|"service"|"comment"|"send"|"sentTitle"|"sentText"|"required"|"error"|"other"|"low"|"high";
+export const SURVEY_TEXTS: Record<Lang, Record<TK, string>> = {
   pt: {
     eyebrow: "Pesquisa de satisfação", choose: "Escolha a pesquisa", exec: "Serviço executado", nonExec: "Serviço não executado",
     execDesc: "Para clientes que contrataram e receberam um serviço.", nonExecDesc: "Para quem recebeu proposta e não seguiu com a contratação.",

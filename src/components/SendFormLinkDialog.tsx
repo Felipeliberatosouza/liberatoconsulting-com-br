@@ -56,7 +56,10 @@ export function SendFormLinkDialog({ form }: { form: FormKind }) {
       return sendFormLink({ data: { form, company: company?.name ?? "", recipients: list } });
     },
     onSuccess: (res) => {
-      if (!res.ok) return toast.error(res.error);
+      if (!res.ok) {
+        toast.error(res.error);
+        return;
+      }
       toast.success(`E-mail enviado para ${res.sent} contato(s)${res.failed ? ` · ${res.failed} falha(s)` : ""}.`);
       if (res.sent) setOpen(false);
     },

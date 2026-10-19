@@ -90,7 +90,7 @@ function SurveyForm({ kind, lang }: { kind: SurveyKind; lang: Lang }) {
   const questions = surveyQuestions(kind, lang);
   const reasons = REASONS[lang];
   const [form, setForm] = useState({ company: "", respondent_name: "", email: "", service: "", comment: "", website: "" });
-  const [scores, setScores] = useState<Record<string, number>>({});
+  const [scores, setScores] = useState<Partial<Record<"score1" | "score2" | "score3", number>>>({});
   const [reason, setReason] = useState("");
   const [reasonOther, setReasonOther] = useState("");
   const [sent, setSent] = useState(false);
