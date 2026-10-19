@@ -26,6 +26,7 @@ const SOURCE_LABEL: Record<string, string> = {
   newsletter: "Newsletter",
   boletim: "Boletim Semanal",
   notificacao: "Notificação do site",
+  prospeccao: "Prospecção (Brevo)",
 };
 
 function fmt(v: string) {

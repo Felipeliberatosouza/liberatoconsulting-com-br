@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { AdminShell } from "@/components/AdminShell";
 import { CrmProspect } from "@/components/CrmProspect";
+import { ProspectEmailPanel } from "@/components/ProspectEmailPanel";
 
 export const Route = createFileRoute("/admin/prospeccao")({
   head: () => ({
@@ -33,6 +34,7 @@ function ProspectPage() {
           void qc.invalidateQueries({ queryKey: ["crm-agenda"] });
         }}
       />
+      <ProspectEmailPanel />
     </AdminShell>
   );
 }
