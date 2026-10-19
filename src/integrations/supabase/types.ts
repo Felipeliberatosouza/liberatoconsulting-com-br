@@ -1847,6 +1847,81 @@ export type Database = {
         }
         Relationships: []
       }
+      service_consents: {
+        Row: {
+          approved_at: string | null
+          approved_ip: string
+          approved_user_agent: string
+          company: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          invite_email_status: string
+          invite_whatsapp_status: string
+          invited_at: string
+          invited_by: string | null
+          invited_by_name: string
+          phone: string
+          revoked_at: string | null
+          segment: string
+          service: string
+          status: string
+          token: string
+          updated_at: string
+          via_email: boolean
+          via_whatsapp: boolean
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_ip?: string
+          approved_user_agent?: string
+          company?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          invite_email_status?: string
+          invite_whatsapp_status?: string
+          invited_at?: string
+          invited_by?: string | null
+          invited_by_name?: string
+          phone?: string
+          revoked_at?: string | null
+          segment?: string
+          service: string
+          status?: string
+          token?: string
+          updated_at?: string
+          via_email?: boolean
+          via_whatsapp?: boolean
+        }
+        Update: {
+          approved_at?: string | null
+          approved_ip?: string
+          approved_user_agent?: string
+          company?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          invite_email_status?: string
+          invite_whatsapp_status?: string
+          invited_at?: string
+          invited_by?: string | null
+          invited_by_name?: string
+          phone?: string
+          revoked_at?: string | null
+          segment?: string
+          service?: string
+          status?: string
+          token?: string
+          updated_at?: string
+          via_email?: boolean
+          via_whatsapp?: boolean
+        }
+        Relationships: []
+      }
       service_pricing: {
         Row: {
           activities: Json
