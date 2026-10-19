@@ -18,6 +18,7 @@ import { Route as BrasilRouteImport } from './routes/brasil'
 import { Route as CareersRouteImport } from './routes/careers'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContentRouteImport } from './routes/content'
+import { Route as DescadastroRouteImport } from './routes/descadastro'
 import { Route as EscopoinicialRouteImport } from './routes/escopoinicial'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
 import { Route as GuiaGestaoRouteImport } from './routes/guia-gestao'
@@ -134,6 +135,11 @@ const ContactRoute = ContactRouteImport.update({
 const ContentRoute = ContentRouteImport.update({
   id: '/content',
   path: '/content',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DescadastroRoute = DescadastroRouteImport.update({
+  id: '/descadastro',
+  path: '/descadastro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EscopoinicialRoute = EscopoinicialRouteImport.update({
@@ -516,6 +522,7 @@ export interface FileRoutesByFullPath {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/descadastro': typeof DescadastroRoute
   '/escopoinicial': typeof EscopoinicialRoute
   '/ferramentas': typeof FerramentasRoute
   '/guia-gestao': typeof GuiaGestaoRoute
@@ -599,6 +606,7 @@ export interface FileRoutesByTo {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/descadastro': typeof DescadastroRoute
   '/escopoinicial': typeof EscopoinicialRoute
   '/ferramentas': typeof FerramentasRoute
   '/guia-gestao': typeof GuiaGestaoRoute
@@ -683,6 +691,7 @@ export interface FileRoutesById {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/descadastro': typeof DescadastroRoute
   '/escopoinicial': typeof EscopoinicialRoute
   '/ferramentas': typeof FerramentasRoute
   '/guia-gestao': typeof GuiaGestaoRoute
@@ -768,6 +777,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/descadastro'
     | '/escopoinicial'
     | '/ferramentas'
     | '/guia-gestao'
@@ -851,6 +861,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/descadastro'
     | '/escopoinicial'
     | '/ferramentas'
     | '/guia-gestao'
@@ -934,6 +945,7 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/descadastro'
     | '/escopoinicial'
     | '/ferramentas'
     | '/guia-gestao'
@@ -1018,6 +1030,7 @@ export interface RootRouteChildren {
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   ContentRoute: typeof ContentRoute
+  DescadastroRoute: typeof DescadastroRoute
   EscopoinicialRoute: typeof EscopoinicialRoute
   FerramentasRoute: typeof FerramentasRoute
   GuiaGestaoRoute: typeof GuiaGestaoRoute
@@ -1155,6 +1168,13 @@ declare module '@tanstack/react-router' {
       path: '/content'
       fullPath: '/content'
       preLoaderRoute: typeof ContentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/descadastro': {
+      id: '/descadastro'
+      path: '/descadastro'
+      fullPath: '/descadastro'
+      preLoaderRoute: typeof DescadastroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/escopoinicial': {
@@ -1674,6 +1694,7 @@ const rootRouteChildren: RootRouteChildren = {
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   ContentRoute: ContentRoute,
+  DescadastroRoute: DescadastroRoute,
   EscopoinicialRoute: EscopoinicialRoute,
   FerramentasRoute: FerramentasRoute,
   GuiaGestaoRoute: GuiaGestaoRoute,
