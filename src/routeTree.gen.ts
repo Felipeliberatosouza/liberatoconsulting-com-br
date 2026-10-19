@@ -58,6 +58,7 @@ import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
 import { Route as AdminPrecificacaoRouteImport } from './routes/admin.precificacao'
 import { Route as AdminProjetosRouteImport } from './routes/admin.projetos'
 import { Route as AdminPropagandaRouteImport } from './routes/admin.propaganda'
+import { Route as AdminProspeccaoRouteImport } from './routes/admin.prospeccao'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as AdminServicosRouteImport } from './routes/admin.servicos'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -335,6 +336,11 @@ const AdminPropagandaRoute = AdminPropagandaRouteImport.update({
   path: '/admin/propaganda',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminProspeccaoRoute = AdminProspeccaoRouteImport.update({
+  id: '/admin/prospeccao',
+  path: '/admin/prospeccao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
   id: '/admin/reset-password',
   path: '/admin/reset-password',
@@ -537,6 +543,7 @@ export interface FileRoutesByFullPath {
   '/admin/precificacao': typeof AdminPrecificacaoRoute
   '/admin/projetos': typeof AdminProjetosRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
+  '/admin/prospeccao': typeof AdminProspeccaoRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/servicos': typeof AdminServicosRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -617,6 +624,7 @@ export interface FileRoutesByTo {
   '/admin/precificacao': typeof AdminPrecificacaoRoute
   '/admin/projetos': typeof AdminProjetosRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
+  '/admin/prospeccao': typeof AdminProspeccaoRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/servicos': typeof AdminServicosRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -698,6 +706,7 @@ export interface FileRoutesById {
   '/admin/precificacao': typeof AdminPrecificacaoRoute
   '/admin/projetos': typeof AdminProjetosRoute
   '/admin/propaganda': typeof AdminPropagandaRoute
+  '/admin/prospeccao': typeof AdminProspeccaoRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/servicos': typeof AdminServicosRoute
   '/admin/settings': typeof AdminSettingsRoute
@@ -780,6 +789,7 @@ export interface FileRouteTypes {
     | '/admin/precificacao'
     | '/admin/projetos'
     | '/admin/propaganda'
+    | '/admin/prospeccao'
     | '/admin/reset-password'
     | '/admin/servicos'
     | '/admin/settings'
@@ -860,6 +870,7 @@ export interface FileRouteTypes {
     | '/admin/precificacao'
     | '/admin/projetos'
     | '/admin/propaganda'
+    | '/admin/prospeccao'
     | '/admin/reset-password'
     | '/admin/servicos'
     | '/admin/settings'
@@ -940,6 +951,7 @@ export interface FileRouteTypes {
     | '/admin/precificacao'
     | '/admin/projetos'
     | '/admin/propaganda'
+    | '/admin/prospeccao'
     | '/admin/reset-password'
     | '/admin/servicos'
     | '/admin/settings'
@@ -1021,6 +1033,7 @@ export interface RootRouteChildren {
   AdminPrecificacaoRoute: typeof AdminPrecificacaoRoute
   AdminProjetosRoute: typeof AdminProjetosRoute
   AdminPropagandaRoute: typeof AdminPropagandaRoute
+  AdminProspeccaoRoute: typeof AdminProspeccaoRoute
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
   AdminServicosRoute: typeof AdminServicosRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
@@ -1398,6 +1411,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPropagandaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/prospeccao': {
+      id: '/admin/prospeccao'
+      path: '/admin/prospeccao'
+      fullPath: '/admin/prospeccao'
+      preLoaderRoute: typeof AdminProspeccaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/reset-password': {
       id: '/admin/reset-password'
       path: '/admin/reset-password'
@@ -1653,6 +1673,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminPrecificacaoRoute: AdminPrecificacaoRoute,
   AdminProjetosRoute: AdminProjetosRoute,
   AdminPropagandaRoute: AdminPropagandaRoute,
+  AdminProspeccaoRoute: AdminProspeccaoRoute,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
   AdminServicosRoute: AdminServicosRoute,
   AdminSettingsRoute: AdminSettingsRoute,
