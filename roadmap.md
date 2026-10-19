@@ -85,3 +85,10 @@
 - [x] Pesquisas públicas (serviço executado / não executado, 3 perguntas, 4 idiomas)
 - [x] Dashboard de satisfação com links em Projetos e Pessoas e clientes
 - [x] Envio por e-mail dos links de Escopo e Satisfação a contatos do CRM (modelos editáveis)
+
+## Ferramentas de gestão interativas (19/10/2026)
+- [x] Criação com IA (prompt ou planilha Excel), agentes projetista + auditor e testes de cálculo
+- [x] Custo de IA por ferramenta, markup e preço de venda; gratuita ou paga
+- [x] Página do cliente: coleta de dados, resultados, gráfico, PDF e PowerPoint com dados da empresa
+- [x] Cadastro de compra com CPF/CNPJ e confirmação de celular; cobrança PIX/boleto/cartão via Asaas
+- [ ] Chaves do Asaas (aguardando o usuário)

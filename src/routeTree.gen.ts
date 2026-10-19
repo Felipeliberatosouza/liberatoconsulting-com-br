@@ -50,6 +50,7 @@ import { Route as AdminEmpresaRouteImport } from './routes/admin.empresa'
 import { Route as AdminEnviosRouteImport } from './routes/admin.envios'
 import { Route as AdminFerramentasRouteImport } from './routes/admin.ferramentas'
 import { Route as AdminFerramentasClientesRouteImport } from './routes/admin.ferramentas-clientes'
+import { Route as AdminFerramentasInterativasRouteImport } from './routes/admin.ferramentas-interativas'
 import { Route as AdminHeroRouteImport } from './routes/admin.hero'
 import { Route as AdminHistoricoRouteImport } from './routes/admin.historico'
 import { Route as AdminIndicadoresRouteImport } from './routes/admin.indicadores'
@@ -72,6 +73,7 @@ import { Route as BoletimCancelarRouteImport } from './routes/boletim.cancelar'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
 import { Route as ContentSlugRouteImport } from './routes/content_.$slug'
 import { Route as ContentEnviarRouteImport } from './routes/content_.enviar'
+import { Route as FerramentasSlugRouteImport } from './routes/ferramentas_.$slug'
 import { Route as NewsletterSlugRouteImport } from './routes/newsletter.$slug'
 import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
@@ -81,6 +83,7 @@ import { Route as AdminProjetosApresentacoesRouteImport } from './routes/admin.p
 import { Route as AdminProjetosDiagnosticoRouteImport } from './routes/admin.projetos_.diagnostico'
 import { Route as AdminProjetosEscoposRouteImport } from './routes/admin.projetos_.escopos'
 import { Route as AdminProjetosSatisfacaoRouteImport } from './routes/admin.projetos_.satisfacao'
+import { Route as ApiPublicAsaasWebhookRouteImport } from './routes/api/public/asaas-webhook'
 import { Route as ApiPublicBulletinWeeklyRouteImport } from './routes/api/public/bulletin-weekly'
 import { Route as ApiPublicCrmBirthdaysRouteImport } from './routes/api/public/crm-birthdays'
 import { Route as ApiPublicIndicatorsRefreshRouteImport } from './routes/api/public/indicators-refresh'
@@ -299,6 +302,12 @@ const AdminFerramentasClientesRoute =
     path: '/admin/ferramentas-clientes',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AdminFerramentasInterativasRoute =
+  AdminFerramentasInterativasRouteImport.update({
+    id: '/admin/ferramentas-interativas',
+    path: '/admin/ferramentas-interativas',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminHeroRoute = AdminHeroRouteImport.update({
   id: '/admin/hero',
   path: '/admin/hero',
@@ -409,6 +418,11 @@ const ContentEnviarRoute = ContentEnviarRouteImport.update({
   path: '/content/enviar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FerramentasSlugRoute = FerramentasSlugRouteImport.update({
+  id: '/ferramentas_/$slug',
+  path: '/ferramentas/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NewsletterSlugRoute = NewsletterSlugRouteImport.update({
   id: '/newsletter/$slug',
   path: '/newsletter/$slug',
@@ -455,6 +469,11 @@ const AdminProjetosEscoposRoute = AdminProjetosEscoposRouteImport.update({
 const AdminProjetosSatisfacaoRoute = AdminProjetosSatisfacaoRouteImport.update({
   id: '/admin/projetos_/satisfacao',
   path: '/admin/projetos/satisfacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAsaasWebhookRoute = ApiPublicAsaasWebhookRouteImport.update({
+  id: '/api/public/asaas-webhook',
+  path: '/api/public/asaas-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicBulletinWeeklyRoute = ApiPublicBulletinWeeklyRouteImport.update({
@@ -553,6 +572,7 @@ export interface FileRoutesByFullPath {
   '/admin/envios': typeof AdminEnviosRoute
   '/admin/ferramentas': typeof AdminFerramentasRoute
   '/admin/ferramentas-clientes': typeof AdminFerramentasClientesRoute
+  '/admin/ferramentas-interativas': typeof AdminFerramentasInterativasRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
@@ -575,6 +595,7 @@ export interface FileRoutesByFullPath {
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
   '/content/enviar': typeof ContentEnviarRoute
+  '/ferramentas/$slug': typeof FerramentasSlugRoute
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
@@ -585,6 +606,7 @@ export interface FileRoutesByFullPath {
   '/admin/projetos/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
   '/admin/projetos/satisfacao': typeof AdminProjetosSatisfacaoRoute
+  '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
@@ -637,6 +659,7 @@ export interface FileRoutesByTo {
   '/admin/envios': typeof AdminEnviosRoute
   '/admin/ferramentas': typeof AdminFerramentasRoute
   '/admin/ferramentas-clientes': typeof AdminFerramentasClientesRoute
+  '/admin/ferramentas-interativas': typeof AdminFerramentasInterativasRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
@@ -659,6 +682,7 @@ export interface FileRoutesByTo {
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
   '/content/enviar': typeof ContentEnviarRoute
+  '/ferramentas/$slug': typeof FerramentasSlugRoute
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
@@ -669,6 +693,7 @@ export interface FileRoutesByTo {
   '/admin/projetos/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
   '/admin/projetos/satisfacao': typeof AdminProjetosSatisfacaoRoute
+  '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
@@ -722,6 +747,7 @@ export interface FileRoutesById {
   '/admin/envios': typeof AdminEnviosRoute
   '/admin/ferramentas': typeof AdminFerramentasRoute
   '/admin/ferramentas-clientes': typeof AdminFerramentasClientesRoute
+  '/admin/ferramentas-interativas': typeof AdminFerramentasInterativasRoute
   '/admin/hero': typeof AdminHeroRoute
   '/admin/historico': typeof AdminHistoricoRoute
   '/admin/indicadores': typeof AdminIndicadoresRoute
@@ -744,6 +770,7 @@ export interface FileRoutesById {
   '/brasil_/$slug': typeof BrasilSlugRoute
   '/content_/$slug': typeof ContentSlugRoute
   '/content_/enviar': typeof ContentEnviarRoute
+  '/ferramentas_/$slug': typeof FerramentasSlugRoute
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
@@ -754,6 +781,7 @@ export interface FileRoutesById {
   '/admin/projetos_/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos_/escopos': typeof AdminProjetosEscoposRoute
   '/admin/projetos_/satisfacao': typeof AdminProjetosSatisfacaoRoute
+  '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
@@ -808,6 +836,7 @@ export interface FileRouteTypes {
     | '/admin/envios'
     | '/admin/ferramentas'
     | '/admin/ferramentas-clientes'
+    | '/admin/ferramentas-interativas'
     | '/admin/hero'
     | '/admin/historico'
     | '/admin/indicadores'
@@ -830,6 +859,7 @@ export interface FileRouteTypes {
     | '/brasil/$slug'
     | '/content/$slug'
     | '/content/enviar'
+    | '/ferramentas/$slug'
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
@@ -840,6 +870,7 @@ export interface FileRouteTypes {
     | '/admin/projetos/diagnostico'
     | '/admin/projetos/escopos'
     | '/admin/projetos/satisfacao'
+    | '/api/public/asaas-webhook'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
@@ -892,6 +923,7 @@ export interface FileRouteTypes {
     | '/admin/envios'
     | '/admin/ferramentas'
     | '/admin/ferramentas-clientes'
+    | '/admin/ferramentas-interativas'
     | '/admin/hero'
     | '/admin/historico'
     | '/admin/indicadores'
@@ -914,6 +946,7 @@ export interface FileRouteTypes {
     | '/brasil/$slug'
     | '/content/$slug'
     | '/content/enviar'
+    | '/ferramentas/$slug'
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
@@ -924,6 +957,7 @@ export interface FileRouteTypes {
     | '/admin/projetos/diagnostico'
     | '/admin/projetos/escopos'
     | '/admin/projetos/satisfacao'
+    | '/api/public/asaas-webhook'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
@@ -976,6 +1010,7 @@ export interface FileRouteTypes {
     | '/admin/envios'
     | '/admin/ferramentas'
     | '/admin/ferramentas-clientes'
+    | '/admin/ferramentas-interativas'
     | '/admin/hero'
     | '/admin/historico'
     | '/admin/indicadores'
@@ -998,6 +1033,7 @@ export interface FileRouteTypes {
     | '/brasil_/$slug'
     | '/content_/$slug'
     | '/content_/enviar'
+    | '/ferramentas_/$slug'
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
@@ -1008,6 +1044,7 @@ export interface FileRouteTypes {
     | '/admin/projetos_/diagnostico'
     | '/admin/projetos_/escopos'
     | '/admin/projetos_/satisfacao'
+    | '/api/public/asaas-webhook'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
@@ -1061,6 +1098,7 @@ export interface RootRouteChildren {
   AdminEnviosRoute: typeof AdminEnviosRoute
   AdminFerramentasRoute: typeof AdminFerramentasRoute
   AdminFerramentasClientesRoute: typeof AdminFerramentasClientesRoute
+  AdminFerramentasInterativasRoute: typeof AdminFerramentasInterativasRoute
   AdminHeroRoute: typeof AdminHeroRoute
   AdminHistoricoRoute: typeof AdminHistoricoRoute
   AdminIndicadoresRoute: typeof AdminIndicadoresRoute
@@ -1083,6 +1121,7 @@ export interface RootRouteChildren {
   BrasilSlugRoute: typeof BrasilSlugRoute
   ContentSlugRoute: typeof ContentSlugRoute
   ContentEnviarRoute: typeof ContentEnviarRoute
+  FerramentasSlugRoute: typeof FerramentasSlugRoute
   NewsletterSlugRoute: typeof NewsletterSlugRoute
   NewsletterUnsubscribeRoute: typeof NewsletterUnsubscribeRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
@@ -1093,6 +1132,7 @@ export interface RootRouteChildren {
   AdminProjetosDiagnosticoRoute: typeof AdminProjetosDiagnosticoRoute
   AdminProjetosEscoposRoute: typeof AdminProjetosEscoposRoute
   AdminProjetosSatisfacaoRoute: typeof AdminProjetosSatisfacaoRoute
+  ApiPublicAsaasWebhookRoute: typeof ApiPublicAsaasWebhookRoute
   ApiPublicBulletinWeeklyRoute: typeof ApiPublicBulletinWeeklyRoute
   ApiPublicCrmBirthdaysRoute: typeof ApiPublicCrmBirthdaysRoute
   ApiPublicIndicatorsRefreshRoute: typeof ApiPublicIndicatorsRefreshRoute
@@ -1394,6 +1434,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFerramentasClientesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/ferramentas-interativas': {
+      id: '/admin/ferramentas-interativas'
+      path: '/admin/ferramentas-interativas'
+      fullPath: '/admin/ferramentas-interativas'
+      preLoaderRoute: typeof AdminFerramentasInterativasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/hero': {
       id: '/admin/hero'
       path: '/admin/hero'
@@ -1548,6 +1595,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContentEnviarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ferramentas_/$slug': {
+      id: '/ferramentas_/$slug'
+      path: '/ferramentas/$slug'
+      fullPath: '/ferramentas/$slug'
+      preLoaderRoute: typeof FerramentasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/newsletter/$slug': {
       id: '/newsletter/$slug'
       path: '/newsletter/$slug'
@@ -1609,6 +1663,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/projetos/satisfacao'
       fullPath: '/admin/projetos/satisfacao'
       preLoaderRoute: typeof AdminProjetosSatisfacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/asaas-webhook': {
+      id: '/api/public/asaas-webhook'
+      path: '/api/public/asaas-webhook'
+      fullPath: '/api/public/asaas-webhook'
+      preLoaderRoute: typeof ApiPublicAsaasWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/bulletin-weekly': {
@@ -1725,6 +1786,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminEnviosRoute: AdminEnviosRoute,
   AdminFerramentasRoute: AdminFerramentasRoute,
   AdminFerramentasClientesRoute: AdminFerramentasClientesRoute,
+  AdminFerramentasInterativasRoute: AdminFerramentasInterativasRoute,
   AdminHeroRoute: AdminHeroRoute,
   AdminHistoricoRoute: AdminHistoricoRoute,
   AdminIndicadoresRoute: AdminIndicadoresRoute,
@@ -1747,6 +1809,7 @@ const rootRouteChildren: RootRouteChildren = {
   BrasilSlugRoute: BrasilSlugRoute,
   ContentSlugRoute: ContentSlugRoute,
   ContentEnviarRoute: ContentEnviarRoute,
+  FerramentasSlugRoute: FerramentasSlugRoute,
   NewsletterSlugRoute: NewsletterSlugRoute,
   NewsletterUnsubscribeRoute: NewsletterUnsubscribeRoute,
   ServicesSlugRoute: ServicesSlugRoute,
@@ -1757,6 +1820,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminProjetosDiagnosticoRoute: AdminProjetosDiagnosticoRoute,
   AdminProjetosEscoposRoute: AdminProjetosEscoposRoute,
   AdminProjetosSatisfacaoRoute: AdminProjetosSatisfacaoRoute,
+  ApiPublicAsaasWebhookRoute: ApiPublicAsaasWebhookRoute,
   ApiPublicBulletinWeeklyRoute: ApiPublicBulletinWeeklyRoute,
   ApiPublicCrmBirthdaysRoute: ApiPublicCrmBirthdaysRoute,
   ApiPublicIndicatorsRefreshRoute: ApiPublicIndicatorsRefreshRoute,

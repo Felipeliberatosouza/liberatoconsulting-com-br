@@ -43,6 +43,13 @@
       "when": 1792421210733,
       "tag": "0005_prospect_email",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792433720585,
+      "tag": "0006_interactive_management_tools",
+      "breakpoints": true
     }
   ]
 }
