@@ -7,6 +7,7 @@ import { listSubscribers } from "@/lib/newsletter.functions";
 import { listBulletinSubscribers } from "@/lib/bulletin.functions";
 import { listToolClients } from "@/lib/tools.functions";
 import { listScopeSubmissions } from "@/lib/projects.functions";
+import { PersonPanel } from "@/components/PersonPanel";
 
 type Person = {
   key: string;
@@ -54,6 +55,7 @@ function arr(v: unknown): any[] {
 export function AllPeopleTab({ onOpenTab }: { onOpenTab: (tab: string) => void }) {
   const [q, setQ] = useState("");
   const [tag, setTag] = useState("");
+  const [open, setOpen] = useState<Person | null>(null);
   const team = useQuery({ queryKey: ["all-team"], queryFn: safe(() => listTeam()) });
   const subs = useQuery({ queryKey: ["all-subs"], queryFn: safe(() => listSubscribers()) });
   const bull = useQuery({ queryKey: ["all-bull"], queryFn: safe(() => listBulletinSubscribers()) });
@@ -111,6 +113,7 @@ export function AllPeopleTab({ onOpenTab }: { onOpenTab: (tab: string) => void }
 
   return (
     <div className="space-y-4">
+      {open && <PersonPanel person={open} onClose={() => setOpen(null)} />
       <div className="flex flex-wrap gap-2">
         <button
           onClick={() => setTag("")}
@@ -149,7 +152,17 @@ export function AllPeopleTab({ onOpenTab }: { onOpenTab: (tab: string) => void }
           <tbody>
             {rows.map((p) => (
               <tr key={p.key} className="border-t border-border align-top">
-                <td className="px-3 py-2 font-medium">{p.name || "—"}</td>
+                <td className="px-3 py-2 font-medium">
+                  <button className="text-left hover:text-accent hover:underline" onClick={() => setOpen(p)}>
+                    {p.name || "—"}
+                  </button>
+                  <button
+                    className="mt-1 block text-xs font-medium text-accent hover:underline"
+                    onClick={() => setOpen(p)}
+                  >
+                    Gerenciar / excluir
+                  </button>
+                </td>
                 <td className="px-3 py-2">{p.email || "—"}</td>
                 <td className="px-3 py-2">{p.phone || "—"}</td>
                 <td className="px-3 py-2">{p.company || "—"}</td>
