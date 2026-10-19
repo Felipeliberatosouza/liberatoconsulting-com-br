@@ -1823,6 +1823,33 @@ export type Database = {
         }
         Relationships: []
       }
+      prospect_unsubscribes: {
+        Row: {
+          company: string
+          created_at: string
+          email: string
+          id: string
+          ip: string
+          user_agent: string
+        }
+        Insert: {
+          company?: string
+          created_at?: string
+          email: string
+          id?: string
+          ip?: string
+          user_agent?: string
+        }
+        Update: {
+          company?: string
+          created_at?: string
+          email?: string
+          id?: string
+          ip?: string
+          user_agent?: string
+        }
+        Relationships: []
+      }
       quotes: {
         Row: {
           client_name: string
