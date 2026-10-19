@@ -40,6 +40,7 @@ const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
       { to: "/admin/brasil", label: "Dados do Brasil" },
       { to: "/admin/indicadores", label: "Indicadores econômicos" },
       { to: "/admin/ferramentas", label: "Ferramentas gratuitas" },
+      { to: "/admin/ferramentas-interativas", label: "Ferramentas de gestão com IA" },
       { to: "/admin/approvals", label: "Aprovações" },
     ],
   },

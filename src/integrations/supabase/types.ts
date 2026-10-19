@@ -74,6 +74,54 @@ export type Database = {
         }
         Relationships: []
       }
+      billing_profiles: {
+        Row: {
+          address_number: string
+          asaas_customer_id: string | null
+          cpf_cnpj: string
+          created_at: string
+          email: string
+          full_name: string
+          phone: string
+          phone_code_expires_at: string | null
+          phone_code_hash: string | null
+          phone_verified_at: string | null
+          postal_code: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address_number?: string
+          asaas_customer_id?: string | null
+          cpf_cnpj: string
+          created_at?: string
+          email: string
+          full_name: string
+          phone: string
+          phone_code_expires_at?: string | null
+          phone_code_hash?: string | null
+          phone_verified_at?: string | null
+          postal_code?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address_number?: string
+          asaas_customer_id?: string | null
+          cpf_cnpj?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          phone?: string
+          phone_code_expires_at?: string | null
+          phone_code_hash?: string | null
+          phone_verified_at?: string | null
+          postal_code?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       brazil_scope_content: {
         Row: {
           body: string
@@ -1221,6 +1269,168 @@ export type Database = {
           slug?: string
           subject?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      interactive_tool_ai_usage: {
+        Row: {
+          cost_brl: number
+          created_at: string
+          id: string
+          input_tokens: number
+          model: string
+          output_tokens: number
+          step: string
+          tool_id: string | null
+        }
+        Insert: {
+          cost_brl?: number
+          created_at?: string
+          id?: string
+          input_tokens?: number
+          model: string
+          output_tokens?: number
+          step: string
+          tool_id?: string | null
+        }
+        Update: {
+          cost_brl?: number
+          created_at?: string
+          id?: string
+          input_tokens?: number
+          model?: string
+          output_tokens?: number
+          step?: string
+          tool_id?: string | null
+        }
+        Relationships: []
+      }
+      interactive_tool_orders: {
+        Row: {
+          amount_brl: number
+          asaas_payment_id: string | null
+          bank_slip_url: string | null
+          billing_type: string
+          created_at: string
+          id: string
+          invoice_url: string | null
+          paid_at: string | null
+          pix_image: string | null
+          pix_payload: string | null
+          status: string
+          tool_id: string
+          user_id: string
+        }
+        Insert: {
+          amount_brl: number
+          asaas_payment_id?: string | null
+          bank_slip_url?: string | null
+          billing_type: string
+          created_at?: string
+          id?: string
+          invoice_url?: string | null
+          paid_at?: string | null
+          pix_image?: string | null
+          pix_payload?: string | null
+          status?: string
+          tool_id: string
+          user_id: string
+        }
+        Update: {
+          amount_brl?: number
+          asaas_payment_id?: string | null
+          bank_slip_url?: string | null
+          billing_type?: string
+          created_at?: string
+          id?: string
+          invoice_url?: string | null
+          paid_at?: string | null
+          pix_image?: string | null
+          pix_payload?: string | null
+          status?: string
+          tool_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      interactive_tool_runs: {
+        Row: {
+          created_at: string
+          id: string
+          inputs: Json
+          results: Json
+          tool_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inputs?: Json
+          results?: Json
+          tool_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inputs?: Json
+          results?: Json
+          tool_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      interactive_tools: {
+        Row: {
+          ai_cost_brl: number
+          category: string
+          created_at: string
+          created_by: string | null
+          id: string
+          markup_pct: number
+          price_brl: number
+          pricing_mode: string
+          slug: string
+          spec: Json
+          status: string
+          summary: string
+          title: string
+          updated_at: string
+          verification: Json
+        }
+        Insert: {
+          ai_cost_brl?: number
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          markup_pct?: number
+          price_brl?: number
+          pricing_mode?: string
+          slug: string
+          spec?: Json
+          status?: string
+          summary?: string
+          title: string
+          updated_at?: string
+          verification?: Json
+        }
+        Update: {
+          ai_cost_brl?: number
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          markup_pct?: number
+          price_brl?: number
+          pricing_mode?: string
+          slug?: string
+          spec?: Json
+          status?: string
+          summary?: string
+          title?: string
+          updated_at?: string
+          verification?: Json
         }
         Relationships: []
       }
