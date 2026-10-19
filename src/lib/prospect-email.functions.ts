@@ -83,7 +83,7 @@ export const sendProspectEmails = createServerFn({ method: "POST" })
         body: fill(data.body),
         appendix: `Não deseja mais receber estes e-mails? Cancele aqui: ${unsubUrl}`,
         brandFooter,
-        logoUrl: brand.logoUrl.startsWith("http") ? brand.logoUrl : undefined,
+        logoUrl: srv.EMAIL_LOGO_CID,
       });
       const all = [...to, ...cc, ...bcc];
       try {
