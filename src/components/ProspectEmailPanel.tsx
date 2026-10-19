@@ -123,7 +123,10 @@ export function ProspectEmailPanel() {
 
   const send = async () => {
     const valid = groups.filter((g) => g.to.length > 0);
-    if (valid.length === 0) return toast.error("Escolha ao menos um destinatário como “Para”.");
+    if (valid.length === 0) {
+      toast.error("Escolha ao menos um destinatário como “Para”.");
+      return;
+    }
     const total = valid.reduce((n, g) => n + g.to.length + g.cc.length + g.bcc.length, 0);
     if (!confirm(`Enviar ${valid.length} e-mail(s) para ${total} pessoa(s)?`)) return;
     setSending(true);
