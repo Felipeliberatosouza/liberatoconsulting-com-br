@@ -30,7 +30,7 @@ export const Route = createFileRoute("/satisfacao")({
   component: SurveyPage,
 });
 
-function Stars({ value, onChange }: { value?: number; onChange: (v: number) => void }) {
+function Stars({ value, onChange }: { value: number | undefined; onChange: (v: number) => void }) {
   return (
     <div className="mt-3 flex gap-2">
       {[1, 2, 3, 4, 5].map((n) => (
@@ -120,7 +120,10 @@ function SurveyForm({ kind, lang }: { kind: SurveyKind; lang: Lang }) {
         },
       }),
     onSuccess: (res) => {
-      if (!res.ok) return toast.error(t.error);
+      if (!res.ok) {
+        toast.error(t.error);
+        return;
+      }
       setSent(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
