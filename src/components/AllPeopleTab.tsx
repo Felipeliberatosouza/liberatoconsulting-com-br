@@ -113,7 +113,7 @@ export function AllPeopleTab({ onOpenTab }: { onOpenTab: (tab: string) => void }
 
   return (
     <div className="space-y-4">
-      {open && <PersonPanel person={open} onClose={() => setOpen(null)} />
+      {open && <PersonPanel person={open} onClose={() => setOpen(null)} />}
       <div className="flex flex-wrap gap-2">
         <button
           onClick={() => setTag("")}
