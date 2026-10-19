@@ -5,6 +5,7 @@ import { ArrowLeft, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
+import { FormLinkBar } from "@/components/SendFormLinkDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -88,6 +89,7 @@ function ScopesPage() {
       description="Respostas enviadas pelo formulário público de escopo inicial, com o guia do consultor para leitura rápida."
       requireAdmin
     >
+      <div className="mb-6"><FormLinkBar form="escopo" /></div>
       <Link
         to="/admin/projetos"
         className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-accent"

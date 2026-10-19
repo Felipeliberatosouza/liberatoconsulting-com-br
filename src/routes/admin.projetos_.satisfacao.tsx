@@ -136,7 +136,7 @@ function SatisfactionPage() {
                 <XAxis type="number" domain={[0, 5]} />
                 <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 12 }} />
                 <Tooltip />
-                <Bar dataKey="nota" fill="hsl(var(--accent))" radius={[0, 6, 6, 0]} />
+                <Bar dataKey="nota" fill="var(--accent)" radius={[0, 6, 6, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -153,7 +153,7 @@ function SatisfactionPage() {
                   <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                   <YAxis allowDecimals={false} />
                   <Tooltip />
-                  <Bar dataKey="value" name="Respostas" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="value" name="Respostas" fill="var(--primary)" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -168,8 +168,8 @@ function SatisfactionPage() {
                 <XAxis dataKey="mes" />
                 <YAxis allowDecimals={false} />
                 <Tooltip />
-                <Bar dataKey="Executado" stackId="a" fill="hsl(var(--accent))" />
-                <Bar dataKey="Não executado" stackId="a" fill="hsl(var(--primary))" />
+                <Bar dataKey="Executado" stackId="a" fill="var(--accent)" />
+                <Bar dataKey="Não executado" stackId="a" fill="var(--primary)" />
               </BarChart>
             </ResponsiveContainer>
           </div>
