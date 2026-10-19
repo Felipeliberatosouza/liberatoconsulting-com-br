@@ -110,7 +110,10 @@ export function PersonPanel({ person, onClose }: { person: Basic; onClose: () =>
   async function removeAll() {
     if (!confirm(`Excluir ${person.email} de TODOS os cadastros do site? Esta ação não pode ser desfeita.`)) return;
     const r = await deletePerson({ data: { email: person.email } });
-    if (!r.ok) return toast.error(r.error);
+    if (!r.ok) {
+      toast.error(r.error);
+      return;
+    }
     toast.success("Usuário excluído.");
     qc.invalidateQueries();
     onClose();
