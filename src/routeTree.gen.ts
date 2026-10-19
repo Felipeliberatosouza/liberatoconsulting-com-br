@@ -26,6 +26,7 @@ import { Route as NovoconsultorRouteImport } from './routes/novoconsultor'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as SatisfacaoRouteImport } from './routes/satisfacao'
 import { Route as SitemapEnDotxmlRouteImport } from './routes/sitemap-en[.]xml'
 import { Route as SitemapEsDotxmlRouteImport } from './routes/sitemap-es[.]xml'
 import { Route as SitemapPtDotxmlRouteImport } from './routes/sitemap-pt[.]xml'
@@ -78,6 +79,7 @@ import { Route as AdminProjetosApresentacaoRouteImport } from './routes/admin.pr
 import { Route as AdminProjetosApresentacoesRouteImport } from './routes/admin.projetos_.apresentacoes'
 import { Route as AdminProjetosDiagnosticoRouteImport } from './routes/admin.projetos_.diagnostico'
 import { Route as AdminProjetosEscoposRouteImport } from './routes/admin.projetos_.escopos'
+import { Route as AdminProjetosSatisfacaoRouteImport } from './routes/admin.projetos_.satisfacao'
 import { Route as ApiPublicBulletinWeeklyRouteImport } from './routes/api/public/bulletin-weekly'
 import { Route as ApiPublicCrmBirthdaysRouteImport } from './routes/api/public/crm-birthdays'
 import { Route as ApiPublicIndicatorsRefreshRouteImport } from './routes/api/public/indicators-refresh'
@@ -172,6 +174,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SatisfacaoRoute = SatisfacaoRouteImport.update({
+  id: '/satisfacao',
+  path: '/satisfacao',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapEnDotxmlRoute = SitemapEnDotxmlRouteImport.update({
@@ -439,6 +446,11 @@ const AdminProjetosEscoposRoute = AdminProjetosEscoposRouteImport.update({
   path: '/admin/projetos/escopos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminProjetosSatisfacaoRoute = AdminProjetosSatisfacaoRouteImport.update({
+  id: '/admin/projetos_/satisfacao',
+  path: '/admin/projetos/satisfacao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicBulletinWeeklyRoute = ApiPublicBulletinWeeklyRouteImport.update({
   id: '/api/public/bulletin-weekly',
   path: '/api/public/bulletin-weekly',
@@ -512,6 +524,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/satisfacao': typeof SatisfacaoRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-es.xml': typeof SitemapEsDotxmlRoute
   '/sitemap-pt.xml': typeof SitemapPtDotxmlRoute
@@ -564,6 +577,7 @@ export interface FileRoutesByFullPath {
   '/admin/projetos/apresentacoes': typeof AdminProjetosApresentacoesRoute
   '/admin/projetos/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
+  '/admin/projetos/satisfacao': typeof AdminProjetosSatisfacaoRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
@@ -593,6 +607,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/satisfacao': typeof SatisfacaoRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-es.xml': typeof SitemapEsDotxmlRoute
   '/sitemap-pt.xml': typeof SitemapPtDotxmlRoute
@@ -645,6 +660,7 @@ export interface FileRoutesByTo {
   '/admin/projetos/apresentacoes': typeof AdminProjetosApresentacoesRoute
   '/admin/projetos/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
+  '/admin/projetos/satisfacao': typeof AdminProjetosSatisfacaoRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
@@ -675,6 +691,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/satisfacao': typeof SatisfacaoRoute
   '/sitemap-en.xml': typeof SitemapEnDotxmlRoute
   '/sitemap-es.xml': typeof SitemapEsDotxmlRoute
   '/sitemap-pt.xml': typeof SitemapPtDotxmlRoute
@@ -727,6 +744,7 @@ export interface FileRoutesById {
   '/admin/projetos_/apresentacoes': typeof AdminProjetosApresentacoesRoute
   '/admin/projetos_/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos_/escopos': typeof AdminProjetosEscoposRoute
+  '/admin/projetos_/satisfacao': typeof AdminProjetosSatisfacaoRoute
   '/api/public/bulletin-weekly': typeof ApiPublicBulletinWeeklyRoute
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
@@ -758,6 +776,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/robots.txt'
+    | '/satisfacao'
     | '/sitemap-en.xml'
     | '/sitemap-es.xml'
     | '/sitemap-pt.xml'
@@ -810,6 +829,7 @@ export interface FileRouteTypes {
     | '/admin/projetos/apresentacoes'
     | '/admin/projetos/diagnostico'
     | '/admin/projetos/escopos'
+    | '/admin/projetos/satisfacao'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
@@ -839,6 +859,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/robots.txt'
+    | '/satisfacao'
     | '/sitemap-en.xml'
     | '/sitemap-es.xml'
     | '/sitemap-pt.xml'
@@ -891,6 +912,7 @@ export interface FileRouteTypes {
     | '/admin/projetos/apresentacoes'
     | '/admin/projetos/diagnostico'
     | '/admin/projetos/escopos'
+    | '/admin/projetos/satisfacao'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
@@ -920,6 +942,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/reset-password'
     | '/robots.txt'
+    | '/satisfacao'
     | '/sitemap-en.xml'
     | '/sitemap-es.xml'
     | '/sitemap-pt.xml'
@@ -972,6 +995,7 @@ export interface FileRouteTypes {
     | '/admin/projetos_/apresentacoes'
     | '/admin/projetos_/diagnostico'
     | '/admin/projetos_/escopos'
+    | '/admin/projetos_/satisfacao'
     | '/api/public/bulletin-weekly'
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
@@ -1002,6 +1026,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SatisfacaoRoute: typeof SatisfacaoRoute
   SitemapEnDotxmlRoute: typeof SitemapEnDotxmlRoute
   SitemapEsDotxmlRoute: typeof SitemapEsDotxmlRoute
   SitemapPtDotxmlRoute: typeof SitemapPtDotxmlRoute
@@ -1054,6 +1079,7 @@ export interface RootRouteChildren {
   AdminProjetosApresentacoesRoute: typeof AdminProjetosApresentacoesRoute
   AdminProjetosDiagnosticoRoute: typeof AdminProjetosDiagnosticoRoute
   AdminProjetosEscoposRoute: typeof AdminProjetosEscoposRoute
+  AdminProjetosSatisfacaoRoute: typeof AdminProjetosSatisfacaoRoute
   ApiPublicBulletinWeeklyRoute: typeof ApiPublicBulletinWeeklyRoute
   ApiPublicCrmBirthdaysRoute: typeof ApiPublicCrmBirthdaysRoute
   ApiPublicIndicatorsRefreshRoute: typeof ApiPublicIndicatorsRefreshRoute
@@ -1185,6 +1211,13 @@ declare module '@tanstack/react-router' {
       path: '/robots.txt'
       fullPath: '/robots.txt'
       preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/satisfacao': {
+      id: '/satisfacao'
+      path: '/satisfacao'
+      fullPath: '/satisfacao'
+      preLoaderRoute: typeof SatisfacaoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-en.xml': {
@@ -1551,6 +1584,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProjetosEscoposRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/projetos_/satisfacao': {
+      id: '/admin/projetos_/satisfacao'
+      path: '/admin/projetos/satisfacao'
+      fullPath: '/admin/projetos/satisfacao'
+      preLoaderRoute: typeof AdminProjetosSatisfacaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/bulletin-weekly': {
       id: '/api/public/bulletin-weekly'
       path: '/api/public/bulletin-weekly'
@@ -1642,6 +1682,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
+  SatisfacaoRoute: SatisfacaoRoute,
   SitemapEnDotxmlRoute: SitemapEnDotxmlRoute,
   SitemapEsDotxmlRoute: SitemapEsDotxmlRoute,
   SitemapPtDotxmlRoute: SitemapPtDotxmlRoute,
@@ -1694,6 +1735,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminProjetosApresentacoesRoute: AdminProjetosApresentacoesRoute,
   AdminProjetosDiagnosticoRoute: AdminProjetosDiagnosticoRoute,
   AdminProjetosEscoposRoute: AdminProjetosEscoposRoute,
+  AdminProjetosSatisfacaoRoute: AdminProjetosSatisfacaoRoute,
   ApiPublicBulletinWeeklyRoute: ApiPublicBulletinWeeklyRoute,
   ApiPublicCrmBirthdaysRoute: ApiPublicCrmBirthdaysRoute,
   ApiPublicIndicatorsRefreshRoute: ApiPublicIndicatorsRefreshRoute,
