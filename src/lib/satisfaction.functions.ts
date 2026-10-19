@@ -69,26 +69,70 @@ export const deleteSatisfaction = createServerFn({ method: "POST" })
     return error ? { ok: false as const, error: error.message } : { ok: true as const };
   });
 
-/** Contatos do CRM com e-mail, para escolher os destinatários do link. */
+export type RecipientSource = "crm" | "escopo" | "diagnostico" | "site";
+
+/**
+ * Todos os clientes com quem houve contato (CRM, Escopo Inicial, Diagnóstico,
+ * formulários do site/WhatsApp), com e-mail. Candidatos do "Trabalhe conosco"
+ * são sempre excluídos.
+ */
 export const listLinkRecipients = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
-    const [companies, contacts] = await Promise.all([
-      context.supabase.from("crm_companies").select("id, name, trade_name, email").order("name"),
-      context.supabase.from("crm_contacts").select("id, company_id, full_name, email, role_title, active"),
+    const sb = context.supabase;
+    const [companies, contacts, scopes, diags, leads, apps] = await Promise.all([
+      sb.from("crm_companies").select("id, name, trade_name, email").order("name"),
+      sb.from("crm_contacts").select("id, company_id, full_name, email, role_title, active"),
+      sb.from("project_scope_submissions").select("id, company, respondent_name, respondent_role, email").limit(1000),
+      sb.from("project_diagnostics").select("id, client_name, scope_submission_id").limit(1000),
+      sb.from("leads").select("id, name, company, email").not("email", "is", null).limit(2000),
+      sb.from("job_applications").select("email").limit(5000),
     ]);
+    const blocked = new Set(((apps.data ?? []) as any[]).map((a) => String(a.email ?? "").trim().toLowerCase()).filter(Boolean));
+    type Contact = { name: string; email: string; role: string };
+    type Group = { id: string; name: string; source: RecipientSource; contacts: Contact[] };
+    const groups: Group[] = [];
+    const add = (g: Group, c: Contact) => {
+      const e = c.email.trim().toLowerCase();
+      if (!e.includes("@") || blocked.has(e)) return;
+      if (!g.contacts.some((x) => x.email.toLowerCase() === e)) g.contacts.push({ ...c, email: c.email.trim() });
+    };
+
     const people = (contacts.data ?? []) as any[];
-    return ((companies.data ?? []) as any[]).map((c) => {
-      const list = people
-        .filter((p) => p.company_id === c.id && p.email && p.active !== false)
-        .map((p) => ({ name: p.full_name as string, email: p.email as string, role: (p.role_title ?? "") as string }));
-      if (c.email && !list.some((p) => p.email.toLowerCase() === String(c.email).toLowerCase())) {
-        list.push({ name: (c.trade_name || c.name) as string, email: c.email as string, role: "E-mail da empresa" });
+    for (const c of (companies.data ?? []) as any[]) {
+      const g: Group = { id: `crm:${c.id}`, name: (c.trade_name || c.name) as string, source: "crm", contacts: [] };
+      for (const p of people.filter((p) => p.company_id === c.id && p.email && p.active !== false))
+        add(g, { name: p.full_name ?? "", email: p.email, role: p.role_title ?? "" });
+      if (c.email) add(g, { name: g.name, email: c.email, role: "E-mail da empresa" });
+      groups.push(g);
+    }
+
+    const scopeRows = (scopes.data ?? []) as any[];
+    const byKey = new Map<string, Group>();
+    const grouped = (source: RecipientSource, name: string) => {
+      const key = `${source}:${name.trim().toLowerCase() || "sem-empresa"}`;
+      let g = byKey.get(key);
+      if (!g) {
+        g = { id: key, name: name.trim() || "(sem empresa)", source, contacts: [] };
+        byKey.set(key, g);
+        groups.push(g);
       }
-      return { id: c.id as string, name: (c.trade_name || c.name) as string, contacts: list };
-    });
+      return g;
+    };
+    for (const s of scopeRows) {
+      if (s.email) add(grouped("escopo", s.company ?? ""), { name: s.respondent_name ?? "", email: s.email, role: s.respondent_role ?? "" });
+    }
+    const scopeById = new Map(scopeRows.map((s) => [s.id, s]));
+    for (const d of (diags.data ?? []) as any[]) {
+      const s = d.scope_submission_id ? scopeById.get(d.scope_submission_id) : null;
+      if (s?.email) add(grouped("diagnostico", d.client_name || s.company || ""), { name: s.respondent_name ?? "", email: s.email, role: s.respondent_role ?? "" });
+    }
+    for (const l of (leads.data ?? []) as any[]) {
+      if (l.email) add(grouped("site", l.company ?? ""), { name: l.name ?? "", email: l.email, role: "Formulário / WhatsApp" });
+    }
+    return groups.filter((g) => g.contacts.length > 0).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
   });
 
 const sendSchema = z.object({
