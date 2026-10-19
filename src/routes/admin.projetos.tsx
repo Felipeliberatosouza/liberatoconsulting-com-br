@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, ClipboardList, Copy, FileSpreadsheet, Presentation, Receipt, Wallet, Inbox, FileSearch } from "lucide-react";
-import { toast } from "sonner";
+import { ArrowRight, ClipboardList, FileSpreadsheet, Presentation, Receipt, Wallet, Inbox, FileSearch, Smile } from "lucide-react";
 
 import { AdminShell } from "@/components/AdminShell";
 import { getProjectsOverview } from "@/lib/projects.functions";
+import { FormLinkBar } from "@/components/SendFormLinkDialog";
 
 export const Route = createFileRoute("/admin/projetos")({
   head: () => ({
@@ -16,7 +16,6 @@ export const Route = createFileRoute("/admin/projetos")({
   component: ProjectsPage,
 });
 
-const PUBLIC_LINK = "https://liberatoconsulting.com.br/escopoinicial";
 
 function ProjectsPage() {
   const overview = useQuery({
@@ -67,15 +66,25 @@ function ProjectsPage() {
       badge: "",
       items: ["Valor do homem-hora", "Etapas por serviço", "Gerar orçamento", "Material para Apresentação"],
     },
+    {
+      n: 5,
+      title: "Satisfação do Cliente",
+      description: "Pesquisas de serviço executado e não executado, com dashboard de resultados.",
+      icon: Smile,
+      to: "/admin/projetos/satisfacao",
+      search: undefined as never,
+      badge: "",
+      items: ["Pesquisa por serviço executado", "Pesquisa por serviço não executado", "Dashboard de satisfação"],
+    },
   ];
 
   return (
     <AdminShell
       title="Projetos"
-      description="Atendimento às solicitações de clientes em quatro etapas, do primeiro contato ao orçamento enviado."
+      description="Atendimento às solicitações de clientes em cinco etapas, do primeiro contato ao orçamento enviado."
       requireAdmin
     >
-      <div className="grid gap-4 lg:grid-cols-4">
+      <div className="grid gap-4 lg:grid-cols-5">
         {steps.map((step, i) => (
           <div key={step.n} className="relative">
             <Link
@@ -131,6 +140,7 @@ function ProjectsPage() {
       {[
         { icon: Presentation, title: "Apresentações geradas", text: `Listagem de todos os materiais de apresentação gerados${counts ? ` (${counts.presentations})` : ""}.`, to: "/admin/projetos/apresentacoes" },
         { icon: Inbox, title: "Escopos iniciais recebidos", text: `Formulários de escopo enviados pelos clientes${counts ? ` (${counts.scopes})` : ""}.`, to: "/admin/projetos/escopos" },
+        { icon: Smile, title: "Dashboard de satisfação do cliente", text: "Resultados das pesquisas de satisfação (NPS, notas e motivos).", to: "/admin/projetos/satisfacao" },
         { icon: FileSearch, title: "Diagnósticos recebidos", text: `Diagnósticos detalhados registrados${counts ? ` (${counts.diagnostics})` : ""}.`, to: "/admin/projetos/diagnostico" },
       ].map((row) => (
         <div key={row.to} className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-background p-5">
@@ -148,18 +158,10 @@ function ProjectsPage() {
         </div>
       ))}
 
-      <div className="mt-6 flex flex-wrap items-center gap-3 rounded-2xl border border-dashed border-border p-5 text-sm">
-        <span className="text-muted-foreground">Link do formulário para enviar ao cliente:</span>
-        <code className="rounded bg-secondary px-2 py-1">{PUBLIC_LINK}</code>
-        <button
-          className="inline-flex items-center gap-1 text-accent hover:underline"
-          onClick={() => {
-            void navigator.clipboard.writeText(PUBLIC_LINK);
-            toast.success("Link copiado.");
-          }}
-        >
-          <Copy className="size-4" /> Copiar
-        </button>
+      <div className="mt-6 grid gap-3">
+        <FormLinkBar form="escopo" />
+        <FormLinkBar form="executado" />
+        <FormLinkBar form="nao_executado" />
       </div>
     </AdminShell>
   );

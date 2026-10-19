@@ -19,16 +19,18 @@ const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
       { to: "/admin/cadastros-consultores", label: "Cadastros de novos consultores" },
       { to: "/admin/crm", label: "CRM de clientes" },
       { to: "/admin/prospeccao", label: "Prospecção de leads com IA" },
+      { to: "/admin/projetos/satisfacao", label: "Satisfação do cliente" },
     ],
   },
   {
     label: "Projetos",
     items: [
-      { to: "/admin/projetos", label: "Visão das 4 etapas", exact: true },
+      { to: "/admin/projetos", label: "Visão das 5 etapas", exact: true },
       { to: "/admin/projetos/escopos", label: "1. Escopos iniciais" },
       { to: "/admin/projetos/diagnostico", label: "2. Diagnóstico detalhado" },
       { to: "/admin/precificacao", label: "3. Precificação" },
       { to: "/admin/projetos/apresentacoes", label: "4. Apresentações e orçamentos" },
+      { to: "/admin/projetos/satisfacao", label: "5. Satisfação do cliente" },
     ],
   },
   {

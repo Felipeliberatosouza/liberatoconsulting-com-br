@@ -1727,6 +1727,54 @@ export type Database = {
         }
         Relationships: []
       }
+      project_satisfaction_surveys: {
+        Row: {
+          comment: string
+          company: string
+          created_at: string
+          email: string
+          id: string
+          kind: string
+          lang: string
+          reason: string
+          respondent_name: string
+          score1: number | null
+          score2: number | null
+          score3: number | null
+          service: string
+        }
+        Insert: {
+          comment?: string
+          company?: string
+          created_at?: string
+          email?: string
+          id?: string
+          kind?: string
+          lang?: string
+          reason?: string
+          respondent_name?: string
+          score1?: number | null
+          score2?: number | null
+          score3?: number | null
+          service?: string
+        }
+        Update: {
+          comment?: string
+          company?: string
+          created_at?: string
+          email?: string
+          id?: string
+          kind?: string
+          lang?: string
+          reason?: string
+          respondent_name?: string
+          score1?: number | null
+          score2?: number | null
+          score3?: number | null
+          service?: string
+        }
+        Relationships: []
+      }
       project_scope_submissions: {
         Row: {
           answers: Json

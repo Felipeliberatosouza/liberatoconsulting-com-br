@@ -80,3 +80,8 @@
 - [x] Histórico de aprovação com data, horário, IP e aparelho
 - [x] Ficha completa: faturamento, funcionários, segmento, permissões
 - [x] Alterações restritas a administradores
+
+## Etapa 5 — Satisfação do cliente (19/10/2026)
+- [x] Pesquisas públicas (serviço executado / não executado, 3 perguntas, 4 idiomas)
+- [x] Dashboard de satisfação com links em Projetos e Pessoas e clientes
+- [x] Envio por e-mail dos links de Escopo e Satisfação a contatos do CRM (modelos editáveis)
