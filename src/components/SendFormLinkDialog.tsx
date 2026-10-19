@@ -40,12 +40,23 @@ export function FormLinkBar({ form }: { form: FormKind }) {
   );
 }
 
+const SOURCE_LABEL = { crm: "CRM", escopo: "Escopo Inicial", diagnostico: "Diagnóstico", site: "Site / WhatsApp" } as const;
+type Src = keyof typeof SOURCE_LABEL;
+
 export function SendFormLinkDialog({ form }: { form: FormKind }) {
   const [open, setOpen] = useState(false);
   const [companyId, setCompanyId] = useState("");
+  const [source, setSource] = useState<Src | "all">("all");
+  const [search, setSearch] = useState("");
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const [extra, setExtra] = useState("");
   const recipients = useQuery({ queryKey: ["link-recipients"], queryFn: () => listLinkRecipients(), enabled: open });
+  const q = search.trim().toLowerCase();
+  const visible = (recipients.data ?? []).filter(
+    (g) =>
+      (source === "all" || g.source === source) &&
+      (!q || g.name.toLowerCase().includes(q) || g.contacts.some((c) => `${c.name} ${c.email}`.toLowerCase().includes(q))),
+  );
   const company = recipients.data?.find((c) => c.id === companyId);
   const contacts = company?.contacts ?? [];
 
@@ -80,8 +91,25 @@ export function SendFormLinkDialog({ form }: { form: FormKind }) {
           <DialogTitle>Enviar link — {TITLES[form]}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 text-sm">
+          <div className="flex flex-wrap gap-2">
+            {(["all", "crm", "escopo", "diagnostico", "site"] as const).map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => {
+                  setSource(s);
+                  setCompanyId("");
+                  setPicked(new Set());
+                }}
+                className={`rounded-full border px-3 py-1 text-xs ${source === s ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}
+              >
+                {s === "all" ? "Todas as origens" : SOURCE_LABEL[s]}
+              </button>
+            ))}
+          </div>
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por empresa, nome ou e-mail" />
           <div>
-            <Label htmlFor="crm-company">Cliente do CRM</Label>
+            <Label htmlFor="crm-company">Cliente</Label>
             <select
               id="crm-company"
               className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2"
@@ -91,13 +119,14 @@ export function SendFormLinkDialog({ form }: { form: FormKind }) {
                 setPicked(new Set());
               }}
             >
-              <option value="">{recipients.isLoading ? "Carregando…" : "Selecione o cliente"}</option>
-              {(recipients.data ?? []).map((c) => (
+              <option value="">{recipients.isLoading ? "Carregando…" : `Selecione o cliente (${visible.length})`}</option>
+              {visible.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name} ({c.contacts.length})
+                  [{SOURCE_LABEL[c.source as Src]}] {c.name} ({c.contacts.length})
                 </option>
               ))}
             </select>
+            <p className="mt-1 text-xs text-muted-foreground">Candidatos do "Trabalhe conosco" não aparecem nesta lista.</p>
           </div>
           {company ? (
             contacts.length === 0 ? (
