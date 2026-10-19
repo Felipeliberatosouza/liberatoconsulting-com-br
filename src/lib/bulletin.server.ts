@@ -506,7 +506,7 @@ export async function sendWhatsAppMessage(params: {
   const connectionKey = process.env["WHATSAPP_API_KEY"];
   if (!lovableKey || !connectionKey) {
     throw new Error(
-      "WhatsApp não configurado. Informe as credenciais da Z-API nas configurações do projeto.",
+      "WhatsApp não configurado. Configure a Evolution API nas configurações do projeto.",
     );
   }
 
