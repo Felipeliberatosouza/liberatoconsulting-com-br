@@ -38,6 +38,14 @@ export async function verifyUnsubscribeToken(token: string): Promise<string | nu
 
 export type BrevoAddr = { email: string; name?: string };
 
+/** Referência da logomarca incorporada (CID) — exibida sem download externo. */
+export const EMAIL_LOGO_CID = "cid:logo.png";
+
+async function logoAttachment() {
+  const mod = (await import("../../public/logo.png?inline")) as { default: string };
+  return { name: "logo.png", content: mod.default.split(",")[1] ?? "" };
+}
+
 export async function sendBrevoEmail(params: {
   sender: BrevoAddr;
   to: BrevoAddr[];
@@ -50,6 +58,7 @@ export async function sendBrevoEmail(params: {
 }) {
   const key = process.env["BREVO_API_KEY"];
   if (!key) throw new Error("Chave do Brevo não configurada");
+  const attachment = params.html.includes(EMAIL_LOGO_CID) ? [await logoAttachment()] : [];
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: { "api-key": key, "Content-Type": "application/json", accept: "application/json" },
@@ -61,6 +70,7 @@ export async function sendBrevoEmail(params: {
       subject: params.subject,
       htmlContent: params.html,
       textContent: params.text,
+      ...(attachment.length ? { attachment } : {}),
       headers: { "List-Unsubscribe": `<${params.unsubscribeUrl}>` },
     }),
   });
