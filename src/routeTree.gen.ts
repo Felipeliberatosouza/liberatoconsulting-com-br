@@ -64,6 +64,7 @@ import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminTextsRouteImport } from './routes/admin.texts'
 import { Route as AdminThemeRouteImport } from './routes/admin.theme'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AutorizarTokenRouteImport } from './routes/autorizar.$token'
 import { Route as BoletimCancelarRouteImport } from './routes/boletim.cancelar'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
 import { Route as ContentSlugRouteImport } from './routes/content_.$slug'
@@ -364,6 +365,11 @@ const AdminUsersRoute = AdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AutorizarTokenRoute = AutorizarTokenRouteImport.update({
+  id: '/autorizar/$token',
+  path: '/autorizar/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BoletimCancelarRoute = BoletimCancelarRouteImport.update({
   id: '/boletim/cancelar',
   path: '/boletim/cancelar',
@@ -537,6 +543,7 @@ export interface FileRoutesByFullPath {
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/admin/users': typeof AdminUsersRoute
+  '/autorizar/$token': typeof AutorizarTokenRoute
   '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
@@ -616,6 +623,7 @@ export interface FileRoutesByTo {
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/admin/users': typeof AdminUsersRoute
+  '/autorizar/$token': typeof AutorizarTokenRoute
   '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
@@ -696,6 +704,7 @@ export interface FileRoutesById {
   '/admin/texts': typeof AdminTextsRoute
   '/admin/theme': typeof AdminThemeRoute
   '/admin/users': typeof AdminUsersRoute
+  '/autorizar/$token': typeof AutorizarTokenRoute
   '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil_/$slug': typeof BrasilSlugRoute
   '/content_/$slug': typeof ContentSlugRoute
@@ -777,6 +786,7 @@ export interface FileRouteTypes {
     | '/admin/texts'
     | '/admin/theme'
     | '/admin/users'
+    | '/autorizar/$token'
     | '/boletim/cancelar'
     | '/brasil/$slug'
     | '/content/$slug'
@@ -856,6 +866,7 @@ export interface FileRouteTypes {
     | '/admin/texts'
     | '/admin/theme'
     | '/admin/users'
+    | '/autorizar/$token'
     | '/boletim/cancelar'
     | '/brasil/$slug'
     | '/content/$slug'
@@ -935,6 +946,7 @@ export interface FileRouteTypes {
     | '/admin/texts'
     | '/admin/theme'
     | '/admin/users'
+    | '/autorizar/$token'
     | '/boletim/cancelar'
     | '/brasil_/$slug'
     | '/content_/$slug'
@@ -1015,6 +1027,7 @@ export interface RootRouteChildren {
   AdminTextsRoute: typeof AdminTextsRoute
   AdminThemeRoute: typeof AdminThemeRoute
   AdminUsersRoute: typeof AdminUsersRoute
+  AutorizarTokenRoute: typeof AutorizarTokenRoute
   BoletimCancelarRoute: typeof BoletimCancelarRoute
   BrasilSlugRoute: typeof BrasilSlugRoute
   ContentSlugRoute: typeof ContentSlugRoute
@@ -1427,6 +1440,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/autorizar/$token': {
+      id: '/autorizar/$token'
+      path: '/autorizar/$token'
+      fullPath: '/autorizar/$token'
+      preLoaderRoute: typeof AutorizarTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/boletim/cancelar': {
       id: '/boletim/cancelar'
       path: '/boletim/cancelar'
@@ -1639,6 +1659,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminTextsRoute: AdminTextsRoute,
   AdminThemeRoute: AdminThemeRoute,
   AdminUsersRoute: AdminUsersRoute,
+  AutorizarTokenRoute: AutorizarTokenRoute,
   BoletimCancelarRoute: BoletimCancelarRoute,
   BrasilSlugRoute: BrasilSlugRoute,
   ContentSlugRoute: ContentSlugRoute,

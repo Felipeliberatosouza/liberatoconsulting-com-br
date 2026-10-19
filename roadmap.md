@@ -73,3 +73,10 @@
 - [x] Menu superior agrupado em 6 áreas com submenus
 - [x] Central de usuários com visão unificada (Todos) e abas de materiais e escopo
 - [x] Telas repetidas de Leads e Clientes de materiais levadas para a Central
+
+## Gestão de usuários (19/10/2026)
+- [x] Exclusão de usuário em todos os cadastros
+- [x] Inclusão/remoção de serviço pelo Adm com aprovação LGPD por link (e-mail/WhatsApp)
+- [x] Histórico de aprovação com data, horário, IP e aparelho
+- [x] Ficha completa: faturamento, funcionários, segmento, permissões
+- [x] Alterações restritas a administradores
