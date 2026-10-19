@@ -90,7 +90,8 @@ function ErrorComponent({ error, reset }: import("@tanstack/react-router").Error
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  loader: () => getPublicCompanyAddress(),
+  // Falha de rede (ex.: recarga do servidor) não pode derrubar o site inteiro.
+  loader: () => getPublicCompanyAddress().catch(() => null),
   head: (ctx) => ({
     meta: [
       { charSet: "utf-8" },
