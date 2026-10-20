@@ -50,6 +50,7 @@ const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
       { to: "/admin/envios", label: "Painel de envios" },
       { to: "/admin/newsletter", label: "Newsletter" },
       { to: "/admin/boletim", label: "Boletim Semanal" },
+      { to: "/admin/divulgacao-ferramentas", label: "Ferramentas" },
       { to: "/admin/propaganda", label: "Propaganda" },
       { to: "/admin/historico", label: "Histórico de publicações" },
     ],
