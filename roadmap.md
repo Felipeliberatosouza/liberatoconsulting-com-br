@@ -1,4 +1,9 @@
 
+## Formulário das ferramentas (20/10/2026)
+- [ ] Seleção dos últimos 36 meses completos e critérios de rateio pesquisados
+- [ ] Formatação brasileira e validação das entradas numéricas
+- [ ] Testes de regras e conferência do formulário
+
 ## Divulgação de ferramentas (20/10/2026)
 - [x] Incluir Ferramentas em Envios e marketing e Nova ferramenta em Propaganda
 - [x] Criar artes e legendas para LinkedIn, WhatsApp e Instagram com acesso gráfico opcional
