@@ -18,9 +18,15 @@ export async function composeToolPromotion(opts: {
   ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
   const wrap = (text: string, width: number) => {
     const lines: string[] = []; let line = "";
-    for (const ch of text) {
-      if (ctx.measureText(line + ch).width > width && line) { lines.push(line.trim()); line = ""; }
-      line += ch;
+    for (const word of text.split(/\s+/)) {
+      const next = line ? `${line} ${word}` : word;
+      if (ctx.measureText(next).width <= width) { line = next; continue; }
+      if (line) { lines.push(line); line = ""; }
+      if (ctx.measureText(word).width <= width) { line = word; continue; }
+      for (const ch of word) {
+        if (ctx.measureText(line + ch).width > width && line) { lines.push(line); line = ""; }
+        line += ch;
+      }
     }
     if (line.trim()) lines.push(line.trim());
     return lines;

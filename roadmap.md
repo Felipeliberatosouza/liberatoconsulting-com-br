@@ -1,8 +1,9 @@
 
 ## Divulgação de ferramentas (20/10/2026)
-- [ ] Incluir Ferramentas em Envios e marketing e Nova ferramenta em Propaganda
-- [ ] Criar artes e legendas para LinkedIn, WhatsApp e Instagram com acesso gráfico opcional
-- [ ] Validar seleção, geração, rodapé e downloads
+- [x] Incluir Ferramentas em Envios e marketing e Nova ferramenta em Propaganda
+- [x] Criar artes e legendas para LinkedIn, WhatsApp e Instagram com acesso gráfico opcional
+- [x] Validar testes do acesso opcional, composição dos formatos e rodapé
+- [ ] Validar fluxo completo de seleção e download com conta administrativa (aguarda verificação em duas etapas do usuário)
 
 ## Correção urgente — painel administrativo
 - [x] Corrigir importação de PHONE_ERROR em users.functions.ts
