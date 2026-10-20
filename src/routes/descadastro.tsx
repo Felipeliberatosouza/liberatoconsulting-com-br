@@ -24,11 +24,22 @@ export const Route = createFileRoute("/descadastro")({
 function UnsubPage() {
   const { t } = Route.useSearch();
   const [state, setState] = useState<"idle" | "busy" | "ok" | "err">("idle");
+  const [needEmail, setNeedEmail] = useState(false);
+  const [mismatch, setMismatch] = useState(false);
+  const [email, setEmail] = useState("");
   const confirm = async () => {
     if (!t) return setState("err");
     setState("busy");
-    const r = await confirmProspectUnsubscribe({ data: { t } }).catch(() => ({ ok: false }));
-    setState(r.ok ? "ok" : "err");
+    const r = await confirmProspectUnsubscribe({ data: { t, email: email || undefined } }).catch(
+      () => ({ ok: false as const, needEmail: false }),
+    );
+    if (r.ok) return setState("ok");
+    if ("needEmail" in r && r.needEmail) {
+      setNeedEmail(true);
+      setMismatch(Boolean("mismatch" in r && r.mismatch));
+      return setState("idle");
+    }
+    setState("err");
   };
   return (
     <main className="mx-auto flex min-h-[60vh] max-w-lg flex-col justify-center gap-4 px-6 py-16 text-center">
@@ -40,7 +51,22 @@ function UnsubPage() {
       ) : (
         <>
           <p className="text-muted-foreground">Confirme para não receber mais e-mails comerciais da Liberato Consulting.</p>
-          <Button onClick={confirm} disabled={state === "busy"} className="mx-auto">
+          {needEmail && (
+            <div className="flex flex-col gap-2 text-left">
+              <label htmlFor="unsub-email" className="text-sm text-foreground">
+                Esta mensagem foi enviada a mais de uma pessoa. Informe o seu e-mail:
+              </label>
+              <input
+                id="unsub-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="rounded-md border border-input bg-background px-3 py-2 text-foreground"
+              />
+              {mismatch && <p className="text-sm text-destructive">Este e-mail não está entre os destinatários desta mensagem.</p>}
+            </div>
+          )}
+          <Button onClick={confirm} disabled={state === "busy" || (needEmail && !email)} className="mx-auto">
             {state === "busy" ? "Confirmando..." : "Confirmar cancelamento"}
           </Button>
         </>

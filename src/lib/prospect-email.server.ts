@@ -20,17 +20,19 @@ async function sign(value: string) {
   return b64url(new Uint8Array(await crypto.subtle.sign("HMAC", key, enc.encode(value))));
 }
 
-export async function unsubscribeToken(email: string) {
-  const e = email.trim().toLowerCase();
+/** Token assinado com todos os destinatários do e-mail (Para, CC e CCO). */
+export async function unsubscribeToken(emails: string[]) {
+  const e = [...new Set(emails.map((x) => x.trim().toLowerCase()))].join(",");
   return `${b64url(enc.encode(e))}.${await sign(e)}`;
 }
 
-export async function verifyUnsubscribeToken(token: string): Promise<string | null> {
+export async function verifyUnsubscribeToken(token: string): Promise<string[] | null> {
   const [p, sig] = token.split(".");
   if (!p || !sig) return null;
   try {
-    const email = new TextDecoder().decode(fromB64url(p));
-    return (await sign(email)) === sig ? email : null;
+    const value = new TextDecoder().decode(fromB64url(p));
+    if ((await sign(value)) !== sig) return null;
+    return value.split(",").filter(Boolean);
   } catch {
     return null;
   }

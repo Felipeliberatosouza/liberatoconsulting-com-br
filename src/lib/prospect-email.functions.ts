@@ -77,7 +77,7 @@ export const sendProspectEmails = createServerFn({ method: "POST" })
       const empresa = g.company || "sua empresa";
       const fill = (s: string) => s.replaceAll("{{nome}}", nome).replaceAll("{{empresa}}", empresa).replaceAll("{{link}}", SITE);
       const subject = fill(data.subject);
-      const unsubUrl = `${SITE}/descadastro?t=${encodeURIComponent(await srv.unsubscribeToken(first.email))}`;
+      const unsubUrl = `${SITE}/descadastro?t=${encodeURIComponent(await srv.unsubscribeToken([...to, ...cc, ...bcc].map((a) => a.email)))}`;
       const element = React.createElement(component, {
         subject,
         body: fill(data.body),
@@ -119,11 +119,22 @@ export const removeProspectUnsubscribe = createServerFn({ method: "POST" })
 
 /** Público: confirma o descadastro a partir do link assinado do e-mail. */
 export const confirmProspectUnsubscribe = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ t: z.string().max(600) }).parse(d))
+  .inputValidator((d: unknown) =>
+    z.object({ t: z.string().max(12000), email: z.string().trim().max(180).optional() }).parse(d),
+  )
   .handler(async ({ data }) => {
     const { verifyUnsubscribeToken } = await import("./prospect-email.server");
-    const email = await verifyUnsubscribeToken(data.t);
-    if (!email) return { ok: false as const };
+    const list = await verifyUnsubscribeToken(data.t);
+    if (!list || list.length === 0) return { ok: false as const, needEmail: false };
+    // E-mail enviado a várias pessoas: quem clicou informa o próprio endereço.
+    let email: string;
+    if (list.length === 1) email = list[0]!;
+    else {
+      const typed = (data.email ?? "").toLowerCase();
+      if (!typed) return { ok: false as const, needEmail: true };
+      if (!list.includes(typed)) return { ok: false as const, needEmail: true, mismatch: true };
+      email = typed;
+    }
     const { getRequest } = await import("@tanstack/react-start/server");
     const req = getRequest();
     const ip = req?.headers.get("cf-connecting-ip") || req?.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "";
