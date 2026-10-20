@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ToolPromotionPage } from "./admin.propaganda";
+import { AdEditor } from "@/components/AdEditor";
 
 export const Route = createFileRoute("/admin/divulgacao-ferramentas")({
   head: () => ({ meta: [
@@ -13,3 +13,7 @@ export const Route = createFileRoute("/admin/divulgacao-ferramentas")({
   ] }),
   component: ToolPromotionPage,
 });
+
+function ToolPromotionPage() {
+  return <AdEditor toolsOnly />;
+}

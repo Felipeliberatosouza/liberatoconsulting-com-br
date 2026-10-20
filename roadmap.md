@@ -1,6 +1,4 @@
 
-## Correção urgente — painel administrativo
- 
 ## Divulgação de ferramentas (20/10/2026)
 - [ ] Incluir Ferramentas em Envios e marketing e Nova ferramenta em Propaganda
 - [ ] Criar artes e legendas para LinkedIn, WhatsApp e Instagram com acesso gráfico opcional

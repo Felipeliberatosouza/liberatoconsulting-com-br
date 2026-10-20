@@ -10,4 +10,4 @@
 <!-- LOVABLE:END -->
 - Interactive management tools: AI only writes a JSON spec with formulas; all math runs in `src/lib/tool-engine.ts` (no eval) and every spec must pass its own test cases plus an AI audit before publishing — prevents calculation errors from the model.
 - Tool payments go through Asaas (`interactive-tools.server.ts`, webhook `/api/public/asaas-webhook`); card data is only typed on Asaas' hosted page, never stored here — keeps the app out of PCI scope.
-- Tool marketing reuses the Propaganda editor and existing published-tool lists; its browser canvas composer is isolated from the calculation engine so promotion cannot change tool formulas or access rules.
+- Propaganda and tool marketing share AdEditor in components (never import components from route modules, which are code-split); promotion uses existing published-tool lists and a separate browser canvas composer so it cannot change formulas or access rules.
