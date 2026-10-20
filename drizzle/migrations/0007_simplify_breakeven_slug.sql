@@ -1,0 +1,1 @@
+UPDATE public.interactive_tools SET slug='ponto-de-equilibrio' WHERE slug='ponto-de-equilibrio-por-produto-ou-servico-9i6h' AND NOT EXISTS (SELECT 1 FROM public.interactive_tools WHERE slug='ponto-de-equilibrio');

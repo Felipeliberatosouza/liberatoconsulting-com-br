@@ -15,9 +15,6 @@ async function db() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin as any;
 }
-function slugify(s: string) {
-  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "ferramenta";
-}
 
 export type InteractiveToolRow = {
   id: string; slug: string; title: string; summary: string; category: string; status: string;
