@@ -21,16 +21,15 @@ export const Route = createFileRoute("/admin/uso")({
 });
 
 const fmt = (d: string | null) => (d ? new Date(d).toLocaleString("pt-BR") : "—");
-const show = (v: unknown) => (typeof v === "object" && v !== null ? JSON.stringify(v) : String(v ?? ""));
+const show = (v: unknown) => String(v ?? "");
 
-function KeyValues({ title, data }: { title: string; data: Record<string, unknown> }) {
-  const entries = Object.entries(data).filter(([k]) => k !== "_context");
-  const ctx = data["_context"] as Record<string, unknown> | undefined;
+function KeyValues({ title, data }: { title: string; data: Record<string, string | number | boolean | null> }) {
+  const entries = Object.entries(data).map(([k, v]) => [k.replace(/^_context › /, ""), v] as const);
   return (
     <div>
       <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{title}</p>
       <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-3 text-sm">
-        {[...(ctx ? Object.entries(ctx) : []), ...entries].map(([k, v]) => (
+        {entries.map(([k, v]) => (
           <div key={k} className="contents">
             <dt className="text-muted-foreground">{k}</dt>
             <dd className="break-all">{show(v)}</dd>

@@ -89,14 +89,28 @@ export const listClientUsage = createServerFn({ method: "GET" })
     return [...map.values()].sort((a, b) => (b.lastActivity ?? "").localeCompare(a.lastActivity ?? ""));
   });
 
+function flat(v: unknown): Record<string, string | number | boolean | null> {
+  const out: Record<string, string | number | boolean | null> = {};
+  const walk = (o: unknown, pre: string) => {
+    if (!o || typeof o !== "object") return;
+    for (const [k, x] of Object.entries(o as Record<string, unknown>)) {
+      const key = pre ? `${pre} › ${k}` : k;
+      if (x && typeof x === "object") walk(x, key);
+      else out[key] = (x ?? null) as string | number | boolean | null;
+    }
+  };
+  walk(v, "");
+  return out;
+}
+
 export type ClientTimelineItem = {
   id: string;
   at: string;
   kind: string;
   title: string;
   detail: string;
-  inputs?: Record<string, unknown>;
-  results?: Record<string, unknown>;
+  inputs?: Record<string, string | number | boolean | null>;
+  results?: Record<string, string | number | boolean | null>;
 };
 
 /** Linha do tempo completa de um cliente, incluindo entradas e resultados das ferramentas. */
@@ -135,8 +149,8 @@ export const getClientTimeline = createServerFn({ method: "GET" })
         kind: "tool_run",
         title: "Calculou ferramenta",
         detail: toolName.get(r.tool_id) ?? "Ferramenta",
-        inputs: (r.inputs ?? {}) as Record<string, unknown>,
-        results: (r.results ?? {}) as Record<string, unknown>,
+        inputs: flat(r.inputs),
+        results: flat(r.results),
       })),
       ...(downloads.data ?? []).map((r) => ({ id: r.id, at: r.created_at, kind: "download", title: "Baixou material", detail: matName.get(r.tool_id) ?? "Material" })),
       ...(orders.data ?? []).map((r) => ({ id: r.id, at: r.created_at, kind: "order", title: "Compra de ferramenta", detail: `${toolName.get(r.tool_id) ?? "Ferramenta"} — R$ ${Number(r.amount_brl).toFixed(2).replace(".", ",")} (${r.status})` })),
