@@ -81,6 +81,11 @@ const CARDS = [
     text: "Empresas e contatos, datas importantes, interações e orçamentos enviados.",
   },
   {
+    to: "/admin/uso",
+    title: "Uso por cliente",
+    text: "Ferramentas calculadas, downloads, newsletters e boletins vistos por cada cliente.",
+  },
+  {
     to: "/admin/prospeccao",
     title: "Prospecção de leads com IA",
     text: "Encontre empresas por segmento e região e importe as melhores para o CRM.",

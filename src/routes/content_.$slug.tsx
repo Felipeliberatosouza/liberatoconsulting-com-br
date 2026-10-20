@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Linkedin, Instagram, MessageCircle, Star } from "lucide-react";
 
 import { CtaBand } from "@/components/CtaBand";
+import { useLogMemberView } from "@/hooks/useLogMemberView";
 import { ArticleChart, ArticleTable, ArticleVideo } from "@/components/ArticleExtras";
 
 import { useLanguage } from "@/i18n";
@@ -105,6 +106,7 @@ export const Route = createFileRoute("/content_/$slug")({
 
 function ArticlePage() {
   const { slug } = Route.useParams();
+  useLogMemberView("article", slug, slug);
   const { t, lang } = useLanguage();
   const a = t.content.article;
 
