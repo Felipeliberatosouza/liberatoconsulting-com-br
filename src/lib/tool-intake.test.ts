@@ -11,8 +11,8 @@ describe("tool intake rules", () => {
     expect(prefillCompany(companyFields, {}, null)).toEqual({});
   });
   it("preserves edits and intentional clearing when the account is loaded again", () => {
-    expect(prefillCompany(companyFields, { empresa: "Outra empresa" }, "Liberato Consulting").empresa).toBe("Outra empresa");
-    expect(prefillCompany(companyFields, { empresa: "" }, "Liberato Consulting").empresa).toBe("");
+    expect(prefillCompany(companyFields, { empresa: "Outra empresa" }, "Liberato Consulting")["empresa"]).toBe("Outra empresa");
+    expect(prefillCompany(companyFields, { empresa: "" }, "Liberato Consulting")["empresa"]).toBe("");
   });
   it("offers exactly the last 36 completed months, never the current month", () => {
     const periods = completedMonths(now);
