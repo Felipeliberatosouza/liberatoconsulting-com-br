@@ -1,10 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { completedMonths, formatInput, parseBrazilianNumber, validateIntake } from "./tool-intake";
+import { completedMonths, formatInput, parseBrazilianNumber, prefillCompany, validateIntake } from "./tool-intake";
 import type { ToolSpec } from "./tool-engine";
 
 const now = new Date("2026-10-20T19:14:00Z");
 const spec = { context_fields: [{ id: "mes_referencia", label: "Mês de referência" }], inputs: [] } as unknown as ToolSpec;
 describe("tool intake rules", () => {
+  const companyFields = [{ id: "empresa", label: "Nome da empresa — identifica o negócio no relatório" }, { id: "produto", label: "Produto ou serviço analisado" }];
+  it("prefills only the company from the signed-in user's registration", () => {
+    expect(prefillCompany(companyFields, {}, "Liberato Consulting")).toEqual({ empresa: "Liberato Consulting" });
+    expect(prefillCompany(companyFields, {}, null)).toEqual({});
+  });
+  it("preserves edits and intentional clearing when the account is loaded again", () => {
+    expect(prefillCompany(companyFields, { empresa: "Outra empresa" }, "Liberato Consulting").empresa).toBe("Outra empresa");
+    expect(prefillCompany(companyFields, { empresa: "" }, "Liberato Consulting").empresa).toBe("");
+  });
   it("offers exactly the last 36 completed months, never the current month", () => {
     const periods = completedMonths(now);
     expect(periods).toHaveLength(36);

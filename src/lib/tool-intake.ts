@@ -17,6 +17,17 @@ export function contextKind(f: ToolContextField) {
   return "text";
 }
 
+export function prefillCompany(fields: ToolContextField[], context: Record<string, string>, company: string | null | undefined): Record<string, string> {
+  const filled = { ...context };
+  if (!company?.trim()) return filled;
+  for (const field of fields) {
+    if (/^(empresa|company|company_name|nome_empresa|nome_da_empresa)$/.test(field.id) || /^(nome da empresa|company name|nombre de la empresa|公司名称)(\s|$)/i.test(field.label)) {
+      if (filled[field.id] === undefined) filled[field.id] = company.trim();
+    }
+  }
+  return filled;
+}
+
 export function inputKind(i: ToolInput): "currency" | "percent" | "integer" | "decimal" {
   if (/R\$/.test(i.unit)) return "currency";
   if (/%/.test(i.unit)) return "percent";
