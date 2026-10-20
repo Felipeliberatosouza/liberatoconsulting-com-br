@@ -15,9 +15,6 @@ async function db() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin as any;
 }
-function slugify(s: string) {
-  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "ferramenta";
-}
 
 export type InteractiveToolRow = {
   id: string; slug: string; title: string; summary: string; category: string; status: string;
@@ -63,7 +60,8 @@ export const generateInteractiveTool = createServerFn({ method: "POST" })
       let id = data.toolId;
       if (id) await sb.from("interactive_tools").update(row).eq("id", id);
       else {
-        const slug = `${slugify(result.spec.title)}-${Math.random().toString(36).slice(2, 6)}`;
+        const { shortSlug, uniqueShortSlug } = await import("./short-slug");
+        const slug = await uniqueShortSlug(sb, "interactive_tools", shortSlug(result.spec.title), "ferramenta");
         const { data: ins, error } = await sb.from("interactive_tools").insert({ ...row, slug, markup_pct: markup, created_by: context.userId }).select("id").single();
         if (error) throw error;
         id = ins.id;
