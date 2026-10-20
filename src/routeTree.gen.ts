@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AreaClienteRouteImport } from './routes/area-cliente'
+import { Route as AtendimentoRouteImport } from './routes/atendimento'
 import { Route as BoletinsRouteImport } from './routes/boletins'
 import { Route as BrasilRouteImport } from './routes/brasil'
 import { Route as CareersRouteImport } from './routes/careers'
@@ -113,6 +114,11 @@ const AboutRoute = AboutRouteImport.update({
 const AreaClienteRoute = AreaClienteRouteImport.update({
   id: '/area-cliente',
   path: '/area-cliente',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AtendimentoRoute = AtendimentoRouteImport.update({
+  id: '/atendimento',
+  path: '/atendimento',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BoletinsRoute = BoletinsRouteImport.update({
@@ -536,6 +542,7 @@ export interface FileRoutesByFullPath {
   '/$slug': typeof SlugRoute
   '/about': typeof AboutRoute
   '/area-cliente': typeof AreaClienteRoute
+  '/atendimento': typeof AtendimentoRoute
   '/boletins': typeof BoletinsRoute
   '/brasil': typeof BrasilRoute
   '/careers': typeof CareersRoute
@@ -623,6 +630,7 @@ export interface FileRoutesByTo {
   '/$slug': typeof SlugRoute
   '/about': typeof AboutRoute
   '/area-cliente': typeof AreaClienteRoute
+  '/atendimento': typeof AtendimentoRoute
   '/boletins': typeof BoletinsRoute
   '/brasil': typeof BrasilRoute
   '/careers': typeof CareersRoute
@@ -711,6 +719,7 @@ export interface FileRoutesById {
   '/$slug': typeof SlugRoute
   '/about': typeof AboutRoute
   '/area-cliente': typeof AreaClienteRoute
+  '/atendimento': typeof AtendimentoRoute
   '/boletins': typeof BoletinsRoute
   '/brasil': typeof BrasilRoute
   '/careers': typeof CareersRoute
@@ -800,6 +809,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/about'
     | '/area-cliente'
+    | '/atendimento'
     | '/boletins'
     | '/brasil'
     | '/careers'
@@ -887,6 +897,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/about'
     | '/area-cliente'
+    | '/atendimento'
     | '/boletins'
     | '/brasil'
     | '/careers'
@@ -974,6 +985,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/about'
     | '/area-cliente'
+    | '/atendimento'
     | '/boletins'
     | '/brasil'
     | '/careers'
@@ -1062,6 +1074,7 @@ export interface RootRouteChildren {
   SlugRoute: typeof SlugRoute
   AboutRoute: typeof AboutRoute
   AreaClienteRoute: typeof AreaClienteRoute
+  AtendimentoRoute: typeof AtendimentoRoute
   BoletinsRoute: typeof BoletinsRoute
   BrasilRoute: typeof BrasilRoute
   CareersRoute: typeof CareersRoute
@@ -1173,6 +1186,13 @@ declare module '@tanstack/react-router' {
       path: '/area-cliente'
       fullPath: '/area-cliente'
       preLoaderRoute: typeof AreaClienteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/atendimento': {
+      id: '/atendimento'
+      path: '/atendimento'
+      fullPath: '/atendimento'
+      preLoaderRoute: typeof AtendimentoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/boletins': {
@@ -1750,6 +1770,7 @@ const rootRouteChildren: RootRouteChildren = {
   SlugRoute: SlugRoute,
   AboutRoute: AboutRoute,
   AreaClienteRoute: AreaClienteRoute,
+  AtendimentoRoute: AtendimentoRoute,
   BoletinsRoute: BoletinsRoute,
   BrasilRoute: BrasilRoute,
   CareersRoute: CareersRoute,
