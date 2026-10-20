@@ -1587,6 +1587,36 @@ export type Database = {
         }
         Relationships: []
       }
+      member_activity_events: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string
+          label: string
+          path: string
+          ref_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: string
+          label?: string
+          path?: string
+          ref_id?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string
+          label?: string
+          path?: string
+          ref_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       newsletter_campaigns: {
         Row: {
           author_contact: string
