@@ -141,7 +141,7 @@ function SurveyForm({ kind, lang }: { kind: SurveyKind; lang: Lang }) {
 
   return (
     <>
-      <h1 className="font-display text-3xl font-bold">{kind === "executado" ? t.exec : t.nonExec}</h1>
+      <h1 className="font-display text-3xl font-bold">{kind === "executado" ? t.execTitle : t.nonExecTitle}</h1>
       <p className="mt-3 text-sm text-muted-foreground">{t.intro}</p>
       <section className="mt-8 grid gap-4 rounded-2xl border border-border bg-background p-6 shadow-sm sm:grid-cols-2">
         {(["company", "respondent_name", "email", "service"] as const).map((f) => (

@@ -65,9 +65,10 @@ export function surveyQuestions(kind: SurveyKind, lang: Lang): Q[] {
       ];
 }
 
-type TK = "eyebrow"|"choose"|"exec"|"nonExec"|"execDesc"|"nonExecDesc"|"intro"|"company"|"name"|"email"|"service"|"comment"|"send"|"sentTitle"|"sentText"|"required"|"error"|"other"|"low"|"high";
+type TK = "eyebrow"|"choose"|"exec"|"nonExec"|"execDesc"|"nonExecDesc"|"intro"|"company"|"name"|"email"|"service"|"comment"|"send"|"sentTitle"|"sentText"|"required"|"error"|"other"|"low"|"high"|"execTitle"|"nonExecTitle";
 export const SURVEY_TEXTS: Record<Lang, Record<TK, string>> = {
   pt: {
+    execTitle: 'Jogo aberto! Valeu a pena? Como foi trabalhar com a gente?', nonExecTitle: 'Jogo aberto! Mesmo sem fechar, sua opinião vale muito: como foi nosso atendimento?',
     eyebrow: "Pesquisa de satisfação", choose: "Escolha a pesquisa", exec: "Serviço executado", nonExec: "Serviço não executado",
     execDesc: "Para clientes que contrataram e receberam um serviço.", nonExecDesc: "Para quem recebeu proposta e não seguiu com a contratação.",
     intro: "São apenas 3 perguntas. Sua opinião nos ajuda a melhorar.", company: "Empresa", name: "Seu nome", email: "E-mail",
@@ -76,6 +77,7 @@ export const SURVEY_TEXTS: Record<Lang, Record<TK, string>> = {
     error: "Não foi possível enviar agora. Tente novamente.", other: "Descreva o motivo (obrigatório)", low: "Nada provável", high: "Muito provável",
   },
   en: {
+    execTitle: "Let's be honest! Was it worth it? How was working with us?", nonExecTitle: "Let's be honest! Even without closing a deal, your opinion matters a lot: how was our service?",
     eyebrow: "Satisfaction survey", choose: "Choose the survey", exec: "Service delivered", nonExec: "Service not contracted",
     execDesc: "For clients who hired and received a service.", nonExecDesc: "For those who received a proposal and did not move forward.",
     intro: "Only 3 questions. Your opinion helps us improve.", company: "Company", name: "Your name", email: "E-mail",
@@ -84,6 +86,7 @@ export const SURVEY_TEXTS: Record<Lang, Record<TK, string>> = {
     error: "Could not submit now. Please try again.", other: "Describe the reason (required)", low: "Not likely", high: "Very likely",
   },
   es: {
+    execTitle: '¡Juego abierto! ¿Valió la pena? ¿Cómo fue trabajar con nosotros?', nonExecTitle: '¡Juego abierto! Aunque no cerramos, su opinión vale mucho: ¿cómo fue nuestra atención?',
     eyebrow: "Encuesta de satisfacción", choose: "Elija la encuesta", exec: "Servicio ejecutado", nonExec: "Servicio no contratado",
     execDesc: "Para clientes que contrataron y recibieron un servicio.", nonExecDesc: "Para quien recibió propuesta y no siguió con la contratación.",
     intro: "Solo 3 preguntas. Su opinión nos ayuda a mejorar.", company: "Empresa", name: "Su nombre", email: "Correo electrónico",
@@ -92,6 +95,7 @@ export const SURVEY_TEXTS: Record<Lang, Record<TK, string>> = {
     error: "No fue posible enviar ahora. Inténtelo de nuevo.", other: "Describa el motivo (obligatorio)", low: "Nada probable", high: "Muy probable",
   },
   zh: {
+    execTitle: '坦诚相告！值得吗？与我们合作感觉如何？', nonExecTitle: '坦诚相告！即使没有合作，您的意见也非常重要：我们的服务如何？',
     eyebrow: "满意度调查", choose: "选择调查", exec: "已执行的服务", nonExec: "未执行的服务",
     execDesc: "适用于已签约并接受服务的客户。", nonExecDesc: "适用于收到方案但未继续合作的客户。",
     intro: "仅有3个问题。您的意见帮助我们改进。", company: "公司", name: "您的姓名", email: "电子邮件",
