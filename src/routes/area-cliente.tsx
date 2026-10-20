@@ -12,6 +12,7 @@ import { HEADER_TRANSLATIONS } from "@/lib/header-translations";
 import { pageText } from "@/lib/page-translations";
 import { getMemberContent, getToolDownload, getToolsAccount, requestMemberService, saveToolsProfile } from "@/lib/tools.functions";
 import { formatPhone, isValidPhone } from "@/lib/validation";
+import { logMemberActivity } from "@/lib/activity.functions";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
@@ -41,6 +42,16 @@ function CustomerArea() {
   const save = useServerFn(saveToolsProfile); const request = useServerFn(requestMemberService); const getDownload = useServerFn(getToolDownload);
   useEffect(() => { void supabase.auth.getSession().then(({ data }) => { setSignedIn(Boolean(data.session)); setReady(true); }); }, []);
   useEffect(() => { if (account.data?.profile) setProfile({ ...EMPTY, ...account.data.profile }); }, [account.data?.profile]);
+  const logActivity = useServerFn(logMemberActivity);
+  useEffect(() => {
+    if (!signedIn) return;
+    if (!sessionStorage.getItem("lc-login-logged")) { sessionStorage.setItem("lc-login-logged", "1"); void logActivity({ data: { kind: "login", path: "/area-cliente" } }).catch(() => {}); }
+    void logActivity({ data: { kind: "section", label: secao, path: `/area-cliente?secao=${secao}` } }).catch(() => {});
+  }, [signedIn, secao]);
+  useEffect(() => {
+    const b = content.data?.bulletins?.[0];
+    if (signedIn && secao === "boletim" && b) void logActivity({ data: { kind: "bulletin", refId: b.id, label: b.subject } }).catch(() => {});
+  }, [signedIn, secao, content.data?.bulletins]);
   const articles = useMemo(() => { const needle = search.trim().toLocaleLowerCase(); return (content.data?.articles ?? []).filter((item) => !needle || `${item.title} ${item.summary} ${item.authors}`.toLocaleLowerCase().includes(needle)); }, [content.data?.articles, search]);
   const guideTool = (account.data?.tools ?? []).find((tool) => tool.category?.toLocaleLowerCase().includes("guia") || tool.title?.toLocaleLowerCase().includes("guia"));
   if (!ready) return <div className="mx-auto max-w-7xl px-6 py-20">{p.loading}</div>;
