@@ -1,4 +1,10 @@
 
+## Formulário das ferramentas (20/10/2026)
+- [x] Seleção dos últimos 36 meses completos e critérios de rateio pesquisados
+- [x] Formatação brasileira e validação das entradas numéricas
+- [x] Testes de regras de período, formato e validação (15 testes aprovados com motor)
+- [ ] Conferir cálculo completo pela página autenticada (a sessão de teste recebeu “Ferramenta não encontrada”; acesso não verificado)
+
 ## Divulgação de ferramentas (20/10/2026)
 - [x] Incluir Ferramentas em Envios e marketing e Nova ferramenta em Propaganda
 - [x] Criar artes e legendas para LinkedIn, WhatsApp e Instagram com acesso gráfico opcional
