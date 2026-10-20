@@ -266,7 +266,8 @@ export const saveAdminTool = createServerFn({ method: "POST" })
       return { ok: true as const };
     }
 
-    const row = { ...base, slug: `${slug}-${Date.now().toString(36)}`, file_name: data.file_name!, file_path: filePath! };
+    const { shortSlug, uniqueShortSlug } = await import("./short-slug");
+    const row = { ...base, slug: await uniqueShortSlug(supabaseAdmin, "management_tools", shortSlug(data.title) || slug.slice(0, 40), "ferramenta"), file_name: data.file_name!, file_path: filePath! };
     const saved = await supabaseAdmin.from("management_tools").insert(row);
     if (saved.error) {
       if (filePath) await supabaseAdmin.storage.from("management-tools").remove([filePath]);

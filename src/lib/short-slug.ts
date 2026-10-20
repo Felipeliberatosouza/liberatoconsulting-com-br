@@ -20,12 +20,40 @@ function normalize(v: string) {
     .replace(/[^a-z0-9\s-]+/g, " ");
 }
 
-/** Gera um slug curto (1 a 2 palavras) a partir de um título. */
+/**
+ * Gera um slug curto e memorizável: até `maxWords` palavras significativas,
+ * mantendo os conectivos curtos entre elas (ex.: "ponto-de-equilibrio").
+ */
 export function shortSlug(title: string, maxWords = 2) {
   const words = normalize(title)
     .split(/[\s-]+/)
     .filter(Boolean);
-  const strong = words.filter((w) => w.length > 2 && !STOP.has(w));
-  const picked = (strong.length ? strong : words).slice(0, maxWords);
+  const isStrong = (w: string) => w.length > 2 && !STOP.has(w);
+  if (!words.some(isStrong)) return words.slice(0, maxWords).join("-").slice(0, 40);
+  const picked: string[] = [];
+  let strong = 0;
+  for (const w of words) {
+    if (isStrong(w)) {
+      picked.push(w);
+      if (++strong >= maxWords) break;
+    } else if (strong > 0) picked.push(w);
+  }
   return picked.join("-").slice(0, 40).replace(/^-+|-+$/g, "");
+}
+
+/** Garante endereço único acrescentando -2, -3… somente quando necessário. */
+export async function uniqueShortSlug(
+  client: any,
+  table: string,
+  base: string,
+  fallback: string,
+  currentId: string | null = null,
+) {
+  const root = base || fallback;
+  for (let i = 0; i < 30; i++) {
+    const candidate = i === 0 ? root : `${root}-${i + 1}`;
+    const { data } = await client.from(table).select("id").eq("slug", candidate).maybeSingle();
+    if (!data || data.id === currentId) return candidate;
+  }
+  return `${root}-${Date.now().toString(36).slice(-3)}`;
 }
