@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 
 import { CtaBand } from "@/components/CtaBand";
+import { useLogMemberView } from "@/hooks/useLogMemberView";
 import { useLanguage } from "@/i18n";
 import { getPublishedNewsletter } from "@/lib/newsletter-public.functions";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
@@ -110,6 +111,7 @@ function NewsletterPage() {
   const data = (lang !== "pt" && translated.data) || loaded;
   const cover = data.hasImage ? `/api/public/newsletter-image/${slug}` : "";
   const text = data.fullText.trim() || data.body;
+  useLogMemberView("newsletter", slug, loaded.subject ?? slug);
 
   return (
     <div>
