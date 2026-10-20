@@ -8,7 +8,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { formatValue, runTool } from "@/lib/tool-engine";
-import { parseBrazilianNumber, validateIntake } from "@/lib/tool-intake";
+import { parseBrazilianNumber, prefillCompany, validateIntake } from "@/lib/tool-intake";
+import { getToolsAccount } from "@/lib/tools.functions";
 import { ToolContextInput } from "@/components/ToolContextInput";
 import { ToolNumberInput } from "@/components/ToolNumberInput";
 import { exportTool } from "@/lib/tool-export";
@@ -60,7 +61,9 @@ function ToolRunner() {
 type Loaded = Extract<Awaited<ReturnType<typeof getInteractiveTool>>, { found: true }>;
 
 function Calculator({ toolId, spec }: { toolId: string; spec: NonNullable<Loaded["spec"]> }) {
-  const [ctx, setCtx] = useState<Record<string, string>>({});
+  const [contextEdits, setCtx] = useState<Record<string, string>>({});
+  const account = useQuery({ queryKey: ["tools-account"], queryFn: () => getToolsAccount(), retry: false });
+  const ctx = prefillCompany(spec.context_fields, contextEdits, account.data?.profile?.company);
   const [raw, setRaw] = useState<Record<string, string>>({});
   const [step, setStep] = useState<"intake" | "result">("intake");
   const [busy, setBusy] = useState<"" | "pdf" | "pptx">("");
@@ -82,7 +85,7 @@ function Calculator({ toolId, spec }: { toolId: string; spec: NonNullable<Loaded
         void save({ data: { toolId, inputs, context: ctx } });
       }}>
         <div className="md:col-span-2"><h2 className="text-2xl font-bold">1. Dados do seu negócio</h2><p className="mt-1 text-sm text-muted-foreground">Essas informações personalizam a ferramenta e o relatório.</p></div>
-        {spec.context_fields.map((f) => <label key={f.id} className="min-w-0 text-sm font-medium">{f.label} *<ToolContextInput field={f} value={ctx[f.id] ?? ""} onChange={value => setCtx({ ...ctx, [f.id]: value })} className={field} /></label>)}
+        {spec.context_fields.map((f) => <label key={f.id} className="min-w-0 text-sm font-medium">{f.label} *<ToolContextInput field={f} value={ctx[f.id] ?? ""} onChange={value => setCtx(current => ({ ...current, [f.id]: value }))} className={field} /></label>)}
         <div className="md:col-span-2 mt-4"><h2 className="text-2xl font-bold">2. Números para o cálculo</h2></div>
         {spec.inputs.map((i) => (
           <label key={i.id} className="text-sm font-medium">{i.label}{i.unit ? ` (${i.unit})` : ""} *
