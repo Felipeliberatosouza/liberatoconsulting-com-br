@@ -47,6 +47,7 @@ import { Route as AdminConsultoresRouteImport } from './routes/admin.consultores
 import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminContratoRouteImport } from './routes/admin.contrato'
 import { Route as AdminCrmRouteImport } from './routes/admin.crm'
+import { Route as AdminDivulgacaoFerramentasRouteImport } from './routes/admin.divulgacao-ferramentas'
 import { Route as AdminEmpresaRouteImport } from './routes/admin.empresa'
 import { Route as AdminEnviosRouteImport } from './routes/admin.envios'
 import { Route as AdminFerramentasRouteImport } from './routes/admin.ferramentas'
@@ -287,6 +288,12 @@ const AdminCrmRoute = AdminCrmRouteImport.update({
   path: '/admin/crm',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDivulgacaoFerramentasRoute =
+  AdminDivulgacaoFerramentasRouteImport.update({
+    id: '/admin/divulgacao-ferramentas',
+    path: '/admin/divulgacao-ferramentas',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminEmpresaRoute = AdminEmpresaRouteImport.update({
   id: '/admin/empresa',
   path: '/admin/empresa',
@@ -575,6 +582,7 @@ export interface FileRoutesByFullPath {
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/crm': typeof AdminCrmRoute
+  '/admin/divulgacao-ferramentas': typeof AdminDivulgacaoFerramentasRoute
   '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/envios': typeof AdminEnviosRoute
   '/admin/ferramentas': typeof AdminFerramentasRoute
@@ -663,6 +671,7 @@ export interface FileRoutesByTo {
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/crm': typeof AdminCrmRoute
+  '/admin/divulgacao-ferramentas': typeof AdminDivulgacaoFerramentasRoute
   '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/envios': typeof AdminEnviosRoute
   '/admin/ferramentas': typeof AdminFerramentasRoute
@@ -752,6 +761,7 @@ export interface FileRoutesById {
   '/admin/content': typeof AdminContentRoute
   '/admin/contrato': typeof AdminContratoRoute
   '/admin/crm': typeof AdminCrmRoute
+  '/admin/divulgacao-ferramentas': typeof AdminDivulgacaoFerramentasRoute
   '/admin/empresa': typeof AdminEmpresaRoute
   '/admin/envios': typeof AdminEnviosRoute
   '/admin/ferramentas': typeof AdminFerramentasRoute
@@ -842,6 +852,7 @@ export interface FileRouteTypes {
     | '/admin/content'
     | '/admin/contrato'
     | '/admin/crm'
+    | '/admin/divulgacao-ferramentas'
     | '/admin/empresa'
     | '/admin/envios'
     | '/admin/ferramentas'
@@ -930,6 +941,7 @@ export interface FileRouteTypes {
     | '/admin/content'
     | '/admin/contrato'
     | '/admin/crm'
+    | '/admin/divulgacao-ferramentas'
     | '/admin/empresa'
     | '/admin/envios'
     | '/admin/ferramentas'
@@ -1018,6 +1030,7 @@ export interface FileRouteTypes {
     | '/admin/content'
     | '/admin/contrato'
     | '/admin/crm'
+    | '/admin/divulgacao-ferramentas'
     | '/admin/empresa'
     | '/admin/envios'
     | '/admin/ferramentas'
@@ -1107,6 +1120,7 @@ export interface RootRouteChildren {
   AdminContentRoute: typeof AdminContentRoute
   AdminContratoRoute: typeof AdminContratoRoute
   AdminCrmRoute: typeof AdminCrmRoute
+  AdminDivulgacaoFerramentasRoute: typeof AdminDivulgacaoFerramentasRoute
   AdminEmpresaRoute: typeof AdminEmpresaRoute
   AdminEnviosRoute: typeof AdminEnviosRoute
   AdminFerramentasRoute: typeof AdminFerramentasRoute
@@ -1424,6 +1438,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/crm'
       fullPath: '/admin/crm'
       preLoaderRoute: typeof AdminCrmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/divulgacao-ferramentas': {
+      id: '/admin/divulgacao-ferramentas'
+      path: '/admin/divulgacao-ferramentas'
+      fullPath: '/admin/divulgacao-ferramentas'
+      preLoaderRoute: typeof AdminDivulgacaoFerramentasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/empresa': {
@@ -1803,6 +1824,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminContentRoute: AdminContentRoute,
   AdminContratoRoute: AdminContratoRoute,
   AdminCrmRoute: AdminCrmRoute,
+  AdminDivulgacaoFerramentasRoute: AdminDivulgacaoFerramentasRoute,
   AdminEmpresaRoute: AdminEmpresaRoute,
   AdminEnviosRoute: AdminEnviosRoute,
   AdminFerramentasRoute: AdminFerramentasRoute,
