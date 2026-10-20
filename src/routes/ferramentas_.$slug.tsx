@@ -8,6 +8,9 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { formatValue, runTool } from "@/lib/tool-engine";
+import { parseBrazilianNumber, validateIntake } from "@/lib/tool-intake";
+import { ToolContextInput } from "@/components/ToolContextInput";
+import { ToolNumberInput } from "@/components/ToolNumberInput";
 import { exportTool } from "@/lib/tool-export";
 import {
   createToolOrder, getInteractiveTool, getToolBranding, refreshToolOrder, saveBillingProfile, saveToolRun, sendPhoneCode, verifyPhoneCode,
@@ -63,7 +66,7 @@ function Calculator({ toolId, spec }: { toolId: string; spec: NonNullable<Loaded
   const [busy, setBusy] = useState<"" | "pdf" | "pptx">("");
   const save = useServerFn(saveToolRun);
   const brandingQ = useQuery({ queryKey: ["tool-branding"], queryFn: () => getToolBranding() });
-  const inputs = useMemo(() => Object.fromEntries(spec.inputs.map((i) => [i.id, Number(String(raw[i.id] ?? "").replace(/\./g, "").replace(",", "."))])), [raw, spec.inputs]);
+  const inputs = useMemo(() => Object.fromEntries(spec.inputs.map((i) => [i.id, parseBrazilianNumber(raw[i.id] ?? "")])), [raw, spec.inputs]);
   const result = useMemo(() => runTool(spec, inputs), [spec, inputs]);
   const ctxOk = spec.context_fields.every((f) => (ctx[f.id] ?? "").trim());
 
@@ -72,16 +75,18 @@ function Calculator({ toolId, spec }: { toolId: string; spec: NonNullable<Loaded
       <form className="mt-10 grid gap-5 bg-background p-6 md:grid-cols-2" onSubmit={async (e) => {
         e.preventDefault();
         if (!ctxOk) { toast.error("Preencha os dados do seu negócio."); return; }
+        const intakeError = validateIntake(spec, ctx, inputs);
+        if (intakeError) { toast.error(intakeError); return; }
         if (!result.ok) { toast.error(result.error); return; }
         setStep("result");
         void save({ data: { toolId, inputs, context: ctx } });
       }}>
         <div className="md:col-span-2"><h2 className="text-2xl font-bold">1. Dados do seu negócio</h2><p className="mt-1 text-sm text-muted-foreground">Essas informações personalizam a ferramenta e o relatório.</p></div>
-        {spec.context_fields.map((f) => <label key={f.id} className="text-sm font-medium">{f.label} *<input required value={ctx[f.id] ?? ""} onChange={(e) => setCtx({ ...ctx, [f.id]: e.target.value })} className={field} maxLength={200} /></label>)}
+        {spec.context_fields.map((f) => <label key={f.id} className="min-w-0 text-sm font-medium">{f.label} *<ToolContextInput field={f} value={ctx[f.id] ?? ""} onChange={value => setCtx({ ...ctx, [f.id]: value })} className={field} /></label>)}
         <div className="md:col-span-2 mt-4"><h2 className="text-2xl font-bold">2. Números para o cálculo</h2></div>
         {spec.inputs.map((i) => (
           <label key={i.id} className="text-sm font-medium">{i.label}{i.unit ? ` (${i.unit})` : ""} *
-            <input required inputMode="decimal" value={raw[i.id] ?? ""} onChange={(e) => setRaw({ ...raw, [i.id]: e.target.value.replace(/[^0-9.,-]/g, "") })} className={field} />
+            <ToolNumberInput input={i} value={raw[i.id] ?? ""} onChange={value => setRaw({ ...raw, [i.id]: value })} className={field} />
             {i.help ? <span className="mt-1 block text-xs font-normal text-muted-foreground">{i.help}</span> : null}
           </label>
         ))}

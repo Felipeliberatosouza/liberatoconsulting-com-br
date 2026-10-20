@@ -51,10 +51,14 @@ export const ALLOCATION_OPTIONS = [
   "Consumo de materiais",
   "Número de pessoas / funcionários",
   "Consumo medido de energia ou outros recursos",
+  "Pedidos, lotes, setups ou entregas",
+  "Clientes, usuários ou contatos atendidos",
+  "Peso, distância ou ocupação de armazenagem",
   "Atividades (ABC) — pedidos, lotes, setups, atendimentos",
   "Tempo das atividades (TDABC)",
   "Critérios combinados por centro de custo",
   "Divisão igual entre itens comparáveis",
+  "Percentual acordado com justificativa",
   "Outro critério justificado",
 ] as const;
 

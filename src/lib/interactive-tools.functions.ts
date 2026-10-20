@@ -149,6 +149,9 @@ export const saveToolRun = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: tool } = await context.supabase.from("interactive_tools").select("id, pricing_mode, spec").eq("id", data.toolId).maybeSingle();
     if (!tool || !(await hasAccess(context, tool))) return { ok: false as const, error: "Acesso não liberado." };
+    const { validateIntake } = await import("./tool-intake");
+    const intakeError = validateIntake(tool.spec as ToolSpec, data.context, data.inputs);
+    if (intakeError) return { ok: false as const, error: intakeError };
     const r = runTool(tool.spec as ToolSpec, data.inputs);
     if (!r.ok) return { ok: false as const, error: r.error };
     const sb = await db();
