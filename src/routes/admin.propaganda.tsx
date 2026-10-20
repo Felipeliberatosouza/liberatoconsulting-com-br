@@ -5,6 +5,12 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
+import { Button } from "@/components/ui/button";
+import { Copy, ExternalLink, Sparkles } from "lucide-react";
+import { listInteractiveToolsAdmin } from "@/lib/interactive-tools.functions";
+import { listAdminTools } from "@/lib/tools.functions";
+import { toolAccessSteps, toolPromotionCaption, toolPromotionLink, type PromotionTool } from "@/lib/tool-promotion";
+import { composeToolPromotion } from "@/lib/tool-promotion-image";
 import { useAuthReady } from "@/hooks/useAuthReady";
 import { useLanguage } from "@/i18n";
 import { pt } from "@/i18n/pt";
@@ -66,7 +72,8 @@ type Mode =
   | "brasil"
   | "gestao"
   | "insights"
-  | "seguidor";
+  | "seguidor"
+  | "ferramenta";
 
 const MODE_LABELS: Record<Mode, string> = {
   servico: "Propaganda de serviço",
@@ -78,6 +85,7 @@ const MODE_LABELS: Record<Mode, string> = {
   gestao: "Conteúdos gerais sobre gestão",
   insights: "Insights",
   seguidor: "Siga a Liberato Consulting (LinkedIn)",
+  ferramenta: "Nova ferramenta",
 };
 
 /** Modos com título fixo e frase publicitária opcional em cada idioma. */
@@ -105,7 +113,11 @@ const AD_LANG_LABELS: Record<AdLang, string> = {
   es: "Espanhol",
 };
 
-function AdPage() {
+export function ToolPromotionPage() {
+  return <AdPage toolsOnly />;
+}
+
+function AdPage({ toolsOnly = false }: { toolsOnly?: boolean }) {
   const ready = useAuthReady();
   const { logoUrl } = useLanguage();
   const company = useQuery({
@@ -127,7 +139,27 @@ function AdPage() {
   });
   const indicatorList = indicators.data ?? [];
 
-  const [mode, setMode] = useState<Mode>("servico");
+  const [mode, setMode] = useState<Mode>(toolsOnly ? "ferramenta" : "servico");
+  const toolQuery = useQuery({
+    queryKey: ["tool-promotion-sources"],
+    queryFn: async () => {
+      const [interactive, downloads] = await Promise.all([listInteractiveToolsAdmin(), listAdminTools()]);
+      return [
+        ...interactive.tools.filter((t) => t.status === "published").map((t): PromotionTool => ({
+          id: `interactive:${t.id}`, slug: t.slug, title: t.title, summary: t.summary, kind: "interactive",
+          priceLabel: t.pricing_mode === "free" ? "Gratuita" : Number(t.price_brl).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
+        })),
+        ...downloads.filter((t) => t.published).map((t): PromotionTool => ({
+          id: `download:${t.id}`, slug: t.slug, title: t.title, summary: t.summary, kind: "download", coverUrl: t.cover_url, priceLabel: "Gratuita",
+        })),
+      ];
+    },
+    enabled: ready && mode === "ferramenta",
+  });
+  const [toolId, setToolId] = useState("");
+  const tool = toolQuery.data?.find((t) => t.id === toolId);
+  const [showAccess, setShowAccess] = useState(false);
+  const [captions, setCaptions] = useState<Partial<Record<SocialFormatKey, string>>>({});
   const [articleId, setArticleId] = useState("");
   const article = published.find((a) => a.id === articleId);
   const serviceOptions = useServiceOptions();
@@ -219,6 +251,7 @@ function AdPage() {
 
   // Artigo vinculado: o selecionado (modo artigo) ou o cujo título coincide com o foco.
   function linkedArticle() {
+    if (mode === "ferramenta") return undefined;
     if (mode === "artigo") return article;
     return findSimilarArticle(topic, published);
   }
@@ -257,6 +290,18 @@ function AdPage() {
     setBaseImage(finalUrl);
     setArts({});
     toast.success("Imagem de fundo gerada.");
+  }
+
+  async function makeToolCopy() {
+    if (!tool) return;
+    setBusy("copy");
+    try {
+      const res = await generateAdCopy({ data: { service: tool.title, topic: tool.summary.slice(0, 200), goal: "Divulgar esta ferramenta de gestão, sem inventar benefícios ou resultados" } });
+      if (!res.ok) { toast.error(res.error); return; }
+      setLines({ pt: res.pt, en: res.en, zh: res.zh, es: res.es });
+      toast.success("Frases da ferramenta geradas nos quatro idiomas.");
+    } catch { toast.error("Não foi possível gerar as frases da ferramenta."); }
+    finally { setBusy(null); }
   }
 
   async function makeArticleCopy() {
@@ -321,6 +366,27 @@ function AdPage() {
 
   async function compose() {
     const selected = AD_LANGS.filter((l) => langs[l]);
+    if (!selected.length) { toast.error("Selecione ao menos um idioma."); return; }
+    if (mode === "ferramenta") {
+      if (!tool) { toast.error("Selecione uma ferramenta publicada."); return; }
+      setBusy("compose");
+      try {
+        const steps = toolAccessSteps(tool, showAccess);
+        const details = selected.map((l) => lines[l].trim()).filter(Boolean);
+        if (!details.length) { toast.error("Preencha os detalhes da ferramenta."); return; }
+        const toolFooter = [company.data?.trade_name || "Liberato Consulting", site, phone, company.data?.email].filter(Boolean).join(" · ");
+        const out: Partial<Record<SocialFormatKey, string>> = {};
+        const text: Partial<Record<SocialFormatKey, string>> = {};
+        for (const format of FORMATS) {
+          out[format] = await composeToolPromotion({ format, title: tool.title, details, steps, footer: toolFooter, logoUrl: company.data?.logo_url || logoUrl || "/logo.png", priceLabel: tool.priceLabel });
+          text[format] = toolPromotionCaption(tool, [tool.title, ...details], steps, format) + `\n\n${toolFooter}`;
+        }
+        setArts(out); setCaptions(text);
+        toast.success("Divulgação da ferramenta pronta nos três formatos.");
+      } catch { toast.error("Não foi possível montar as artes. Confira a logomarca e tente novamente."); }
+      finally { setBusy(null); }
+      return;
+    }
     const focus = topic.trim();
     const list =
       mode === "artigo"
@@ -386,15 +452,19 @@ function AdPage() {
 
   const field = "w-full rounded-md border border-border bg-background px-3 py-2 text-sm";
 
+  useEffect(() => {
+    if (mode === "ferramenta") { setArts({}); setCaptions({}); }
+  }, [mode, toolId, showAccess, lines, langs, company.data, logoUrl]);
+
   return (
     <AdminShell
-      title="Propaganda em redes sociais"
+      title={toolsOnly ? "Divulgação de ferramentas" : "Propaganda em redes sociais"}
       description="Monte peças para LinkedIn, Instagram e WhatsApp em português, inglês, chinês e espanhol."
       requireAdmin
     >
       <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
         <section className="space-y-4 rounded-xl border border-border bg-card p-5">
-          <div className="space-y-1">
+          {!toolsOnly && <div className="space-y-1">
             <label className="text-sm font-medium">Tipo de peça</label>
             <select
               className={field}
@@ -412,7 +482,32 @@ function AdPage() {
                 </option>
               ))}
             </select>
-          </div>
+          </div>}
+
+          {mode === "ferramenta" && <div className="space-y-4">
+            <label className="block space-y-1 text-sm font-medium">
+              <span>Ferramenta publicada</span>
+              <select className={field} value={toolId} disabled={toolQuery.isLoading} onChange={(e) => {
+                const next = toolQuery.data?.find((t) => t.id === e.target.value);
+                setToolId(e.target.value); setLines({ pt: next?.summary || next?.title || "", en: "", zh: "", es: "" });
+                setLangs({ pt: true, en: false, zh: false, es: false }); setBaseImage("");
+              }}>
+                <option value="">{toolQuery.isLoading ? "Carregando ferramentas…" : "Selecione uma ferramenta…"}</option>
+                {toolQuery.data?.map((t) => <option key={t.id} value={t.id}>{t.title} · {t.kind === "interactive" ? "Interativa" : "Planilha / material"} · {t.priceLabel}</option>)}
+              </select>
+            </label>
+            {toolQuery.error && <p role="alert" className="text-sm text-destructive">Não foi possível carregar as ferramentas.</p>}
+            {toolQuery.data?.length === 0 && <p className="text-sm text-muted-foreground">Nenhuma ferramenta publicada.</p>}
+            {tool && <>
+              <p className="text-sm font-semibold">{tool.title} · {tool.priceLabel}</p>
+              <Button asChild variant="link" className="h-auto whitespace-normal p-0"><a href={toolPromotionLink(tool)} target="_blank" rel="noopener noreferrer"><ExternalLink /> Abrir ferramenta</a></Button>
+              <label className="flex items-start gap-2 text-sm font-medium">
+                <input type="checkbox" checked={showAccess} onChange={(e) => setShowAccess(e.target.checked)} className="mt-1" />
+                Incluir passo a passo gráfico de acesso no post
+              </label>
+              <Button onClick={makeToolCopy} disabled={busy !== null} className="h-auto min-h-9 whitespace-normal"><Sparkles />{busy === "copy" ? "Gerando…" : "Gerar frases da ferramenta (4 idiomas)"}</Button>
+            </>}
+          </div>}
 
           {mode === "artigo" ? (
             <>
@@ -529,7 +624,7 @@ function AdPage() {
             </div>
           ) : null}
 
-          {mode === "artigo" || mode === "indicadores" ? null : (
+          {mode === "artigo" || mode === "indicadores" || mode === "ferramenta" ? null : (
             <div className="space-y-1">
               <label className="text-sm font-medium">
                 {mode === "areas" || isTheme(mode)
@@ -664,7 +759,7 @@ function AdPage() {
               <label className="text-sm font-medium">
                 {mode === "artigo"
                   ? `Nome do artigo — ${AD_LANG_LABELS[k]}`
-                  : `${i + 1}ª linha — ${AD_LANG_LABELS[k]}`}
+                  : mode === "ferramenta" ? `Detalhes da ferramenta — ${AD_LANG_LABELS[k]}` : `${i + 1}ª linha — ${AD_LANG_LABELS[k]}`}
               </label>
               <input
                 className={field}
@@ -677,14 +772,14 @@ function AdPage() {
 
           <p className="text-xs text-muted-foreground">Rodapé da arte: {footer}</p>
 
-          <button
+          <Button
             type="button"
             onClick={compose}
-            disabled={busy !== null}
+            disabled={busy !== null || (mode === "ferramenta" && !tool)}
             className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
           >
             {busy === "compose" ? "Montando…" : "Montar artes nos três formatos"}
-          </button>
+          </Button>
         </section>
 
         <section className="grid gap-6 sm:grid-cols-2">
@@ -736,6 +831,15 @@ function AdPage() {
                   </button>
                 </span>
               </figcaption>
+              {mode === "ferramenta" && captions[f] && <div className="space-y-2">
+                <label className="block text-sm font-medium">Legenda — {SOCIAL_IMAGE_FORMATS[f].label}
+                  <textarea aria-label={`Legenda para ${SOCIAL_IMAGE_FORMATS[f].label}`} className={`${field} mt-1 min-h-48`} value={captions[f]} onChange={(e) => setCaptions((prev) => ({ ...prev, [f]: e.target.value }))} />
+                </label>
+                <Button variant="outline" size="sm" onClick={async () => {
+                  try { await navigator.clipboard.writeText(captions[f] ?? ""); toast.success("Legenda copiada."); }
+                  catch { toast.error("Não foi possível copiar a legenda."); }
+                }}><Copy /> Copiar legenda</Button>
+              </div>}
             </figure>
           ))}
         </section>
