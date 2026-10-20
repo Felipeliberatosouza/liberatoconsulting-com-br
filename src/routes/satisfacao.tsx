@@ -44,11 +44,13 @@ function Stars({ value, onChange }: { value: number | undefined; onChange: (v: n
 
 function SurveyPage() {
   const { tipo } = Route.useSearch();
+  return <SurveyShell kind={tipo === "nao-executado" ? "nao_executado" : "executado"} />;
+}
+
+export function SurveyShell({ kind }: { kind: SurveyKind }) {
   const { lang: rawLang, logoUrl } = useLanguage();
   const lang = (["pt", "en", "es", "zh"].includes(rawLang) ? rawLang : "pt") as Lang;
   const t = SURVEY_TEXTS[lang];
-  const kind: SurveyKind | null = tipo === "executado" ? "executado" : tipo === "nao-executado" ? "nao_executado" : null;
-
   return (
     <div className="min-h-screen bg-secondary/30">
       <header className="border-b border-border bg-background">
@@ -60,26 +62,7 @@ function SurveyPage() {
         </div>
       </header>
       <main className="mx-auto max-w-3xl px-6 py-10">
-        {kind ? (
-          <SurveyForm key={kind} kind={kind} lang={lang} />
-        ) : (
-          <>
-            <h1 className="font-display text-3xl font-bold">{t.choose}</h1>
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {(["executado", "nao-executado"] as const).map((k) => (
-                <Link
-                  key={k}
-                  to="/satisfacao"
-                  search={{ tipo: k }}
-                  className="rounded-2xl border border-border bg-background p-6 shadow-sm hover:border-accent"
-                >
-                  <h2 className="font-display text-lg font-semibold">{k === "executado" ? t.exec : t.nonExec}</h2>
-                  <p className="mt-2 text-sm text-muted-foreground">{k === "executado" ? t.execDesc : t.nonExecDesc}</p>
-                </Link>
-              ))}
-            </div>
-          </>
-        )}
+        <SurveyForm key={kind} kind={kind} lang={lang} />
       </main>
     </div>
   );

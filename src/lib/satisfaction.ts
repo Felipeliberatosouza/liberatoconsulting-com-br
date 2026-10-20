@@ -6,7 +6,7 @@ export type Lang = "pt" | "en" | "es" | "zh";
 export const SITE = "https://liberatoconsulting.com.br";
 export const SCOPE_LINK = `${SITE}/escopoinicial`;
 export const surveyLink = (kind: SurveyKind) =>
-  `${SITE}/satisfacao?tipo=${kind === "executado" ? "executado" : "nao-executado"}`;
+  `${SITE}/${kind === "executado" ? "satisfacao" : "atendimento"}`;
 
 export const REASONS: Record<Lang, string[]> = {
   pt: ["Orçamento", "Prazo", "Mudança de prioridades internas", "Escolhemos outro fornecedor", "Proposta não atendeu à necessidade", "Outro"],
