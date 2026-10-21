@@ -106,13 +106,14 @@ export const listPublishedInteractiveTools = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data } = await context.supabase.from("interactive_tools").select("id, slug, title, summary, category, pricing_mode, price_brl").eq("status", "published").order("created_at", { ascending: false });
-    return (data ?? []) as Array<{ id: string; slug: string; title: string; summary: string; category: string; pricing_mode: string; price_brl: number }>;
+    const { data: paid } = await context.supabase.from("interactive_tool_orders").select("tool_id").eq("user_id", context.userId).eq("status", "paid");
+    const owned = new Set((paid ?? []).map((o) => o.tool_id as string));
+    return (data ?? []).map((t) => ({ ...t, access: t.pricing_mode !== "paid" || owned.has(t.id) })) as Array<{ id: string; slug: string; title: string; summary: string; category: string; pricing_mode: string; price_brl: number; access: boolean }>;
   });
 
+/** Ferramenta paga só abre após pagamento confirmado — inclusive para administradores, para que o checkout Asaas seja sempre exibido. */
 async function hasAccess(context: Ctx, tool: { id: string; pricing_mode: string }) {
   if (tool.pricing_mode !== "paid") return true;
-  const { isAdmin } = await import("./access.server");
-  if (await isAdmin(context)) return true;
   const { data } = await context.supabase.from("interactive_tool_orders").select("id").eq("tool_id", tool.id).eq("user_id", context.userId).eq("status", "paid").limit(1);
   return Boolean(data?.length);
 }
