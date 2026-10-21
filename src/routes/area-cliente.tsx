@@ -15,6 +15,7 @@ import { formatPhone, isValidPhone } from "@/lib/validation";
 import { logMemberActivity } from "@/lib/activity.functions";
 import { listPublishedInteractiveTools } from "@/lib/interactive-tools.functions";
 import { Button } from "@/components/ui/button";
+import { ToolPriceBadge } from "@/components/ToolPriceBadge";
 import { Switch } from "@/components/ui/switch";
 
 type Section = "ferramentas" | "guia" | "servicos" | "newsletter" | "boletim" | "artigos" | "perfil";
@@ -77,5 +78,5 @@ function InteractiveToolsBlock({ enabled }: { enabled: boolean }) {
   const q = useQuery({ queryKey: ["interactive-tools-list"], queryFn: () => listPublishedInteractiveTools(), enabled, retry: false });
   const tools = q.data ?? [];
   if (!tools.length) return null;
-  return <section className="mt-7"><h2 className="text-sm font-bold uppercase tracking-[0.2em] text-accent">Ferramentas interativas</h2><div className="mt-4 grid gap-5 md:grid-cols-2">{tools.map((tool) => <article key={tool.id} className="border-t-2 border-accent py-5"><div className="flex items-center justify-between gap-3 text-xs text-muted-foreground"><span>{tool.category}</span><span className="font-semibold text-foreground">{tool.pricing_mode === "paid" ? `R$ ${Number(tool.price_brl).toFixed(2).replace(".", ",")}` : "Gratuita"}</span></div><h3 className="mt-2 text-xl font-bold">{tool.title}</h3><p className="mt-2 text-sm text-muted-foreground">{tool.summary}</p><Button asChild className="mt-5"><Link to="/ferramentas/$slug" params={{ slug: tool.slug }}><Wrench />Abrir ferramenta</Link></Button></article>)}</div><h2 className="mt-10 text-sm font-bold uppercase tracking-[0.2em] text-accent">Guias e planilhas para download</h2></section>;
+  return <section className="mt-7"><h2 className="text-sm font-bold uppercase tracking-[0.2em] text-accent">Ferramentas interativas</h2><div className="mt-4 grid gap-5 md:grid-cols-2">{tools.map((tool) => <article key={tool.id} className="border-t-2 border-accent py-5"><div className="flex items-center justify-between gap-3 text-xs text-muted-foreground"><span>{tool.category}</span><ToolPriceBadge pricingMode={tool.pricing_mode} price={tool.price_brl} /></div><h3 className="mt-2 text-xl font-bold">{tool.title}</h3><p className="mt-2 text-sm text-muted-foreground">{tool.summary}</p><Button asChild className="mt-5"><Link to="/ferramentas/$slug" params={{ slug: tool.slug }}><Wrench />Abrir ferramenta</Link></Button></article>)}</div><h2 className="mt-10 text-sm font-bold uppercase tracking-[0.2em] text-accent">Guias e planilhas para download</h2></section>;
 }
