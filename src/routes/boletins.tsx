@@ -9,7 +9,7 @@ import { pageText } from "@/lib/page-translations";
 import { sanitizeEmailHtml } from "@/lib/sanitize-html";
 
 export const Route = createFileRoute("/boletins")({
-  validateSearch: (s: Record<string, unknown>): { edicao: string | undefined } => ({ edicao: typeof s["edicao"] === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s["edicao"]) ? s["edicao"] : undefined }),
+  validateSearch: (s: Record<string, unknown>): { edicao?: string | undefined } => ({ edicao: typeof s["edicao"] === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s["edicao"]) ? s["edicao"] : undefined }),
   head: () => ({ meta: [{ title: "Boletins Semanais — Liberato Consulting" }, { name: "description", content: "Boletins semanais publicados pela Liberato Consulting nos últimos três meses." }, { property: "og:title", content: "Boletins Semanais — Liberato Consulting" }, { property: "og:description", content: "Indicadores e análises recentes para apoiar decisões empresariais." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: BulletinsPage,
 });
