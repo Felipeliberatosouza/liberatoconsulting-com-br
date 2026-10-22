@@ -529,7 +529,8 @@ function drawDeck(b: Board, d: DeckInput) {
     b.rect(x, 3.0, 5.8, 2.7, C.white, true);
     b.text(t.kind === "guide" ? "GUIA DE GESTÃO" : "FERRAMENTA DA PLATAFORMA", x + 0.25, 3.2, 5.3, 0.25, { size: 10, bold: true, color: C.accent });
     b.text(t.title, x + 0.25, 3.58, 5.3, 0.6, { size: 17, bold: true, color: C.navy, url: t.url });
-    const summary = (t.summary ?? "").split(/(?<=[.!?])\s/).slice(0, 2).join(" ");
+    const sentences = (t.summary ?? "").split(/(?<=[.!?])\s/).slice(0, 2).join(" ");
+    const summary = sentences.length > 225 ? `${sentences.slice(0, 222).replace(/\s+\S*$/, "")}…` : sentences;
     b.text(summary, x + 0.25, 4.3, 5.3, 0.72, { size: 13, color: C.muted });
     b.text(t.url.replace(/^https?:\/\//, ""), x + 0.25, 5.18, 5.3, 0.3, { size: 11, color: C.accent, url: t.url });
   });
