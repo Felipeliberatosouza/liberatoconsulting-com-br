@@ -152,16 +152,21 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
     try {
       const res = await searchCrmLeads({
         data: {
-          segment: filters.segment,
+          segment: filters.segment.join(" OU "),
           companyName: filters.companyName,
-          country: filters.country,
-          state: filters.state,
-          city: filters.city,
-          size: filters.porte === "grande" ? "corporacao" : filters.porte ? "pme" : "",
-          porte: filters.porte ? `${PORTE_LABEL[filters.porte]} (${SECTOR_LABEL[filters.sector]}, critério IBGE/Sebrae)` : "",
-          minEmployees: num(filters.minEmployees) ?? porteLimits?.min ?? null,
-          maxEmployees: num(filters.maxEmployees) ?? porteLimits?.max ?? null,
-          revenue: filters.revenue,
+          country: filters.country.join(" OU "),
+          state: filters.state.join(" OU "),
+          city: filters.city.join(" OU "),
+          size:
+            filters.porte.length && filters.porte.every((p) => p === "grande")
+              ? "corporacao"
+              : filters.porte.length && !filters.porte.includes("grande") ? "pme" : "",
+          porte: filters.porte.length || filters.sector.length
+            ? `${filters.porte.length ? filters.porte.map((p) => PORTE_LABEL[p]).join(" ou ") : "Qualquer porte"} (${sectors.map((s) => SECTOR_LABEL[s]).join(" ou ")}, critério IBGE/Sebrae)${chosenRanges.length ? `; faixas de funcionários: ${chosenRanges.map((r) => r.label).join(", ")}` : ""}`
+            : chosenRanges.length ? `Faixas de funcionários: ${chosenRanges.map((r) => r.label).join(", ")}` : "",
+          minEmployees: (chosenRanges.length ? bounds(chosenRanges) : bounds(porteLimits)).min,
+          maxEmployees: (chosenRanges.length ? bounds(chosenRanges) : bounds(porteLimits)).max,
+          revenue: filters.revenue.join(" OU "),
           keywords: filters.keywords,
           roles: filters.roles,
           limit: Math.min(30, Math.max(1, Number(filters.limit) || 6)),
