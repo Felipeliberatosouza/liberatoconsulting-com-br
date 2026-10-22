@@ -37,16 +37,15 @@ const btn = "rounded-full bg-ink px-4 py-2 text-sm font-semibold text-ink-foregr
 const btnGhost = "rounded-full border border-border px-4 py-2 text-sm font-medium hover:border-accent disabled:opacity-60";
 
 type Filters = {
-  segment: string;
+  segment: string[];
   companyName: string;
-  country: string;
-  state: string;
-  city: string;
-  porte: Porte;
-  sector: Sector;
-  minEmployees: string;
-  maxEmployees: string;
-  revenue: string;
+  country: string[];
+  state: string[];
+  city: string[];
+  porte: Array<Exclude<Porte, "">>;
+  sector: Sector[];
+  employees: string[];
+  revenue: string[];
   keywords: string;
   roles: string;
   limit: string;
@@ -56,16 +55,15 @@ type Filters = {
 const QUALITY_LABEL = { completo: "Lead completo", parcial: "Lead parcial", basico: "Apenas empresa" } as const;
 
 const initial: Filters = {
-  segment: "",
+  segment: [],
   companyName: "",
-  country: "Brasil",
-  state: "",
-  city: "",
-  porte: "",
-  sector: "comercio_servicos",
-  minEmployees: "",
-  maxEmployees: "",
-  revenue: "",
+  country: ["Brasil"],
+  state: [],
+  city: [],
+  porte: [],
+  sector: [],
+  employees: [],
+  revenue: [],
   keywords: "",
   roles: "",
   limit: "6",
@@ -85,37 +83,65 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const set = (key: keyof Filters, value: string | number) =>
-    setFilters((prev) => ({ ...prev, [key]: value }) as Filters);
+  const set = <K extends keyof Filters>(key: K, value: Filters[K]) => setFilters((prev) => ({ ...prev, [key]: value }));
 
   const [cities, setCities] = useState<string[]>([]);
   const [citiesLoading, setCitiesLoading] = useState(false);
-  const region = COUNTRY_REGIONS[filters.country];
+  const onlyBrazil = filters.country.length === 1 && filters.country[0] === "Brasil";
+  const regionLabel = filters.country.length === 1 ? COUNTRY_REGIONS[filters.country[0]]?.label ?? "Estado / Província" : "Estado / Província";
+  const countriesForRegion = filters.country.length ? filters.country : Object.keys(COUNTRY_REGIONS);
+  const regionOptions = countriesForRegion.flatMap((c) =>
+    (COUNTRY_REGIONS[c]?.options ?? []).map((o) => ({
+      value: o,
+      label:
+        c === "Brasil"
+          ? `${o} — ${STATES.find((s) => s.uf === o)?.name ?? ""}`
+          : countriesForRegion.length > 1 ? `${o} (${c})` : o,
+    })),
+  );
+  const brStates = filters.state.filter((s) => STATES.some((x) => x.uf === s));
+  const brKey = brStates.join(",");
 
   useEffect(() => {
     setCities([]);
-    if (filters.country !== "Brasil" || !filters.state) return;
+    if (!filters.country.includes("Brasil") || brStates.length === 0) return;
     let alive = true;
     setCitiesLoading(true);
-    fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${filters.state}/municipios?orderBy=nome`)
-      .then((r) => r.json())
-      .then((rows: Array<{ nome: string }>) => alive && setCities(rows.map((r) => r.nome)))
-      .catch(() => alive && setCities([]))
+    Promise.all(
+      brStates.map((uf) =>
+        fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderBy=nome`)
+          .then((r) => r.json())
+          .then((rows: Array<{ nome: string }>) => rows.map((r) => (brStates.length > 1 ? `${r.nome}/${uf}` : r.nome)))
+          .catch(() => [] as string[]),
+      ),
+    )
+      .then((lists) => alive && setCities(lists.flat()))
       .finally(() => alive && setCitiesLoading(false));
     return () => {
       alive = false;
     };
-  }, [filters.country, filters.state]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.country.join(","), brKey]);
 
-  const employeeRanges = employeeRangesFor(filters.porte, filters.sector);
-  const employeeRange =
-    employeeRanges.find((r) => String(r.min) === filters.minEmployees && String(r.max ?? "") === filters.maxEmployees)?.label ?? "";
-  const porteLimits = filters.porte ? PORTE_LIMITS[filters.sector][filters.porte] : null;
+  const sectors: Sector[] = filters.sector.length ? filters.sector : (Object.keys(SECTOR_LABEL) as Sector[]);
+  const portes: Array<Exclude<Porte, "">> = filters.porte.length ? filters.porte : (Object.keys(PORTE_LABEL) as Array<Exclude<Porte, "">>);
+  const employeeRanges = Array.from(
+    new Map(
+      sectors.flatMap((s) => portes.flatMap((p) => employeeRangesFor(p, s))).map((r) => [r.label, r] as const),
+    ).values(),
+  ).sort((a, b) => a.min - b.min);
+  const chosenRanges = employeeRanges.filter((r) => filters.employees.includes(r.label));
+  const porteLimits = filters.porte.length
+    ? sectors.flatMap((s) => filters.porte.map((p) => PORTE_LIMITS[s][p]))
+    : [];
 
-  const num = (v: string) => {
-    const n = Number(v.replace(/\D/g, ""));
-    return Number.isFinite(n) && n > 0 ? n : null;
-  };
+  function bounds(list: Array<{ min: number; max: number | null }>) {
+    if (!list.length) return { min: null as number | null, max: null as number | null };
+    return {
+      min: Math.min(...list.map((r) => r.min)),
+      max: list.some((r) => r.max == null) ? null : Math.max(...list.map((r) => r.max as number)),
+    };
+  }
 
   async function search() {
     setBusy(true);
