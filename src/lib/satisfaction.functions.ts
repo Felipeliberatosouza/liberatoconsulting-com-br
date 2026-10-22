@@ -87,7 +87,9 @@ export const listLinkRecipients = createServerFn({ method: "GET" })
       sb.from("crm_contacts").select("id, company_id, full_name, email, role_title, active"),
       sb.from("project_scope_submissions").select("id, company, respondent_name, respondent_role, email").limit(1000),
       sb.from("project_diagnostics").select("id, client_name, scope_submission_id").limit(1000),
-      sb.from("leads").select("id, name, company, email").not("email", "is", null).limit(2000),
+      import("@/integrations/supabase/client.server").then(({ supabaseAdmin }) =>
+        supabaseAdmin.from("leads").select("id, name, company, email").not("email", "is", null).limit(2000),
+      ),
       sb.from("job_applications").select("email").limit(5000),
     ]);
     const blocked = new Set(((apps.data ?? []) as any[]).map((a) => String(a.email ?? "").trim().toLowerCase()).filter(Boolean));

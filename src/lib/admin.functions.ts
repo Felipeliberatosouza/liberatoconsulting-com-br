@@ -405,7 +405,7 @@ export const listLeads = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin
       .from("leads")
-      .select("id, name, company, country, email, service_slug, service_title, message, language, source_path, created_at")
+      .select("id, name, company, country, email, phone, service_slug, service_title, message, language, source_path, created_at")
       .order("created_at", { ascending: false })
       .limit(500);
     if (error) throw new Error(error.message);

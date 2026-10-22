@@ -125,6 +125,21 @@ export function ProspectEmailPanel() {
     return buildEmailPreviewHtml({ subject: f(subject), body: f(body) });
   }, [subject, body, sample]);
 
+  /** Copia o e-mail formatado (texto + imagens) para colar no corpo de um e-mail. */
+  const copyPreview = async () => {
+    const doc = new DOMParser().parseFromString(previewHtml, "text/html");
+    const html = doc.body.innerHTML;
+    const text = doc.body.innerText;
+    try {
+      await navigator.clipboard.write([
+        new ClipboardItem({ "text/html": new Blob([html], { type: "text/html" }), "text/plain": new Blob([text], { type: "text/plain" }) }),
+      ]);
+      toast.success("Conteúdo copiado. Cole no corpo do e-mail.");
+    } catch {
+      toast.error("Não foi possível copiar neste navegador.");
+    }
+  };
+
   const send = async () => {
     const valid = groups.filter((g) => g.to.length > 0);
     if (valid.length === 0) {
@@ -280,7 +295,10 @@ export function ProspectEmailPanel() {
           <Button onClick={send} disabled={sending || groups.length === 0}>{sending ? "Enviando..." : "Enviar e-mails"}</Button>
         </div>
         <div>
-          <div className="mb-2 text-sm font-medium">Pré-visualização{sample ? ` — ${sample.company || sample.to[0]?.email}` : ""}</div>
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <span className="text-sm font-medium">Pré-visualização{sample ? ` — ${sample.company || sample.to[0]?.email}` : ""}</span>
+            <Button size="sm" variant="outline" onClick={copyPreview}>Copiar conteúdo</Button>
+          </div>
           <iframe title="Pré-visualização" srcDoc={previewHtml} className="h-[640px] w-full rounded-md border border-border bg-background" />
         </div>
       </div>
