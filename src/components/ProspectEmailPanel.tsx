@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -10,6 +10,7 @@ import { buildEmailPreviewHtml } from "@/lib/email-brand";
 import { listLinkRecipients } from "@/lib/satisfaction.functions";
 import { ProspectKitCard } from "@/components/ProspectKitCard";
 import { regenerateProspectKit } from "@/lib/prospect-kit-build";
+import { getProspectKit } from "@/lib/prospect-kit.functions";
 import { getProspectSetup, removeProspectUnsubscribe, sendProspectEmails } from "@/lib/prospect-email.functions";
 
 type Mode = "" | "to" | "cc" | "bcc";
@@ -129,12 +130,42 @@ export function ProspectEmailPanel() {
   const noTo = groups.filter((g) => g.to.length === 0);
 
   const sample = groups[0];
+  const kit = useQuery({ queryKey: ["prospect-kit"], queryFn: () => getProspectKit(), retry: false });
+  const kitStarted = useRef(false);
+  // Gera o banner e o resumo (PPT/PDF) automaticamente na primeira vez.
+  useEffect(() => {
+    if (kit.data && !kit.data.updatedAt && !kitStarted.current) {
+      kitStarted.current = true;
+      regenerateProspectKit()
+        .then(() => qc.invalidateQueries({ queryKey: ["prospect-kit"] }))
+        .catch(() => toast.error("Não foi possível gerar o banner e o resumo. Use “Gerar / atualizar”."));
+    }
+  }, [kit.data, qc]);
+  const bannerUrl = kit.data?.urls?.bannerView ?? "";
+
   const previewHtml = useMemo(() => {
     const nome = sample?.to[0]?.name.split(" ")[0] ?? "Maria";
     const empresa = sample?.company || "Empresa Exemplo";
     const f = (s: string) => s.replaceAll("{{nome}}", nome).replaceAll("{{empresa}}", empresa);
-    return buildEmailPreviewHtml({ subject: f(subject), body: f(body) });
-  }, [subject, body, sample]);
+    let html = buildEmailPreviewHtml({ subject: f(subject), body: f(body) });
+    // Mesma ordem do e-mail enviado: 2 parágrafos, notícia do setor, banner, restante do texto.
+    const extra =
+      (includeInsight
+        ? `<p style="font-size:15px;line-height:24px;color:#1f2937;margin:0 0 14px;border-left:4px solid #E8630A;background:#FCEBDD;padding:12px 14px"><em>Parágrafo com uma notícia recente do setor da ${empresa} (ou da economia do país), pesquisada automaticamente no momento do envio.</em></p>`
+        : "") +
+      (attachKit && bannerUrl
+        ? `<img src="${bannerUrl}" alt="Liberato Consulting" width="560" style="display:block;width:100%;max-width:560px;height:auto;margin:6px 0 18px;border-radius:6px" />`
+        : "");
+    let count = 0;
+    html = html.replace(/<\/p>/g, (m) => (++count === 2 ? m + extra : m));
+    if (attachKit) {
+      html = html.replace(
+        '<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0" />',
+        `<div style="font-size:13px;color:#374151;border:1px solid #e5e7eb;border-radius:6px;padding:8px 12px;margin:8px 0 0">📎 Anexo: Resumo-Servicos-Liberato.pdf</div><hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0" />`,
+      );
+    }
+    return html;
+  }, [subject, body, sample, includeInsight, attachKit, bannerUrl]);
 
   /** Copia o e-mail formatado (texto + imagens) para colar no corpo de um e-mail. */
   const copyPreview = async () => {
