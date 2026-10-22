@@ -27,15 +27,6 @@ const REVENUE_RANGES = [
   "Acima de R$ 1 bilhão por ano",
 ];
 
-const EMPLOYEE_RANGES: Array<{ label: string; min: string; max: string }> = [
-  { label: "1 a 9", min: "1", max: "9" },
-  { label: "10 a 49", min: "10", max: "49" },
-  { label: "50 a 99", min: "50", max: "99" },
-  { label: "100 a 499", min: "100", max: "499" },
-  { label: "500 a 999", min: "500", max: "999" },
-  { label: "1.000 a 4.999", min: "1000", max: "4999" },
-  { label: "5.000 ou mais", min: "5000", max: "" },
-];
 
 /** Prospecção de leads com IA: pesquisa empresas e pessoas na web e grava no CRM. */
 
@@ -49,7 +40,8 @@ type Filters = {
   country: string;
   state: string;
   city: string;
-  size: "" | "pme" | "corporacao";
+  porte: Porte;
+  sector: Sector;
   minEmployees: string;
   maxEmployees: string;
   revenue: string;
@@ -67,7 +59,8 @@ const initial: Filters = {
   country: "Brasil",
   state: "",
   city: "",
-  size: "",
+  porte: "",
+  sector: "comercio_servicos",
   minEmployees: "",
   maxEmployees: "",
   revenue: "",
@@ -112,7 +105,10 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
     };
   }, [filters.country, filters.state]);
 
-  const employeeRange = EMPLOYEE_RANGES.find((r) => r.min === filters.minEmployees && r.max === filters.maxEmployees)?.label ?? "";
+  const employeeRanges = employeeRangesFor(filters.porte, filters.sector);
+  const employeeRange =
+    employeeRanges.find((r) => String(r.min) === filters.minEmployees && String(r.max ?? "") === filters.maxEmployees)?.label ?? "";
+  const porteLimits = filters.porte ? PORTE_LIMITS[filters.sector][filters.porte] : null;
 
   const num = (v: string) => {
     const n = Number(v.replace(/\D/g, ""));
@@ -133,9 +129,10 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
           country: filters.country,
           state: filters.state,
           city: filters.city,
-          size: filters.size,
-          minEmployees: num(filters.minEmployees),
-          maxEmployees: num(filters.maxEmployees),
+          size: filters.porte === "grande" ? "corporacao" : filters.porte ? "pme" : "",
+          porte: filters.porte ? `${PORTE_LABEL[filters.porte]} (${SECTOR_LABEL[filters.sector]}, critério IBGE/Sebrae)` : "",
+          minEmployees: num(filters.minEmployees) ?? porteLimits?.min ?? null,
+          maxEmployees: num(filters.maxEmployees) ?? porteLimits?.max ?? null,
           revenue: filters.revenue,
           keywords: filters.keywords,
           roles: filters.roles,
@@ -199,7 +196,20 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
       <div className="mt-4 grid gap-3 md:grid-cols-3">
         <label>
           <Label>Segmento</Label>
-          <select className={baseField} value={filters.segment} onChange={(e) => set("segment", e.target.value)}>
+          <select
+            className={baseField}
+            value={filters.segment}
+            onChange={(e) => {
+              const segment = e.target.value;
+              setFilters((prev) => ({
+                ...prev,
+                segment,
+                sector: segment ? sectorFromSegment(segment) : prev.sector,
+                minEmployees: "",
+                maxEmployees: "",
+              }));
+            }}
+          >
             <option value="">Qualquer segmento</option>
             {CRM_SEGMENTS.map((s) => (
               <option key={s} value={s}>
@@ -209,11 +219,28 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
           </select>
         </label>
         <label>
+          <Label>Setor econômico</Label>
+          <select
+            className={baseField}
+            value={filters.sector}
+            onChange={(e) => setFilters((prev) => ({ ...prev, sector: e.target.value as Sector, minEmployees: "", maxEmployees: "" }))}
+          >
+            {(Object.keys(SECTOR_LABEL) as Sector[]).map((s) => (
+              <option key={s} value={s}>{SECTOR_LABEL[s]}</option>
+            ))}
+          </select>
+        </label>
+        <label>
           <Label>Porte</Label>
-          <select className={baseField} value={filters.size} onChange={(e) => set("size", e.target.value)}>
+          <select
+            className={baseField}
+            value={filters.porte}
+            onChange={(e) => setFilters((prev) => ({ ...prev, porte: e.target.value as Porte, minEmployees: "", maxEmployees: "" }))}
+          >
             <option value="">Qualquer porte</option>
-            <option value="pme">Pequena e média empresa</option>
-            <option value="corporacao">Corporação</option>
+            {(Object.keys(PORTE_LABEL) as Array<Exclude<Porte, "">>).map((p) => (
+              <option key={p} value={p}>{PORTE_LABEL[p]}</option>
+            ))}
           </select>
         </label>
         <label>
@@ -282,15 +309,22 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
             className={baseField}
             value={employeeRange}
             onChange={(e) => {
-              const r = EMPLOYEE_RANGES.find((x) => x.label === e.target.value);
-              setFilters((prev) => ({ ...prev, minEmployees: r?.min ?? "", maxEmployees: r?.max ?? "" }));
+              const r = employeeRanges.find((x) => x.label === e.target.value);
+              setFilters((prev) => ({ ...prev, minEmployees: r ? String(r.min) : "", maxEmployees: r ? String(r.max ?? "") : "" }));
             }}
           >
-            <option value="">Qualquer quantidade</option>
-            {EMPLOYEE_RANGES.map((r) => (
+            <option value="">
+              {porteLimits
+                ? `Todo o porte (${porteLimits.min}${porteLimits.max ? ` a ${porteLimits.max}` : "+"} funcionários)`
+                : "Qualquer quantidade"}
+            </option>
+            {employeeRanges.map((r) => (
               <option key={r.label} value={r.label}>{r.label} funcionários</option>
             ))}
           </select>
+          <span className="mt-1 block text-[11px] text-muted-foreground">
+            As opções seguem o porte e o setor escolhidos (critério IBGE/Sebrae).
+          </span>
         </label>
         <label>
           <Label>Número de empresas (até 30)</Label>
