@@ -122,16 +122,16 @@ export const searchCrmLeads = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z
       .object({
-        segment: z.string().trim().max(160).default(""),
+        segment: z.string().trim().max(2000).default(""),
         companyName: z.string().trim().max(160).default(""),
-        country: z.string().trim().max(80).default("Brasil"),
-        state: z.string().trim().max(80).default(""),
-        city: z.string().trim().max(120).default(""),
+        country: z.string().trim().max(800).default("Brasil"),
+        state: z.string().trim().max(2000).default(""),
+        city: z.string().trim().max(4000).default(""),
         size: z.enum(["", "pme", "corporacao"]).default(""),
-        porte: z.string().trim().max(160).default(""),
+        porte: z.string().trim().max(800).default(""),
         minEmployees: z.number().int().min(0).max(5_000_000).nullable().default(null),
         maxEmployees: z.number().int().min(0).max(5_000_000).nullable().default(null),
-        revenue: z.string().trim().max(160).default(""),
+        revenue: z.string().trim().max(1000).default(""),
         keywords: z.string().trim().max(400).default(""),
         roles: z.string().trim().max(300).default(""),
         limit: z.number().int().min(1).max(30).default(6),

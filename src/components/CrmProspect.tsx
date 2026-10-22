@@ -5,6 +5,7 @@ import { CRM_SEGMENTS } from "@/lib/crm-segments";
 import { employeeRangesFor, PORTE_LABEL, PORTE_LIMITS, SECTOR_LABEL, sectorFromSegment, type Porte, type Sector } from "@/lib/company-size";
 import { STATES } from "@/lib/audience-filters";
 import { exportProspects } from "@/lib/prospect-export";
+import { MultiSelect } from "@/components/MultiSelect";
 
 const COUNTRY_REGIONS: Record<string, { label: string; options: string[] }> = {
   Brasil: { label: "Estado (UF)", options: STATES.map((s) => s.uf) },
