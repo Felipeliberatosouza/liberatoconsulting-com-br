@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { buildEmailPreviewHtml } from "@/lib/email-brand";
 import { listLinkRecipients } from "@/lib/satisfaction.functions";
+import { ProspectKitCard } from "@/components/ProspectKitCard";
+import { regenerateProspectKit } from "@/lib/prospect-kit-build";
 import { getProspectSetup, removeProspectUnsubscribe, sendProspectEmails } from "@/lib/prospect-email.functions";
 
 type Mode = "" | "to" | "cc" | "bcc";
@@ -33,6 +35,8 @@ export function ProspectEmailPanel() {
   const [sender, setSender] = useState("");
   const [filter, setFilter] = useState("");
   const [sending, setSending] = useState(false);
+  const [includeInsight, setIncludeInsight] = useState(true);
+  const [attachKit, setAttachKit] = useState(true);
 
   useEffect(() => {
     if (setup.data) {
@@ -131,9 +135,15 @@ export function ProspectEmailPanel() {
     if (!confirm(`Enviar ${valid.length} e-mail(s) para ${total} pessoa(s)?`)) return;
     setSending(true);
     try {
+      // Material sempre atualizado com os dados atuais do painel antes do disparo.
+      if (attachKit) {
+        toast.message("Atualizando banner e resumo em PDF…");
+        await regenerateProspectKit();
+      }
+      if (includeInsight) toast.message("Pesquisando notícias recentes do setor de cada empresa…");
       const strip = (l: Person[]) => l.map((p) => ({ name: p.name, email: p.email }));
       const r = await sendProspectEmails({
-        data: { senderEmail: sender, senderName: "Liberato Consulting", subject, body, groups: valid.map((g) => ({ company: g.company, to: strip(g.to), cc: strip(g.cc), bcc: strip(g.bcc) })) },
+        data: { senderEmail: sender, senderName: "Liberato Consulting", subject, body, includeInsight, attachKit, groups: valid.map((g) => ({ company: g.company, to: strip(g.to), cc: strip(g.cc), bcc: strip(g.bcc) })) },
       });
       if (r.failed) toast.error(`${r.sent} enviados, ${r.failed} falharam. ${r.error ?? ""}`);
       else toast.success(`${r.sent} destinatários receberam o e-mail${r.skipped ? ` (${r.skipped} bloqueados)` : ""}.`);
@@ -167,6 +177,12 @@ export function ProspectEmailPanel() {
         <p className="text-sm text-muted-foreground">
           Envio pelo Brevo com logomarca e dados atuais da empresa (cadastro em Dados da consultoria) e link de descadastro. Use {"{{nome}}"} e {"{{empresa}}"} no texto.
         </p>
+      </div>
+
+      <ProspectKitCard compact />
+      <div className="flex flex-wrap gap-6 text-sm">
+        <label className="flex items-center gap-2"><input type="checkbox" checked={includeInsight} onChange={(e) => setIncludeInsight(e.target.checked)} /> Incluir parágrafo com notícia recente do setor (ou da economia do país)</label>
+        <label className="flex items-center gap-2"><input type="checkbox" checked={attachKit} onChange={(e) => setAttachKit(e.target.checked)} /> Incluir banner e anexar resumo de serviços (PDF)</label>
       </div>
 
       <Tabs defaultValue="crm">

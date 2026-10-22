@@ -4,6 +4,7 @@ import { ArrowLeft, Download, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
+import { ProspectKitCard } from "@/components/ProspectKitCard";
 import { deletePresentation, getPresentationFileUrl, listPresentations } from "@/lib/presentation.functions";
 
 export const Route = createFileRoute("/admin/projetos_/apresentacoes")({
@@ -51,6 +52,7 @@ function PresentationsList() {
           Gerar nova apresentação
         </Link>
       </div>
+      <div className="mb-8"><ProspectKitCard /></div>
       {list.isLoading ? (
         <p className="text-sm text-muted-foreground">Carregando…</p>
       ) : list.error ? (
