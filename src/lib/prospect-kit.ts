@@ -14,11 +14,30 @@ export type KitInput = {
   metrics: Array<{ value: string; label: string }>;
   impact: Array<{ title: string; body: string }>;
   services: Array<{ title: string; bullets: string[] }>;
-  consultants: Array<{ name: string; headline: string; lines: string[] }>;
+  consultants: Array<{ name: string; headline: string; education: string[]; clients: string[]; specialties: string[] }>;
   identity: { tradeName: string; website: string; phone: string; email: string; address: string };
 };
 
 const short = (s: string, n: number) => (s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s);
+
+/** Três frentes do slide "O que entregamos" (texto definido pela Liberato). */
+export const DELIVERY_PILLARS = [
+  {
+    title: "AUMENTO DE PRODUTIVIDADE E EFICIÊNCIA",
+    body:
+      "Processos mais enxutos liberam capacidade sem novas contratações. Eliminamos desperdícios, padronizamos rotinas e usamos dados e IA para reduzir retrabalho e prazos — o resultado é menor custo por entrega, mais caixa e um time focado no que gera valor.",
+  },
+  {
+    title: "AUMENTO DE VENDAS E MARGEM",
+    body:
+      "Ferramentas práticas para vender mais e melhor: inteligência de mercado, prospecção estruturada, funil e CRM com metas claras, precificação baseada em valor e análise de rentabilidade por cliente e produto. Mais receita, com margem protegida.",
+  },
+  {
+    title: "TREINAMENTOS IN COMPANY",
+    body:
+      "Programas sob medida em liderança, Lean, gestão de projetos, precificação, vendas e uso de IA na gestão. Um time preparado sustenta os ganhos, toma decisões melhores e executa a estratégia com autonomia — a melhoria deixa de depender de poucas pessoas.",
+  },
+];
 
 function drawKit(b: Board, k: KitInput) {
   const name = k.identity.tradeName || "Liberato Consulting";
@@ -54,18 +73,18 @@ function drawKit(b: Board, k: KitInput) {
   b.text("O QUE ENTREGAMOS", 0.6, 0.35, 9, 0.6, { size: 28, color: C.white, bold: true, display: true });
   b.text(short(k.introduction.title, 120), 0.6, 0.95, 9.5, 0.45, { size: 14, color: C.soft });
   b.image(k.logoLight ?? k.logo, 10.6, 0.4, 2.2, 0.75);
-  const main = k.services.slice(0, 3);
-  const cw = (W - 1.2 - 0.4 * (main.length - 1)) / Math.max(1, main.length);
+  const main = DELIVERY_PILLARS;
+  const cw = (W - 1.2 - 0.4 * (main.length - 1)) / main.length;
   main.forEach((s, i) => {
     const x = 0.6 + i * (cw + 0.4);
     b.rect(x, 1.95, cw, 3.9, C.light, true);
     b.rect(x, 1.95, cw, 0.12, C.accent);
-    b.text(s.title.toUpperCase(), x + 0.25, 2.2, cw - 0.5, 0.8, { size: 15, color: C.navy, bold: true, display: true });
-    b.text(s.bullets.slice(0, 4).map((l) => `• ${short(l, 70)}`).join("\n"), x + 0.25, 3.05, cw - 0.5, 2.7, { size: 13, color: C.ink });
+    b.text(s.title, x + 0.25, 2.2, cw - 0.5, 0.8, { size: 15, color: C.navy, bold: true, display: true });
+    b.text(s.body, x + 0.25, 3.05, cw - 0.5, 2.7, { size: 13, color: C.ink });
   });
   b.rect(0.6, 6.05, W - 1.2, 0.55, C.soft, true);
   b.text("Como entregamos: diagnóstico  ›  piloto com ganhos rápidos  ›  escala  ›  capacitação da liderança", 0.85, 6.18, W - 1.7, 0.35, { size: 13, color: C.navy, bold: true });
-  const others = k.services.slice(3, 9).map((s) => s.title);
+  const others = k.services.slice(0, 8).map((s) => s.title);
   if (others.length) b.text(`Também atuamos em: ${others.join(" · ")}`, 0.6, 6.78, W - 1.2, 0.4, { size: 11, color: C.muted });
 
   // Slide 3 — Vamos conversar
@@ -73,17 +92,28 @@ function drawKit(b: Board, k: KitInput) {
   b.image(k.logoLight ?? k.logo, 0.6, 0.45, 2.6, 0.85);
   b.text("VAMOS CONVERSAR?", 0.6, 1.45, 12, 0.8, { size: 36, color: C.white, bold: true, display: true });
   b.text("Em 20 a 30 minutos, trazemos uma primeira análise de oportunidades de melhoria para a sua empresa.", 0.6, 2.2, 12, 0.5, { size: 16, color: C.soft });
-  const cons = k.consultants.slice(0, 2);
-  const list = cons.length ? cons : [{ name, headline: "Consultoria em gestão estratégica e IA", lines: [k.introduction.body] }];
-  const pw = (W - 1.2 - 0.4 * (list.length - 1)) / list.length;
-  list.forEach((c, i) => {
-    const x = 0.6 + i * (pw + 0.4);
-    b.rect(x, 2.95, pw, 3.3, C.white, true);
-    b.rect(x, 2.95, 0.12, 3.3, C.accent);
-    b.text(c.name, x + 0.35, 3.15, pw - 0.6, 0.45, { size: 18, color: C.navy, bold: true, display: true });
-    b.text(c.headline, x + 0.35, 3.6, pw - 0.6, 0.4, { size: 12, color: C.accent, bold: true });
-    b.text(c.lines.filter(Boolean).slice(0, 4).map((l) => `• ${short(l, 140)}`).join("\n"), x + 0.35, 4.05, pw - 0.6, 2.1, { size: 11.5, color: C.ink });
-  });
+  const c = k.consultants[0];
+  const cx = 0.6, cwid = W - 1.2, cy = 2.85, ch = 3.45;
+  b.rect(cx, cy, cwid, ch, C.white, true);
+  b.rect(cx, cy, 0.12, ch, C.accent);
+  if (c) {
+    b.text(c.name, cx + 0.35, cy + 0.15, 6, 0.45, { size: 18, color: C.navy, bold: true, display: true });
+    b.text(c.headline, cx + 0.35, cy + 0.58, 6, 0.35, { size: 12, color: C.accent, bold: true });
+    const cols = [
+      { t: "FORMAÇÃO", items: c.education.slice(0, 7), w: 5.6 },
+      { t: "CLIENTES", items: c.clients.slice(0, 7), w: 2.4 },
+      { t: "ESPECIALIDADES", items: c.specialties.slice(0, 7), w: cwid - 0.6 - 5.6 - 2.4 - 0.6 },
+    ];
+    let x = cx + 0.35;
+    cols.forEach((col) => {
+      b.rect(x, cy + 1.05, col.w, 0.04, C.accent);
+      b.text(col.t, x, cy + 1.12, col.w, 0.32, { size: 11, color: C.accent, bold: true });
+      b.text(col.items.map((l) => `• ${short(l, col.w > 4 ? 95 : 48)}`).join("\n") || "—", x, cy + 1.48, col.w, ch - 1.6, { size: 10, color: C.ink });
+      x += col.w + 0.3;
+    });
+  } else {
+    b.text(k.introduction.body, cx + 0.35, cy + 0.3, cwid - 0.7, ch - 0.6, { size: 14, color: C.ink });
+  }
   const contact = [k.identity.website, k.identity.email, k.identity.phone].filter(Boolean).join("  ·  ");
   b.text(contact, 0.6, 6.45, W - 1.2, 0.35, { size: 13, color: C.white, bold: true, align: "center" });
   if (k.identity.address) b.text(k.identity.address, 0.6, 6.85, W - 1.2, 0.35, { size: 10, color: C.soft, align: "center" });
