@@ -75,14 +75,12 @@ function KitEditor() {
   const urls = kit.data?.urls;
   const stamp = kit.data?.updatedAt ?? "";
   return (
-    <AdminShell>
+    <AdminShell
+      title="Banner e slides do e-mail de prospecção"
+      description="Escreva o que deseja mudar. O banner e o resumo em PowerPoint/PDF são refeitos na hora e passam a ir nos próximos e-mails."
+      requireAdmin
+    >
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-foreground">Banner e slides do e-mail de prospecção</h1>
-          <p className="text-sm text-muted-foreground">
-            Escreva o que deseja mudar. O banner e o resumo em PowerPoint/PDF são refeitos na hora e passam a ir nos próximos e-mails.
-          </p>
-        </div>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,380px)_1fr]">
           <div className="space-y-3 rounded-2xl border border-border bg-card p-4">
