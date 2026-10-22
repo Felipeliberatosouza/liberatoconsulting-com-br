@@ -43,7 +43,24 @@ export type BrevoAddr = { email: string; name?: string };
 /** Referência da logomarca incorporada (CID) — exibida sem download externo. */
 export const EMAIL_LOGO_CID = "cid:logo.png";
 
+/** Logomarca atual do painel (Identidade visual); usa o arquivo do site se não houver. */
 async function logoAttachment() {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin.from("site_settings").select("value").eq("key", "branding").maybeSingle();
+    const url = (data?.value as { logoUrl?: string } | null)?.logoUrl;
+    if (url) {
+      const res = await fetch(url);
+      if (res.ok) {
+        const buf = new Uint8Array(await res.arrayBuffer());
+        let bin = "";
+        for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode(...buf.subarray(i, i + 0x8000));
+        return { name: "logo.png", content: btoa(bin) };
+      }
+    }
+  } catch {
+    /* usa o arquivo padrão abaixo */
+  }
   const mod = (await import("../../public/logo.png?inline")) as { default: string };
   return { name: "logo.png", content: mod.default.split(",")[1] ?? "" };
 }
