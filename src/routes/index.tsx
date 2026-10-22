@@ -5,6 +5,7 @@ import {
   ChevronRight,
   Compass,
   Globe2,
+  GraduationCap,
   Rocket,
   Settings2,
 } from "lucide-react";
@@ -48,6 +49,7 @@ export const Route = createFileRoute("/")({
           name: "Frentes de atuação",
           items: [
             { name: "Serviços", path: "/services" },
+            { name: "Treinamento in Company", path: "/services/treinamento-in-company" },
             { name: "Dados do Brasil", path: "/brasil" },
             { name: "Quem somos", path: "/about" },
             { name: "Conteúdo", path: "/content" },
@@ -60,7 +62,7 @@ export const Route = createFileRoute("/")({
 });
 
 
-const icons = [Compass, Rocket, Globe2, Settings2];
+const icons = [Compass, Settings2, Rocket, Globe2, GraduationCap];
 
 const SLIDE_IMAGES: Record<string, string> = {
   consultoria: heroImage,
@@ -201,7 +203,15 @@ function HeroCarousel() {
           </p>
         )}
         <div className="mt-10 flex flex-wrap gap-3">
-          {slide.id === "pesquisas" ? (
+          {slide.id === "treinamento" ? (
+            <Link
+              to="/services/$slug"
+              params={{ slug: "treinamento-in-company" }}
+              className="inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
+            >
+              {slide.primary} <ArrowRight className="size-4" />
+            </Link>
+          ) : slide.id === "pesquisas" ? (
             <Link
               to="/brasil"
               className="inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
@@ -370,7 +380,7 @@ function Index() {
           <h2 className="mt-5 max-w-2xl text-3xl font-bold leading-tight md:text-5xl">
             {t.services.title}
           </h2>
-          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
             {t.services.items.map((s, i) => {
               const Icon = icons[i] ?? Compass;
               return (
@@ -410,7 +420,7 @@ function Index() {
       </section>
 
       <SeoKeywordLinks
-        themeIds={["gestao", "operacoes", "ia", "pesquisas", "brasil", "financas"]}
+        themeIds={["gestao", "operacoes", "treinamento", "ia", "pesquisas", "brasil", "financas"]}
         title="Consultoria empresarial: temas mais procurados"
       />
 
