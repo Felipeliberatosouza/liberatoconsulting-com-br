@@ -22,7 +22,6 @@ export const Route = createFileRoute("/ferramentas_/$slug")({
     meta: [
       { title: "Ferramenta de gestão — Liberato Consulting" },
       { name: "description", content: "Ferramenta interativa de gestão personalizada para o seu negócio." },
-      { name: "robots", content: "noindex" },
       { property: "og:title", content: "Ferramenta de gestão — Liberato Consulting" },
       { property: "og:description", content: "Informe os dados do seu negócio e receba resultados e relatório." },
       { property: "og:type", content: "website" },

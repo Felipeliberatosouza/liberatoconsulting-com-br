@@ -14,7 +14,6 @@ import { compareIndicator, resolvePolarity } from "@/lib/indicator-compare";
 import { pt } from "@/i18n/pt";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { seoPageMeta } from "@/lib/seo-meta";
-import { keywordsMeta } from "@/lib/keywords";
 import { breadcrumb, itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { getScopedBrazilSections } from "@/lib/brazil-scope.functions";
 import { topicSlug } from "@/lib/brazil-topic";
@@ -23,7 +22,6 @@ export const Route = createFileRoute("/brasil")({
   head: (ctx) => ({
     meta: [
       ...seoPageMeta("/brasil", headLang(ctx)),
-      keywordsMeta(["pesquisas", "brasil", "ia"], headLang(ctx) as never),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/brasil", headLang(ctx)),

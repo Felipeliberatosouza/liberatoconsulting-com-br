@@ -7,7 +7,6 @@ import { SeoKeywordLinks } from "@/components/SeoKeywordLinks";
 import { pt } from "@/i18n/pt";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { seoPageMeta } from "@/lib/seo-meta";
-import { keywordsMeta } from "@/lib/keywords";
 import { breadcrumb, itemList, jsonLd } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
@@ -15,7 +14,6 @@ export const Route = createFileRoute("/services/")({
   head: (ctx) => ({
     meta: [
       ...seoPageMeta("/services", headLang(ctx)),
-      keywordsMeta(undefined, headLang(ctx) as never),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/services", headLang(ctx)),

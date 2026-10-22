@@ -23,7 +23,6 @@ import { useAudienceFilters } from "@/lib/audience-filters";
 import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { seoPageMeta } from "@/lib/seo-meta";
-import { keywordsMeta } from "@/lib/keywords";
 import { itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { DEFAULT_AUTOPLAY_MS, heroSlideOrder } from "@/lib/site-config";
 
@@ -32,7 +31,6 @@ export const Route = createFileRoute("/")({
   head: (ctx) => ({
     meta: [
       ...seoPageMeta("/", headLang(ctx)),
-      keywordsMeta(undefined, headLang(ctx) as never),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/", headLang(ctx)),
