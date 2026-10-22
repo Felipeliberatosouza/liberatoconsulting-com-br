@@ -40,18 +40,23 @@ export async function regenerateProspectKit() {
   return saveProspectKit({ data: { banner, ...deck } });
 }
 
-/** "- Instituição (SIGLA). Curso | ano" → "Curso — SIGLA (ano)", sem traço inicial. */
+/** "- Instituição (SIGLA). Curso, ano | Curso 2, ano" → ["Curso — SIGLA (ano)", ...], sem traço inicial. */
 export function educationBullets(raw: string): string[] {
-  return raw
-    .split(/\n+/)
-    .map((l) => l.replace(/^[\s\-–•·]+/, "").trim())
-    .filter(Boolean)
-    .map((l) => {
-      const [main, year] = l.split("|").map((s) => s.trim());
-      const dot = main!.indexOf(". ");
-      const inst = dot > 0 ? main!.slice(0, dot) : "";
-      const course = dot > 0 ? main!.slice(dot + 2) : main!;
-      const sigla = inst.match(/\(([^)]+)\)/)?.[1]?.split("/")[0]?.trim() || inst;
-      return `${course.replace(/\.$/, "")}${sigla ? ` — ${sigla}` : ""}${year ? ` (${year})` : ""}`;
-    });
+  const out: string[] = [];
+  for (const line of raw.split(/\n+/)) {
+    const l = line.replace(/^[\s\-–•·]+/, "").trim();
+    if (!l) continue;
+    const dot = l.indexOf(". ");
+    const inst = dot > 0 ? l.slice(0, dot) : "";
+    const sigla = inst.match(/\(([^)]+)\)/)?.[1]?.split("/")[0]?.trim() || inst;
+    const rest = dot > 0 ? l.slice(dot + 2) : l;
+    const items: { course: string; year: string }[] = [];
+    for (const seg of rest.split("|").map((x) => x.trim()).filter(Boolean)) {
+      if (/^\d{4}$/.test(seg) && items.length) { items[items.length - 1]!.year = seg; continue; }
+      const m = seg.match(/^(.*?)[,\s]+(\d{4})$/);
+      items.push(m ? { course: m[1]!, year: m[2]! } : { course: seg, year: "" });
+    }
+    for (const it of items) out.push(`${it.course.replace(/[.,]$/, "")}${sigla ? ` — ${sigla}` : ""}${it.year ? ` (${it.year})` : ""}`);
+  }
+  return out;
 }
