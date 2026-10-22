@@ -114,7 +114,7 @@ export const sendProspectEmails = createServerFn({ method: "POST" })
         body: fill(data.body),
         insight: insights.get(g.company) ?? "",
         bannerUrl: bannerB64 ? "cid:banner.png" : "",
-        attachmentNote: pdfB64 ? "Envio em anexo um resumo dos nossos serviços." : "",
+        attachmentNote: pdfB64 && !/anexo/i.test(data.body) ? "Envio em anexo um resumo dos nossos serviços." : "",
         appendix: `Não deseja mais receber estes e-mails? Cancele aqui: ${unsubUrl}`,
         brandFooter,
         logoUrl: srv.EMAIL_LOGO_CID,
