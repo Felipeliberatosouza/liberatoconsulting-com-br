@@ -32,6 +32,8 @@ const sendSchema = z.object({
   senderName: z.string().trim().max(120).default("Liberato Consulting"),
   subject: z.string().trim().min(2).max(250),
   body: z.string().trim().min(10).max(10000),
+  includeInsight: z.boolean().default(true),
+  attachKit: z.boolean().default(true),
   groups: z
     .array(z.object({ company: z.string().trim().max(160).default(""), to: z.array(addr).min(1).max(20), cc: z.array(addr).max(20).default([]), bcc: z.array(addr).max(20).default([]) }))
     .min(1)
@@ -60,7 +62,36 @@ export const sendProspectEmails = createServerFn({ method: "POST" })
     const block = new Set((blocked ?? []).map((b) => String(b.email).toLowerCase()));
     // Identidade lida no momento do envio: alterações no painel valem já no próximo disparo.
     const [brandFooter, brand] = await Promise.all([getEmailBrandFooter(), loadEmailBrand(SITE)]);
-    const component = TEMPLATES["consultant-notice"]!.component;
+    void TEMPLATES;
+    const { ProspectOutreachEmail } = await import("./email-templates/prospect-outreach");
+    const { KIT_FILES } = await import("./prospect-kit.functions");
+    const { sectorInsight } = await import("./prospect-insight.server");
+    // Banner (inline, CID) e resumo em PDF: material atual salvo em Projetos → Apresentações.
+    const [bannerB64, pdfB64] = data.attachKit
+      ? await Promise.all([srv.storageBase64("presentations", KIT_FILES.banner), srv.storageBase64("presentations", KIT_FILES.pdf)])
+      : [null, null];
+    const kitAttachments = [
+      ...(bannerB64 ? [{ name: "banner.png", content: bannerB64 }] : []),
+      ...(pdfB64 ? [{ name: "Resumo-Servicos-Liberato.pdf", content: pdfB64 }] : []),
+    ];
+    // Notícia do setor por empresa, pesquisada em paralelo (lotes de 5).
+    const insights = new Map<string, string>();
+    if (data.includeInsight) {
+      const names = [...new Set(data.groups.map((g) => g.company).filter(Boolean))];
+      const { data: crm } = names.length
+        ? await supabaseAdmin.from("crm_companies").select("name, trade_name, segment, city, state").in("name", names)
+        : { data: [] as any[] };
+      const info = new Map((crm ?? []).map((c: any) => [c.name, c]));
+      for (let i = 0; i < names.length; i += 5) {
+        await Promise.all(
+          names.slice(i, i + 5).map(async (n) => {
+            const c: any = info.get(n) ?? {};
+            const r = await sectorInsight(n, c.segment ?? "", [c.city, c.state].filter(Boolean).join(" - "));
+            if (r) insights.set(n, r.paragraph);
+          }),
+        );
+      }
+    }
 
     let sent = 0, failed = 0, skipped = 0;
     const log: Parameters<typeof logDeliveries>[0] = [];
@@ -78,9 +109,12 @@ export const sendProspectEmails = createServerFn({ method: "POST" })
       const fill = (s: string) => s.replaceAll("{{nome}}", nome).replaceAll("{{empresa}}", empresa).replaceAll("{{link}}", SITE);
       const subject = fill(data.subject);
       const unsubUrl = `${SITE}/descadastro?t=${encodeURIComponent(await srv.unsubscribeToken([...to, ...cc, ...bcc].map((a) => a.email)))}`;
-      const element = React.createElement(component, {
+      const element = React.createElement(ProspectOutreachEmail, {
         subject,
         body: fill(data.body),
+        insight: insights.get(g.company) ?? "",
+        bannerUrl: bannerB64 ? "cid:banner.png" : "",
+        attachmentNote: pdfB64 ? "Envio em anexo um resumo dos nossos serviços." : "",
         appendix: `Não deseja mais receber estes e-mails? Cancele aqui: ${unsubUrl}`,
         brandFooter,
         logoUrl: srv.EMAIL_LOGO_CID,
@@ -93,6 +127,7 @@ export const sendProspectEmails = createServerFn({ method: "POST" })
           html: await render(element),
           text: await render(element, { plainText: true }),
           unsubscribeUrl: unsubUrl,
+          attachments: kitAttachments,
         });
         sent += all.length;
         all.forEach((a) => log.push({ source: "prospeccao", subject, recipient_name: a.name, recipient_email: a.email, channel: "email", status: "enviado" }));
