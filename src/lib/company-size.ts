@@ -1,9 +1,10 @@
 /** Porte de empresa pelo número de pessoas ocupadas (metodologia IBGE/Sebrae). */
-export type Porte = "" | "pequena" | "media" | "grande";
+export type Porte = "" | "micro" | "pequena" | "media" | "grande";
 export type Sector = "industria" | "comercio_servicos";
 export type EmployeeRange = { label: string; min: number; max: number | null };
 
 export const PORTE_LABEL: Record<Exclude<Porte, "">, string> = {
+  micro: "Microempresa",
   pequena: "Pequena Empresa",
   media: "Média Empresa",
   grande: "Grande Empresa",
@@ -16,12 +17,13 @@ export const SECTOR_LABEL: Record<Sector, string> = {
 
 /** Limites de cada porte por setor. */
 export const PORTE_LIMITS: Record<Sector, Record<Exclude<Porte, "">, { min: number; max: number | null }>> = {
-  industria: { pequena: { min: 20, max: 99 }, media: { min: 100, max: 499 }, grande: { min: 500, max: null } },
-  comercio_servicos: { pequena: { min: 10, max: 49 }, media: { min: 50, max: 99 }, grande: { min: 100, max: null } },
+  industria: { micro: { min: 1, max: 19 }, pequena: { min: 20, max: 99 }, media: { min: 100, max: 499 }, grande: { min: 500, max: null } },
+  comercio_servicos: { micro: { min: 1, max: 9 }, pequena: { min: 10, max: 49 }, media: { min: 50, max: 99 }, grande: { min: 100, max: null } },
 };
 
 const RANGES: Record<Sector, Record<Exclude<Porte, "">, EmployeeRange[]>> = {
   industria: {
+    micro: [{ label: "1 a 19", min: 1, max: 19 }],
     pequena: [{ label: "20 a 49", min: 20, max: 49 }, { label: "50 a 99", min: 50, max: 99 }],
     media: [{ label: "100 a 199", min: 100, max: 199 }, { label: "200 a 499", min: 200, max: 499 }],
     grande: [
@@ -31,6 +33,7 @@ const RANGES: Record<Sector, Record<Exclude<Porte, "">, EmployeeRange[]>> = {
     ],
   },
   comercio_servicos: {
+    micro: [{ label: "1 a 9", min: 1, max: 9 }],
     pequena: [{ label: "10 a 19", min: 10, max: 19 }, { label: "20 a 49", min: 20, max: 49 }],
     media: [{ label: "50 a 99", min: 50, max: 99 }],
     grande: [
@@ -44,7 +47,7 @@ const RANGES: Record<Sector, Record<Exclude<Porte, "">, EmployeeRange[]>> = {
 /** Faixas de funcionários disponíveis conforme porte e setor. "Qualquer porte" lista todas as faixas do setor. */
 export function employeeRangesFor(porte: Porte, sector: Sector): EmployeeRange[] {
   if (porte) return RANGES[sector][porte];
-  return [...RANGES[sector].pequena, ...RANGES[sector].media, ...RANGES[sector].grande];
+  return [...RANGES[sector].micro, ...RANGES[sector].pequena, ...RANGES[sector].media, ...RANGES[sector].grande];
 }
 
 /** Deduz o setor a partir do segmento escolhido. */
