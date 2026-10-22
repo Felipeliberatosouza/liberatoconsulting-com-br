@@ -1,4 +1,10 @@
 
+## Apresentações comerciais — Tiki (22/10/2026)
+- [ ] Contraste automático das logos sem recoloração
+- [ ] Guia, ferramenta relevante e últimas publicações com links no PPT/PDF
+- [ ] Próximos passos fixos e duração única por porte
+- [ ] Testes das regras e inspeção visual dos arquivos gerados
+
 ## Formulário das ferramentas (20/10/2026)
 - [x] Seleção dos últimos 36 meses completos e critérios de rateio pesquisados
 - [x] Formatação brasileira e validação das entradas numéricas
