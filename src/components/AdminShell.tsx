@@ -19,7 +19,6 @@ const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
       { to: "/admin/cadastros-consultores", label: "Cadastros de novos consultores" },
       { to: "/admin/crm", label: "CRM de clientes" },
       { to: "/admin/prospeccao", label: "Prospecção de leads com IA" },
-      { to: "/admin/material-prospeccao", label: "Banner e slides do e-mail" },
       { to: "/admin/uso", label: "Uso por cliente" },
       { to: "/admin/projetos/satisfacao", label: "Satisfação do cliente" },
     ],
@@ -50,6 +49,7 @@ const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
     label: "Envios e marketing",
     items: [
       { to: "/admin/envios", label: "Painel de envios" },
+      { to: "/admin/material-prospeccao", label: "Banner e slides do e-mail" },
       { to: "/admin/newsletter", label: "Newsletter" },
       { to: "/admin/boletim", label: "Boletim Semanal" },
       { to: "/admin/divulgacao-ferramentas", label: "Ferramentas" },
