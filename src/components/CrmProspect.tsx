@@ -4,6 +4,7 @@ import { searchCrmLeads, importCrmLeads, type ProspectLead } from "@/lib/crm-pro
 import { CRM_SEGMENTS } from "@/lib/crm-segments";
 import { employeeRangesFor, PORTE_LABEL, PORTE_LIMITS, SECTOR_LABEL, sectorFromSegment, type Porte, type Sector } from "@/lib/company-size";
 import { STATES } from "@/lib/audience-filters";
+import { exportProspects } from "@/lib/prospect-export";
 
 const COUNTRY_REGIONS: Record<string, { label: string; options: string[] }> = {
   Brasil: { label: "Estado (UF)", options: STATES.map((s) => s.uf) },
@@ -385,8 +386,14 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
                 .map((q) => `${QUALITY_LABEL[q]}: ${leads.filter((l) => l.quality === q).length}`)
                 .join(" · ")}
             </span>
+            <button className={`${btnGhost} ml-auto`} onClick={() => void exportProspects(leads, "xlsx")}>
+              Baixar Excel
+            </button>
+            <button className={btnGhost} onClick={() => void exportProspects(leads, "csv")}>
+              Baixar CSV
+            </button>
             <button
-              className={`${btnGhost} ml-auto`}
+              className={btnGhost}
               onClick={() => {
                 const next: Record<number, boolean> = {};
                 leads.forEach((l, i) => {
