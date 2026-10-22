@@ -61,7 +61,7 @@ export type DeckInput = {
   };
 };
 
-const C = {
+export const C = {
   navy: "1B2A41",
   ink: "141C2B",
   accent: "E0702A",
@@ -71,8 +71,8 @@ const C = {
   light: "EEF0F4",
   soft: "FCEBDD",
 };
-const W = 13.333;
-const H = 7.5;
+export const W = 13.333;
+export const H = 7.5;
 
 type TextOpts = {
   size: number;
@@ -82,7 +82,7 @@ type TextOpts = {
   display?: boolean;
 };
 
-interface Board {
+export interface Board {
   newSlide(bg: string): void;
   rect(x: number, y: number, w: number, h: number, color: string, round?: boolean): void;
   text(str: string, x: number, y: number, w: number, h: number, o: TextOpts): void;
@@ -151,7 +151,7 @@ function fit(img: NonNullable<Img>, x: number, y: number, w: number, h: number) 
 }
 
 // ---------- PowerPoint ----------
-async function pptBoard() {
+export async function pptBoard() {
   const PptxGenJS = (await import("pptxgenjs")).default;
   const pptx = new PptxGenJS();
   pptx.layout = "LAYOUT_WIDE";
@@ -200,7 +200,7 @@ async function pptBoard() {
 }
 
 // ---------- PDF ----------
-async function pdfBoard() {
+export async function pdfBoard() {
   const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ orientation: "landscape", unit: "in", format: [W, H] });
   let first = true;
