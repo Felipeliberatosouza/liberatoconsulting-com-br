@@ -88,7 +88,7 @@ export const getPresentationContext = createServerFn({ method: "GET" })
       supabaseAdmin.from("interactive_tools").select("id, slug, title, summary, category").eq("status", "published"),
       supabaseAdmin.from("tool_downloads").select("tool_id"),
       supabaseAdmin.from("newsletter_campaigns").select("slug, subject").or("published_at.not.is.null,status.eq.sent").not("slug", "is", null).order("created_at", { ascending: false }).limit(1),
-      supabaseAdmin.from("bulletin_dispatches").select("id, subject").in("status", ["sent", "enviado"]).eq("is_test", false).order("created_at", { ascending: false }).limit(1),
+      supabaseAdmin.from("bulletin_dispatches").select("id, subject, created_at").in("status", ["sent", "enviado"]).eq("is_test", false).order("created_at", { ascending: false }).limit(1),
     ]);
     const map = new Map((settings.data ?? []).map((r: any) => [r.key, r.value]));
     const branding = (map.get("branding") ?? {}) as { logoUrl?: string };
@@ -114,7 +114,7 @@ export const getPresentationContext = createServerFn({ method: "GET" })
     resources.push(...(interactive.data ?? []).map(t => ({ title: t.title, summary: t.summary, category: t.category, kind: "tool" as const, url: `${base}/ferramentas/${t.slug}` })));
     const publications = [
       ...(newsletters.data?.[0]?.slug ? [{ title: "Newsletter · última edição", url: `${base}/newsletter/${newsletters.data[0].slug}` }] : []),
-      ...(bulletins.data?.[0] ? [{ title: "Boletim Semanal · última edição", url: `${base}/boletins?edicao=${bulletins.data[0].id}` }] : []),
+      ...(bulletins.data?.[0] ? [{ title: "Boletim Semanal · última edição", url: `${base}/boletins?edicao=${bulletins.data[0].created_at.slice(0, 10)}` }] : []),
     ];
     return {
       services: (services.data ?? []) as any[],
