@@ -24,7 +24,9 @@ export async function regenerateProspectKit() {
     consultants: (cons as any[]).slice(0, 2).map((c) => ({
       name: c.full_name,
       headline: c.headline ?? "",
-      lines: [c.education, c.experience, c.clients].map((x: unknown) => String(x ?? "").replace(/\s+/g, " ").trim()),
+      education: educationBullets(String(c.education ?? "")),
+      clients: String(c.clients ?? "").replace(/\.\s*$/, "").split(/[,;\n]/).map((s) => s.trim()).filter(Boolean),
+      specialties: (Array.isArray(c.specialties) ? c.specialties : []).map((s: unknown) => String(s).split(" · ").pop()!.trim()).filter(Boolean),
     })),
     identity: {
       tradeName: ctx.identity?.tradeName ?? "Liberato Consulting",
@@ -36,4 +38,25 @@ export async function regenerateProspectKit() {
   };
   const [banner, deck] = await Promise.all([buildKitBanner(k), buildKitDeck(k)]);
   return saveProspectKit({ data: { banner, ...deck } });
+}
+
+/** "- Instituição (SIGLA). Curso, ano | Curso 2, ano" → ["Curso — SIGLA (ano)", ...], sem traço inicial. */
+export function educationBullets(raw: string): string[] {
+  const out: string[] = [];
+  for (const line of raw.split(/\n+/)) {
+    const l = line.replace(/^[\s\-–•·]+/, "").trim();
+    if (!l) continue;
+    const dot = l.indexOf(". ");
+    const inst = dot > 0 ? l.slice(0, dot) : "";
+    const sigla = inst.match(/\(([^)]+)\)/)?.[1]?.split("/")[0]?.trim() || inst;
+    const rest = dot > 0 ? l.slice(dot + 2) : l;
+    const items: { course: string; year: string }[] = [];
+    for (const seg of rest.split("|").map((x) => x.trim()).filter(Boolean)) {
+      if (/^\d{4}$/.test(seg) && items.length) { items[items.length - 1]!.year = seg; continue; }
+      const m = seg.match(/^(.*?)[,\s]+(\d{4})$/);
+      items.push(m ? { course: m[1]!, year: m[2]! } : { course: seg, year: "" });
+    }
+    for (const it of items) out.push(`${it.course.replace(/[.,]$/, "")}${sigla ? ` — ${sigla}` : ""}${it.year ? ` (${it.year})` : ""}`);
+  }
+  return out;
 }
