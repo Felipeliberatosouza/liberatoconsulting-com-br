@@ -43,6 +43,7 @@ export const SCOPE_QUESTIONS: ScopeQuestion[] = [
       "Validar o modelo de negócio",
       "Dimensionar mercado e concorrência",
       "Preparar lançamento ou captação",
+      "Treinamento in company para a equipe",
       "Outro",
     ],
   },
