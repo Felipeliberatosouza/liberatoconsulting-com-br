@@ -59,6 +59,7 @@ import { Route as AdminIndicadoresRouteImport } from './routes/admin.indicadores
 import { Route as AdminInstitucionalRouteImport } from './routes/admin.institucional'
 import { Route as AdminLeadsRouteImport } from './routes/admin.leads'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminMaterialProspeccaoRouteImport } from './routes/admin.material-prospeccao'
 import { Route as AdminNewsletterRouteImport } from './routes/admin.newsletter'
 import { Route as AdminPrecificacaoRouteImport } from './routes/admin.precificacao'
 import { Route as AdminProjetosRouteImport } from './routes/admin.projetos'
@@ -352,6 +353,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminMaterialProspeccaoRoute = AdminMaterialProspeccaoRouteImport.update({
+  id: '/admin/material-prospeccao',
+  path: '/admin/material-prospeccao',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminNewsletterRoute = AdminNewsletterRouteImport.update({
   id: '/admin/newsletter',
   path: '/admin/newsletter',
@@ -600,6 +606,7 @@ export interface FileRoutesByFullPath {
   '/admin/institucional': typeof AdminInstitucionalRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/material-prospeccao': typeof AdminMaterialProspeccaoRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/precificacao': typeof AdminPrecificacaoRoute
   '/admin/projetos': typeof AdminProjetosRoute
@@ -690,6 +697,7 @@ export interface FileRoutesByTo {
   '/admin/institucional': typeof AdminInstitucionalRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/material-prospeccao': typeof AdminMaterialProspeccaoRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/precificacao': typeof AdminPrecificacaoRoute
   '/admin/projetos': typeof AdminProjetosRoute
@@ -781,6 +789,7 @@ export interface FileRoutesById {
   '/admin/institucional': typeof AdminInstitucionalRoute
   '/admin/leads': typeof AdminLeadsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/material-prospeccao': typeof AdminMaterialProspeccaoRoute
   '/admin/newsletter': typeof AdminNewsletterRoute
   '/admin/precificacao': typeof AdminPrecificacaoRoute
   '/admin/projetos': typeof AdminProjetosRoute
@@ -873,6 +882,7 @@ export interface FileRouteTypes {
     | '/admin/institucional'
     | '/admin/leads'
     | '/admin/login'
+    | '/admin/material-prospeccao'
     | '/admin/newsletter'
     | '/admin/precificacao'
     | '/admin/projetos'
@@ -963,6 +973,7 @@ export interface FileRouteTypes {
     | '/admin/institucional'
     | '/admin/leads'
     | '/admin/login'
+    | '/admin/material-prospeccao'
     | '/admin/newsletter'
     | '/admin/precificacao'
     | '/admin/projetos'
@@ -1053,6 +1064,7 @@ export interface FileRouteTypes {
     | '/admin/institucional'
     | '/admin/leads'
     | '/admin/login'
+    | '/admin/material-prospeccao'
     | '/admin/newsletter'
     | '/admin/precificacao'
     | '/admin/projetos'
@@ -1144,6 +1156,7 @@ export interface RootRouteChildren {
   AdminInstitucionalRoute: typeof AdminInstitucionalRoute
   AdminLeadsRoute: typeof AdminLeadsRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminMaterialProspeccaoRoute: typeof AdminMaterialProspeccaoRoute
   AdminNewsletterRoute: typeof AdminNewsletterRoute
   AdminPrecificacaoRoute: typeof AdminPrecificacaoRoute
   AdminProjetosRoute: typeof AdminProjetosRoute
@@ -1537,6 +1550,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/material-prospeccao': {
+      id: '/admin/material-prospeccao'
+      path: '/admin/material-prospeccao'
+      fullPath: '/admin/material-prospeccao'
+      preLoaderRoute: typeof AdminMaterialProspeccaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/newsletter': {
       id: '/admin/newsletter'
       path: '/admin/newsletter'
@@ -1856,6 +1876,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminInstitucionalRoute: AdminInstitucionalRoute,
   AdminLeadsRoute: AdminLeadsRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminMaterialProspeccaoRoute: AdminMaterialProspeccaoRoute,
   AdminNewsletterRoute: AdminNewsletterRoute,
   AdminPrecificacaoRoute: AdminPrecificacaoRoute,
   AdminProjetosRoute: AdminProjetosRoute,

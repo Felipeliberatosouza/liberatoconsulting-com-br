@@ -39,19 +39,58 @@ export const DELIVERY_PILLARS = [
   },
 ];
 
-function drawKit(b: Board, k: KitInput) {
+type TB = { title: string; body: string };
+type Metric = { value: string; label: string };
+/** Todos os textos editáveis do banner e dos 3 slides. */
+export type KitContent = {
+  banner: { title: string; pillars: TB[]; metrics: Metric[] };
+  slide1: { kicker: string; highlight: string; body: string; impactTitle: string; impact: TB[]; metrics: Metric[] };
+  slide2: { title: string; subtitle: string; pillars: TB[]; process: string; also: string };
+  slide3: { title: string; subtitle: string };
+};
+
+/** Conteúdo padrão, derivado dos dados atuais do painel. */
+export function defaultKitContent(k: KitInput): KitContent {
   const name = k.identity.tradeName || "Liberato Consulting";
   const metrics = k.metrics.slice(0, 4);
+  const others = k.services.slice(0, 8).map((s) => s.title);
+  return {
+    banner: { title: k.introduction.title, pillars: k.impact.slice(0, 3), metrics },
+    slide1: { kicker: "POR QUE A", highlight: name.toUpperCase(), body: k.introduction.body, impactTitle: "O QUE SUA EMPRESA GANHA", impact: k.impact.slice(0, 4), metrics },
+    slide2: {
+      title: "O QUE ENTREGAMOS",
+      subtitle: short(k.introduction.title, 120),
+      pillars: DELIVERY_PILLARS,
+      process: "Como entregamos: diagnóstico  ›  piloto com ganhos rápidos  ›  escala  ›  capacitação da liderança",
+      also: others.length ? `Também atuamos em: ${others.join(" · ")}` : "",
+    },
+    slide3: { title: "VAMOS CONVERSAR?", subtitle: "Em 20 a 30 minutos, trazemos uma primeira análise de oportunidades de melhoria para a sua empresa." },
+  };
+}
+
+/** Junta o conteúdo salvo (ajustes do administrador) sobre o padrão. */
+export function mergeKitContent(base: KitContent, saved: Partial<KitContent> | null | undefined): KitContent {
+  if (!saved) return base;
+  return {
+    banner: { ...base.banner, ...(saved.banner ?? {}) },
+    slide1: { ...base.slide1, ...(saved.slide1 ?? {}) },
+    slide2: { ...base.slide2, ...(saved.slide2 ?? {}) },
+    slide3: { ...base.slide3, ...(saved.slide3 ?? {}) },
+  };
+}
+
+function drawKit(b: Board, k: KitInput, c: KitContent) {
+  const metrics = c.slide1.metrics.slice(0, 4);
 
   // Slide 1 — Por que a Liberato
   b.newSlide(C.cream);
   b.rect(0, 0, 5.2, H, C.navy);
   b.image(k.logoLight ?? k.logo, 0.6, 0.55, 2.8, 0.9);
-  b.text("POR QUE A", 0.6, 1.9, 4.2, 0.6, { size: 30, color: C.white, bold: true, display: true });
-  b.text(name.toUpperCase(), 0.6, 2.45, 4.2, 1.1, { size: 30, color: C.accent, bold: true, display: true });
-  b.text(k.introduction.body, 0.6, 3.75, 4.1, 2.0, { size: 16, color: C.white });
-  b.text("O QUE SUA EMPRESA GANHA", 5.8, 0.6, 7, 0.5, { size: 20, color: C.navy, bold: true, display: true });
-  k.impact.slice(0, 4).forEach((it, i) => {
+  b.text(c.slide1.kicker, 0.6, 1.9, 4.2, 0.6, { size: 30, color: C.white, bold: true, display: true });
+  b.text(c.slide1.highlight, 0.6, 2.45, 4.2, 1.1, { size: 30, color: C.accent, bold: true, display: true });
+  b.text(c.slide1.body, 0.6, 3.75, 4.1, 2.0, { size: 16, color: C.white });
+  b.text(c.slide1.impactTitle, 5.8, 0.6, 7, 0.5, { size: 20, color: C.navy, bold: true, display: true });
+  c.slide1.impact.slice(0, 4).forEach((it, i) => {
     const y = 1.25 + i * 0.78;
     b.rect(5.8, y + 0.06, 0.32, 0.32, C.accent, true);
     b.text("•", 5.86, y + 0.02, 0.2, 0.35, { size: 16, color: C.white, bold: true, align: "center" });
@@ -70,11 +109,11 @@ function drawKit(b: Board, k: KitInput) {
   // Slide 2 — O que entregamos
   b.newSlide(C.white);
   b.rect(0, 0, W, 1.55, C.navy);
-  b.text("O QUE ENTREGAMOS", 0.6, 0.35, 9, 0.6, { size: 28, color: C.white, bold: true, display: true });
-  b.text(short(k.introduction.title, 120), 0.6, 0.95, 9.5, 0.45, { size: 14, color: C.soft });
+  b.text(c.slide2.title, 0.6, 0.35, 9, 0.6, { size: 28, color: C.white, bold: true, display: true });
+  b.text(c.slide2.subtitle, 0.6, 0.95, 9.5, 0.45, { size: 14, color: C.soft });
   b.image(k.logoLight ?? k.logo, 10.6, 0.4, 2.2, 0.75);
-  const main = DELIVERY_PILLARS;
-  const cw = (W - 1.2 - 0.4 * (main.length - 1)) / main.length;
+  const main = c.slide2.pillars.slice(0, 3);
+  const cw = (W - 1.2 - 0.4 * (main.length - 1)) / Math.max(1, main.length);
   main.forEach((s, i) => {
     const x = 0.6 + i * (cw + 0.4);
     b.rect(x, 1.95, cw, 3.9, C.light, true);
@@ -83,26 +122,25 @@ function drawKit(b: Board, k: KitInput) {
     b.text(s.body, x + 0.25, 3.05, cw - 0.5, 2.7, { size: 13, color: C.ink });
   });
   b.rect(0.6, 6.05, W - 1.2, 0.55, C.soft, true);
-  b.text("Como entregamos: diagnóstico  ›  piloto com ganhos rápidos  ›  escala  ›  capacitação da liderança", 0.85, 6.18, W - 1.7, 0.35, { size: 13, color: C.navy, bold: true });
-  const others = k.services.slice(0, 8).map((s) => s.title);
-  if (others.length) b.text(`Também atuamos em: ${others.join(" · ")}`, 0.6, 6.78, W - 1.2, 0.4, { size: 11, color: C.muted });
+  b.text(c.slide2.process, 0.85, 6.18, W - 1.7, 0.35, { size: 13, color: C.navy, bold: true });
+  if (c.slide2.also) b.text(c.slide2.also, 0.6, 6.78, W - 1.2, 0.4, { size: 11, color: C.muted });
 
   // Slide 3 — Vamos conversar
   b.newSlide(C.navy);
   b.image(k.logoLight ?? k.logo, 0.6, 0.45, 2.6, 0.85);
-  b.text("VAMOS CONVERSAR?", 0.6, 1.45, 12, 0.8, { size: 36, color: C.white, bold: true, display: true });
-  b.text("Em 20 a 30 minutos, trazemos uma primeira análise de oportunidades de melhoria para a sua empresa.", 0.6, 2.2, 12, 0.5, { size: 16, color: C.soft });
-  const c = k.consultants[0];
+  b.text(c.slide3.title, 0.6, 1.45, 12, 0.8, { size: 36, color: C.white, bold: true, display: true });
+  b.text(c.slide3.subtitle, 0.6, 2.2, 12, 0.5, { size: 16, color: C.soft });
+  const cs = k.consultants[0];
   const cx = 0.6, cwid = W - 1.2, cy = 2.85, ch = 3.45;
   b.rect(cx, cy, cwid, ch, C.white, true);
   b.rect(cx, cy, 0.12, ch, C.accent);
-  if (c) {
-    b.text(c.name, cx + 0.35, cy + 0.15, 6, 0.45, { size: 18, color: C.navy, bold: true, display: true });
-    b.text(c.headline, cx + 0.35, cy + 0.58, 6, 0.35, { size: 12, color: C.accent, bold: true });
+  if (cs) {
+    b.text(cs.name, cx + 0.35, cy + 0.15, 6, 0.45, { size: 18, color: C.navy, bold: true, display: true });
+    b.text(cs.headline, cx + 0.35, cy + 0.58, 6, 0.35, { size: 12, color: C.accent, bold: true });
     const cols = [
-      { t: "FORMAÇÃO", items: c.education.slice(0, 7), w: 5.6 },
-      { t: "CLIENTES", items: c.clients.slice(0, 7), w: 2.4 },
-      { t: "ESPECIALIDADES", items: c.specialties.slice(0, 7), w: cwid - 0.6 - 5.6 - 2.4 - 0.6 },
+      { t: "FORMAÇÃO", items: cs.education.slice(0, 7), w: 5.6 },
+      { t: "CLIENTES", items: cs.clients.slice(0, 7), w: 2.4 },
+      { t: "ESPECIALIDADES", items: cs.specialties.slice(0, 7), w: cwid - 0.6 - 5.6 - 2.4 - 0.6 },
     ];
     let x = cx + 0.35;
     cols.forEach((col) => {
@@ -119,11 +157,11 @@ function drawKit(b: Board, k: KitInput) {
   if (k.identity.address) b.text(k.identity.address, 0.6, 6.85, W - 1.2, 0.35, { size: 10, color: C.soft, align: "center" });
 }
 
-export async function buildKitDeck(k: KitInput): Promise<{ pptx: string; pdf: string }> {
+export async function buildKitDeck(k: KitInput, c: KitContent = defaultKitContent(k)): Promise<{ pptx: string; pdf: string }> {
   const ppt = await pptBoard();
-  drawKit(ppt.board, k);
+  drawKit(ppt.board, k, c);
   const pdf = await pdfBoard();
-  drawKit(pdf.board, k);
+  drawKit(pdf.board, k, c);
   return { pptx: await ppt.base64(), pdf: await pdf.base64() };
 }
 
@@ -148,7 +186,7 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, maxW: number) {
 }
 
 /** Banner PNG do e-mail (1200 px), leve e sem texto essencial — o texto real fica no corpo do e-mail. */
-export async function buildKitBanner(k: KitInput): Promise<string> {
+export async function buildKitBanner(k: KitInput, c: KitContent = defaultKitContent(k)): Promise<string> {
   const Wd = 1200, Hd = 640;
   const cv = document.createElement("canvas");
   cv.width = Wd; cv.height = Hd;
@@ -163,9 +201,9 @@ export async function buildKitBanner(k: KitInput): Promise<string> {
   }
   ctx.fillStyle = hex(C.white);
   ctx.font = "bold 40px Arial, Helvetica, sans-serif";
-  wrap(ctx, k.introduction.title, 1080).slice(0, 2).forEach((l, i) => ctx.fillText(l, 60, 170 + i * 50));
+  wrap(ctx, c.banner.title, 1080).slice(0, 2).forEach((l, i) => ctx.fillText(l, 60, 170 + i * 50));
   // pilares
-  const pillars = k.impact.slice(0, 3);
+  const pillars = c.banner.pillars.slice(0, 3);
   const pw = (1080 - 40) / Math.max(1, pillars.length);
   pillars.forEach((p, i) => {
     const x = 60 + i * (pw + 20), y = 260;
@@ -177,7 +215,7 @@ export async function buildKitBanner(k: KitInput): Promise<string> {
     wrap(ctx, p.body, pw - 40).slice(0, 3).forEach((l, j) => ctx.fillText(l, x + 20, y + 106 + j * 22));
   });
   // métricas
-  const ms = k.metrics.slice(0, 4);
+  const ms = c.banner.metrics.slice(0, 4);
   const mw = 1080 / Math.max(1, ms.length);
   ms.forEach((m, i) => {
     const x = 60 + i * mw;
