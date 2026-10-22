@@ -111,6 +111,15 @@ export const listPublishedInteractiveTools = createServerFn({ method: "GET" })
     return (data ?? []).map((t) => ({ ...t, access: t.pricing_mode !== "paid" || owned.has(t.id) })) as Array<{ id: string; slug: string; title: string; summary: string; category: string; pricing_mode: string; price_brl: number; access: boolean }>;
   });
 
+/** Dados públicos (somente título/resumo/categoria) de ferramenta publicada, para SEO. */
+export const getPublicToolMeta = createServerFn({ method: "GET" })
+  .inputValidator((d: unknown) => z.object({ slug: z.string().min(1).max(100) }).parse(d))
+  .handler(async ({ data }) => {
+    const sb = await db();
+    const { data: t } = await sb.from("interactive_tools").select("slug, title, summary, category").eq("slug", data.slug).eq("status", "published").maybeSingle();
+    return (t ?? null) as { slug: string; title: string; summary: string; category: string } | null;
+  });
+
 /** Ferramenta paga só abre após pagamento confirmado — inclusive para administradores, para que o checkout Asaas seja sempre exibido. */
 async function hasAccess(context: Ctx, tool: { id: string; pricing_mode: string }) {
   if (tool.pricing_mode !== "paid") return true;

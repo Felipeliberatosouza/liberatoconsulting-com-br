@@ -14,20 +14,33 @@ import { ToolContextInput } from "@/components/ToolContextInput";
 import { ToolNumberInput } from "@/components/ToolNumberInput";
 import { exportTool } from "@/lib/tool-export";
 import {
-  createToolOrder, getInteractiveTool, getToolBranding, refreshToolOrder, saveBillingProfile, saveToolRun, sendPhoneCode, verifyPhoneCode,
+  createToolOrder, getInteractiveTool, getPublicToolMeta, getToolBranding, refreshToolOrder, saveBillingProfile, saveToolRun, sendPhoneCode, verifyPhoneCode,
 } from "@/lib/interactive-tools.functions";
 
 export const Route = createFileRoute("/ferramentas_/$slug")({
-  head: () => ({
-    meta: [
-      { title: "Ferramenta de gestão — Liberato Consulting" },
-      { name: "description", content: "Ferramenta interativa de gestão personalizada para o seu negócio." },
-      { property: "og:title", content: "Ferramenta de gestão — Liberato Consulting" },
-      { property: "og:description", content: "Informe os dados do seu negócio e receba resultados e relatório." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
+  loader: async ({ params }) => {
+    try { return { meta: await getPublicToolMeta({ data: { slug: params.slug } }) }; } catch { return { meta: null }; }
+  },
+  head: ({ params, loaderData }) => {
+    const m = loaderData?.meta;
+    const title = m ? `${m.title} — Ferramenta | Liberato Consulting` : "Ferramenta de gestão — Liberato Consulting";
+    const raw = m?.summary?.trim() || "Ferramenta interativa de gestão: informe os dados do seu negócio e receba resultados e relatório.";
+    const description = raw.length > 160 ? raw.slice(0, 157).trimEnd() + "…" : raw;
+    const url = `https://liberatoconsulting.com.br/ferramentas/${params.slug}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:url", content: url },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary" },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: m ? [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "SoftwareApplication", name: m.title, description, applicationCategory: "BusinessApplication", operatingSystem: "Web", url, provider: { "@type": "Organization", name: "Liberato Consulting" } }) }] : [],
+    };
+  },
   component: ToolRunner,
 });
 
