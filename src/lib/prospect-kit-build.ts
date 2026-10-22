@@ -24,7 +24,9 @@ export async function regenerateProspectKit() {
     consultants: (cons as any[]).slice(0, 2).map((c) => ({
       name: c.full_name,
       headline: c.headline ?? "",
-      lines: [c.education, c.experience, c.clients].map((x: unknown) => String(x ?? "").replace(/\s+/g, " ").trim()),
+      education: educationBullets(String(c.education ?? "")),
+      clients: String(c.clients ?? "").replace(/\.\s*$/, "").split(/[,;\n]/).map((s) => s.trim()).filter(Boolean),
+      specialties: (Array.isArray(c.specialties) ? c.specialties : []).map(String).filter(Boolean),
     })),
     identity: {
       tradeName: ctx.identity?.tradeName ?? "Liberato Consulting",
@@ -36,4 +38,20 @@ export async function regenerateProspectKit() {
   };
   const [banner, deck] = await Promise.all([buildKitBanner(k), buildKitDeck(k)]);
   return saveProspectKit({ data: { banner, ...deck } });
+}
+
+/** "- Instituição (SIGLA). Curso | ano" → "Curso — SIGLA (ano)", sem traço inicial. */
+export function educationBullets(raw: string): string[] {
+  return raw
+    .split(/\n+/)
+    .map((l) => l.replace(/^[\s\-–•·]+/, "").trim())
+    .filter(Boolean)
+    .map((l) => {
+      const [main, year] = l.split("|").map((s) => s.trim());
+      const dot = main!.indexOf(". ");
+      const inst = dot > 0 ? main!.slice(0, dot) : "";
+      const course = dot > 0 ? main!.slice(dot + 2) : main!;
+      const sigla = inst.match(/\(([^)]+)\)/)?.[1]?.split("/")[0]?.trim() || inst;
+      return `${course.replace(/\.$/, "")}${sigla ? ` — ${sigla}` : ""}${year ? ` (${year})` : ""}`;
+    });
 }
