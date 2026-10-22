@@ -2,10 +2,25 @@
 import { listConsultants } from "./consultants.functions";
 import { getPresentationContext } from "./presentation.functions";
 import { prepareImage } from "./presentation-deck";
-import { buildKitBanner, buildKitDeck, type KitInput } from "./prospect-kit";
-import { saveProspectKit } from "./prospect-kit.functions";
+import { buildKitBanner, buildKitDeck, defaultKitContent, mergeKitContent, type KitContent, type KitInput } from "./prospect-kit";
+import { getKitContent, saveProspectKit } from "./prospect-kit.functions";
 
-export async function regenerateProspectKit() {
+/** Regera banner + PPT/PDF. `content` permite aplicar textos já editados sem nova leitura. */
+export async function regenerateProspectKit(content?: KitContent | null) {
+  const k = await loadKitInput();
+  const saved = content === undefined ? (await getKitContent()).content : content;
+  const c = mergeKitContent(defaultKitContent(k), saved);
+  const [banner, deck] = await Promise.all([buildKitBanner(k, c), buildKitDeck(k, c)]);
+  return saveProspectKit({ data: { banner, ...deck } });
+}
+
+/** Conteúdo efetivo (padrão do painel + ajustes salvos), para o editor. */
+export async function loadEffectiveKitContent(): Promise<KitContent> {
+  const [k, saved] = await Promise.all([loadKitInput(), getKitContent()]);
+  return mergeKitContent(defaultKitContent(k), saved.content);
+}
+
+async function loadKitInput(): Promise<KitInput> {
   const [ctx, cons] = await Promise.all([getPresentationContext(), listConsultants().catch(() => [])]);
   const [logo, logoLight] = await Promise.all([prepareImage(ctx.liberatoLogo, false), prepareImage(ctx.liberatoLogoLight, false)]);
   const inst = ctx.institutional as any;
@@ -36,8 +51,7 @@ export async function regenerateProspectKit() {
       address: ctx.identity?.address ?? "",
     },
   };
-  const [banner, deck] = await Promise.all([buildKitBanner(k), buildKitDeck(k)]);
-  return saveProspectKit({ data: { banner, ...deck } });
+  return k;
 }
 
 /** "- Instituição (SIGLA). Curso, ano | Curso 2, ano" → ["Curso — SIGLA (ano)", ...], sem traço inicial. */
