@@ -49,7 +49,7 @@ export const getProspectKit = createServerFn({ method: "GET" })
       const { data } = await supabaseAdmin.storage.from(BUCKET).createSignedUrl(KIT_FILES[k], 600, { download: NAMES[k] });
       urls[k] = data?.signedUrl ?? "";
     }
-    const { data: view } = await supabaseAdmin.storage.from(BUCKET).createSignedUrl(KIT_FILES.banner, 600);
+    const { data: view } = await supabaseAdmin.storage.from(BUCKET).createSignedUrl(KIT_FILES.banner, 60 * 60 * 24 * 365);
     urls["bannerView"] = view?.signedUrl ?? "";
     return { updatedAt: updated as string, urls: urls as { banner: string; pptx: string; pdf: string; bannerView: string } };
   });
