@@ -29,6 +29,9 @@ export async function collectEntries(): Promise<SitemapEntry[]> {
     { path: "/brasil", changefreq: "weekly", priority: "0.9" },
     { path: "/content", changefreq: "weekly", priority: "0.8" },
     { path: "/contact", changefreq: "monthly", priority: "0.7" },
+    { path: "/ferramentas", changefreq: "weekly", priority: "0.8" },
+    { path: "/newsletters", changefreq: "weekly", priority: "0.6" },
+    { path: "/boletins", changefreq: "weekly", priority: "0.6" },
     { path: "/careers", changefreq: "monthly", priority: "0.5" },
     { path: "/privacy", changefreq: "yearly", priority: "0.3" },
     { path: "/terms", changefreq: "yearly", priority: "0.3" },
@@ -76,10 +79,14 @@ export async function collectEntries(): Promise<SitemapEntry[]> {
 
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [{ data: articles }, { data: campaigns }] = await Promise.all([
+    const [{ data: articles }, { data: campaigns }, { data: tools }] = await Promise.all([
       supabaseAdmin.from("content_articles").select("slug, updated_at").eq("published", true),
       supabaseAdmin.from("newsletter_campaigns").select("slug, published_at").not("published_at", "is", null),
+      supabaseAdmin.from("interactive_tools").select("slug").eq("status", "published"),
     ]);
+    for (const t of tools ?? []) {
+      if ((t as any)?.slug) entries.push({ path: `/ferramentas/${(t as any).slug}`, changefreq: "monthly", priority: "0.7" });
+    }
     for (const a of articles ?? []) {
       if (a?.slug) entries.push({ path: `/content/${a.slug}`, changefreq: "monthly", priority: "0.6", lastmod: (a as any).updated_at });
     }
