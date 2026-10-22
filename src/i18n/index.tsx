@@ -91,7 +91,7 @@ const STORAGE_KEY = "liberato-lang";
 export function LanguageProvider({ children }: { children: ReactNode }) {
   // ?lang= é lido já na renderização do servidor, para o Google receber o texto no idioma certo.
   const urlLang = useRouterState({
-    select: (s) => (s.location.search as Record<string, unknown>)?.lang,
+    select: (s) => (s.location.search as Record<string, unknown>)?.['lang'],
   });
   const [lang, setLangState] = useState<Lang>(
     typeof urlLang === "string" && (LANGS as readonly string[]).includes(urlLang) ? (urlLang as Lang) : "pt",
