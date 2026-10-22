@@ -5,7 +5,7 @@
  */
 import type { PresentationDraft } from "./presentation.functions";
 import { formatMoney } from "./pricing-catalog";
-import { logoBackground, STANDARD_NEXT_STEPS, type PresentationResource } from "./presentation-rules";
+import { logoBackground, presentationLogoBackground, STANDARD_NEXT_STEPS, type PresentationResource } from "./presentation-rules";
 
 export type Img = { data: string; w: number; h: number; background?: string } | null;
 
@@ -272,12 +272,6 @@ function drawDeck(b: Board, d: DeckInput) {
   const total = { n: 0 };
   const date = new Date().toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
 
-  const logoOn = (img: Img, x: number, y: number, w: number, h: number, surrounding: string) => {
-    if (!img) return;
-    const background = img.background ?? C.white;
-    if (background !== surrounding) b.rect(x - 0.08, y - 0.06, w + 0.16, h + 0.12, background, true);
-    b.image(img, x, y, w, h);
-  };
   const light = (kicker: string, title: string) => {
     total.n += 1;
     b.newSlide(C.cream);
@@ -286,7 +280,7 @@ function drawDeck(b: Board, d: DeckInput) {
     b.text(title, 0.7, 0.75, 10.2, 1.0, { size: 28, bold: true, color: C.navy, display: true });
     b.rect(0.7, 1.8, 1.2, 0.06, C.accent);
     if (d.clientLogo) {
-      b.rect(11.2, 0.4, 1.6, 0.9, d.clientLogo.background ?? C.white, true);
+      b.rect(11.2, 0.4, 1.6, 0.9, presentationLogoBackground("client", d.clientLogo.background), true);
       b.image(d.clientLogo, 11.3, 0.48, 1.4, 0.74);
     }
     footer(false);
@@ -299,7 +293,7 @@ function drawDeck(b: Board, d: DeckInput) {
     b.text(title, 0.7, 0.75, 10.2, 1.0, { size: 28, bold: true, color: C.white, display: true });
     b.rect(0.7, 1.8, 1.2, 0.06, C.accent);
     if (d.clientLogo) {
-      b.rect(11.2, 0.4, 1.6, 0.9, d.clientLogo.background ?? C.white, true);
+      b.rect(11.2, 0.4, 1.6, 0.9, presentationLogoBackground("client", d.clientLogo.background), true);
       b.image(d.clientLogo, 11.3, 0.48, 1.4, 0.74);
     }
     footer(true);
@@ -320,7 +314,7 @@ function drawDeck(b: Board, d: DeckInput) {
     });
   }
   function footer(onDark: boolean) {
-    logoOn(onDark ? d.liberatoLogoLight ?? d.liberatoLogo : d.liberatoLogo, 0.7, 6.9, 1.4, 0.38, onDark ? C.navy : C.cream);
+    b.image(onDark ? d.liberatoLogoLight ?? d.liberatoLogo : d.liberatoLogo, 0.7, 6.9, 1.4, 0.38);
     b.text(`Liberato Consulting · Proposta exclusiva para ${A}`, 3.5, 7.0, 6.3, 0.25, {
       size: 9,
       color: onDark ? "C9CFDA" : C.muted,
@@ -358,9 +352,9 @@ function drawDeck(b: Board, d: DeckInput) {
   total.n += 1;
   b.newSlide(C.navy);
   b.rect(0, 0, 0.35, H, C.accent);
-  logoOn(d.liberatoLogoLight ?? d.liberatoLogo, 0.9, 0.6, 2.6, 0.8, C.navy);
+  b.image(d.liberatoLogoLight ?? d.liberatoLogo, 0.9, 0.6, 2.6, 0.8);
   if (d.clientLogo) {
-    b.rect(9.6, 0.5, 3.0, 1.5, d.clientLogo.background ?? C.white, true);
+    b.rect(9.6, 0.5, 3.0, 1.5, presentationLogoBackground("client", d.clientLogo.background), true);
     b.image(d.clientLogo, 9.8, 0.65, 2.6, 1.2);
   }
   b.text(`PROPOSTA DE VALOR · ${(d.service.family || "CONSULTORIA").toUpperCase()}`, 0.9, 2.5, 11, 0.35, { size: 13, bold: true, color: C.accent });
@@ -450,7 +444,7 @@ function drawDeck(b: Board, d: DeckInput) {
     withLogos.slice(0, 8).forEach((c, i) => {
       const x = 0.7 + (i % 4) * 3.0;
       const y = 2.3 + Math.floor(i / 4) * 2.0;
-      b.rect(x, y, 2.75, 1.7, c.logo?.background ?? C.white, true);
+      b.rect(x, y, 2.75, 1.7, presentationLogoBackground("reference", c.logo?.background), true);
       if (c.logo) b.image(c.logo, x + 0.3, y + 0.25, 2.15, 1.2);
     });
   }
@@ -576,7 +570,7 @@ function drawDeck(b: Board, d: DeckInput) {
   numbered(STANDARD_NEXT_STEPS, 0.7, 2.2, 6.6, 0.95, true);
   b.text(`Duração de referência: ${d.service.duration}`, 0.7, 6.15, 6.6, 0.4, { size: 14, bold: true, color: C.accent });
   b.rect(7.9, 2.2, 4.8, 4.2, C.white, true);
-  logoOn(d.liberatoLogo, 8.2, 2.45, 2.4, 0.7, C.white);
+  b.image(d.liberatoLogo, 8.2, 2.45, 2.4, 0.7);
   b.text(
     [d.identity.tradeName || "Liberato Consulting", d.identity.phone, d.identity.email, d.identity.website || "liberatoconsulting.com.br", d.identity.address]
       .filter(Boolean)
