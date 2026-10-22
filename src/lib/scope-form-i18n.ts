@@ -38,6 +38,7 @@ const EN: QuestionText[] = [
       "Validate the business model",
       "Size the market and competition",
       "Prepare a launch or fundraising",
+      "In-company training for the team",
       "Other",
     ],
   },
