@@ -57,10 +57,11 @@ export async function sendBrevoEmail(params: {
   html: string;
   text: string;
   unsubscribeUrl: string;
+  attachments?: Array<{ name: string; content: string }>;
 }) {
   const key = process.env["BREVO_API_KEY"];
   if (!key) throw new Error("Chave do Brevo não configurada");
-  const attachment = params.html.includes(EMAIL_LOGO_CID) ? [await logoAttachment()] : [];
+  const attachment = [...(params.html.includes(EMAIL_LOGO_CID) ? [await logoAttachment()] : []), ...(params.attachments ?? [])];
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: { "api-key": key, "Content-Type": "application/json", accept: "application/json" },
@@ -81,4 +82,15 @@ export async function sendBrevoEmail(params: {
     console.error(`[brevo] ${res.status}: ${body}`);
     throw new Error(`Brevo recusou o envio (${res.status}): ${body.slice(0, 200)}`);
   }
+}
+
+/** Lê um arquivo do armazenamento e devolve em base64 (anexos do e-mail). */
+export async function storageBase64(bucket: string, path: string): Promise<string | null> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.storage.from(bucket).download(path);
+  if (error || !data) return null;
+  const bytes = new Uint8Array(await data.arrayBuffer());
+  let s = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(s);
 }
