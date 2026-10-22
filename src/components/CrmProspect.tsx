@@ -435,7 +435,7 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
                 .join(" · ")}
             </span>
             <Help label="Como as empresas são escolhidas e ordenadas?">
-              <p>O número de empresas é um limite máximo: só entram empresas reais com dados públicos verificáveis, por isso podem vir menos.</p>
+              <p>A pesquisa funciona em etapas: 1) descoberta ampla de empresas reais nos filtros (sem exigir contato); 2) descarte apenas das claramente fora do porte/região — porte não público fica como "porte a confirmar"; 3) busca de contatos e decisores para todas; 4) classificação em completo, parcial ou apenas empresa. O número informado é a meta; vem menos só quando não há empresas reais suficientes.</p>
               <p className="mt-2 font-semibold">Ordem de prioridade na escolha:</p>
               <ol className="mt-1 list-decimal space-y-1 pl-4">
                 <li>Aderência aos filtros informados;</li>
