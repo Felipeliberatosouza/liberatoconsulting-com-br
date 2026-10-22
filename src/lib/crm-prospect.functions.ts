@@ -210,9 +210,11 @@ Responda com JSON exatamente neste formato (strings vazias quando não souber):
       }
       leads = leads.slice(0, data.limit);
 
-      // Segunda rodada: busca ativa de decisores e canais para os leads incompletos.
-      const weak = leads.filter((l) => leadQuality(l) !== "completo").slice(0, 12);
-      if (weak.length > 0) {
+      // Etapa de enriquecimento: busca contatos/decisores para TODOS os leads incompletos, em lotes paralelos.
+      const weak = leads.filter((l) => leadQuality(l) !== "completo");
+      const batches: ProspectLead[][] = [];
+      for (let i = 0; i < weak.length; i += 8) batches.push(weak.slice(i, i + 8));
+      await Promise.all(batches.map(async (batch) => {
         try {
           const extra = await askJsonGrounded<{ items?: Array<{ name?: string; email?: string; phone?: string; contacts?: unknown[] }> }>(
             "Você é pesquisador de contatos B2B. Para cada empresa, procure na web canais de contato PÚBLICOS: página " +
@@ -220,12 +222,12 @@ Responda com JSON exatamente neste formato (strings vazias quando não souber):
               "funcionários, Receita Federal/CNPJ (telefone e e-mail cadastrais), juntas comerciais, associações setoriais, " +
               "listas de expositores de feiras e imprensa local. Identifique sócios/diretores (QSA do CNPJ, LinkedIn). " +
               "NUNCA invente: deixe vazio se não encontrar.",
-            `Empresas:\n${weak.map((l) => `- ${l.name} | site: ${l.website || "?"} | CNPJ: ${l.cnpj || "?"} | ${l.city}/${l.state}`).join("\n")}
+            `Empresas:\n${batch.map((l) => `- ${l.name} | site: ${l.website || "?"} | CNPJ: ${l.cnpj || "?"} | ${l.city}/${l.state}`).join("\n")}
 Cargos de interesse: ${data.roles || "sócio, diretor, gerente comercial, operações, financeiro"}.
 Responda JSON: {"items":[{"name":"nome exatamente como listado","email":"e-mail público","phone":"telefone com DDI/DDD","contacts":[{"full_name":"","role_title":"","department":"${CRM_DEPARTMENTS.join(" | ")}","email":"","phone":"","linkedin_url":""}]}]}`,
           );
           for (const item of extra?.items ?? []) {
-            const lead = weak.find((l) => key(l.name) === key(String(item.name ?? "")));
+            const lead = batch.find((l) => key(l.name) === key(String(item.name ?? "")));
             if (!lead) continue;
             const merged = normalizeLead({ name: lead.name, contacts: item.contacts ?? [] } as RawLead);
             lead.email = lead.email || str(item.email, 255);
@@ -238,7 +240,7 @@ Responda JSON: {"items":[{"name":"nome exatamente como listado","email":"e-mail 
         } catch {
           /* enriquecimento é opcional */
         }
-      }
+      }));
 
       const { data: existing } = await context.supabase
         .from("crm_companies")
