@@ -338,7 +338,7 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
           <span className="mt-1 block text-[11px] text-muted-foreground">
             As opções seguem o porte e o setor escolhidos (critério IBGE/Sebrae).
           </span>
-        </label>
+        </div>
         <label>
           <Label>Número de empresas (até 30)</Label>
           <input
