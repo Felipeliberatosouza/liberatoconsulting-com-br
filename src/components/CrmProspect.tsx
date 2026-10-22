@@ -68,11 +68,48 @@ const initial: Filters = {
   keywords: "",
   roles: "",
   limit: "6",
-  excludeLarge: true,
+  excludeLarge: false,
 };
 
 function Label({ children }: { children: React.ReactNode }) {
   return <span className="mb-1 block text-xs font-medium text-muted-foreground">{children}</span>;
+}
+
+const QUALITY_HELP = {
+  completo: "Lead completo: há um decisor identificado (nome e cargo) com canal público de contato (e-mail, telefone ou LinkedIn) e também e-mail ou telefone da empresa ou do decisor.",
+  parcial: "Lead parcial: existe algum canal público da empresa ou um decisor identificado, mas falta a combinação necessária para ser completo.",
+  basico: "Apenas empresa: foram encontrados dados da empresa, mas nenhum canal público de contato nem decisor utilizável.",
+} as const;
+
+const filled = (v?: string) => Boolean(v && v.trim());
+
+function missingForComplete(lead: ProspectLead): string[] {
+  const missing: string[] = [];
+  const decisor = lead.contacts.some(
+    (c) => filled(c.full_name) && filled(c.role_title) && (filled(c.email) || filled(c.phone) || filled(c.linkedin_url)),
+  );
+  if (!decisor) missing.push("decisor com nome, cargo e um canal de contato (e-mail, telefone ou LinkedIn)");
+  const direct = filled(lead.email) || filled(lead.phone) || lead.contacts.some((c) => filled(c.email) || filled(c.phone));
+  if (!direct) missing.push("e-mail ou telefone da empresa ou do decisor");
+  return missing;
+}
+
+/** Ícone de ajuda: mostra a explicação ao passar o mouse ou clicar. */
+function Help({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <details className="group relative ml-1 inline-block align-middle">
+      <summary
+        aria-label={label}
+        title={label}
+        className="flex h-5 w-5 cursor-pointer list-none items-center justify-center rounded-full border border-border text-xs font-bold text-muted-foreground hover:border-accent hover:text-foreground [&::-webkit-details-marker]:hidden"
+      >
+        ?
+      </summary>
+      <div className="absolute left-0 z-20 mt-2 w-80 max-w-[85vw] rounded-md border border-border bg-popover p-3 text-xs font-normal leading-relaxed text-popover-foreground shadow-lg">
+        {children}
+      </div>
+    </details>
+  );
 }
 
 export function CrmProspect({ onImported }: { onImported: () => void }) {
@@ -397,6 +434,18 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
                 .map((q) => `${QUALITY_LABEL[q]}: ${leads.filter((l) => l.quality === q).length}`)
                 .join(" · ")}
             </span>
+            <Help label="Como as empresas são escolhidas e ordenadas?">
+              <p>O número de empresas é um limite máximo: só entram empresas reais com dados públicos verificáveis, por isso podem vir menos.</p>
+              <p className="mt-2 font-semibold">Ordem de prioridade na escolha:</p>
+              <ol className="mt-1 list-decimal space-y-1 pl-4">
+                <li>Aderência aos filtros informados;</li>
+                <li>Empresas com canais públicos de contato;</li>
+                <li>Decisores identificáveis;</li>
+                <li>Fontes verificáveis;</li>
+                <li>Exclusão de empresas grandes, quando essa opção estiver marcada.</li>
+              </ol>
+              <p className="mt-2">Quando há mais empresas compatíveis que o limite, entram as que a pesquisa encontrou e validou primeiro; por isso pesquisas iguais podem variar. Na lista, aparecem primeiro os leads completos, depois parciais e por último "apenas empresa".</p>
+            </Help>
             <button className={`${btnGhost} ml-auto`} onClick={() => void exportProspects(leads, "xlsx")}>
               Baixar Excel
             </button>
@@ -445,6 +494,16 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
                         >
                           {QUALITY_LABEL[lead.quality]}
                         </span>
+                      )}
+                      {lead.quality && (
+                        <Help label={`O que é ${QUALITY_LABEL[lead.quality]}?`}>
+                          <p>{QUALITY_HELP[lead.quality]}</p>
+                          {lead.quality !== "completo" && (
+                            <p className="mt-2">
+                              <strong>Falta para ser completo:</strong> {missingForComplete(lead).join("; ")}.
+                            </p>
+                          )}
+                        </Help>
                       )}
                       {lead.duplicate && (
                         <span className="ml-2 rounded-full bg-secondary px-2 py-0.5 text-xs">já cadastrada</span>
