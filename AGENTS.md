@@ -16,3 +16,4 @@
 
 - Every generated public URL slug uses `shortSlug`/`uniqueShortSlug` from src/lib/short-slug.ts (max 2 meaningful words, -2/-3 only on collision, no random/timestamp suffixes) — links must be short and memorable.
 - Prospect email kit (banner PNG + 3-slide summary PPTX/PDF) is built in the browser from current admin data (src/lib/prospect-kit*.ts), stored in the presentations bucket under prospect-kit/, and attached server-side (banner inline via CID) — keeps the HTML small for deliverability and reflects admin edits.
+- Commercial presentation rules live in a shared browser-safe module and both exporters use the same drawing board; logo pixel contrast, resource ranking and size-selected duration are deterministic, not AI decisions, to keep PDF/PPT consistent.

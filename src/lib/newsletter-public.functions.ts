@@ -85,7 +85,7 @@ export const listRecentBulletins = createServerFn({ method: "GET" }).handler(asy
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin
     .from("bulletin_dispatches")
-    .select("id, subject, date_label, created_at")
+    .select("id, subject, date_label, created_at, body_html")
     .in("status", ["sent", "enviado"])
     .eq("is_test", false)
     .gte("created_at", since.toISOString())

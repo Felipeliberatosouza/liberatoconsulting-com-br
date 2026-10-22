@@ -1,4 +1,11 @@
 
+## Apresentações comerciais — Tiki (22/10/2026)
+- [x] Contraste automático das logos sem recoloração
+- [x] Guia, ferramenta relevante e últimas publicações com links no PPT/PDF
+- [x] Próximos passos fixos e duração única por porte
+- [x] Oito testes de regras, links em ambos os formatos e inspeção visual de cópia da Tiki; descrição encurtada para caber
+- [ ] Regerar e salvar a apresentação Tiki pelo painel (sessão administrativa redirecionou ao login; aguarda acesso do usuário)
+
 ## Formulário das ferramentas (20/10/2026)
 - [x] Seleção dos últimos 36 meses completos e critérios de rateio pesquisados
 - [x] Formatação brasileira e validação das entradas numéricas

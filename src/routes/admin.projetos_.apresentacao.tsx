@@ -20,6 +20,7 @@ import { activeSignals } from "@/lib/scope-guide";
 import { BASE_BLOCKS, FAMILY_BLOCKS, DEFAULT_MODULES } from "@/lib/diagnostic-catalog";
 import { listConsultants } from "@/lib/consultants.functions";
 import { buildDeckFiles, prepareImage, type DeckInput } from "@/lib/presentation-deck";
+import { presentationSize, referenceDuration, selectPresentationResources, STANDARD_NEXT_STEPS, type PresentationSize } from "@/lib/presentation-rules";
 import { buildProjectClients } from "@/lib/projects.functions";
 
 export const Route = createFileRoute("/admin/projetos_/apresentacao")({
@@ -27,6 +28,11 @@ export const Route = createFileRoute("/admin/projetos_/apresentacao")({
     meta: [
       { title: "Material para Apresentação — Painel Liberato Consulting" },
       { name: "robots", content: "noindex" },
+      { name: "description", content: "Criação de apresentações comerciais personalizadas da Liberato Consulting." },
+      { property: "og:title", content: "Apresentações comerciais — Liberato Consulting" },
+      { property: "og:description", content: "Materiais comerciais personalizados em PowerPoint e PDF." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   validateSearch: (s: Record<string, unknown>): { id?: string } => (typeof s["id"] === "string" ? { id: s["id"] } : {}),
@@ -88,6 +94,7 @@ function PresentationPage() {
   const [consultantId, setConsultantId] = useState("");
   const [site, setSite] = useState("");
   const [name, setName] = useState("");
+  const [clientSize, setClientSize] = useState<PresentationSize | "">("");
   const [sector, setSector] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
@@ -121,7 +128,7 @@ function PresentationPage() {
     void getPresentation({ data: { id: search.id } }).then((r) => {
       const p = r?.payload as any;
       if (!p || !p.name) { toast.info("Esta apresentação é antiga e não tem dados salvos para edição."); return; }
-      setSite(p.site ?? ""); setName(p.name ?? ""); setSector(p.sector ?? ""); setLocation(p.location ?? "");
+      setClientSize(p.clientSize ?? ""); setSite(p.site ?? ""); setName(p.name ?? ""); setSector(p.sector ?? ""); setLocation(p.location ?? "");
       setDescription(p.description ?? ""); setOfferings(p.offerings ?? ""); setHighlights(p.highlights ?? "");
       setAudience(p.audience ?? ""); setLogo(p.logo ?? ""); setServiceSlug(p.serviceSlug ?? "");
       setUseQuote(!!p.useQuote); setQuoteId(p.quoteId ?? ""); setUseScope(!!p.useScope); setScopeId(p.scopeId ?? "");
@@ -145,6 +152,8 @@ function PresentationPage() {
     const o = clientOptions.find((x) => x.key === key);
     if (!o) return;
     setName(o.name);
+    const crmSize = ctx.data?.crm.find(c => [c.name, c.trade_name].some(n => n?.trim().toLowerCase() === o.name.trim().toLowerCase()))?.size;
+    setClientSize(presentationSize(o.size || crmSize || ""));
     if (o.sector) setSector(o.sector);
     if (o.location) setLocation(o.location);
     if (o.website && !site) setSite(o.website);
@@ -176,7 +185,7 @@ function PresentationPage() {
       if (r.highlights.length) setHighlights(r.highlights.join("\n"));
       if (r.audience) setAudience(r.audience);
       if (r.logo && !logo) {
-        const img = await prepareImage(r.logo, true);
+        const img = await prepareImage(r.logo, false);
         if (img) setLogo(img.data);
       }
       toast.success(r.website ? "Campos preenchidos. Revise e ajuste." : "Campos preenchidos com o escopo (site não encontrado na internet).", { id: t });
@@ -227,7 +236,7 @@ function PresentationPage() {
       setHighlights(r.highlights.join("\n"));
       setAudience(r.audience);
       if (r.logo) {
-        const img = await prepareImage(r.logo, true);
+        const img = await prepareImage(r.logo, false);
         if (img) setLogo(img.data);
       }
       toast.success("Informações preenchidas a partir do site. Revise e ajuste.");
@@ -240,7 +249,7 @@ function PresentationPage() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = async () => {
-      const img = await prepareImage(String(reader.result), true);
+      const img = await prepareImage(String(reader.result), false);
       if (img) setLogo(img.data);
       else toast.error("Não foi possível ler a imagem.");
     };
@@ -288,6 +297,11 @@ function PresentationPage() {
 
   async function generate() {
     if (!ctx.data || !service) { toast.error("Selecione o serviço."); return; }
+    if (!clientSize) { toast.error("Selecione o porte do cliente para definir a duração."); return; }
+    const duration = referenceDuration(service.duration ?? "", service.duration_corporate ?? "", clientSize);
+    if (!duration) { toast.error("Cadastre a duração deste serviço para o porte selecionado."); return; }
+    const selectedResources = selectPresentationResources(ctx.data.tools, `${sector} ${description} ${offerings} ${service.title}`);
+    if (!selectedResources.some(r => r.kind === "guide") || !selectedResources.some(r => r.kind === "tool")) { toast.error("Publique um guia e ao menos uma ferramenta para incluir na apresentação."); return; }
     if (useQuote && !quoteId) { toast.error("Selecione o orçamento a usar ou desmarque a opção."); return; }
     if (useScope && !scopeId) { toast.error("Selecione o escopo inicial ou desmarque a opção."); return; }
     if (useDiag && !diagId) { toast.error("Selecione o diagnóstico ou desmarque a opção."); return; }
@@ -325,7 +339,7 @@ function PresentationPage() {
           bullets: service.bullets ?? [],
           results: service.results ?? [],
           modules: service.modules ?? [],
-          duration: service.duration ?? "",
+          duration,
           ai: service.ai ?? "",
         },
         draft: d,
@@ -333,7 +347,8 @@ function PresentationPage() {
           ...ctx.data.institutional,
           clients: ctx.data.institutional.clients.map((c, i) => ({ name: c.name, logo: clientImgs[i] ?? null })),
         },
-        tools: ctx.data.tools,
+        tools: selectedResources,
+        publications: ctx.data.publications,
         consultant: cons
           ? {
               name: cons.full_name,
@@ -377,7 +392,7 @@ function PresentationPage() {
           used_diagnostic: useDiag && !!diagId,
           pptx: files.pptx,
           pdf: files.pdf,
-          payload: { site, name, sector, location, description, offerings, highlights, audience, logo, serviceSlug, useQuote, quoteId, useScope, scopeId, useDiag, diagId, consultantId, draft: d },
+          payload: { clientSize, site, name, sector, location, description, offerings, highlights, audience, logo, serviceSlug, useQuote, quoteId, useScope, scopeId, useDiag, diagId, consultantId, draft: d },
         },
       });
       setSavedId(r.id);
@@ -472,13 +487,20 @@ function PresentationPage() {
               </select>
               <input className={input} placeholder="Ou digite / ajuste o nome" value={name} onChange={(e) => setName(e.target.value)} />
             </Field>
+            <Field label="Porte do cliente">
+              <select className={input} value={clientSize} onChange={e => setClientSize(e.target.value as PresentationSize | "")}>
+                <option value="">Selecione…</option>
+                <option value="pme">Micro, pequena ou média empresa / startup</option>
+                <option value="corporativo">Grande empresa</option>
+              </select>
+            </Field>
             <Field label="Setor (segmento de mercado)">
               <input className={input} value={sector} onChange={(e) => setSector(e.target.value)} />
             </Field>
             <Field label="Localização geográfica">
               <input className={input} value={location} onChange={(e) => setLocation(e.target.value)} />
             </Field>
-            <Field label="Logomarca do cliente (fundo removido automaticamente)">
+            <Field label="Logomarca do cliente (cores originais preservadas)">
               <div className="flex items-center gap-3">
                 <div className="flex h-16 w-32 items-center justify-center rounded-lg border border-dashed border-border bg-[repeating-conic-gradient(var(--color-secondary)_0_25%,transparent_0_50%)] bg-[length:12px_12px]">
                   {logo ? <img src={logo} alt="Logomarca" className="max-h-14 max-w-28 object-contain" /> : <span className="text-xs text-muted-foreground">sem logo</span>}
@@ -587,7 +609,7 @@ function PresentationPage() {
                   />
                 </Field>
                 <Field label="Por que a Liberato (um por linha)"><textarea className={input} rows={4} value={draft.whyLiberato.join("\n")} onChange={(e) => setList("whyLiberato", e.target.value)} /></Field>
-                <Field label="Próximos passos (um por linha)"><textarea className={input} rows={4} value={draft.nextSteps.join("\n")} onChange={(e) => setList("nextSteps", e.target.value)} /></Field>
+                <Field label="Próximos passos (um por linha)"><textarea className={input} rows={4} readOnly value={STANDARD_NEXT_STEPS.join("\n")} /></Field>
               </div>
             ) : (
               <p className="mt-2 text-sm text-muted-foreground">
