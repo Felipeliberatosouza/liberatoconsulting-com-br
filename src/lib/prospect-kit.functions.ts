@@ -51,7 +51,9 @@ export const getProspectKit = createServerFn({ method: "GET" })
     }
     const { data: view } = await supabaseAdmin.storage.from(BUCKET).createSignedUrl(KIT_FILES.banner, 60 * 60 * 24 * 365);
     urls["bannerView"] = view?.signedUrl ?? "";
-    return { updatedAt: updated as string, urls: urls as { banner: string; pptx: string; pdf: string; bannerView: string } };
+    const { data: pdfView } = await supabaseAdmin.storage.from(BUCKET).createSignedUrl(KIT_FILES.pdf, 3600);
+    urls["pdfView"] = pdfView?.signedUrl ?? "";
+    return { updatedAt: updated as string, urls: urls as { banner: string; pptx: string; pdf: string; bannerView: string; pdfView: string } };
   });
 
 const CONTENT_FILE = "prospect-kit/content.json";
