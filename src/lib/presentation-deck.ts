@@ -5,8 +5,9 @@
  */
 import type { PresentationDraft } from "./presentation.functions";
 import { formatMoney } from "./pricing-catalog";
+import { logoBackground, STANDARD_NEXT_STEPS, type PresentationResource } from "./presentation-rules";
 
-export type Img = { data: string; w: number; h: number } | null;
+export type Img = { data: string; w: number; h: number; background?: string } | null;
 
 export type DeckInput = {
   clientName: string;
@@ -38,7 +39,8 @@ export type DeckInput = {
     purpose: string;
     clients: Array<{ name: string; logo: Img }>;
   };
-  tools: Array<{ title: string; summary: string | null }>;
+  tools: PresentationResource[];
+  publications?: Array<{ title: string; url: string }>;
   consultant?: null | {
     name: string;
     headline: string;
@@ -80,6 +82,7 @@ type TextOpts = {
   bold?: boolean;
   align?: "left" | "center" | "right";
   display?: boolean;
+  url?: string;
 };
 
 export interface Board {
@@ -184,6 +187,7 @@ export async function pptBoard() {
         margin: 0,
         fontFace: o.display ? "Space Grotesk" : "DM Sans",
         lineSpacingMultiple: 1.05,
+        hyperlink: o.url ? { url: o.url } : undefined,
       });
     },
     image(img, x, y, w, h) {
@@ -237,6 +241,7 @@ export async function pdfBoard() {
         const ty = y + (size * 0.9) / 72 + i * lh;
         const tx = o.align === "center" ? x + w / 2 : o.align === "right" ? x + w : x;
         doc.text(line, tx, ty, { align: o.align ?? "left" });
+        if (o.url) doc.link(x, ty - size / 72, w, lh, { url: o.url });
       });
     },
     image(img, x, y, w, h) {
@@ -267,6 +272,12 @@ function drawDeck(b: Board, d: DeckInput) {
   const total = { n: 0 };
   const date = new Date().toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
 
+  const logoOn = (img: Img, x: number, y: number, w: number, h: number, surrounding: string) => {
+    if (!img) return;
+    const background = img.background ?? C.white;
+    if (background !== surrounding) b.rect(x - 0.08, y - 0.06, w + 0.16, h + 0.12, background, true);
+    b.image(img, x, y, w, h);
+  };
   const light = (kicker: string, title: string) => {
     total.n += 1;
     b.newSlide(C.cream);
@@ -275,7 +286,7 @@ function drawDeck(b: Board, d: DeckInput) {
     b.text(title, 0.7, 0.75, 10.2, 1.0, { size: 28, bold: true, color: C.navy, display: true });
     b.rect(0.7, 1.8, 1.2, 0.06, C.accent);
     if (d.clientLogo) {
-      b.rect(11.2, 0.4, 1.6, 0.9, C.white, true);
+      b.rect(11.2, 0.4, 1.6, 0.9, d.clientLogo.background ?? C.white, true);
       b.image(d.clientLogo, 11.3, 0.48, 1.4, 0.74);
     }
     footer(false);
@@ -288,7 +299,7 @@ function drawDeck(b: Board, d: DeckInput) {
     b.text(title, 0.7, 0.75, 10.2, 1.0, { size: 28, bold: true, color: C.white, display: true });
     b.rect(0.7, 1.8, 1.2, 0.06, C.accent);
     if (d.clientLogo) {
-      b.rect(11.2, 0.4, 1.6, 0.9, C.white, true);
+      b.rect(11.2, 0.4, 1.6, 0.9, d.clientLogo.background ?? C.white, true);
       b.image(d.clientLogo, 11.3, 0.48, 1.4, 0.74);
     }
     footer(true);
@@ -309,7 +320,7 @@ function drawDeck(b: Board, d: DeckInput) {
     });
   }
   function footer(onDark: boolean) {
-    b.image(onDark ? d.liberatoLogoLight ?? d.liberatoLogo : d.liberatoLogo, 0.7, 6.9, 1.4, 0.38);
+    logoOn(onDark ? d.liberatoLogoLight ?? d.liberatoLogo : d.liberatoLogo, 0.7, 6.9, 1.4, 0.38, onDark ? C.navy : C.cream);
     b.text(`Liberato Consulting · Proposta exclusiva para ${A}`, 3.5, 7.0, 6.3, 0.25, {
       size: 9,
       color: onDark ? "C9CFDA" : C.muted,
@@ -347,9 +358,9 @@ function drawDeck(b: Board, d: DeckInput) {
   total.n += 1;
   b.newSlide(C.navy);
   b.rect(0, 0, 0.35, H, C.accent);
-  b.image(d.liberatoLogoLight ?? d.liberatoLogo, 0.9, 0.6, 2.6, 0.8);
+  logoOn(d.liberatoLogoLight ?? d.liberatoLogo, 0.9, 0.6, 2.6, 0.8, C.navy);
   if (d.clientLogo) {
-    b.rect(9.6, 0.5, 3.0, 1.5, C.white, true);
+    b.rect(9.6, 0.5, 3.0, 1.5, d.clientLogo.background ?? C.white, true);
     b.image(d.clientLogo, 9.8, 0.65, 2.6, 1.2);
   }
   b.text(`PROPOSTA DE VALOR · ${(d.service.family || "CONSULTORIA").toUpperCase()}`, 0.9, 2.5, 11, 0.35, { size: 13, bold: true, color: C.accent });
@@ -439,7 +450,7 @@ function drawDeck(b: Board, d: DeckInput) {
     withLogos.slice(0, 8).forEach((c, i) => {
       const x = 0.7 + (i % 4) * 3.0;
       const y = 2.3 + Math.floor(i / 4) * 2.0;
-      b.rect(x, y, 2.75, 1.7, C.white, true);
+      b.rect(x, y, 2.75, 1.7, c.logo?.background ?? C.white, true);
       if (c.logo) b.image(c.logo, x + 0.3, y + 0.25, 2.15, 1.2);
     });
   }
@@ -513,10 +524,20 @@ function drawDeck(b: Board, d: DeckInput) {
   // 12. Ferramentas
   light("Ferramentas e autonomia", `Ferramentas e IA que dão autonomia ${g === "a" ? "à" : "ao"} ${client}`);
   if (d.service.ai) b.text(d.service.ai, 0.7, 2.1, 11.9, 0.9, { size: 15, color: C.muted });
-  cards(
-    d.tools.slice(0, 6).map((t) => ({ title: t.title, body: t.summary ?? "" })),
-    0.7, d.service.ai ? 3.1 : 2.2, 11.9, d.service.ai ? 3.45 : 4.35, 3,
-  );
+  d.tools.slice(0, 2).forEach((t, i) => {
+    const x = 0.7 + i * 6.1;
+    b.rect(x, 3.0, 5.8, 2.7, C.white, true);
+    b.text(t.kind === "guide" ? "GUIA DE GESTÃO" : "FERRAMENTA DA PLATAFORMA", x + 0.25, 3.2, 5.3, 0.25, { size: 10, bold: true, color: C.accent });
+    b.text(t.title, x + 0.25, 3.58, 5.3, 0.6, { size: 17, bold: true, color: C.navy, url: t.url });
+    const summary = (t.summary ?? "").split(/(?<=[.!?])\s/).slice(0, 2).join(" ");
+    b.text(summary, x + 0.25, 4.3, 5.3, 0.72, { size: 13, color: C.muted });
+    b.text(t.url.replace(/^https?:\/\//, ""), x + 0.25, 5.18, 5.3, 0.3, { size: 11, color: C.accent, url: t.url });
+  });
+  (d.publications ?? []).slice(0, 2).forEach((p, i) => {
+    b.rect(0.75, 6.0 + i * 0.35, 0.08, 0.08, C.accent);
+    b.text(p.title, 0.95, 5.91 + i * 0.35, 3.3, 0.27, { size: 11, bold: true, color: C.navy, url: p.url });
+    b.text(p.url.replace(/^https?:\/\//, ""), 4.35, 5.91 + i * 0.35, 8.2, 0.27, { size: 10, color: C.accent, url: p.url });
+  });
 
   // 13. Por que a Liberato
   light("Por que a Liberato", `Por que ${A} deve escolher a Liberato Consulting`);
@@ -551,9 +572,10 @@ function drawDeck(b: Board, d: DeckInput) {
 
   // 15. Próximos passos e contato
   dark("Próximos passos", `Vamos começar, ${client}?`);
-  numbered(d.draft.nextSteps.slice(0, 4), 0.7, 2.2, 6.6, 0.95, true);
+  numbered(STANDARD_NEXT_STEPS, 0.7, 2.2, 6.6, 0.95, true);
+  b.text(`Duração de referência: ${d.service.duration}`, 0.7, 6.15, 6.6, 0.4, { size: 14, bold: true, color: C.accent });
   b.rect(7.9, 2.2, 4.8, 4.2, C.white, true);
-  b.image(d.liberatoLogo, 8.2, 2.45, 2.4, 0.7);
+  logoOn(d.liberatoLogo, 8.2, 2.45, 2.4, 0.7, C.white);
   b.text(
     [d.identity.tradeName || "Liberato Consulting", d.identity.phone, d.identity.email, d.identity.website || "liberatoconsulting.com.br", d.identity.address]
       .filter(Boolean)
@@ -595,7 +617,8 @@ export async function prepareImage(src: string, removeBackground: boolean): Prom
         const cv = document.createElement("canvas");
         cv.width = w;
         cv.height = h;
-        const ctx = cv.getContext("2d")!;
+        const ctx = cv.getContext("2d");
+        if (!ctx) { resolve(null); return; }
         ctx.drawImage(img, 0, 0, w, h);
         if (removeBackground) {
           const px = ctx.getImageData(0, 0, w, h);
@@ -614,7 +637,7 @@ export async function prepareImage(src: string, removeBackground: boolean): Prom
             ctx.putImageData(px, 0, 0);
           }
         }
-        resolve({ data: cv.toDataURL("image/png"), w, h });
+        resolve({ data: cv.toDataURL("image/png"), w, h, background: logoBackground(ctx.getImageData(0, 0, w, h).data) });
       } catch {
         resolve(null);
       }

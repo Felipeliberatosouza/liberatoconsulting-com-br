@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { STANDARD_NEXT_STEPS, type PresentationResource } from "./presentation-rules";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -60,20 +61,20 @@ export const getPresentationContext = createServerFn({ method: "GET" })
     await guard(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { getPublicCompanyIdentity } = await import("./company-public.functions");
-    const [services, settings, tools, quotes, identity, crm, scopes, diags] = await Promise.all([
+    const [services, settings, tools, quotes, identity, crm, scopes, diags, interactive, downloads, newsletters, bulletins] = await Promise.all([
       supabaseAdmin
         .from("service_products")
-        .select("slug, title, family_title, lead, problem, body, audience, duration, bullets, results, modules, ai, published, position")
+        .select("slug, title, family_title, lead, problem, body, audience, duration, duration_corporate, bullets, results, modules, ai, published, position")
         .order("position"),
       supabaseAdmin.from("site_settings").select("key, value").in("key", ["branding", "institutional"]),
-      supabaseAdmin.from("management_tools").select("title, summary, category").eq("published", true).order("position").limit(12),
+      supabaseAdmin.from("management_tools").select("id, slug, title, summary, category, position").eq("published", true).order("position"),
       supabaseAdmin
         .from("quotes")
         .select("id, slug, service_title, client_name, currency, total_currency, total_brl, start_date, end_date, discount_pct, created_at, payload")
         .order("created_at", { ascending: false })
         .limit(40),
       getPublicCompanyIdentity(),
-      supabaseAdmin.from("crm_companies").select("id, name, trade_name, segment, city, state, website").order("name").limit(1000),
+      supabaseAdmin.from("crm_companies").select("id, name, trade_name, segment, city, state, website, size").order("name").limit(1000),
       supabaseAdmin
         .from("project_scope_submissions")
         .select("id, company, respondent_name, answers, comments, notes, created_at")
@@ -84,6 +85,10 @@ export const getPresentationContext = createServerFn({ method: "GET" })
         .select("id, title, client_name, service_slug, service_title, answers, consultant_notes, modules, updated_at")
         .order("updated_at", { ascending: false })
         .limit(300),
+      supabaseAdmin.from("interactive_tools").select("id, slug, title, summary, category").eq("status", "published"),
+      supabaseAdmin.from("tool_downloads").select("tool_id"),
+      supabaseAdmin.from("newsletter_campaigns").select("slug, subject").or("published_at.not.is.null,status.eq.sent").not("slug", "is", null).order("created_at", { ascending: false }).limit(1),
+      supabaseAdmin.from("bulletin_dispatches").select("id, subject").in("status", ["sent", "enviado"]).eq("is_test", false).order("created_at", { ascending: false }).limit(1),
     ]);
     const map = new Map((settings.data ?? []).map((r: any) => [r.key, r.value]));
     const branding = (map.get("branding") ?? {}) as { logoUrl?: string };
@@ -96,12 +101,28 @@ export const getPresentationContext = createServerFn({ method: "GET" })
       toDataUrl("https://liberatoconsulting.com.br/logo-light.png"),
       ...logos.map((l) => (l.imageUrl ? toDataUrl(l.imageUrl) : Promise.resolve(""))),
     ]);
+    for (const result of [tools, interactive, downloads, newsletters, bulletins]) {
+      if (result.error) throw new Error(result.error.message);
+    }
+    const base = "https://liberatoconsulting.com.br";
+    const popularity = new Map<string, number>();
+    (downloads.data ?? []).forEach(r => popularity.set(r.tool_id, (popularity.get(r.tool_id) ?? 0) + 1));
+    const resources: PresentationResource[] = (tools.data ?? []).map(t => {
+      const guide = /guia/i.test(`${t.title} ${t.category}`);
+      return { title: t.title, summary: t.summary, category: t.category, position: t.position, popularity: popularity.get(t.id) ?? 0, kind: guide ? "guide" : "tool", url: guide ? `${base}/guia-gestao` : `${base}/ferramentas#${t.slug}` };
+    });
+    resources.push(...(interactive.data ?? []).map(t => ({ title: t.title, summary: t.summary, category: t.category, kind: "tool" as const, url: `${base}/ferramentas/${t.slug}` })));
+    const publications = [
+      ...(newsletters.data?.[0]?.slug ? [{ title: "Newsletter · última edição", url: `${base}/newsletter/${newsletters.data[0].slug}` }] : []),
+      ...(bulletins.data?.[0] ? [{ title: "Boletim Semanal · última edição", url: `${base}/boletins?edicao=${bulletins.data[0].id}` }] : []),
+    ];
     return {
       services: (services.data ?? []) as any[],
-      tools: (tools.data ?? []) as Array<{ title: string; summary: string | null; category: string | null }>,
+      tools: resources,
+      publications,
       quotes: (quotes.data ?? []) as any[],
       identity,
-      crm: (crm.data ?? []) as Array<{ id: string; name: string; trade_name: string; segment: string; city: string; state: string; website: string }>,
+      crm: (crm.data ?? []) as Array<{ id: string; name: string; trade_name: string; segment: string; city: string; state: string; website: string; size: string }>,
       scopes: (scopes.data ?? []) as any[],
       diagnostics: (diags.data ?? []) as any[],
       liberatoLogo,
@@ -335,7 +356,7 @@ export const draftPresentationContent = createServerFn({ method: "POST" })
 clientGender ("f" se o nome "${data.clientName}" pede artigo feminino — ex.: a Mark Up, a Natura, a Petrobras; "m" se masculino — ex.: o Itaú, o Grupo Pão de Açúcar, o Banco do Brasil),
 workPlan (uma entrada por módulo do serviço, na mesma ordem, no máximo 6: {stage nome curto da etapa até 40 caracteres, how como o trabalho será executado em ${data.clientName} até 160 caracteres, research quais pesquisas/levantamentos serão feitos — ex.: entrevistas, pesquisa com clientes finais, benchmarking de concorrentes, análise de dados internos — até 130 caracteres, stakeholders quem será envolvido — clientes finais do mercado-foco de ${data.clientName}, funcionários e lideranças, concorrentes, fornecedores, parceiros — até 110 caracteres}).`,
       );
-      return { ok: true as const, draft };
+      return { ok: true as const, draft: { ...draft, nextSteps: [...STANDARD_NEXT_STEPS] } };
     } catch (err) {
       return { ok: false as const, error: (err as Error).message || "Falha ao gerar os textos." };
     }
