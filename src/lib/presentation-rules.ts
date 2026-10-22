@@ -36,6 +36,11 @@ export function logoBackground(pixels: ArrayLike<number>): "FFFFFF" | "1B2A41" {
   return weight && dark > white ? "1B2A41" : "FFFFFF";
 }
 
+/** Contrast adaptation belongs only to the proposal client's logo. */
+export function presentationLogoBackground(role: "client" | "reference", detected?: string): string {
+  return role === "client" && detected === "1B2A41" ? "1B2A41" : "FFFFFF";
+}
+
 export type PresentationResource = { title: string; summary: string | null; url: string; category?: string | null; position?: number; popularity?: number; kind: "guide" | "tool" };
 export function selectPresentationResources(resources: PresentationResource[], business: string) {
   const normalize = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();

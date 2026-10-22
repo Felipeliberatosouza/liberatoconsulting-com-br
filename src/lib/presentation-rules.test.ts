@@ -1,7 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { logoBackground, presentationSize, referenceDuration, selectPresentationResources, STANDARD_NEXT_STEPS } from "./presentation-rules";
+import { logoBackground, presentationLogoBackground, presentationSize, referenceDuration, selectPresentationResources, STANDARD_NEXT_STEPS } from "./presentation-rules";
 
 describe("commercial presentation rules", () => {
+  it("adapts the background only for the proposal client's white logo", () => {
+    expect(presentationLogoBackground("client", "1B2A41")).toBe("1B2A41");
+    expect(presentationLogoBackground("client", "FFFFFF")).toBe("FFFFFF");
+  });
+  it("preserves the original white background of reference company logos", () => {
+    expect(presentationLogoBackground("reference", "1B2A41")).toBe("FFFFFF");
+    expect(presentationLogoBackground("reference", "FFFFFF")).toBe("FFFFFF");
+  });
   it("keeps white logos on dark backgrounds without mutating pixels", () => {
     const pixels = [255, 255, 255, 255, 0, 0, 0, 0];
     expect(logoBackground(pixels)).toBe("1B2A41");
