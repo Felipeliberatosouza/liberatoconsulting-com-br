@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 
+import { useRouterState } from "@tanstack/react-router";
 import { pt, type Dict } from "./pt";
 import {
   DEFAULT_LANG,
@@ -88,7 +89,13 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 const STORAGE_KEY = "liberato-lang";
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("pt");
+  // ?lang= é lido já na renderização do servidor, para o Google receber o texto no idioma certo.
+  const urlLang = useRouterState({
+    select: (s) => (s.location.search as Record<string, unknown>)?.['lang'],
+  });
+  const [lang, setLangState] = useState<Lang>(
+    typeof urlLang === "string" && (LANGS as readonly string[]).includes(urlLang) ? (urlLang as Lang) : "pt",
+  );
   const [dicts, setDicts] = useState<Partial<Record<Lang, Dict>>>({});
   const [translating, setTranslating] = useState(false);
   const [config, setConfig] = useState<SiteConfig>(EMPTY_CONFIG);

@@ -25,9 +25,9 @@ export const PAGE_SEO: Record<string, PageSeoByLang> = {
       title: "Consultoria empresarial e gestão estratégica com IA | Liberato",
       description:
         "Consultoria empresarial com inteligência artificial: diagnóstico empresarial, gestão estratégica, finanças e pesquisas de mercado no Brasil. Fale conosco.",
-      ogTitle: "Pesquisas de mercado sobre o Brasil — Liberato Consulting",
+      ogTitle: "Consultoria empresarial e gestão estratégica com IA — Liberato Consulting",
       ogDescription:
-        "Inteligência sobre setores da economia brasileira para empresas internacionais, com gestão estratégica e IA no centro.",
+        "Diagnóstico empresarial, gestão estratégica, finanças e pesquisas de mercado no Brasil, com inteligência artificial.",
     },
     en: {
       title: "Brazil market research and AI-driven management — Liberato Consulting",

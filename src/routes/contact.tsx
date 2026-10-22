@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { seoPageMeta } from "@/lib/seo-meta";
-import { keywordsMeta } from "@/lib/keywords";
 import { trackEvent } from "@/lib/gtag";
 import { submitLead } from "@/lib/leads.functions";
 import { getPublicCompanyAddress } from "@/lib/company-public.functions";
@@ -19,7 +18,6 @@ export const Route = createFileRoute("/contact")({
   head: (ctx) => ({
     meta: [
       ...seoPageMeta("/contact", headLang(ctx)),
-      keywordsMeta(undefined, headLang(ctx) as never),
       ...seoLocaleMeta(headLang(ctx)),
     ],
     links: seoLinks("/contact", headLang(ctx)),
