@@ -5,6 +5,7 @@ import { CRM_SEGMENTS } from "@/lib/crm-segments";
 import { employeeRangesFor, PORTE_LABEL, PORTE_LIMITS, SECTOR_LABEL, sectorFromSegment, type Porte, type Sector } from "@/lib/company-size";
 import { STATES } from "@/lib/audience-filters";
 import { exportProspects } from "@/lib/prospect-export";
+import { MultiSelect } from "@/components/MultiSelect";
 
 const COUNTRY_REGIONS: Record<string, { label: string; options: string[] }> = {
   Brasil: { label: "Estado (UF)", options: STATES.map((s) => s.uf) },
@@ -37,16 +38,15 @@ const btn = "rounded-full bg-ink px-4 py-2 text-sm font-semibold text-ink-foregr
 const btnGhost = "rounded-full border border-border px-4 py-2 text-sm font-medium hover:border-accent disabled:opacity-60";
 
 type Filters = {
-  segment: string;
+  segment: string[];
   companyName: string;
-  country: string;
-  state: string;
-  city: string;
-  porte: Porte;
-  sector: Sector;
-  minEmployees: string;
-  maxEmployees: string;
-  revenue: string;
+  country: string[];
+  state: string[];
+  city: string[];
+  porte: Array<Exclude<Porte, "">>;
+  sector: Sector[];
+  employees: string[];
+  revenue: string[];
   keywords: string;
   roles: string;
   limit: string;
@@ -56,16 +56,15 @@ type Filters = {
 const QUALITY_LABEL = { completo: "Lead completo", parcial: "Lead parcial", basico: "Apenas empresa" } as const;
 
 const initial: Filters = {
-  segment: "",
+  segment: [],
   companyName: "",
-  country: "Brasil",
-  state: "",
-  city: "",
-  porte: "",
-  sector: "comercio_servicos",
-  minEmployees: "",
-  maxEmployees: "",
-  revenue: "",
+  country: ["Brasil"],
+  state: [],
+  city: [],
+  porte: [],
+  sector: [],
+  employees: [],
+  revenue: [],
   keywords: "",
   roles: "",
   limit: "6",
@@ -85,37 +84,65 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const set = (key: keyof Filters, value: string | number) =>
-    setFilters((prev) => ({ ...prev, [key]: value }) as Filters);
+  const set = <K extends keyof Filters>(key: K, value: Filters[K]) => setFilters((prev) => ({ ...prev, [key]: value }));
 
   const [cities, setCities] = useState<string[]>([]);
   const [citiesLoading, setCitiesLoading] = useState(false);
-  const region = COUNTRY_REGIONS[filters.country];
+  const onlyBrazil = filters.country.length === 1 && filters.country[0] === "Brasil";
+  const regionLabel = filters.country.length === 1 ? COUNTRY_REGIONS[filters.country[0] ?? ""]?.label ?? "Estado / Província" : "Estado / Província";
+  const countriesForRegion = filters.country.length ? filters.country : Object.keys(COUNTRY_REGIONS);
+  const regionOptions = countriesForRegion.flatMap((c) =>
+    (COUNTRY_REGIONS[c]?.options ?? []).map((o) => ({
+      value: o,
+      label:
+        c === "Brasil"
+          ? `${o} — ${STATES.find((s) => s.uf === o)?.name ?? ""}`
+          : countriesForRegion.length > 1 ? `${o} (${c})` : o,
+    })),
+  );
+  const brStates = filters.state.filter((s) => STATES.some((x) => x.uf === s));
+  const brKey = brStates.join(",");
 
   useEffect(() => {
     setCities([]);
-    if (filters.country !== "Brasil" || !filters.state) return;
+    if (!filters.country.includes("Brasil") || brStates.length === 0) return;
     let alive = true;
     setCitiesLoading(true);
-    fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${filters.state}/municipios?orderBy=nome`)
-      .then((r) => r.json())
-      .then((rows: Array<{ nome: string }>) => alive && setCities(rows.map((r) => r.nome)))
-      .catch(() => alive && setCities([]))
+    Promise.all(
+      brStates.map((uf) =>
+        fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios?orderBy=nome`)
+          .then((r) => r.json())
+          .then((rows: Array<{ nome: string }>) => rows.map((r) => (brStates.length > 1 ? `${r.nome}/${uf}` : r.nome)))
+          .catch(() => [] as string[]),
+      ),
+    )
+      .then((lists) => alive && setCities(lists.flat()))
       .finally(() => alive && setCitiesLoading(false));
     return () => {
       alive = false;
     };
-  }, [filters.country, filters.state]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.country.join(","), brKey]);
 
-  const employeeRanges = employeeRangesFor(filters.porte, filters.sector);
-  const employeeRange =
-    employeeRanges.find((r) => String(r.min) === filters.minEmployees && String(r.max ?? "") === filters.maxEmployees)?.label ?? "";
-  const porteLimits = filters.porte ? PORTE_LIMITS[filters.sector][filters.porte] : null;
+  const sectors: Sector[] = filters.sector.length ? filters.sector : (Object.keys(SECTOR_LABEL) as Sector[]);
+  const portes: Array<Exclude<Porte, "">> = filters.porte.length ? filters.porte : (Object.keys(PORTE_LABEL) as Array<Exclude<Porte, "">>);
+  const employeeRanges = Array.from(
+    new Map(
+      sectors.flatMap((s) => portes.flatMap((p) => employeeRangesFor(p, s))).map((r) => [r.label, r] as const),
+    ).values(),
+  ).sort((a, b) => a.min - b.min);
+  const chosenRanges = employeeRanges.filter((r) => filters.employees.includes(r.label));
+  const porteLimits = filters.porte.length
+    ? sectors.flatMap((s) => filters.porte.map((p) => PORTE_LIMITS[s][p]))
+    : [];
 
-  const num = (v: string) => {
-    const n = Number(v.replace(/\D/g, ""));
-    return Number.isFinite(n) && n > 0 ? n : null;
-  };
+  function bounds(list: Array<{ min: number; max: number | null }>) {
+    if (!list.length) return { min: null as number | null, max: null as number | null };
+    return {
+      min: Math.min(...list.map((r) => r.min)),
+      max: list.some((r) => r.max == null) ? null : Math.max(...list.map((r) => r.max as number)),
+    };
+  }
 
   async function search() {
     setBusy(true);
@@ -126,16 +153,21 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
     try {
       const res = await searchCrmLeads({
         data: {
-          segment: filters.segment,
+          segment: filters.segment.join(" OU "),
           companyName: filters.companyName,
-          country: filters.country,
-          state: filters.state,
-          city: filters.city,
-          size: filters.porte === "grande" ? "corporacao" : filters.porte ? "pme" : "",
-          porte: filters.porte ? `${PORTE_LABEL[filters.porte]} (${SECTOR_LABEL[filters.sector]}, critério IBGE/Sebrae)` : "",
-          minEmployees: num(filters.minEmployees) ?? porteLimits?.min ?? null,
-          maxEmployees: num(filters.maxEmployees) ?? porteLimits?.max ?? null,
-          revenue: filters.revenue,
+          country: filters.country.join(" OU "),
+          state: filters.state.join(" OU "),
+          city: filters.city.join(" OU "),
+          size:
+            filters.porte.length && filters.porte.every((p) => p === "grande")
+              ? "corporacao"
+              : filters.porte.length && !filters.porte.includes("grande") ? "pme" : "",
+          porte: filters.porte.length || filters.sector.length
+            ? `${filters.porte.length ? filters.porte.map((p) => PORTE_LABEL[p]).join(" ou ") : "Qualquer porte"} (${sectors.map((s) => SECTOR_LABEL[s]).join(" ou ")}, critério IBGE/Sebrae)${chosenRanges.length ? `; faixas de funcionários: ${chosenRanges.map((r) => r.label).join(", ")}` : ""}`
+            : chosenRanges.length ? `Faixas de funcionários: ${chosenRanges.map((r) => r.label).join(", ")}` : "",
+          minEmployees: (chosenRanges.length ? bounds(chosenRanges) : bounds(porteLimits)).min,
+          maxEmployees: (chosenRanges.length ? bounds(chosenRanges) : bounds(porteLimits)).max,
+          revenue: filters.revenue.join(" OU "),
           keywords: filters.keywords,
           roles: filters.roles,
           limit: Math.min(30, Math.max(1, Number(filters.limit) || 6)),
@@ -196,138 +228,117 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
       </p>
 
       <div className="mt-4 grid gap-3 md:grid-cols-3">
-        <label>
+        <div>
           <Label>Segmento</Label>
-          <select
+          <MultiSelect
             className={baseField}
+            options={CRM_SEGMENTS as unknown as string[]}
             value={filters.segment}
-            onChange={(e) => {
-              const segment = e.target.value;
+            placeholder="Qualquer segmento"
+            onChange={(segment) =>
               setFilters((prev) => ({
                 ...prev,
                 segment,
-                sector: segment ? sectorFromSegment(segment) : prev.sector,
-                minEmployees: "",
-                maxEmployees: "",
-              }));
-            }}
-          >
-            <option value="">Qualquer segmento</option>
-            {CRM_SEGMENTS.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
+                sector: segment.length ? Array.from(new Set(segment.map(sectorFromSegment))) : prev.sector,
+                employees: [],
+              }))
+            }
+          />
+        </div>
+        <div>
           <Label>Setor econômico</Label>
-          <select
+          <MultiSelect
             className={baseField}
+            options={(Object.keys(SECTOR_LABEL) as Sector[]).map((s) => ({ value: s, label: SECTOR_LABEL[s] }))}
             value={filters.sector}
-            onChange={(e) => setFilters((prev) => ({ ...prev, sector: e.target.value as Sector, minEmployees: "", maxEmployees: "" }))}
-          >
-            {(Object.keys(SECTOR_LABEL) as Sector[]).map((s) => (
-              <option key={s} value={s}>{SECTOR_LABEL[s]}</option>
-            ))}
-          </select>
-        </label>
-        <label>
+            placeholder="Qualquer setor"
+            onChange={(v) => setFilters((prev) => ({ ...prev, sector: v as Sector[], employees: [] }))}
+          />
+        </div>
+        <div>
           <Label>Porte</Label>
-          <select
+          <MultiSelect
             className={baseField}
+            options={(Object.keys(PORTE_LABEL) as Array<Exclude<Porte, "">>).map((p) => ({ value: p, label: PORTE_LABEL[p] }))}
             value={filters.porte}
-            onChange={(e) => setFilters((prev) => ({ ...prev, porte: e.target.value as Porte, minEmployees: "", maxEmployees: "" }))}
-          >
-            <option value="">Qualquer porte</option>
-            {(Object.keys(PORTE_LABEL) as Array<Exclude<Porte, "">>).map((p) => (
-              <option key={p} value={p}>{PORTE_LABEL[p]}</option>
-            ))}
-          </select>
-        </label>
+            placeholder="Qualquer porte"
+            onChange={(v) => setFilters((prev) => ({ ...prev, porte: v as Array<Exclude<Porte, "">>, employees: [] }))}
+          />
+        </div>
         <label>
           <Label>Nome da empresa</Label>
           <input className={baseField} value={filters.companyName} onChange={(e) => set("companyName", e.target.value)} placeholder="Ex.: Embraer (opcional)" />
         </label>
-        <label>
+        <div>
           <Label>País</Label>
-          <select
+          <MultiSelect
             className={baseField}
+            options={Object.keys(COUNTRY_REGIONS)}
             value={filters.country}
-            onChange={(e) => setFilters((prev) => ({ ...prev, country: e.target.value, state: "", city: "" }))}
-          >
-            {Object.keys(COUNTRY_REGIONS).map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          <Label>{region?.label ?? "Estado / Província"}</Label>
-          <select
+            placeholder="Qualquer país"
+            onChange={(country) => setFilters((prev) => ({ ...prev, country, state: [], city: [] }))}
+          />
+        </div>
+        <div>
+          <Label>{regionLabel}</Label>
+          <MultiSelect
             className={baseField}
+            options={regionOptions}
             value={filters.state}
-            onChange={(e) => setFilters((prev) => ({ ...prev, state: e.target.value, city: "" }))}
-          >
-            <option value="">Qualquer {(region?.label ?? "estado").toLowerCase()}</option>
-            {(region?.options ?? []).map((o) => (
-              <option key={o} value={o}>
-                {filters.country === "Brasil" ? `${o} — ${STATES.find((s) => s.uf === o)?.name ?? ""}` : o}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
+            placeholder={`Qualquer ${regionLabel.toLowerCase()}`}
+            onChange={(state) => setFilters((prev) => ({ ...prev, state, city: [] }))}
+          />
+        </div>
+        <div>
           <Label>Cidade</Label>
-          {filters.country === "Brasil" ? (
-            <select
+          {onlyBrazil ? (
+            <MultiSelect
               className={baseField}
+              options={cities}
               value={filters.city}
-              disabled={!filters.state || citiesLoading}
-              onChange={(e) => set("city", e.target.value)}
-            >
-              <option value="">
-                {!filters.state ? "Escolha a UF primeiro" : citiesLoading ? "Carregando cidades…" : "Qualquer cidade"}
-              </option>
-              {cities.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
+              disabled={brStates.length === 0 || citiesLoading}
+              placeholder={brStates.length === 0 ? "Escolha a UF primeiro" : citiesLoading ? "Carregando cidades…" : "Qualquer cidade"}
+              onChange={(city) => set("city", city)}
+            />
           ) : (
-            <input className={baseField} value={filters.city} onChange={(e) => set("city", e.target.value)} placeholder="Cidade (opcional)" />
+            <input
+              className={baseField}
+              value={filters.city.join(", ")}
+              onChange={(e) => set("city", e.target.value.split(",").map((s) => s.trimStart()).filter((s, i, a) => s || i === a.length - 1))}
+              placeholder="Cidades separadas por vírgula (opcional)"
+            />
           )}
-        </label>
-        <label>
+        </div>
+        <div>
           <Label>Faixa de faturamento</Label>
-          <select className={baseField} value={filters.revenue} onChange={(e) => set("revenue", e.target.value)}>
-            <option value="">Qualquer faturamento</option>
-            {REVENUE_RANGES.map((r) => (
-              <option key={r} value={r}>{r}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          <Label>Número de funcionários</Label>
-          <select
+          <MultiSelect
             className={baseField}
-            value={employeeRange}
-            onChange={(e) => {
-              const r = employeeRanges.find((x) => x.label === e.target.value);
-              setFilters((prev) => ({ ...prev, minEmployees: r ? String(r.min) : "", maxEmployees: r ? String(r.max ?? "") : "" }));
-            }}
-          >
-            <option value="">
-              {porteLimits
-                ? `Todo o porte (${porteLimits.min}${porteLimits.max ? ` a ${porteLimits.max}` : "+"} funcionários)`
-                : "Qualquer quantidade"}
-            </option>
-            {employeeRanges.map((r) => (
-              <option key={r.label} value={r.label}>{r.label} funcionários</option>
-            ))}
-          </select>
+            options={REVENUE_RANGES}
+            value={filters.revenue}
+            placeholder="Qualquer faturamento"
+            onChange={(v) => set("revenue", v)}
+          />
+        </div>
+        <div>
+          <Label>Número de funcionários</Label>
+          <MultiSelect
+            className={baseField}
+            options={employeeRanges.map((r) => ({ value: r.label, label: `${r.label} funcionários` }))}
+            value={filters.employees}
+            placeholder={
+              porteLimits.length
+                ? (() => {
+                    const b = bounds(porteLimits);
+                    return `Todo o porte (${b.min}${b.max ? ` a ${b.max}` : "+"} funcionários)`;
+                  })()
+                : "Qualquer quantidade"
+            }
+            onChange={(v) => set("employees", v)}
+          />
           <span className="mt-1 block text-[11px] text-muted-foreground">
             As opções seguem o porte e o setor escolhidos (critério IBGE/Sebrae).
           </span>
-        </label>
+        </div>
         <label>
           <Label>Número de empresas (até 30)</Label>
           <input
