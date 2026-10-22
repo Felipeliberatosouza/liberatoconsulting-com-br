@@ -92,7 +92,6 @@ import { Route as ApiPublicBulletinWeeklyRouteImport } from './routes/api/public
 import { Route as ApiPublicCrmBirthdaysRouteImport } from './routes/api/public/crm-birthdays'
 import { Route as ApiPublicIndicatorsRefreshRouteImport } from './routes/api/public/indicators-refresh'
 import { Route as ApiPublicNewsletterWeeklyRouteImport } from './routes/api/public/newsletter-weekly'
-import { Route as ApiPublicTmpProspectTestRouteImport } from './routes/api/public/tmp-prospect-test'
 import { Route as BrasilSlugTopicRouteImport } from './routes/brasil_.$slug_.$topic'
 import { Route as LovableEmailEventsRouteImport } from './routes/lovable/email/events'
 import { Route as ApiPublicNewsletterImageSlugRouteImport } from './routes/api/public/newsletter-image.$slug'
@@ -524,12 +523,6 @@ const ApiPublicNewsletterWeeklyRoute =
     path: '/api/public/newsletter-weekly',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicTmpProspectTestRoute =
-  ApiPublicTmpProspectTestRouteImport.update({
-    id: '/api/public/tmp-prospect-test',
-    path: '/api/public/tmp-prospect-test',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const BrasilSlugTopicRoute = BrasilSlugTopicRouteImport.update({
   id: '/brasil_/$slug_/$topic',
   path: '/brasil/$slug/$topic',
@@ -647,7 +640,6 @@ export interface FileRoutesByFullPath {
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
-  '/api/public/tmp-prospect-test': typeof ApiPublicTmpProspectTestRoute
   '/brasil/$slug/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
@@ -739,7 +731,6 @@ export interface FileRoutesByTo {
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
-  '/api/public/tmp-prospect-test': typeof ApiPublicTmpProspectTestRoute
   '/brasil/$slug/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
@@ -832,7 +823,6 @@ export interface FileRoutesById {
   '/api/public/crm-birthdays': typeof ApiPublicCrmBirthdaysRoute
   '/api/public/indicators-refresh': typeof ApiPublicIndicatorsRefreshRoute
   '/api/public/newsletter-weekly': typeof ApiPublicNewsletterWeeklyRoute
-  '/api/public/tmp-prospect-test': typeof ApiPublicTmpProspectTestRoute
   '/brasil_/$slug_/$topic': typeof BrasilSlugTopicRoute
   '/lovable/email/events': typeof LovableEmailEventsRoute
   '/api/public/newsletter-image/$slug': typeof ApiPublicNewsletterImageSlugRoute
@@ -926,7 +916,6 @@ export interface FileRouteTypes {
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
     | '/api/public/newsletter-weekly'
-    | '/api/public/tmp-prospect-test'
     | '/brasil/$slug/$topic'
     | '/lovable/email/events'
     | '/api/public/newsletter-image/$slug'
@@ -1018,7 +1007,6 @@ export interface FileRouteTypes {
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
     | '/api/public/newsletter-weekly'
-    | '/api/public/tmp-prospect-test'
     | '/brasil/$slug/$topic'
     | '/lovable/email/events'
     | '/api/public/newsletter-image/$slug'
@@ -1110,7 +1098,6 @@ export interface FileRouteTypes {
     | '/api/public/crm-birthdays'
     | '/api/public/indicators-refresh'
     | '/api/public/newsletter-weekly'
-    | '/api/public/tmp-prospect-test'
     | '/brasil_/$slug_/$topic'
     | '/lovable/email/events'
     | '/api/public/newsletter-image/$slug'
@@ -1203,7 +1190,6 @@ export interface RootRouteChildren {
   ApiPublicCrmBirthdaysRoute: typeof ApiPublicCrmBirthdaysRoute
   ApiPublicIndicatorsRefreshRoute: typeof ApiPublicIndicatorsRefreshRoute
   ApiPublicNewsletterWeeklyRoute: typeof ApiPublicNewsletterWeeklyRoute
-  ApiPublicTmpProspectTestRoute: typeof ApiPublicTmpProspectTestRoute
   BrasilSlugTopicRoute: typeof BrasilSlugTopicRoute
   LovableEmailEventsRoute: typeof LovableEmailEventsRoute
   ApiPublicNewsletterImageSlugRoute: typeof ApiPublicNewsletterImageSlugRoute
@@ -1795,13 +1781,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicNewsletterWeeklyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/tmp-prospect-test': {
-      id: '/api/public/tmp-prospect-test'
-      path: '/api/public/tmp-prospect-test'
-      fullPath: '/api/public/tmp-prospect-test'
-      preLoaderRoute: typeof ApiPublicTmpProspectTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/brasil_/$slug_/$topic': {
       id: '/brasil_/$slug_/$topic'
       path: '/brasil/$slug/$topic'
@@ -1931,7 +1910,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicCrmBirthdaysRoute: ApiPublicCrmBirthdaysRoute,
   ApiPublicIndicatorsRefreshRoute: ApiPublicIndicatorsRefreshRoute,
   ApiPublicNewsletterWeeklyRoute: ApiPublicNewsletterWeeklyRoute,
-  ApiPublicTmpProspectTestRoute: ApiPublicTmpProspectTestRoute,
   BrasilSlugTopicRoute: BrasilSlugTopicRoute,
   LovableEmailEventsRoute: LovableEmailEventsRoute,
   ApiPublicNewsletterImageSlugRoute: ApiPublicNewsletterImageSlugRoute,
