@@ -185,7 +185,7 @@ function PresentationPage() {
       if (r.highlights.length) setHighlights(r.highlights.join("\n"));
       if (r.audience) setAudience(r.audience);
       if (r.logo && !logo) {
-        const img = await prepareImage(r.logo, true);
+        const img = await prepareImage(r.logo, false);
         if (img) setLogo(img.data);
       }
       toast.success(r.website ? "Campos preenchidos. Revise e ajuste." : "Campos preenchidos com o escopo (site não encontrado na internet).", { id: t });
@@ -236,7 +236,7 @@ function PresentationPage() {
       setHighlights(r.highlights.join("\n"));
       setAudience(r.audience);
       if (r.logo) {
-        const img = await prepareImage(r.logo, true);
+        const img = await prepareImage(r.logo, false);
         if (img) setLogo(img.data);
       }
       toast.success("Informações preenchidas a partir do site. Revise e ajuste.");
@@ -249,7 +249,7 @@ function PresentationPage() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = async () => {
-      const img = await prepareImage(String(reader.result), true);
+      const img = await prepareImage(String(reader.result), false);
       if (img) setLogo(img.data);
       else toast.error("Não foi possível ler a imagem.");
     };
@@ -500,7 +500,7 @@ function PresentationPage() {
             <Field label="Localização geográfica">
               <input className={input} value={location} onChange={(e) => setLocation(e.target.value)} />
             </Field>
-            <Field label="Logomarca do cliente (fundo removido automaticamente)">
+            <Field label="Logomarca do cliente (cores originais preservadas)">
               <div className="flex items-center gap-3">
                 <div className="flex h-16 w-32 items-center justify-center rounded-lg border border-dashed border-border bg-[repeating-conic-gradient(var(--color-secondary)_0_25%,transparent_0_50%)] bg-[length:12px_12px]">
                   {logo ? <img src={logo} alt="Logomarca" className="max-h-14 max-w-28 object-contain" /> : <span className="text-xs text-muted-foreground">sem logo</span>}
