@@ -48,13 +48,24 @@ export function ProspectEmailPanel() {
 
   const blocked = useMemo(() => new Set((setup.data?.unsubscribes ?? []).map((u) => u.email.toLowerCase())), [setup.data]);
 
-  const crmPeople: Person[] = useMemo(
-    () =>
-      (crm.data ?? []).flatMap((c) =>
-        c.contacts.map((p) => ({ key: `crm:${c.id}:${p.email}`, company: c.name, name: p.name, email: p.email, role: p.role, mode: "" as Mode })),
-      ),
-    [crm.data],
-  );
+  // Um e-mail = uma linha: une o mesmo contato vindo de várias origens (CRM, Escopo, Site...).
+  const crmPeople: Person[] = useMemo(() => {
+    const byEmail = new Map<string, Person & { roles: string[] }>();
+    for (const c of crm.data ?? []) {
+      for (const p of c.contacts) {
+        const e = p.email.trim().toLowerCase();
+        const cur = byEmail.get(e);
+        if (!cur) {
+          byEmail.set(e, { key: `crm:${e}`, company: c.name, name: p.name, email: p.email, role: "", roles: p.role ? [p.role] : [], mode: "" as Mode });
+          continue;
+        }
+        if (p.role && !cur.roles.includes(p.role)) cur.roles.push(p.role);
+        if (!cur.name && p.name) cur.name = p.name;
+        if ((!cur.company || cur.company.startsWith("(")) && c.name) cur.company = c.name;
+      }
+    }
+    return [...byEmail.values()].map(({ roles, ...p }) => ({ ...p, role: roles.join(" • ") }));
+  }, [crm.data]);
 
   const modeOf = (key: string) => people.find((p) => p.key === key)?.mode ?? "";
   const setMode = (p: Person, mode: Mode) =>
