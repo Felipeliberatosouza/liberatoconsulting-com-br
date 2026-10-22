@@ -6,8 +6,10 @@ import { BulletinSignup } from "@/components/BulletinSignup";
 import { useLanguage } from "@/i18n";
 import { LANG_HTML } from "@/i18n/config";
 import { pageText } from "@/lib/page-translations";
+import { sanitizeEmailHtml } from "@/lib/sanitize-html";
 
 export const Route = createFileRoute("/boletins")({
+  validateSearch: (s: Record<string, unknown>): { edicao?: string } => ({ edicao: typeof s["edicao"] === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s["edicao"]) ? s["edicao"] : undefined }),
   head: () => ({ meta: [{ title: "Boletins Semanais — Liberato Consulting" }, { name: "description", content: "Boletins semanais publicados pela Liberato Consulting nos últimos três meses." }, { property: "og:title", content: "Boletins Semanais — Liberato Consulting" }, { property: "og:description", content: "Indicadores e análises recentes para apoiar decisões empresariais." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary_large_image" }] }),
   component: BulletinsPage,
 });
@@ -16,6 +18,8 @@ function BulletinsPage() {
   const { lang } = useLanguage();
   const p = pageText(lang).bulletins;
   const query = useQuery({ queryKey: ["recent-bulletins"], queryFn: () => listRecentBulletins() });
+  const { edicao } = Route.useSearch();
+  const selected = query.data?.find(item => item.created_at.startsWith(edicao ?? ""));
   return (
     <div>
       <section className="bg-ink py-16 text-ink-foreground">
@@ -32,6 +36,10 @@ function BulletinsPage() {
         </div>
       </section>
       <section className="mx-auto max-w-7xl px-6 py-16">
+        {edicao && selected ? <article className="mb-12">
+          <h2 className="mb-6 text-2xl font-bold">{selected.subject}</h2>
+          <div className="overflow-x-auto" dangerouslySetInnerHTML={{ __html: sanitizeEmailHtml(selected.body_html) }} />
+        </article> : null}
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {query.data?.map((item) => (
             <article key={item.id} className="border-t-2 border-accent py-6">
