@@ -26,7 +26,7 @@ export async function regenerateProspectKit() {
       headline: c.headline ?? "",
       education: educationBullets(String(c.education ?? "")),
       clients: String(c.clients ?? "").replace(/\.\s*$/, "").split(/[,;\n]/).map((s) => s.trim()).filter(Boolean),
-      specialties: (Array.isArray(c.specialties) ? c.specialties : []).map(String).filter(Boolean),
+      specialties: (Array.isArray(c.specialties) ? c.specialties : []).map((s: unknown) => String(s).split(" · ").pop()!.trim()).filter(Boolean),
     })),
     identity: {
       tradeName: ctx.identity?.tradeName ?? "Liberato Consulting",
