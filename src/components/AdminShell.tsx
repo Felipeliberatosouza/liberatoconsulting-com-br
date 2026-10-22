@@ -76,8 +76,10 @@ export function AdminShell({
   title,
   description,
   requireAdmin = false,
+  wide = false,
   children,
 }: {
+  wide?: boolean;
   title: string;
   description?: string;
   requireAdmin?: boolean;
@@ -203,7 +205,7 @@ export function AdminShell({
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-10">
+      <main className={`mx-auto px-6 py-10 ${wide ? "max-w-[1800px] px-4" : "max-w-6xl"}`}>
         <h1 className="font-display text-2xl font-bold">{title}</h1>
         {description && (
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{description}</p>

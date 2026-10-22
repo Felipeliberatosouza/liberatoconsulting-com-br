@@ -113,7 +113,7 @@ function DeliveriesPage() {
   const field = "rounded-md border border-border bg-background px-3 py-2 text-sm";
 
   return (
-    <AdminShell title="Painel de Envio de Informações" requireAdmin description="Tudo o que o site já enviou, com data, destinatários e forma de envio (e-mail e/ou WhatsApp).">
+    <AdminShell title="Painel de Envio de Informações" requireAdmin wide description="Tudo o que o site já enviou, com data, destinatários e forma de envio (e-mail e/ou WhatsApp).">
       <div className="grid gap-3 sm:grid-cols-5">
         {[["Envios", totals.envios], ["E-mails entregues", totals.email], ["WhatsApp entregues", totals.wa], ["Falhas", totals.fail], ["Pessoas alcançadas", totals.people]].map(([l, v]) => (
           <div key={l as string} className="rounded-lg border border-border bg-card p-4">
@@ -141,12 +141,12 @@ function DeliveriesPage() {
         </label>
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-lg border border-border">
-        <table className="w-full text-sm">
+      <div className="mt-4 rounded-lg border border-border">
+        <table className="w-full table-fixed text-sm">
           <thead className="bg-secondary/50 text-left text-xs uppercase tracking-wider text-muted-foreground">
             <tr>
-              <th className="p-3">Data</th><th className="p-3">Assunto</th><th className="p-3">Tipo</th>
-              <th className="p-3 text-center">E-mail</th><th className="p-3 text-center">WhatsApp</th><th className="p-3 text-center">Falhas</th><th className="p-3">Destinatários</th>
+              <th className="w-[13%] p-3">Data</th><th className="p-3">Assunto</th><th className="w-[13%] p-3">Tipo</th>
+              <th className="w-[7%] p-3 text-center">E-mail</th><th className="w-[9%] p-3 text-center">WhatsApp</th><th className="w-[7%] p-3 text-center">Falhas</th><th className="w-[13%] p-3">Destinatários</th>
             </tr>
           </thead>
           <tbody>
@@ -155,13 +155,13 @@ function DeliveriesPage() {
             {items.map((i) => (
               <Fragment key={i.key}>
                 <tr className="border-t border-border align-top">
-                  <td className="whitespace-nowrap p-3">{fmt(i.sentAt)}</td>
+                  <td className="p-3">{fmt(i.sentAt)}</td>
                   <td className="p-3">
-                    <p className="font-medium">{i.subject}</p>
+                    <p className="break-words font-medium">{i.subject}</p>
                     {i.isTest && <span className="text-xs text-muted-foreground">Envio de teste</span>}
-                    {i.lastError && <p className="mt-1 text-xs text-destructive">{i.lastError}</p>}
+                    {i.lastError && <p className="mt-1 break-words text-xs text-destructive">{i.lastError}</p>}
                   </td>
-                  <td className="whitespace-nowrap p-3">{SOURCE_LABEL[i.source] ?? i.source}</td>
+                  <td className="p-3">{SOURCE_LABEL[i.source] ?? i.source}</td>
                   <td className="p-3 text-center">{i.sentEmail > 0 ? (<button type="button" title="Ver quem são" className="font-semibold text-accent underline" onClick={() => toggle(i.key, "email")}>{i.sentEmail}</button>) : 0}</td>
                   <td className="p-3 text-center">{i.sentWhatsApp > 0 ? (<button type="button" title="Ver quem são" className="font-semibold text-accent underline" onClick={() => toggle(i.key, "whatsapp")}>{i.sentWhatsApp}</button>) : 0}</td>
                   <td className="p-3 text-center">{i.failed > 0 ? (<button type="button" title="Ver quem são" className="font-semibold text-accent underline" onClick={() => toggle(i.key, "falhou")}>{i.failed}</button>) : 0}</td>
@@ -176,7 +176,7 @@ function DeliveriesPage() {
                         {open === i.key && filter === "all" ? "Ocultar" : `Ver ${i.recipients.length}`}
                       </button>
                     ) : (
-                      <span className="text-xs text-muted-foreground">Detalhe individual indisponível (envio anterior a 18/09/2026)</span>
+                      <span className="text-xs text-muted-foreground" title="Detalhe individual indisponível para envios anteriores a 18/09/2026">Histórico anterior a 18/09</span>
                     )}
                   </td>
                 </tr>
@@ -192,7 +192,7 @@ function DeliveriesPage() {
                           </button>
                         )}
                       </div>
-                      <table className="w-full text-xs">
+                      <div className="overflow-x-auto"><table className="w-full text-xs">
                         <thead className="text-left text-muted-foreground">
                           <tr><th className="p-2">Nome</th><th className="p-2">E-mail</th><th className="p-2">WhatsApp</th><th className="p-2">Forma</th><th className="p-2">Situação</th><th className="p-2">Horário</th><th className="p-2">Reenviar</th></tr>
                         </thead>
@@ -225,7 +225,7 @@ function DeliveriesPage() {
                             </tr>
                           ))}
                         </tbody>
-                      </table>
+                      </table></div>
                     </td>
                   </tr>
                 )}
