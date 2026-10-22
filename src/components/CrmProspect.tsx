@@ -89,7 +89,7 @@ export function CrmProspect({ onImported }: { onImported: () => void }) {
   const [cities, setCities] = useState<string[]>([]);
   const [citiesLoading, setCitiesLoading] = useState(false);
   const onlyBrazil = filters.country.length === 1 && filters.country[0] === "Brasil";
-  const regionLabel = filters.country.length === 1 ? COUNTRY_REGIONS[filters.country[0]]?.label ?? "Estado / Província" : "Estado / Província";
+  const regionLabel = filters.country.length === 1 ? COUNTRY_REGIONS[filters.country[0] ?? ""]?.label ?? "Estado / Província" : "Estado / Província";
   const countriesForRegion = filters.country.length ? filters.country : Object.keys(COUNTRY_REGIONS);
   const regionOptions = countriesForRegion.flatMap((c) =>
     (COUNTRY_REGIONS[c]?.options ?? []).map((o) => ({
