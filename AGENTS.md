@@ -15,3 +15,4 @@
 - Tool company defaults use the authenticated tools account and shared intake helper; explicit user edits take precedence, including empty values, so late account loading never overwrites input.
 
 - Every generated public URL slug uses `shortSlug`/`uniqueShortSlug` from src/lib/short-slug.ts (max 2 meaningful words, -2/-3 only on collision, no random/timestamp suffixes) — links must be short and memorable.
+- Prospect email kit (banner PNG + 3-slide summary PPTX/PDF) is built in the browser from current admin data (src/lib/prospect-kit*.ts), stored in the presentations bucket under prospect-kit/, and attached server-side (banner inline via CID) — keeps the HTML small for deliverability and reflects admin edits.
