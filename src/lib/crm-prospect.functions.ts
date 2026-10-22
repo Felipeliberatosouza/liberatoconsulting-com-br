@@ -128,6 +128,7 @@ export const searchCrmLeads = createServerFn({ method: "POST" })
         state: z.string().trim().max(80).default(""),
         city: z.string().trim().max(120).default(""),
         size: z.enum(["", "pme", "corporacao"]).default(""),
+        porte: z.string().trim().max(160).default(""),
         minEmployees: z.number().int().min(0).max(5_000_000).nullable().default(null),
         maxEmployees: z.number().int().min(0).max(5_000_000).nullable().default(null),
         revenue: z.string().trim().max(160).default(""),
@@ -147,7 +148,9 @@ export const searchCrmLeads = createServerFn({ method: "POST" })
       data.segment ? `Segmento: ${data.segment}` : "",
       data.companyName ? `Empresa específica (priorize esta empresa e similares pelo nome): ${data.companyName}` : "",
       `Local: ${[data.city, data.state, data.country].filter(Boolean).join(", ")}`,
-      data.size ? `Porte desejado: ${data.size === "corporacao" ? "corporação/grande empresa" : "pequena ou média empresa"}` : "",
+      data.porte
+        ? `Porte desejado: ${data.porte}`
+        : data.size ? `Porte desejado: ${data.size === "corporacao" ? "corporação/grande empresa" : "pequena ou média empresa"}` : "",
       data.excludeLarge && data.size !== "corporacao"
         ? "EXCLUA obrigatoriamente: multinacionais, empresas de capital aberto (listadas em bolsa), bancos, estatais, " +
           "grupos econômicos nacionais e líderes de mercado conhecidos. Prefira empresas locais/regionais de pequeno e médio porte, " +

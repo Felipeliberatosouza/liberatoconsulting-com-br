@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { searchCrmLeads, importCrmLeads, type ProspectLead } from "@/lib/crm-prospect.functions";
 import { CRM_SEGMENTS } from "@/lib/crm-segments";
+import { employeeRangesFor, PORTE_LABEL, PORTE_LIMITS, SECTOR_LABEL, sectorFromSegment, type Porte, type Sector } from "@/lib/company-size";
 import { STATES } from "@/lib/audience-filters";
 
 const COUNTRY_REGIONS: Record<string, { label: string; options: string[] }> = {
