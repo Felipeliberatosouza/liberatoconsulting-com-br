@@ -153,8 +153,9 @@ export async function buildKitBanner(k: KitInput): Promise<string> {
     const x = 60 + i * mw;
     ctx.fillStyle = hex(C.accent); ctx.font = "bold 46px Arial, Helvetica, sans-serif";
     ctx.fillText(m.value, x, 520);
-    ctx.fillStyle = hex(C.white); ctx.font = "16px Arial, Helvetica, sans-serif";
-    ctx.fillText(m.label.toUpperCase(), x, 552);
+    ctx.fillStyle = hex(C.white); ctx.font = "15px Arial, Helvetica, sans-serif";
+    // Quebra o rótulo dentro da própria coluna para não encostar na métrica vizinha.
+    wrap(ctx, m.label.toUpperCase(), mw - 40).slice(0, 2).forEach((l, j) => ctx.fillText(l, x, 550 + j * 20));
   });
   ctx.fillStyle = hex(C.soft); ctx.font = "15px Arial, Helvetica, sans-serif";
   ctx.fillText(k.identity.website.replace(/^https?:\/\//, ""), 60, 612);
