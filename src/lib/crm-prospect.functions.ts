@@ -169,12 +169,15 @@ export const searchCrmLeads = createServerFn({ method: "POST" })
 
     try {
       const result = await askJsonGrounded<{ leads?: RawLead[] }>(
-        "Você é analista de prospecção B2B de uma consultoria brasileira. Pesquise na web em fontes públicas e " +
-          "confiáveis (site oficial da empresa, LinkedIn, registros públicos, imprensa de negócios, associações setoriais) " +
-          "empresas reais que atendam aos filtros. NUNCA invente empresas, CNPJs, e-mails ou pessoas: deixe o campo vazio " +
-          "quando não houver informação pública confiável. Traga apenas contatos profissionais públicos (e-mail corporativo, " +
-          "telefone institucional, perfil público do LinkedIn); nunca dados pessoais privados.",
-        `Encontre até ${data.limit} empresas que atendam a estes critérios:
+        "Você é analista de prospecção B2B de uma consultoria brasileira. ETAPA DE DESCOBERTA AMPLA: pesquise na web " +
+          "(diretórios setoriais, associações, rankings regionais, feiras, Google Maps/Meu Negócio, cadastros de CNPJ, " +
+          "LinkedIn, imprensa regional, sites oficiais) e liste empresas reais que atendam aos filtros. O objetivo é VOLUME: " +
+          "entregue a quantidade solicitada sempre que existirem empresas reais compatíveis. NÃO descarte uma empresa por falta " +
+          "de e-mail, telefone ou decisor — o contato será enriquecido depois. Se o porte não estiver público mas for plausível, " +
+          "inclua e escreva 'porte a confirmar' em notes. Descarte apenas empresas claramente fora dos filtros. Diversifique " +
+          "estados e cidades quando a região for ampla. NUNCA invente empresas, CNPJs, e-mails ou pessoas: deixe vazio " +
+          "o que não for público. Apenas contatos profissionais públicos.",
+        `Liste ${data.limit} empresas (o mais próximo possível desse número) que atendam a estes critérios:
 ${filters}
 
 Responda com JSON exatamente neste formato (strings vazias quando não souber):
