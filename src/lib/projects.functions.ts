@@ -181,11 +181,21 @@ export const createDiagnosticLink = createServerFn({ method: "POST" })
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
     const { data: row, error } = await context.supabase
-      .from("project_diagnostics").select("public_token").eq("id", data.id).single();
+      .from("project_diagnostics").select("public_token, client_name").eq("id", data.id).single();
     if (error) return { ok: false as const, error: error.message };
-    let token = (row as { public_token: string | null }).public_token;
-    if (!token) {
-      token = crypto.randomUUID();
+    const r = row as { public_token: string | null; client_name: string | null };
+    let token = r.public_token;
+    // Link curto com o nome da empresa (ex.: /diagnostico/lhs); links antigos com código são trocados.
+    if (!token || /^[0-9a-f-]{36}$/i.test(token)) {
+      const { shortSlug } = await import("./short-slug");
+      const root = shortSlug(r.client_name ?? "", 1) || "cliente";
+      token = root;
+      for (let i = 2; i < 50; i++) {
+        const { data: hit } = await context.supabase
+          .from("project_diagnostics").select("id").eq("public_token", token).maybeSingle();
+        if (!hit || (hit as { id: string }).id === data.id) break;
+        token = `${root}-${i}`;
+      }
       const { error: e2 } = await context.supabase
         .from("project_diagnostics").update({ public_token: token } as never).eq("id", data.id);
       if (e2) return { ok: false as const, error: e2.message };
@@ -195,7 +205,7 @@ export const createDiagnosticLink = createServerFn({ method: "POST" })
 
 /** Leitura pública pelo link: só perguntas e identificação, nunca notas internas ou preço. */
 export const getPublicDiagnostic = createServerFn({ method: "GET" })
-  .inputValidator((input: unknown) => z.object({ token: z.string().uuid() }).parse(input))
+  .inputValidator((input: unknown) => z.object({ token: z.string().trim().min(1).max(80) }).parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row } = await supabaseAdmin
@@ -211,7 +221,7 @@ export const getPublicDiagnostic = createServerFn({ method: "GET" })
 export const submitPublicDiagnostic = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) =>
     z.object({
-      token: z.string().uuid(),
+      token: z.string().trim().min(1).max(80),
       respondent: z.object({
         name: z.string().trim().min(2).max(160),
         role: z.string().trim().max(160).default(""),
