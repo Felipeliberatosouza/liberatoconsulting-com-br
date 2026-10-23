@@ -128,7 +128,7 @@ function DiagnosticPage() {
     if (row.questions?.length && !sameService) keepQs.current = true;
     setServiceSlug(row.service_slug);
     setEditQs(row.questions?.length ? row.questions : toEditable(questionsForFamily((services.data ?? []).find((s) => s.slug === row.service_slug)?.family_id ?? "")));
-    setToken(row.public_token);
+    setToken(row.public_slug ?? null);
     setClientAnswers(row.client_answers ?? {});
     setRespondent(row.client_respondent ?? {});
     setSubmittedAt(row.client_submitted_at);

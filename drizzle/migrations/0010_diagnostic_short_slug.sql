@@ -1,0 +1,2 @@
+ALTER TABLE public.project_diagnostics ADD COLUMN IF NOT EXISTS public_slug text UNIQUE;
+COMMENT ON COLUMN public.project_diagnostics.public_token IS 'DEPRECATED for new links: replaced by public_slug (old links still resolve)';

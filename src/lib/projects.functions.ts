@@ -166,6 +166,7 @@ export type DiagnosticRow = {
   budget: Record<string, number>;
   questions: EditableQuestion[];
   public_token: string | null;
+  public_slug: string | null;
   client_answers: Record<string, ClientAnswer>;
   client_respondent: Record<string, string>;
   client_submitted_at: string | null;
@@ -181,13 +182,23 @@ export const createDiagnosticLink = createServerFn({ method: "POST" })
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
     const { data: row, error } = await context.supabase
-      .from("project_diagnostics").select("public_token").eq("id", data.id).single();
+      .from("project_diagnostics").select("public_slug, client_name").eq("id", data.id).single();
     if (error) return { ok: false as const, error: error.message };
-    let token = (row as { public_token: string | null }).public_token;
+    const r = row as { public_slug: string | null; client_name: string | null };
+    let token = r.public_slug;
+    // Link curto com o nome da empresa (ex.: /diagnostico/lhs); links antigos com código são trocados.
     if (!token) {
-      token = crypto.randomUUID();
+      const { shortSlug } = await import("./short-slug");
+      const root = shortSlug(r.client_name ?? "", 1) || "cliente";
+      token = root;
+      for (let i = 2; i < 50; i++) {
+        const { data: hit } = await context.supabase
+          .from("project_diagnostics").select("id").eq("public_slug", token).maybeSingle();
+        if (!hit || (hit as { id: string }).id === data.id) break;
+        token = `${root}-${i}`;
+      }
       const { error: e2 } = await context.supabase
-        .from("project_diagnostics").update({ public_token: token } as never).eq("id", data.id);
+        .from("project_diagnostics").update({ public_slug: token } as never).eq("id", data.id);
       if (e2) return { ok: false as const, error: e2.message };
     }
     return { ok: true as const, token };
@@ -195,13 +206,13 @@ export const createDiagnosticLink = createServerFn({ method: "POST" })
 
 /** Leitura pública pelo link: só perguntas e identificação, nunca notas internas ou preço. */
 export const getPublicDiagnostic = createServerFn({ method: "GET" })
-  .inputValidator((input: unknown) => z.object({ token: z.string().uuid() }).parse(input))
+  .inputValidator((input: unknown) => z.object({ token: z.string().trim().min(1).max(80) }).parse(input))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row } = await supabaseAdmin
       .from("project_diagnostics")
       .select("client_name, service_title, questions, client_submitted_at")
-      .eq("public_token", data.token)
+      .eq(/^[0-9a-f-]{36}$/i.test(data.token) ? "public_token" : "public_slug", data.token.toLowerCase())
       .maybeSingle();
     if (!row) return null;
     const r = row as unknown as { client_name: string; service_title: string; questions: EditableQuestion[]; client_submitted_at: string | null };
@@ -211,7 +222,7 @@ export const getPublicDiagnostic = createServerFn({ method: "GET" })
 export const submitPublicDiagnostic = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) =>
     z.object({
-      token: z.string().uuid(),
+      token: z.string().trim().min(1).max(80),
       respondent: z.object({
         name: z.string().trim().min(2).max(160),
         role: z.string().trim().max(160).default(""),
@@ -223,7 +234,7 @@ export const submitPublicDiagnostic = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row } = await supabaseAdmin
-      .from("project_diagnostics").select("id, questions, answers").eq("public_token", data.token).maybeSingle();
+      .from("project_diagnostics").select("id, questions, answers").eq(/^[0-9a-f-]{36}$/i.test(data.token) ? "public_token" : "public_slug", data.token.toLowerCase()).maybeSingle();
     if (!row) return { ok: false as const, error: "Link inválido." };
     const r = row as unknown as { id: string; questions: EditableQuestion[]; answers: Record<string, string> };
     const missing = (r.questions ?? []).filter((q) => answerMissing(q, data.answers[q.id]));
