@@ -343,3 +343,40 @@ export function buildQuote(
     end,
   };
 }
+
+/** Cenário alternativo do orçamento: retira atividades e/ou reduz o valor proporcionalmente. */
+export type QuoteScenario = {
+  note: string;
+  removedIds: string[];
+  reducePct: number;
+};
+
+export function buildScenarioQuote(
+  activities: PricedActivity[],
+  settings: PricingSettings,
+  options: QuoteOptions,
+  scenario: QuoteScenario,
+): QuoteResult {
+  const removed = new Set(scenario.removedIds);
+  const q = buildQuote(
+    activities.map((a) => (removed.has(a.id) ? { ...a, enabled: false } : a)),
+    settings,
+    options,
+  );
+  const f = 1 - Math.max(0, Math.min(90, scenario.reducePct || 0)) / 100;
+  if (f === 1) return q;
+  const r = (v: number) => Math.round(v * f);
+  return {
+    ...q,
+    phases: q.phases.map((p) => ({
+      ...p,
+      priceBrl: p.priceBrl * f,
+      items: p.items.map((i) => ({ ...i, priceBrl: i.priceBrl * f, travelBrl: i.travelBrl * f })),
+    })),
+    subtotalBrl: r(q.subtotalBrl),
+    travelBrl: r(q.travelBrl),
+    discountBrl: r(q.discountBrl),
+    totalBrl: r(q.totalBrl),
+    totalCurrency: r(q.totalCurrency),
+  };
+}
