@@ -101,6 +101,7 @@ function PricingPage() {
   /** Preço herdado do diagnóstico (mesmos valores-dia, contingência e impostos). */
   const [override, setOverride] = useState<{ rates: PricingSettings["rates"]["sme"]; markupFactor: number } | null>(null);
   const [diagInfo, setDiagInfo] = useState<{ id: string; title: string; total: number } | null>(null);
+  const [lastDiag, setLastDiag] = useState<DiagnosticRow | null>(null);
   const skipServiceLoad = useRef(false);
   const [scenarios, setScenarios] = useState<QuoteScenario[]>([]);
   const [country, setCountry] = useState("BR");
@@ -133,6 +134,7 @@ function PricingPage() {
     setOverride(conv.override);
     setDiscountPct(conv.discountPct);
     setDiagInfo({ id: row.id, title: row.title, total: conv.expectedTotal });
+    setLastDiag(row);
     if (row.client_name) setClientName(row.client_name);
   }
 
@@ -326,9 +328,7 @@ function PricingPage() {
           <TabsTrigger value="rates">Valor do homem-hora</TabsTrigger>
           <TabsTrigger value="stages">Etapas por serviço</TabsTrigger>
           <TabsTrigger value="quote">Gerar orçamento</TabsTrigger>
-          {aba === "history" ? (
-            <TabsTrigger value="history">Orçamentos emitidos</TabsTrigger>
-          ) : null}
+          <TabsTrigger value="history">Orçamentos emitidos</TabsTrigger>
           <Link
             to="/admin/projetos/apresentacao"
             className="inline-flex items-center rounded-sm px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
@@ -584,6 +584,17 @@ function PricingPage() {
                 }}
               >
                 Usar etapas padrão do serviço
+              </Button>
+            </div>
+          )}
+          {!diagInfo && lastDiag && (
+            <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-secondary/40 p-4 text-sm">
+              <p className="flex-1">
+                Etapas padrão do serviço na tela. Você pode voltar ao planejamento do diagnóstico{" "}
+                <strong>{lastDiag.title}</strong>.
+              </p>
+              <Button variant="outline" size="sm" onClick={() => applyDiagnostic(lastDiag)}>
+                Usar planejamento do diagnóstico
               </Button>
             </div>
           )}
