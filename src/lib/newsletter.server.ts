@@ -290,6 +290,7 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
         });
         log.push({ ...base, ...who, recipient_phone: r.whatsapp, channel: "whatsapp", status: "enviado" });
       } catch (err) {
+        failed += 1;
         lastError = err instanceof Error ? err.message : String(err);
         log.push({ ...base, ...who, recipient_phone: r.whatsapp, channel: "whatsapp", status: "falhou", error: lastError });
       }

@@ -200,3 +200,27 @@ export const resendDelivery = createServerFn({ method: "POST" })
       return { ok: false as const, error: msg };
     }
   });
+
+/** Inscritos ativos que recebem por WhatsApp (usado quando o envio não tem detalhe individual). */
+export const listWhatsAppSubscribers = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ source: z.enum(["newsletter", "boletim"]) }).parse(d))
+  .handler(async ({ data, context }) => {
+    const access = await import("./access.server");
+    await access.assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (data.source === "newsletter") {
+      const { data: rows } = await supabaseAdmin
+        .from("newsletter_subscribers")
+        .select("name, email, whatsapp")
+        .eq("status", "active")
+        .eq("via_whatsapp", true);
+      return (rows ?? []).filter((r) => r.whatsapp).map((r) => ({ name: r.name ?? "", email: r.email ?? "", phone: r.whatsapp as string }));
+    }
+    const { data: rows } = await supabaseAdmin
+      .from("bulletin_subscribers")
+      .select("full_name, email, whatsapp")
+      .eq("status", "active")
+      .eq("via_whatsapp", true);
+    return (rows ?? []).filter((r) => r.whatsapp).map((r) => ({ name: r.full_name ?? "", email: r.email ?? "", phone: r.whatsapp as string }));
+  });
