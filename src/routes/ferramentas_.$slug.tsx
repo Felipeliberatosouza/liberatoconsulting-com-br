@@ -58,11 +58,12 @@ function useTT() { const { lang } = useLanguage(); return TT[lang] ?? TT.pt; }
 
 function ToolRunner() {
   const tt = useTT();
+  const { lang } = useLanguage();
   const { slug } = Route.useParams();
   const [ready, setReady] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   useEffect(() => { supabase.auth.getSession().then(({ data }) => { setSignedIn(Boolean(data.session)); setReady(true); }); }, []);
-  const q = useQuery({ queryKey: ["interactive-tool", slug], queryFn: () => getInteractiveTool({ data: { slug } }), enabled: signedIn, retry: false });
+  const q = useQuery({ queryKey: ["interactive-tool", slug, lang], queryFn: () => getInteractiveTool({ data: { slug, lang } }), enabled: signedIn, retry: false });
   if (!ready || (signedIn && q.isLoading)) return <div className="mx-auto max-w-5xl px-6 py-24 text-muted-foreground">Carregando…</div>;
   if (!signedIn) return <div className="mx-auto max-w-3xl px-6 py-24"><h1 className="text-3xl font-bold">{tt.signTitle}</h1><p className="mt-3 text-muted-foreground">{tt.signBody}</p><Button asChild className="mt-6"><Link to="/ferramentas" search={{ modo: undefined }}>{tt.signCta}</Link></Button></div>;
   const d = q.data;
@@ -84,6 +85,7 @@ type Loaded = Extract<Awaited<ReturnType<typeof getInteractiveTool>>, { found: t
 
 function Calculator({ toolId, spec }: { toolId: string; spec: NonNullable<Loaded["spec"]> }) {
   const tt = useTT();
+  const { lang: clang } = useLanguage();
   const [contextEdits, setCtx] = useState<Record<string, string>>({});
   const account = useQuery({ queryKey: ["tools-account"], queryFn: () => getToolsAccount(), retry: false });
   const ctx = prefillCompany(spec.context_fields, contextEdits, account.data?.profile?.company);
@@ -153,13 +155,21 @@ function Calculator({ toolId, spec }: { toolId: string; spec: NonNullable<Loaded
       <div className="bg-background p-5">
         <h3 className="font-bold">Conclusões e recomendações</h3>
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm">{(result.recommendations.length ? result.recommendations : [tt.ok]).map((r) => <li key={r}>{r}</li>)}</ul>
-        <p className="mt-4 text-xs text-muted-foreground"><ShieldCheck className="mr-1 inline size-3.5" />Metodologia: {spec.methodology}</p>
+        <p className="mt-4 text-xs text-muted-foreground"><ShieldCheck className="mr-1 inline size-3.5" />{({pt:"Metodologia",en:"Methodology",es:"Metodología",zh:"方法"} as const)[clang] ?? "Metodologia"}: {spec.methodology}</p>
       </div>
     </section>
   );
 }
 
+const CO = {
+  pt: { paid: "Pagamento confirmado! Ferramenta liberada.", err: "Erro inesperado.", wait: "Aguardando pagamento", pixCopied: "Código PIX copiado.", copyPix: "Copiar PIX copia e cola", slip: "Abrir boleto", card: "Pagar com cartão no ambiente seguro do Asaas", auto: "A ferramenta é liberada automaticamente assim que o pagamento for confirmado.", other: "Escolher outra forma de pagamento", reg: "Cadastro para compra", regBody: "Seu cadastro atual não muda. Estes dados são usados só para emitir a cobrança. Os dados de cartão são digitados no ambiente seguro do Asaas e nunca ficam salvos aqui.", saved: "Cadastro salvo. Agora confirme seu celular.", name: "Nome completo ou razão social *", doc: "CPF ou CNPJ *", phone: "Celular (WhatsApp) *", zip: "CEP *", num: "Número do endereço *", email: "E-mail confirmado", save: "Salvar cadastro", confirmPhone: "Confirmação do celular", codeInfo: "Enviaremos um código de 6 dígitos pelo WhatsApp.", codeSent: "Código enviado.", resend: "Reenviar código", send: "Enviar código", phoneOk: "Celular confirmado.", confirm: "Confirmar", method: "Forma de pagamento", pixHint: "Liberação imediata", slipL: "Boleto", slipHint: "Até 3 dias úteis", cardL: "Cartão de crédito", cardHint: "Ambiente seguro", access: "Acesso à ferramenta + downloads em PDF e PowerPoint", by: "Pagamento processado pelo Asaas." },
+  en: { paid: "Payment confirmed! Tool unlocked.", err: "Unexpected error.", wait: "Awaiting payment", pixCopied: "PIX code copied.", copyPix: "Copy PIX code", slip: "Open bank slip (boleto)", card: "Pay by card in Asaas' secure checkout", auto: "The tool is unlocked automatically as soon as payment is confirmed.", other: "Choose another payment method", reg: "Purchase details", regBody: "Your current account does not change. These details are used only to issue the charge. Card details are entered in Asaas' secure checkout and are never stored here.", saved: "Details saved. Now confirm your mobile number.", name: "Full name or company name *", doc: "CPF or CNPJ (Brazilian tax ID) *", phone: "Mobile (WhatsApp) *", zip: "Postal code (CEP) *", num: "Street number *", email: "Confirmed email", save: "Save details", confirmPhone: "Mobile confirmation", codeInfo: "We will send a 6-digit code via WhatsApp.", codeSent: "Code sent.", resend: "Resend code", send: "Send code", phoneOk: "Mobile confirmed.", confirm: "Confirm", method: "Payment method", pixHint: "Instant release", slipL: "Bank slip (boleto)", slipHint: "Up to 3 business days", cardL: "Credit card", cardHint: "Secure checkout", access: "Tool access + PDF and PowerPoint downloads", by: "Payment processed by Asaas." },
+  es: { paid: "¡Pago confirmado! Herramienta habilitada.", err: "Error inesperado.", wait: "Esperando el pago", pixCopied: "Código PIX copiado.", copyPix: "Copiar código PIX", slip: "Abrir boleto", card: "Pagar con tarjeta en el entorno seguro de Asaas", auto: "La herramienta se habilita automáticamente en cuanto se confirma el pago.", other: "Elegir otra forma de pago", reg: "Datos para la compra", regBody: "Su registro actual no cambia. Estos datos se usan solo para emitir el cobro. Los datos de la tarjeta se ingresan en el entorno seguro de Asaas y nunca se guardan aquí.", saved: "Datos guardados. Ahora confirme su celular.", name: "Nombre completo o razón social *", doc: "CPF o CNPJ *", phone: "Celular (WhatsApp) *", zip: "Código postal (CEP) *", num: "Número de la dirección *", email: "Correo confirmado", save: "Guardar datos", confirmPhone: "Confirmación del celular", codeInfo: "Le enviaremos un código de 6 dígitos por WhatsApp.", codeSent: "Código enviado.", resend: "Reenviar código", send: "Enviar código", phoneOk: "Celular confirmado.", confirm: "Confirmar", method: "Forma de pago", pixHint: "Habilitación inmediata", slipL: "Boleto", slipHint: "Hasta 3 días hábiles", cardL: "Tarjeta de crédito", cardHint: "Entorno seguro", access: "Acceso a la herramienta + descargas en PDF y PowerPoint", by: "Pago procesado por Asaas." },
+  zh: { paid: "付款已确认！工具已开通。", err: "发生意外错误。", wait: "等待付款", pixCopied: "PIX 代码已复制。", copyPix: "复制 PIX 代码", slip: "打开银行付款单", card: "在 Asaas 安全页面使用银行卡支付", auto: "付款确认后，工具将自动开通。", other: "选择其他付款方式", reg: "购买信息", regBody: "您当前的账户不会改变。这些信息仅用于开具账单。银行卡信息在 Asaas 安全页面填写，绝不会保存在本站。", saved: "信息已保存，请确认您的手机号码。", name: "全名或公司名称 *", doc: "CPF 或 CNPJ（巴西税号）*", phone: "手机（WhatsApp）*", zip: "邮政编码（CEP）*", num: "门牌号 *", email: "已确认的邮箱", save: "保存信息", confirmPhone: "手机验证", codeInfo: "我们将通过 WhatsApp 发送 6 位验证码。", codeSent: "验证码已发送。", resend: "重新发送验证码", send: "发送验证码", phoneOk: "手机已确认。", confirm: "确认", method: "付款方式", pixHint: "即时开通", slipL: "银行付款单", slipHint: "最多 3 个工作日", cardL: "信用卡", cardHint: "安全支付", access: "工具使用权 + PDF 和 PowerPoint 下载", by: "付款由 Asaas 处理。" },
+} as const;
+
 function Checkout({ data, onPaid }: { data: Loaded; onPaid: () => void }) {
+  const c = CO[useLanguage().lang] ?? CO.pt;
   const saveProfile = useServerFn(saveBillingProfile);
   const sendCode = useServerFn(sendPhoneCode);
   const verify = useServerFn(verifyPhoneCode);
@@ -176,53 +186,53 @@ function Checkout({ data, onPaid }: { data: Loaded; onPaid: () => void }) {
 
   useEffect(() => {
     if (!order) return;
-    const t = setInterval(async () => { const r = await refresh({ data: { orderId: order.orderId } }); if (r.status === "paid") { clearInterval(t); toast.success("Pagamento confirmado! Ferramenta liberada."); onPaid(); } }, 8000);
+    const t = setInterval(async () => { const r = await refresh({ data: { orderId: order.orderId } }); if (r.status === "paid") { clearInterval(t); toast.success(c.paid); onPaid(); } }, 8000);
     return () => clearInterval(t);
   }, [order, refresh, onPaid]);
 
   const price = Number(data.tool.price_brl).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  const run = async (fn: () => Promise<void>) => { setBusy(true); try { await fn(); } catch (e) { toast.error(e instanceof Error ? e.message : "Erro inesperado."); } finally { setBusy(false); } };
+  const run = async (fn: () => Promise<void>) => { setBusy(true); try { await fn(); } catch (e) { toast.error(e instanceof Error ? e.message : c.err); } finally { setBusy(false); } };
 
   return (
     <section className="mt-10 grid gap-6 md:grid-cols-[1fr_320px]">
       <div className="space-y-6 bg-background p-6">
         {order ? (
           <div>
-            <h2 className="text-2xl font-bold">Aguardando pagamento</h2>
-            {order.pixImage ? <><img src={`data:image/png;base64,${order.pixImage}`} alt="QR Code PIX" className="mt-4 size-56" /><Button variant="outline" className="mt-3" onClick={() => { void navigator.clipboard.writeText(order.pixPayload ?? ""); toast.success("Código PIX copiado."); }}><Copy /> Copiar PIX copia e cola</Button></> : null}
-            {order.bankSlipUrl ? <p className="mt-4"><a className="font-semibold text-accent underline" href={order.bankSlipUrl} target="_blank" rel="noreferrer">Abrir boleto</a></p> : null}
-            {order.invoiceUrl && !order.pixImage && !order.bankSlipUrl ? <p className="mt-4"><a className="font-semibold text-accent underline" href={order.invoiceUrl} target="_blank" rel="noreferrer">Pagar com cartão no ambiente seguro do Asaas</a></p> : null}
-            <p className="mt-4 text-sm text-muted-foreground">A ferramenta é liberada automaticamente assim que o pagamento for confirmado.</p>
-            <Button variant="ghost" className="mt-2" onClick={() => setOrder(null)}>Escolher outra forma de pagamento</Button>
+            <h2 className="text-2xl font-bold">{c.wait}</h2>
+            {order.pixImage ? <><img src={`data:image/png;base64,${order.pixImage}`} alt="QR Code PIX" className="mt-4 size-56" /><Button variant="outline" className="mt-3" onClick={() => { void navigator.clipboard.writeText(order.pixPayload ?? ""); toast.success(c.pixCopied); }}><Copy /> {c.copyPix}</Button></> : null}
+            {order.bankSlipUrl ? <p className="mt-4"><a className="font-semibold text-accent underline" href={order.bankSlipUrl} target="_blank" rel="noreferrer">{c.slip}</a></p> : null}
+            {order.invoiceUrl && !order.pixImage && !order.bankSlipUrl ? <p className="mt-4"><a className="font-semibold text-accent underline" href={order.invoiceUrl} target="_blank" rel="noreferrer">{c.card}</a></p> : null}
+            <p className="mt-4 text-sm text-muted-foreground">{c.auto}</p>
+            <Button variant="ghost" className="mt-2" onClick={() => setOrder(null)}>{c.other}</Button>
           </div>
         ) : !hasProfile || !verified ? (
           <>
-            <div><h2 className="text-2xl font-bold">Cadastro para compra</h2><p className="mt-1 text-sm text-muted-foreground">Seu cadastro atual não muda. Estes dados são usados só para emitir a cobrança. Os dados de cartão são digitados no ambiente seguro do Asaas e nunca ficam salvos aqui.</p></div>
-            <form className="grid gap-4 md:grid-cols-2" onSubmit={(e) => { e.preventDefault(); void run(async () => { const r = await saveProfile({ data: form }); if (!r.ok) throw new Error(r.error); setHasProfile(true); toast.success("Cadastro salvo. Agora confirme seu celular."); }); }}>
-              <label className="text-sm font-medium md:col-span-2">Nome completo ou razão social *<input required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} className={field} /></label>
-              <label className="text-sm font-medium">CPF ou CNPJ *<input required value={form.cpf_cnpj} onChange={(e) => setForm({ ...form, cpf_cnpj: e.target.value })} className={field} /></label>
-              <label className="text-sm font-medium">Celular (WhatsApp) *<input required value={form.phone} onChange={(e) => { setForm({ ...form, phone: e.target.value }); setVerified(false); }} className={field} /></label>
-              <label className="text-sm font-medium">CEP *<input required value={form.postal_code} onChange={(e) => setForm({ ...form, postal_code: e.target.value })} className={field} /></label>
-              <label className="text-sm font-medium">Número do endereço *<input required value={form.address_number} onChange={(e) => setForm({ ...form, address_number: e.target.value })} className={field} /></label>
-              <p className="text-xs text-muted-foreground md:col-span-2">E-mail confirmado: {data.email}</p>
-              <Button type="submit" disabled={busy} className="md:w-fit">Salvar cadastro</Button>
+            <div><h2 className="text-2xl font-bold">{c.reg}</h2><p className="mt-1 text-sm text-muted-foreground">{c.regBody}</p></div>
+            <form className="grid gap-4 md:grid-cols-2" onSubmit={(e) => { e.preventDefault(); void run(async () => { const r = await saveProfile({ data: form }); if (!r.ok) throw new Error(r.error); setHasProfile(true); toast.success(c.saved); }); }}>
+              <label className="text-sm font-medium md:col-span-2">{c.name}<input required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} className={field} /></label>
+              <label className="text-sm font-medium">{c.doc}<input required value={form.cpf_cnpj} onChange={(e) => setForm({ ...form, cpf_cnpj: e.target.value })} className={field} /></label>
+              <label className="text-sm font-medium">{c.phone}<input required value={form.phone} onChange={(e) => { setForm({ ...form, phone: e.target.value }); setVerified(false); }} className={field} /></label>
+              <label className="text-sm font-medium">{c.zip}<input required value={form.postal_code} onChange={(e) => setForm({ ...form, postal_code: e.target.value })} className={field} /></label>
+              <label className="text-sm font-medium">{c.num}<input required value={form.address_number} onChange={(e) => setForm({ ...form, address_number: e.target.value })} className={field} /></label>
+              <p className="text-xs text-muted-foreground md:col-span-2">{c.email}: {data.email}</p>
+              <Button type="submit" disabled={busy} className="md:w-fit">{c.save}</Button>
             </form>
             {hasProfile && !verified ? (
               <div className="border-t border-border pt-5">
-                <h3 className="font-bold">Confirmação do celular</h3>
-                <p className="mt-1 text-sm text-muted-foreground">Enviaremos um código de 6 dígitos pelo WhatsApp.</p>
+                <h3 className="font-bold">{c.confirmPhone}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{c.codeInfo}</p>
                 <div className="mt-3 flex flex-wrap gap-3">
-                  <Button variant="outline" disabled={busy} onClick={() => void run(async () => { const r = await sendCode(); if (!r.ok) throw new Error(r.error); setCodeSent(true); toast.success("Código enviado."); })}>{codeSent ? "Reenviar código" : "Enviar código"}</Button>
-                  {codeSent ? <><input value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="000000" className="w-32 rounded-md border border-input bg-background px-3 py-2 text-sm" /><Button disabled={busy || code.length !== 6} onClick={() => void run(async () => { const r = await verify({ data: { code } }); if (!r.ok) throw new Error(r.error); setVerified(true); toast.success("Celular confirmado."); })}>Confirmar</Button></> : null}
+                  <Button variant="outline" disabled={busy} onClick={() => void run(async () => { const r = await sendCode(); if (!r.ok) throw new Error(r.error); setCodeSent(true); toast.success(c.codeSent); })}>{codeSent ? c.resend : c.send}</Button>
+                  {codeSent ? <><input value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))} placeholder="000000" className="w-32 rounded-md border border-input bg-background px-3 py-2 text-sm" /><Button disabled={busy || code.length !== 6} onClick={() => void run(async () => { const r = await verify({ data: { code } }); if (!r.ok) throw new Error(r.error); setVerified(true); toast.success(c.phoneOk); })}>{c.confirm}</Button></> : null}
                 </div>
               </div>
             ) : null}
           </>
         ) : (
           <div>
-            <h2 className="text-2xl font-bold">Forma de pagamento</h2>
+            <h2 className="text-2xl font-bold">{c.method}</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              {([["PIX", "PIX", "Liberação imediata"], ["BOLETO", "Boleto", "Até 3 dias úteis"], ["CREDIT_CARD", "Cartão de crédito", "Ambiente seguro"]] as const).map(([id, label, hint]) => (
+              {([["PIX", "PIX", c.pixHint], ["BOLETO", c.slipL, c.slipHint], ["CREDIT_CARD", c.cardL, c.cardHint]] as const).map(([id, label, hint]) => (
                 <button key={id} disabled={busy} onClick={() => void run(async () => { const r = await createOrder({ data: { toolId: data.tool.id, billingType: id } }); if (!r.ok) throw new Error(r.error); setOrder(r); if (id === "CREDIT_CARD") window.open(r.invoiceUrl, "_blank", "noopener"); })} className="border border-border p-4 text-left transition-colors hover:border-accent">
                   <p className="font-semibold">{label}</p><p className="text-xs text-muted-foreground">{hint}</p>
                 </button>
@@ -232,9 +242,9 @@ function Checkout({ data, onPaid }: { data: Loaded; onPaid: () => void }) {
         )}
       </div>
       <aside className="h-fit border-t-2 border-accent bg-background p-6">
-        <p className="text-sm text-muted-foreground">Acesso à ferramenta + downloads em PDF e PowerPoint</p>
+        <p className="text-sm text-muted-foreground">{c.access}</p>
         <p className="mt-2 text-4xl font-bold">{price}</p>
-        <p className="mt-4 text-xs text-muted-foreground">Pagamento processado pelo Asaas.</p>
+        <p className="mt-4 text-xs text-muted-foreground">{c.by}</p>
       </aside>
     </section>
   );

@@ -19,7 +19,7 @@ import { ToolPriceBadge } from "@/components/ToolPriceBadge";
 function InteractiveList() {
   const { lang } = useLanguage();
   const h = homeText(lang);
-  const q = useQuery({ queryKey: ["interactive-tools-list"], queryFn: () => listPublishedInteractiveTools(), retry: false });
+  const q = useQuery({ queryKey: ["interactive-tools-list", lang], queryFn: () => listPublishedInteractiveTools({ data: { lang } }), retry: false });
   if (!q.data?.length) return null;
   return <div className="mb-12"><h2 className="text-2xl font-bold">{h.interactiveTitle}</h2><p className="mt-1 text-sm text-muted-foreground">{h.interactiveBody}</p><div className="mt-6 grid gap-6 md:grid-cols-3">{q.data.map((t) => <Link key={t.id} to="/ferramentas/$slug" params={{ slug: t.slug }} className="group border-t-2 border-accent bg-background p-6 transition-colors hover:bg-accent/5"><div className="flex items-start justify-between gap-3"><Calculator className="size-6 text-accent" /><ToolPriceBadge pricingMode={t.pricing_mode} price={t.price_brl} /></div><p className="mt-6 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">{t.category}</p><h3 className="mt-2 text-xl font-bold group-hover:text-accent">{t.title}</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t.summary}</p></Link>)}</div></div>;
 }

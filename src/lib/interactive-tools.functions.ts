@@ -104,11 +104,15 @@ export const deleteInteractiveTool = createServerFn({ method: "POST" })
 
 export const listPublishedInteractiveTools = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((d: unknown) => z.object({ lang: z.enum(["pt","en","es","zh"]).optional() }).optional().parse(d))
+  .handler(async ({ context, data: input }) => {
     const { data } = await context.supabase.from("interactive_tools").select("id, slug, title, summary, category, pricing_mode, price_brl").eq("status", "published").order("created_at", { ascending: false });
     const { data: paid } = await context.supabase.from("interactive_tool_orders").select("tool_id").eq("user_id", context.userId).eq("status", "paid");
     const owned = new Set((paid ?? []).map((o) => o.tool_id as string));
-    return (data ?? []).map((t) => ({ ...t, access: t.pricing_mode !== "paid" || owned.has(t.id) })) as Array<{ id: string; slug: string; title: string; summary: string; category: string; pricing_mode: string; price_brl: number; access: boolean }>;
+    const lang = input?.lang ?? "pt";
+    const { translateTool } = await import("./tool-i18n.server");
+    const rows = await Promise.all((data ?? []).map(async (t) => (await translateTool(lang, t as any, null)).tool));
+    return rows.map((t: any) => ({ ...t, access: t.pricing_mode !== "paid" || owned.has(t.id) })) as Array<{ id: string; slug: string; title: string; summary: string; category: string; pricing_mode: string; price_brl: number; access: boolean }>;
   });
 
 /** Dados públicos (somente título/resumo/categoria) de ferramenta publicada, para SEO. */
@@ -129,10 +133,13 @@ async function hasAccess(context: Ctx, tool: { id: string; pricing_mode: string 
 
 export const getInteractiveTool = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ slug: z.string().min(1).max(100) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ slug: z.string().min(1).max(100), lang: z.enum(["pt","en","es","zh"]).optional() }).parse(d))
   .handler(async ({ data, context }) => {
-    const { data: tool } = await context.supabase.from("interactive_tools").select("id, slug, title, summary, category, pricing_mode, price_brl, spec, status").eq("slug", data.slug).maybeSingle();
-    if (!tool) return { found: false as const };
+    const { data: raw } = await context.supabase.from("interactive_tools").select("id, slug, title, summary, category, pricing_mode, price_brl, spec, status").eq("slug", data.slug).maybeSingle();
+    if (!raw) return { found: false as const };
+    const { translateTool } = await import("./tool-i18n.server");
+    const tr = await translateTool(data.lang ?? "pt", raw as any, raw.spec as ToolSpec);
+    const tool = { ...raw, ...tr.tool, spec: tr.spec };
     const access = await hasAccess(context, tool);
     const sb = await db();
     const [{ data: billing }, { data: order }] = await Promise.all([
