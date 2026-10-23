@@ -72,10 +72,12 @@ function DeliveriesPage() {
         if (!confirm(`Este envio não tem o detalhe de cada pessoa. Reenviar por WhatsApp para os ${subs.length} inscrito(s) ativos com WhatsApp?`)) return;
         setBusy(`all-${i.key}`);
         let ok = 0, fail = 0;
-        for (const s of subs) {
-          const res = await resendDelivery({ data: { source: i.source, referenceId: i.key, email: s.email, phone: s.phone, name: s.name, channel: "whatsapp" } });
-          if (res.ok) ok++; else fail++;
-        }
+        try {
+          for (const s of subs) {
+            const res = await resendDelivery({ data: { source: i.source, referenceId: i.key, email: s.email, phone: s.phone, name: s.name, channel: "whatsapp" } });
+            if (res.ok) ok++; else { fail++; if (/12 segundos/.test(res.error)) { toast.error(res.error); break; } }
+          }
+        } catch (e) { fail++; toast.error(e instanceof Error ? e.message : "Falha no reenvio."); }
         setBusy(null);
         if (fail) toast.error(`${ok} reenviado(s), ${fail} com falha.`); else toast.success(`${ok} reenvio(s) concluído(s).`);
         q.refetch();
@@ -87,11 +89,13 @@ function DeliveriesPage() {
     if (!confirm(`Reenviar para ${jobs.length} destinatário(s) agora?`)) return;
     setBusy(`all-${i.key}`);
     let ok = 0, fail = 0;
-    for (const r of jobs) {
-      const ch = filter === "email" || filter === "whatsapp" ? filter : (r.channel as "email" | "whatsapp");
-      const res = await resendDelivery({ data: { source: i.source as "newsletter", referenceId: i.key, email: r.email || "", phone: r.phone, name: r.name, channel: ch } });
-      if (res.ok) ok++; else fail++;
-    }
+    try {
+      for (const r of jobs) {
+        const ch = filter === "email" || filter === "whatsapp" ? filter : (r.channel as "email" | "whatsapp");
+        const res = await resendDelivery({ data: { source: i.source as "newsletter", referenceId: i.key, email: r.email || "", phone: r.phone, name: r.name, channel: ch } });
+        if (res.ok) ok++; else { fail++; if (ch === "whatsapp" && /12 segundos/.test(res.error)) { toast.error(res.error); break; } }
+      }
+    } catch (e) { fail++; toast.error(e instanceof Error ? e.message : "Falha no reenvio."); }
     setBusy(null);
     if (fail) toast.error(`${ok} reenviado(s), ${fail} com falha.`); else toast.success(`${ok} reenvio(s) concluído(s).`);
     q.refetch();
