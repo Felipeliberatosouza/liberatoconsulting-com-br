@@ -180,9 +180,9 @@ export type QuoteOptions = {
   discountPct: number;
   fxRate: number;
   /** Porte Sebrae do cliente (micro, pequena, media, grande). */
-  porte?: string;
+  porte?: string | undefined;
   /** Preço herdado do diagnóstico: valores-hora próprios e contingência/impostos embutidos. */
-  override?: { rates: PricingRates; markupFactor: number };
+  override?: { rates: PricingRates; markupFactor: number } | undefined;
 };
 
 export type QuoteItem = {

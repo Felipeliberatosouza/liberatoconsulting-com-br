@@ -835,7 +835,7 @@ function PricingPage() {
                 <p className="font-semibold">{q.service_title}</p>
                 <p className="text-sm text-muted-foreground">
                   {q.client_name || "sem cliente"} · {q.country} ·{" "}
-                  {porteLabel((q.payload as any)?.options?.porte || (q.company_type === "corporate" ? "grande" : "pequena"))} ·{" "}
+                  {porteLabel(q.company_type === "corporate" ? "grande" : "pequena")} ·{" "}
                   {formatMoney(Number(q.total_currency), q.currency)} ·{" "}
                   {new Date(q.created_at).toLocaleDateString("pt-BR")}
                 </p>
