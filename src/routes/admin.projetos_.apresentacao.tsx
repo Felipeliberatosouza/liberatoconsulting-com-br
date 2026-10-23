@@ -520,7 +520,14 @@ function PresentationPage() {
             </Field>
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-medium">
-                <input type="checkbox" checked={useQuote} onChange={(e) => setUseQuote(e.target.checked)} />
+                <input type="checkbox" checked={useQuote} onChange={(e) => {
+                  setUseQuote(e.target.checked);
+                  if (e.target.checked && !quoteId) {
+                    const n = name.trim().toLowerCase();
+                    const match = quotes.find((q) => n && String(q.client_name).toLowerCase().includes(n) && (!service || q.slug === service.slug)) ?? quotes.find((q) => n && String(q.client_name).toLowerCase().includes(n));
+                    if (match) setQuoteId(match.id);
+                  }
+                }} />
                 Usar orçamento gerado em Projetos
               </label>
               {useQuote ? (
