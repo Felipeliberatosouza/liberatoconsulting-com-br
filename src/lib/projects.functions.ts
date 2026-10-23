@@ -274,6 +274,7 @@ export const saveDiagnostic = createServerFn({ method: "POST" })
       scores: data.scores as never,
       modules: data.modules as never,
       budget: data.budget as never,
+      questions: data.questions as never,
     };
     if (data.id) {
       const { error } = await context.supabase
