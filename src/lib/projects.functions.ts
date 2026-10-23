@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { answerMissing, answerText, type ClientAnswer, type EditableQuestion } from "./diagnostic-form";
 
 /* ------------------------------------------------------------------ */
 /* Etapa 1 — Escopo Inicial                                            */
@@ -126,6 +127,16 @@ export const deleteScopeSubmission = createServerFn({ method: "POST" })
 /* Etapa 2 — Diagnóstico Detalhado                                     */
 /* ------------------------------------------------------------------ */
 
+const editableQuestionSchema = z.object({
+  id: z.string().max(30),
+  block: z.string().max(120),
+  question: z.string().trim().min(3).max(600),
+  purpose: z.string().max(600),
+  options: z.array(z.string().trim().min(1).max(200)).max(20),
+  multi: z.boolean(),
+  required: z.boolean(),
+});
+
 const diagnosticSchema = z.object({
   id: z.string().uuid().optional(),
   title: z.string().trim().max(200).default(""),
@@ -138,6 +149,7 @@ const diagnosticSchema = z.object({
   scores: z.record(z.string().max(30), z.number().min(0).max(5)),
   modules: z.array(z.record(z.string().max(30), z.union([z.string().max(600), z.number(), z.boolean()]))).max(60),
   budget: z.record(z.string().max(30), z.number()),
+  questions: z.array(editableQuestionSchema).max(120).default([]),
 });
 
 export type DiagnosticRow = {
@@ -152,9 +164,84 @@ export type DiagnosticRow = {
   scores: Record<string, number>;
   modules: Array<Record<string, string | number | boolean>>;
   budget: Record<string, number>;
+  questions: EditableQuestion[];
+  public_token: string | null;
+  client_answers: Record<string, ClientAnswer>;
+  client_respondent: Record<string, string>;
+  client_submitted_at: string | null;
   created_at: string;
   updated_at: string;
 };
+
+/** Gera (ou reaproveita) o link público do diagnóstico para o cliente responder. */
+export const createDiagnosticLink = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./access.server");
+    await assertAdmin(context);
+    const { data: row, error } = await context.supabase
+      .from("project_diagnostics").select("public_token").eq("id", data.id).single();
+    if (error) return { ok: false as const, error: error.message };
+    let token = (row as { public_token: string | null }).public_token;
+    if (!token) {
+      token = crypto.randomUUID();
+      const { error: e2 } = await context.supabase
+        .from("project_diagnostics").update({ public_token: token } as never).eq("id", data.id);
+      if (e2) return { ok: false as const, error: e2.message };
+    }
+    return { ok: true as const, token };
+  });
+
+/** Leitura pública pelo link: só perguntas e identificação, nunca notas internas ou preço. */
+export const getPublicDiagnostic = createServerFn({ method: "GET" })
+  .inputValidator((input: unknown) => z.object({ token: z.string().uuid() }).parse(input))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row } = await supabaseAdmin
+      .from("project_diagnostics")
+      .select("client_name, service_title, questions, client_submitted_at")
+      .eq("public_token", data.token)
+      .maybeSingle();
+    if (!row) return null;
+    const r = row as unknown as { client_name: string; service_title: string; questions: EditableQuestion[]; client_submitted_at: string | null };
+    return { client_name: r.client_name, service_title: r.service_title, questions: r.questions ?? [], submitted: !!r.client_submitted_at };
+  });
+
+export const submitPublicDiagnostic = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) =>
+    z.object({
+      token: z.string().uuid(),
+      respondent: z.object({
+        name: z.string().trim().min(2).max(160),
+        role: z.string().trim().max(160).default(""),
+        email: z.string().trim().email().max(180),
+      }),
+      answers: z.record(z.string().max(30), z.object({ choices: z.array(z.string().max(200)).max(30), detail: z.string().max(4000) })),
+    }).parse(input),
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row } = await supabaseAdmin
+      .from("project_diagnostics").select("id, questions, answers").eq("public_token", data.token).maybeSingle();
+    if (!row) return { ok: false as const, error: "Link inválido." };
+    const r = row as unknown as { id: string; questions: EditableQuestion[]; answers: Record<string, string> };
+    const missing = (r.questions ?? []).filter((q) => answerMissing(q, data.answers[q.id]));
+    if (missing.length) return { ok: false as const, error: `Responda e explique: ${missing.map((q) => q.question).slice(0, 2).join(" / ")}` };
+    const merged = { ...(r.answers ?? {}) };
+    for (const q of r.questions ?? []) {
+      const a = data.answers[q.id];
+      if (a && (a.choices.length || a.detail.trim())) merged[q.id] = answerText(a);
+    }
+    const { error } = await supabaseAdmin.from("project_diagnostics").update({
+      client_answers: data.answers,
+      client_respondent: data.respondent,
+      client_submitted_at: new Date().toISOString(),
+      answers: merged,
+    } as never).eq("id", r.id);
+    if (error) return { ok: false as const, error: "Não foi possível salvar. Tente novamente." };
+    return { ok: true as const };
+  });
 
 export const listDiagnostics = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -187,6 +274,7 @@ export const saveDiagnostic = createServerFn({ method: "POST" })
       scores: data.scores as never,
       modules: data.modules as never,
       budget: data.budget as never,
+      questions: data.questions as never,
     };
     if (data.id) {
       const { error } = await context.supabase

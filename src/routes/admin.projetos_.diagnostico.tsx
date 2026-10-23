@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowLeft, Copy, HelpCircle, Link as LinkIcon, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
+import { FormattedNumberInput } from "@/components/FormattedNumberInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,12 +14,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { listServiceProducts } from "@/lib/services.functions";
 import {
+  createDiagnosticLink,
   deleteDiagnostic,
   listDiagnostics,
   listProjectClients,
   saveDiagnostic,
   type DiagnosticRow,
 } from "@/lib/projects.functions";
+import { answerText, diagnosticLink, toEditable, type ClientAnswer, type EditableQuestion } from "@/lib/diagnostic-form";
 import {
   DEFAULT_BUDGET,
   DEFAULT_MODULES,
@@ -60,6 +63,13 @@ function DiagnosticPage() {
   const [scoreWhy, setScoreWhy] = useState<Record<string, string>>({});
   const [modules, setModules] = useState<ScopeModule[]>(DEFAULT_MODULES);
   const [budget, setBudget] = useState<DiagnosticBudget>(DEFAULT_BUDGET);
+  const [editQs, setEditQs] = useState<EditableQuestion[]>([]);
+  const [token, setToken] = useState<string | null>(null);
+  const [clientAnswers, setClientAnswers] = useState<Record<string, ClientAnswer>>({});
+  const [respondent, setRespondent] = useState<Record<string, string>>({});
+  const [submittedAt, setSubmittedAt] = useState<string | null>(null);
+  const [tab, setTab] = useState("leiame");
+  const keepQs = useRef(false);
 
   const services = useQuery({
     queryKey: ["admin-services"],
@@ -84,6 +94,15 @@ function DiagnosticPage() {
     }
   }, [services.data, serviceSlug]);
 
+  // Ao trocar de serviço gera as perguntas padrão; um diagnóstico aberto mantém as suas.
+  useEffect(() => {
+    if (keepQs.current) {
+      keepQs.current = false;
+      return;
+    }
+    setEditQs(toEditable(questions));
+  }, [questions]);
+
   function reset() {
     setId(null);
     setTitle("");
@@ -94,13 +113,25 @@ function DiagnosticPage() {
     setScoreWhy({});
     setModules(DEFAULT_MODULES);
     setBudget(DEFAULT_BUDGET);
+    setEditQs(toEditable(questions));
+    setToken(null);
+    setClientAnswers({});
+    setRespondent({});
+    setSubmittedAt(null);
   }
 
   function load(row: DiagnosticRow) {
     setId(row.id);
     setTitle(row.title);
     setClientName(row.client_name);
+    const sameService = row.service_slug === serviceSlug;
+    if (row.questions?.length && !sameService) keepQs.current = true;
     setServiceSlug(row.service_slug);
+    setEditQs(row.questions?.length ? row.questions : toEditable(questionsForFamily((services.data ?? []).find((s) => s.slug === row.service_slug)?.family_id ?? "")));
+    setToken(row.public_token);
+    setClientAnswers(row.client_answers ?? {});
+    setRespondent(row.client_respondent ?? {});
+    setSubmittedAt(row.client_submitted_at);
     setAnswers(row.answers ?? {});
     setConsultantNotes(row.consultant_notes ?? {});
     const s = (row.scores ?? {}) as Record<string, number>;
@@ -112,6 +143,8 @@ function DiagnosticPage() {
         : DEFAULT_MODULES,
     );
     setBudget({ ...DEFAULT_BUDGET, ...(row.budget as unknown as DiagnosticBudget) });
+    setTab("diagnostico");
+    toast.success(`Diagnóstico "${row.title}" aberto.`);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -130,6 +163,7 @@ function DiagnosticPage() {
           scores: scoreValues,
           modules: modules as unknown as Array<Record<string, string | number | boolean>>,
           budget: budget as unknown as Record<string, number>,
+          questions: editQs,
         },
       }),
     onSuccess: (res) => {
@@ -152,13 +186,33 @@ function DiagnosticPage() {
     },
   });
 
+  const genLink = useMutation({
+    mutationFn: async () => {
+      const saved = await save.mutateAsync();
+      if (!saved.ok) throw new Error(saved.error);
+      const r = await createDiagnosticLink({ data: { id: saved.id } });
+      if (!r.ok) throw new Error(r.error);
+      return r.token;
+    },
+    onSuccess: (t) => {
+      setToken(t);
+      void navigator.clipboard?.writeText(diagnosticLink(t)).catch(() => {});
+      toast.success("Link gerado e copiado. Envie ao cliente.");
+      void qc.invalidateQueries({ queryKey: ["project-diagnostics"] });
+    },
+    onError: (e) => toast.error((e as Error).message),
+  });
+
   const totals = computeTotals(modules, budget);
   const avg = weightedScore(scoreValues);
-  const answered = questions.filter((q) => (answers[q.id] ?? "").trim().length > 0).length;
-  const pending = questions.filter((q) => q.required && !(answers[q.id] ?? "").trim()).length;
+  const answered = editQs.filter((q) => (answers[q.id] ?? "").trim().length > 0).length;
+  const pending = editQs.filter((q) => q.required && !(answers[q.id] ?? "").trim()).length;
 
   function patchModule(mid: string, patch: Partial<ScopeModule>) {
     setModules((prev) => prev.map((m) => (m.id === mid ? { ...m, ...patch } : m)));
+  }
+  function patchQ(qid: string, patch: Partial<EditableQuestion>) {
+    setEditQs((prev) => prev.map((q) => (q.id === qid ? { ...q, ...patch } : q)));
   }
 
   return (
@@ -222,7 +276,7 @@ function DiagnosticPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="leiame">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="mb-6 flex-wrap">
           <TabsTrigger value="leiame">Leia-me</TabsTrigger>
           <TabsTrigger value="diagnostico">Diagnóstico</TabsTrigger>
@@ -285,51 +339,67 @@ function DiagnosticPage() {
 
         {/* ---------------- Diagnóstico ---------------- */}
         <TabsContent value="diagnostico" className="space-y-4">
+          <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-dashed border-border bg-background p-4 text-sm">
+            <span className="font-medium">Link do formulário para o cliente:</span>
+            {token ? (
+              <>
+                <code className="rounded bg-secondary px-2 py-1 text-xs">{diagnosticLink(token)}</code>
+                <button type="button" className="inline-flex items-center gap-1 text-accent hover:underline" onClick={() => { void navigator.clipboard.writeText(diagnosticLink(token)); toast.success("Link copiado."); }}>
+                  <Copy className="size-4" /> Copiar
+                </button>
+              </>
+            ) : (
+              <span className="text-muted-foreground">ainda não gerado</span>
+            )}
+            <Button size="sm" onClick={() => genLink.mutate()} disabled={genLink.isPending}>
+              <LinkIcon className="mr-1 size-4" /> {token ? "Salvar perguntas e atualizar link" : "Gerar link do formulário"}
+            </Button>
+            {submittedAt ? (
+              <span className="text-xs text-accent">Respondido pelo cliente em {new Date(submittedAt).toLocaleString("pt-BR")}{respondent["name"] ? ` por ${respondent["name"]}${respondent["email"] ? ` (${respondent["email"]})` : ""}` : ""}</span>
+            ) : null}
+          </div>
           <p className="text-sm text-muted-foreground">
-            Perguntas do serviço <strong>{service?.title ?? "—"}</strong> ·{" "}
-            {service?.family_title ?? ""} · {answered} de {questions.length} respondidas ·{" "}
-            {pending} obrigatórias pendentes.
+            Perguntas do serviço <strong>{service?.title ?? "—"}</strong> · {answered} de {editQs.length} respondidas · {pending} obrigatórias pendentes. Edite o texto, a explicação (?) e as alternativas; inclua ou exclua perguntas antes de gerar o link.
           </p>
-          {Array.from(new Set(questions.map((q) => q.block))).map((block) => (
+          {Array.from(new Set(editQs.map((q) => q.block))).map((block) => (
             <section key={block} className="rounded-2xl border border-border bg-background p-6">
               <h3 className="font-display text-base font-semibold">{block}</h3>
-              <div className="mt-4 space-y-5">
-                {questions
-                  .filter((q) => q.block === block)
-                  .map((q) => (
-                    <div key={q.id} className="grid gap-3 md:grid-cols-2">
-                      <div>
-                        <p className="text-sm font-medium">
-                          {q.question}{" "}
-                          {q.required ? (
-                            <span className="text-destructive">*</span>
-                          ) : null}
-                        </p>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {q.id} · {q.format} · impacto {q.impact.toLowerCase()}
-                        </p>
-                        <Textarea
-                          className="mt-2"
-                          rows={3}
-                          placeholder="Resposta do cliente"
-                          value={answers[q.id] ?? ""}
-                          onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })}
-                        />
+              <div className="mt-4 space-y-6">
+                {editQs.filter((q) => q.block === block).map((q) => {
+                  const ca = clientAnswers[q.id];
+                  return (
+                    <div key={q.id} className="grid gap-3 border-b border-border pb-5 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <div className="flex items-start gap-2">
+                          <Textarea rows={2} value={q.question} onChange={(e) => patchQ(q.id, { question: e.target.value })} />
+                          <button type="button" title="Excluir pergunta" className="mt-2 text-muted-foreground hover:text-destructive" onClick={() => setEditQs(editQs.filter((x) => x.id !== q.id))}>
+                            <Trash2 className="size-4" />
+                          </button>
+                        </div>
+                        <Label className="flex items-center gap-1 text-xs text-muted-foreground"><HelpCircle className="size-3" /> Motivo da pergunta (aparece no ? para o cliente)</Label>
+                        <Input value={q.purpose} onChange={(e) => patchQ(q.id, { purpose: e.target.value })} />
+                        <Label className="text-xs text-muted-foreground">Alternativas (separe por ponto e vírgula; vazio = só texto)</Label>
+                        <Input value={q.options.join("; ")} onChange={(e) => patchQ(q.id, { options: e.target.value.split(";").map((s) => s.trim()).filter(Boolean) })} />
+                        <div className="flex gap-4 text-xs">
+                          <label className="flex items-center gap-1"><Checkbox checked={q.multi} onCheckedChange={(v) => patchQ(q.id, { multi: Boolean(v) })} /> Permite várias</label>
+                          <label className="flex items-center gap-1"><Checkbox checked={q.required} onCheckedChange={(v) => patchQ(q.id, { required: Boolean(v) })} /> Obrigatória</label>
+                        </div>
+                        {ca ? (
+                          <p className="rounded-md bg-accent/10 p-2 text-xs"><strong>Resposta do cliente:</strong> {answerText(ca)}</p>
+                        ) : null}
+                        <Textarea rows={2} placeholder="Resposta (preenchida pelo cliente ou pelo consultor)" value={answers[q.id] ?? ""} onChange={(e) => setAnswers({ ...answers, [q.id]: e.target.value })} />
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground">Observações do consultor</p>
-                        <Textarea
-                          className="mt-2"
-                          rows={3}
-                          value={consultantNotes[q.id] ?? ""}
-                          onChange={(e) =>
-                            setConsultantNotes({ ...consultantNotes, [q.id]: e.target.value })
-                          }
-                        />
+                        <Textarea className="mt-2" rows={4} value={consultantNotes[q.id] ?? ""} onChange={(e) => setConsultantNotes({ ...consultantNotes, [q.id]: e.target.value })} />
                       </div>
                     </div>
-                  ))}
+                  );
+                })}
               </div>
+              <Button size="sm" variant="outline" className="mt-4" onClick={() => setEditQs([...editQs, { id: `NEW-${Date.now().toString(36).slice(-5)}`, block, question: "Nova pergunta", purpose: "", options: [], multi: false, required: true }])}>
+                <Plus className="mr-1 size-4" /> Incluir pergunta neste bloco
+              </Button>
             </section>
           ))}
         </TabsContent>
@@ -505,13 +575,10 @@ function DiagnosticPage() {
               ).map(([key, label]) => (
                 <div key={key}>
                   <Label>{label}</Label>
-                  <Input
-                    type="number"
-                    min={0}
+                  <FormattedNumberInput
+                    kind={String(key).endsWith("Pct") ? "percent" : "currency"}
                     value={budget[key]}
-                    onChange={(e) =>
-                      setBudget({ ...budget, [key]: Number(e.target.value) || 0 })
-                    }
+                    onChange={(v) => setBudget((b) => ({ ...b, [key]: Math.max(0, v) }))}
                   />
                 </div>
               ))}

@@ -64,6 +64,13 @@
       "when": 1792525825647,
       "tag": "0008_member_activity_events",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792762778454,
+      "tag": "0009_migration",
+      "breakpoints": true
     }
   ]
 }

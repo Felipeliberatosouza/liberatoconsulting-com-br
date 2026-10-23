@@ -1861,11 +1861,16 @@ export type Database = {
         Row: {
           answers: Json
           budget: Json
+          client_answers: Json
           client_name: string
+          client_respondent: Json
+          client_submitted_at: string | null
           consultant_notes: Json
           created_at: string
           id: string
           modules: Json
+          public_token: string | null
+          questions: Json
           scope_submission_id: string | null
           scores: Json
           service_slug: string
@@ -1876,11 +1881,16 @@ export type Database = {
         Insert: {
           answers?: Json
           budget?: Json
+          client_answers?: Json
           client_name?: string
+          client_respondent?: Json
+          client_submitted_at?: string | null
           consultant_notes?: Json
           created_at?: string
           id?: string
           modules?: Json
+          public_token?: string | null
+          questions?: Json
           scope_submission_id?: string | null
           scores?: Json
           service_slug?: string
@@ -1891,11 +1901,16 @@ export type Database = {
         Update: {
           answers?: Json
           budget?: Json
+          client_answers?: Json
           client_name?: string
+          client_respondent?: Json
+          client_submitted_at?: string | null
           consultant_notes?: Json
           created_at?: string
           id?: string
           modules?: Json
+          public_token?: string | null
+          questions?: Json
           scope_submission_id?: string | null
           scores?: Json
           service_slug?: string
