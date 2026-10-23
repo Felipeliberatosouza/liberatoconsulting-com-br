@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Copy, HelpCircle, Link as LinkIcon, Plus, Trash2 } from "lucide-react";
@@ -52,6 +52,7 @@ const num = (v: number) => v.toLocaleString("pt-BR", { maximumFractionDigits: 2 
 
 function DiagnosticPage() {
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [id, setId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [clientName, setClientName] = useState("");
@@ -238,7 +239,7 @@ function DiagnosticPage() {
               const c = (clientList.data ?? []).find((x) => x.key === e.target.value);
               // Diagnóstico existente do cliente é aberto para continuar a mesma linha de trabalho.
               const existing = c?.diagId ? (list.data ?? []).find((r) => r.id === c.diagId) : null;
-              if (existing && !id) { openRow(existing); return; }
+              if (existing && !id) { load(existing); return; }
               if (c) setClientName(c.name);
             }}
           >
