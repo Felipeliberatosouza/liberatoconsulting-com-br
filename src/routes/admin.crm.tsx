@@ -1,4 +1,4 @@
-import { PORTE_LABEL, PORTE_OPTIONS, porteLabel } from "@/lib/company-size";
+import { normalizePorte, PORTE_LABEL, PORTE_OPTIONS, porteLabel } from "@/lib/company-size";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -169,7 +169,7 @@ function emptyCompany() {
     trade_name: "",
     cnpj: "",
     segment: "",
-    size: "pme",
+    size: "pequena",
     status: "lead",
     country: "Brasil",
     state: "",
@@ -985,7 +985,7 @@ function AdminCrm() {
             <Field label="Porte" required>
               <select
                 className={field}
-                value={companyForm['size']}
+                value={normalizePorte(companyForm['size']) || "pequena"}
                 onChange={(e) => setCompanyField("size", e.target.value)}
               >
                 {PORTE_OPTIONS.map((p) => (
@@ -1040,7 +1040,7 @@ function AdminCrm() {
                         trade_name: companyForm['trade_name'] ?? "",
                         cnpj: companyForm['cnpj'] ?? "",
                         segment: companyForm['segment'] ?? "",
-                        size: companyForm['size'] ?? "pme",
+                        size: companyForm['size'] ?? "pequena",
                         status: companyForm['status'] ?? "lead",
                         country: companyForm['country'] ?? "",
                         state: companyForm['state'] ?? "",
