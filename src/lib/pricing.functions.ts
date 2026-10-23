@@ -49,6 +49,13 @@ const optionsSchema = z.object({
   remoteOnly: z.boolean(),
   discountPct: z.number().min(0).max(60),
   fxRate: z.number().min(0).max(1000),
+  porte: z.string().max(20).optional(),
+  override: z
+    .object({
+      rates: z.object({ consultant: z.number().min(0), assistant: z.number().min(0), freelancer: z.number().min(0) }),
+      markupFactor: z.number().min(0.5).max(3),
+    })
+    .optional(),
 });
 
 /** Parâmetros globais (valor-hora, fatores de país, cotações de reserva). */

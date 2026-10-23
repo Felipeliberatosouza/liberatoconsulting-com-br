@@ -1,3 +1,4 @@
+import { porteLabel } from "./company-size";
 import {
   COUNTRIES,
   formatMoney,
@@ -47,7 +48,7 @@ export async function renderQuotePdf(input: QuotePdfInput) {
     [
       input.clientName ? `- Cliente: ${input.clientName}` : "",
       `- Serviço: ${input.serviceTitle}`,
-      `- Porte: ${options.companyType === "sme" ? "Pequena empresa / startup" : "Corporação"}`,
+      `- Porte: ${porteLabel(options.porte || (options.companyType === "corporate" ? "grande" : "pequena"))} (critério Sebrae)`,
       `- Localização: ${country?.label ?? options.country}`,
       `- Início previsto: ${br(quote.start)} · Conclusão prevista: ${br(quote.end)}`,
       `- Prazo total: ${quote.totalDays.toFixed(0)} dias úteis`,

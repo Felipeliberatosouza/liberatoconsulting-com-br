@@ -179,6 +179,10 @@ export type QuoteOptions = {
   remoteOnly: boolean;
   discountPct: number;
   fxRate: number;
+  /** Porte Sebrae do cliente (micro, pequena, media, grande). */
+  porte?: string;
+  /** Preço herdado do diagnóstico: valores-hora próprios e contingência/impostos embutidos. */
+  override?: { rates: PricingRates; markupFactor: number };
 };
 
 export type QuoteItem = {
@@ -245,8 +249,10 @@ export function buildQuote(
   settings: PricingSettings,
   options: QuoteOptions,
 ): QuoteResult {
-  const rates = settings.rates[options.companyType];
-  const factor = settings.countryFactors[options.country] ?? 1;
+  const ov = options.override;
+  const rates = ov ? ov.rates : settings.rates[options.companyType];
+  const factor = ov ? 1 : settings.countryFactors[options.country] ?? 1;
+  const markup = ov ? ov.markupFactor : 1;
   const hoursPerDay = settings.hoursPerDay || 8;
   const travelTable = settings.travelCost ?? DEFAULT_PRICING.travelCost;
   const tripCost =
@@ -279,10 +285,10 @@ export function buildQuote(
           a.assistant * rates.assistant +
           a.freelancer * rates.freelancer) *
         reps;
-      const third = a.thirdParty * reps * (1 + settings.thirdPartyMarkup);
+      const third = a.thirdParty * reps * (ov ? 1 : 1 + settings.thirdPartyMarkup);
       const travel = !options.remoteOnly && a.onsite ? tripCost * reps : 0;
       // Fator do país ajusta só a mão de obra; terceiros já são custo em R$.
-      const price = labor * factor + third + travel;
+      const price = (labor * factor + third) * markup + travel;
       const days = Math.max(0.2, Math.round(((hours / hoursPerDay) * 10) / 10) / 1 || 0.2);
       const itemStart = new Date(cursor);
       const itemEnd = addBusinessDays(itemStart, days);
