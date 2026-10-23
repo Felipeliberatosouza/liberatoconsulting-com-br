@@ -1,20 +1,27 @@
 # Liberato Consulting
 
-> Consultoria em gestão empresarial com inteligência artificial aplicada à estratégia, operações, empreendedorismo e pesquisas de mercado sobre o Brasil. Atende em português, inglês, espanhol e chinês.
+> Consultoria em gestão empresarial com inteligência artificial aplicada à estratégia, operações, finanças, vendas, treinamentos in company e pesquisas de mercado sobre o Brasil. Atende em português, inglês, espanhol e chinês.
 
-A Liberato Consulting apoia empresas brasileiras e estrangeiras com diagnóstico, planejamento estratégico, melhoria de processos, vendas, margem e entrada no mercado brasileiro. Contato: contato@liberatoconsulting.com.br · +55 11 91325-8668.
+A Liberato Consulting apoia micro, pequenas, médias e grandes empresas (classificação Sebrae), investidores e empresas estrangeiras que querem entrar ou crescer no Brasil. O trabalho segue um processo em etapas: escopo inicial, diagnóstico empresarial, orçamento (com até três cenários de investimento), execução e pesquisa de satisfação. Oferece ferramentas interativas de gestão com relatórios em PDF e PowerPoint, a Newsletter Insights e o Boletim Semanal de indicadores do Brasil.
+
+Contato: contato@liberatoconsulting.com.br · +55 11 91325-8668. Versões em outros idiomas usam o prefixo /en, /es e /zh.
 
 ## Páginas
 
-- [Início](https://liberatoconsulting.com.br/): Visão geral da consultoria e resultados.
-- [Serviços](https://liberatoconsulting.com.br/services): Todas as soluções de consultoria.
-- [Quem somos](https://liberatoconsulting.com.br/about): História, DNA e equipe de consultores.
-- [Brasil](https://liberatoconsulting.com.br/brasil): Dados e pesquisas de mercado sobre o Brasil.
-- [Conteúdos](https://liberatoconsulting.com.br/content): Artigos sobre gestão e estratégia.
-- [Newsletters](https://liberatoconsulting.com.br/newsletters): Edições publicadas.
+- [Início](https://liberatoconsulting.com.br/): Visão geral, resultados, impactos e perguntas frequentes.
+- [Serviços](https://liberatoconsulting.com.br/services): Onze famílias de soluções de consultoria.
+- [Treinamento in Company](https://liberatoconsulting.com.br/services/treinamento-in-company): Oito programas de capacitação para equipes.
+- [Quem somos](https://liberatoconsulting.com.br/about): História, DNA Liberato, equipe e valores.
+- [Brasil](https://liberatoconsulting.com.br/brasil): Dados, indicadores e pesquisas de mercado sobre o Brasil.
+- [Conteúdos](https://liberatoconsulting.com.br/content): Artigos sobre gestão, estratégia e IA.
+- [Ferramentas de Gestão](https://liberatoconsulting.com.br/ferramentas): Guias, planilhas e ferramentas interativas gratuitas ou pagas.
+- [Newsletters](https://liberatoconsulting.com.br/newsletters): Edições da Newsletter Insights.
+- [Boletins Semanais](https://liberatoconsulting.com.br/boletins): Indicadores econômicos e análises semanais.
 - [Contato](https://liberatoconsulting.com.br/contact): Fale com a consultoria.
 
 ## Optional
 
-- [Carreiras](https://liberatoconsulting.com.br/careers): Seja consultor parceiro.
-- [Privacidade](https://liberatoconsulting.com.br/privacy): Política de privacidade.
+- [Trabalhe Conosco](https://liberatoconsulting.com.br/careers): Seja consultor associado.
+- [Privacidade](https://liberatoconsulting.com.br/privacy): Política de privacidade (LGPD).
+- [Termos de uso](https://liberatoconsulting.com.br/terms): Condições de uso do site.
+- [Sitemap](https://liberatoconsulting.com.br/sitemap.xml): Lista completa de páginas públicas em todos os idiomas.

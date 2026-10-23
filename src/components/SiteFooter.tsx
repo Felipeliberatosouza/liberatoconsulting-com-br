@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Linkedin, Youtube } from "lucide-react";
 import { useLanguage } from "@/i18n";
+import { homeText } from "@/lib/home-translations";
 import { pageText } from "@/lib/page-translations";
 import { getPublicCompanyIdentity } from "@/lib/company-public.functions";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
@@ -92,7 +93,7 @@ export function SiteFooter() {
               Newsletter
             </p>
             <p className="mt-2 max-w-md text-sm text-ink-foreground/70">
-              Receba nossos conteúdos sobre gestão, IA e o mercado brasileiro.
+              {homeText(lang).footerNewsletter}
             </p>
             <NewsletterSignup />
           </div>
