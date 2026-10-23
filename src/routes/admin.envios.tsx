@@ -4,7 +4,7 @@ import { Fragment, useMemo, useState } from "react";
 
 import { AdminShell } from "@/components/AdminShell";
 import { toast } from "sonner";
-import { listDeliveries, previewDelivery, resendDelivery, type DeliveryItem, type DeliveryRecipient } from "@/lib/deliveries.functions";
+import { listDeliveries, listWhatsAppSubscribers, previewDelivery, resendDelivery, type DeliveryItem, type DeliveryRecipient } from "@/lib/deliveries.functions";
 import { MessagePreview } from "@/components/MessagePreview";
 
 export const Route = createFileRoute("/admin/envios")({
@@ -65,7 +65,26 @@ function DeliveriesPage() {
       if (!(ch === "email" ? r.email : r.phone) || seen.has(k)) return false;
       seen.add(k); return true;
     });
-    if (!jobs.length || !confirm(`Reenviar para ${jobs.length} destinatário(s) agora?`)) return;
+    if (!jobs.length) {
+      if (filter === "falhou" && i.failed > 0 && (i.source === "newsletter" || i.source === "boletim")) {
+        const subs = await listWhatsAppSubscribers({ data: { source: i.source } });
+        if (!subs.length) { toast.info("Nenhum inscrito ativo com WhatsApp para reenviar."); return; }
+        if (!confirm(`Este envio não tem o detalhe de cada pessoa. Reenviar por WhatsApp para os ${subs.length} inscrito(s) ativos com WhatsApp?`)) return;
+        setBusy(`all-${i.key}`);
+        let ok = 0, fail = 0;
+        for (const s of subs) {
+          const res = await resendDelivery({ data: { source: i.source, referenceId: i.key, email: s.email, phone: s.phone, name: s.name, channel: "whatsapp" } });
+          if (res.ok) ok++; else fail++;
+        }
+        setBusy(null);
+        if (fail) toast.error(`${ok} reenviado(s), ${fail} com falha.`); else toast.success(`${ok} reenvio(s) concluído(s).`);
+        q.refetch();
+        return;
+      }
+      toast.info("Nenhum destinatário disponível para reenvio nesta lista.");
+      return;
+    }
+    if (!confirm(`Reenviar para ${jobs.length} destinatário(s) agora?`)) return;
     setBusy(`all-${i.key}`);
     let ok = 0, fail = 0;
     for (const r of jobs) {
@@ -197,6 +216,9 @@ function DeliveriesPage() {
                           <tr><th className="p-2">Nome</th><th className="p-2">E-mail</th><th className="p-2">WhatsApp</th><th className="p-2">Forma</th><th className="p-2">Situação</th><th className="p-2">Horário</th><th className="p-2">Reenviar</th></tr>
                         </thead>
                         <tbody>
+                          {i.recipients.filter((r) => filter === "all" || (filter === "falhou" ? r.status === "falhou" : r.channel === filter && r.status === "enviado")).length === 0 && (
+                            <tr><td colSpan={7} className="p-3 text-center text-muted-foreground">Nenhum destinatário registrado individualmente para este envio.{filter === "falhou" ? " Use o botão acima para reenviar aos inscritos ativos com WhatsApp." : ""}</td></tr>
+                          )}
                           {i.recipients.filter((r) => filter === "all" || (filter === "falhou" ? r.status === "falhou" : r.channel === filter && r.status === "enviado")).map((r) => (
                             <tr key={r.id} className="border-t border-border">
                               <td className="p-2">{r.name || "—"}</td>
