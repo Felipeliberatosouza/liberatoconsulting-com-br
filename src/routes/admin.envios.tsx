@@ -104,7 +104,14 @@ function DeliveriesPage() {
   async function resend(i: DeliveryItem, r: DeliveryRecipient, channel: "email" | "whatsapp") {
     const id = `${r.id}-${channel}`;
     setBusy(id);
-    const res = await resendDelivery({ data: { source: i.source as "newsletter", referenceId: i.key, email: r.email || "", phone: r.phone, name: r.name, channel } });
+    let res: Awaited<ReturnType<typeof resendDelivery>>;
+    try {
+      res = await resendDelivery({ data: { source: i.source as "newsletter", referenceId: i.key, email: r.email || "", phone: r.phone, name: r.name, channel } });
+    } catch (e) {
+      setBusy(null);
+      toast.error(e instanceof Error ? e.message : "Falha no reenvio.");
+      return;
+    }
     setBusy(null);
     if (!res.ok) { toast.error(res.error); return; }
     toast.success(channel === "email" ? `E-mail reenviado para ${r.email}` : `WhatsApp reenviado para ${r.phone}`);
