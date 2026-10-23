@@ -355,7 +355,7 @@ function DiagnosticPage() {
               <LinkIcon className="mr-1 size-4" /> {token ? "Salvar perguntas e atualizar link" : "Gerar link do formulário"}
             </Button>
             {submittedAt ? (
-              <span className="text-xs text-accent">Respondido pelo cliente em {new Date(submittedAt).toLocaleString("pt-BR")}{respondent.name ? ` por ${respondent.name}${respondent.email ? ` (${respondent.email})` : ""}` : ""}</span>
+              <span className="text-xs text-accent">Respondido pelo cliente em {new Date(submittedAt).toLocaleString("pt-BR")}{respondent["name"] ? ` por ${respondent["name"]}${respondent["email"] ? ` (${respondent["email"]})` : ""}` : ""}</span>
             ) : null}
           </div>
           <p className="text-sm text-muted-foreground">
