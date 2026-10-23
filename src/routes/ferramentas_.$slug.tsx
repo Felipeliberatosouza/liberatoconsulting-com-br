@@ -6,6 +6,7 @@ import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, X
 import { ArrowLeft, Copy, FileDown, Presentation, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/i18n";
 import { Button } from "@/components/ui/button";
 import { formatValue, runTool } from "@/lib/tool-engine";
 import { parseBrazilianNumber, prefillCompany, validateIntake } from "@/lib/tool-intake";
@@ -47,20 +48,29 @@ export const Route = createFileRoute("/ferramentas_/$slug")({
 const field = "mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus:border-accent";
 const COLORS = ["var(--color-accent)", "var(--color-foreground)", "#3B82F6", "#10B981"];
 
+const TT = {
+  pt: { signTitle: "Entre para usar a ferramenta", signBody: "As ferramentas de gestão estão disponíveis para clientes cadastrados.", signCta: "Entrar ou criar conta", notFound: "Ferramenta não encontrada", back: "Voltar às ferramentas", tools: "Ferramentas de Gestão", calc: "Calcular resultados", fill: "Preencha os dados do seu negócio.", fileErr: "Não foi possível gerar o arquivo.", ok: "Os resultados estão dentro dos parâmetros esperados para os dados informados." },
+  en: { signTitle: "Sign in to use the tool", signBody: "Management tools are available to registered clients.", signCta: "Sign in or create account", notFound: "Tool not found", back: "Back to tools", tools: "Management Tools", calc: "Calculate results", fill: "Fill in your business data.", fileErr: "Could not generate the file.", ok: "Results are within the expected parameters for the data entered." },
+  es: { signTitle: "Inicie sesión para usar la herramienta", signBody: "Las herramientas de gestión están disponibles para clientes registrados.", signCta: "Entrar o crear cuenta", notFound: "Herramienta no encontrada", back: "Volver a las herramientas", tools: "Herramientas de Gestión", calc: "Calcular resultados", fill: "Complete los datos de su negocio.", fileErr: "No fue posible generar el archivo.", ok: "Los resultados están dentro de los parámetros esperados para los datos informados." },
+  zh: { signTitle: "登录以使用该工具", signBody: "管理工具仅向注册客户开放。", signCta: "登录或创建账户", notFound: "未找到该工具", back: "返回工具列表", tools: "管理工具", calc: "计算结果", fill: "请填写您的企业数据。", fileErr: "无法生成文件。", ok: "根据所填数据，结果处于预期范围内。" },
+} as const;
+function useTT() { const { lang } = useLanguage(); return TT[lang] ?? TT.pt; }
+
 function ToolRunner() {
+  const tt = useTT();
   const { slug } = Route.useParams();
   const [ready, setReady] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   useEffect(() => { supabase.auth.getSession().then(({ data }) => { setSignedIn(Boolean(data.session)); setReady(true); }); }, []);
   const q = useQuery({ queryKey: ["interactive-tool", slug], queryFn: () => getInteractiveTool({ data: { slug } }), enabled: signedIn, retry: false });
   if (!ready || (signedIn && q.isLoading)) return <div className="mx-auto max-w-5xl px-6 py-24 text-muted-foreground">Carregando…</div>;
-  if (!signedIn) return <div className="mx-auto max-w-3xl px-6 py-24"><h1 className="text-3xl font-bold">Entre para usar a ferramenta</h1><p className="mt-3 text-muted-foreground">As ferramentas de gestão estão disponíveis para clientes cadastrados.</p><Button asChild className="mt-6"><Link to="/ferramentas" search={{ modo: undefined }}>Entrar ou criar conta</Link></Button></div>;
+  if (!signedIn) return <div className="mx-auto max-w-3xl px-6 py-24"><h1 className="text-3xl font-bold">{tt.signTitle}</h1><p className="mt-3 text-muted-foreground">{tt.signBody}</p><Button asChild className="mt-6"><Link to="/ferramentas" search={{ modo: undefined }}>{tt.signCta}</Link></Button></div>;
   const d = q.data;
-  if (!d || !d.found) return <div className="mx-auto max-w-3xl px-6 py-24"><h1 className="text-3xl font-bold">Ferramenta não encontrada</h1><Button asChild variant="outline" className="mt-6"><Link to="/ferramentas" search={{ modo: undefined }}>Voltar às ferramentas</Link></Button></div>;
+  if (!d || !d.found) return <div className="mx-auto max-w-3xl px-6 py-24"><h1 className="text-3xl font-bold">{tt.notFound}</h1><Button asChild variant="outline" className="mt-6"><Link to="/ferramentas" search={{ modo: undefined }}>{tt.back}</Link></Button></div>;
   return (
     <div className="bg-secondary/40 py-14">
       <div className="mx-auto max-w-5xl px-6">
-        <Link to="/ferramentas" search={{ modo: undefined }} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-accent"><ArrowLeft className="size-4" /> Ferramentas de Gestão</Link>
+        <Link to="/ferramentas" search={{ modo: undefined }} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-accent"><ArrowLeft className="size-4" /> {tt.tools}</Link>
         <p className="mt-6 text-xs font-bold uppercase tracking-[0.3em] text-accent">{d.tool.category}</p>
         <h1 className="mt-3 text-4xl font-bold md:text-5xl">{d.tool.title}</h1>
         <p className="mt-4 max-w-3xl text-muted-foreground">{d.tool.summary}</p>
@@ -73,6 +83,7 @@ function ToolRunner() {
 type Loaded = Extract<Awaited<ReturnType<typeof getInteractiveTool>>, { found: true }>;
 
 function Calculator({ toolId, spec }: { toolId: string; spec: NonNullable<Loaded["spec"]> }) {
+  const tt = useTT();
   const [contextEdits, setCtx] = useState<Record<string, string>>({});
   const account = useQuery({ queryKey: ["tools-account"], queryFn: () => getToolsAccount(), retry: false });
   const ctx = prefillCompany(spec.context_fields, contextEdits, account.data?.profile?.company);
@@ -89,7 +100,7 @@ function Calculator({ toolId, spec }: { toolId: string; spec: NonNullable<Loaded
     return (
       <form className="mt-10 grid gap-5 bg-background p-6 md:grid-cols-2" onSubmit={async (e) => {
         e.preventDefault();
-        if (!ctxOk) { toast.error("Preencha os dados do seu negócio."); return; }
+        if (!ctxOk) { toast.error(tt.fill); return; }
         const intakeError = validateIntake(spec, ctx, inputs);
         if (intakeError) { toast.error(intakeError); return; }
         if (!result.ok) { toast.error(result.error); return; }
@@ -106,7 +117,7 @@ function Calculator({ toolId, spec }: { toolId: string; spec: NonNullable<Loaded
           </label>
         ))}
         {!result.ok && Object.keys(raw).length === spec.inputs.length ? <p className="text-sm text-destructive md:col-span-2">{result.error}</p> : null}
-        <Button type="submit" className="md:col-span-2 md:w-fit">Calcular resultados</Button>
+        <Button type="submit" className="md:col-span-2 md:w-fit">{tt.calc}</Button>
       </form>
     );
   }
@@ -115,7 +126,7 @@ function Calculator({ toolId, spec }: { toolId: string; spec: NonNullable<Loaded
   const download = async (kind: "pdf" | "pptx") => {
     if (!brandingQ.data) return;
     setBusy(kind);
-    try { await exportTool(kind, data, brandingQ.data); } catch (e) { console.error(e); toast.error("Não foi possível gerar o arquivo."); } finally { setBusy(""); }
+    try { await exportTool(kind, data, brandingQ.data); } catch (e) { console.error(e); toast.error(tt.fileErr); } finally { setBusy(""); }
   };
   return (
     <section className="mt-10 space-y-6">
@@ -141,7 +152,7 @@ function Calculator({ toolId, spec }: { toolId: string; spec: NonNullable<Loaded
       ) : null}
       <div className="bg-background p-5">
         <h3 className="font-bold">Conclusões e recomendações</h3>
-        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm">{(result.recommendations.length ? result.recommendations : ["Os resultados estão dentro dos parâmetros esperados para os dados informados."]).map((r) => <li key={r}>{r}</li>)}</ul>
+        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm">{(result.recommendations.length ? result.recommendations : [tt.ok]).map((r) => <li key={r}>{r}</li>)}</ul>
         <p className="mt-4 text-xs text-muted-foreground"><ShieldCheck className="mr-1 inline size-3.5" />Metodologia: {spec.methodology}</p>
       </div>
     </section>
