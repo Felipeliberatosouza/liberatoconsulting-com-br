@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Copy, HelpCircle, Link as LinkIcon, Plus, Trash2 } from "lucide-react";
@@ -52,6 +52,7 @@ const num = (v: number) => v.toLocaleString("pt-BR", { maximumFractionDigits: 2 
 
 function DiagnosticPage() {
   const qc = useQueryClient();
+  const navigate = useNavigate();
   const [id, setId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [clientName, setClientName] = useState("");
@@ -236,6 +237,9 @@ function DiagnosticPage() {
             value=""
             onChange={(e) => {
               const c = (clientList.data ?? []).find((x) => x.key === e.target.value);
+              // Diagnóstico existente do cliente é aberto para continuar a mesma linha de trabalho.
+              const existing = c?.diagId ? (list.data ?? []).find((r) => r.id === c.diagId) : null;
+              if (existing && !id) { load(existing); return; }
               if (c) setClientName(c.name);
             }}
           >
@@ -682,13 +686,19 @@ function DiagnosticPage() {
               gerar o orçamento.
             </p>
           )}
-          <Link
-            to="/admin/precificacao"
-            search={{ aba: "quote" } as never}
+          <button
+            type="button"
+            disabled={save.isPending}
+            onClick={async () => {
+              // Salva antes de seguir: o orçamento é montado a partir deste diagnóstico.
+              const res = await save.mutateAsync();
+              if (!res.ok) return;
+              void navigate({ to: "/admin/precificacao", search: { aba: "quote", diag: res.id } as never });
+            }}
             className="inline-block rounded-full bg-ink px-4 py-2 text-sm font-medium text-ink-foreground hover:bg-accent hover:text-accent-foreground"
           >
-            Ir para Gerar orçamento
-          </Link>
+            {save.isPending ? "Salvando…" : "Ir para Gerar orçamento"}
+          </button>
         </TabsContent>
       </Tabs>
 

@@ -26,7 +26,7 @@ const leadSchema = z.object({
   trade_name: z.string().trim().max(200).default(""),
   cnpj: z.string().trim().max(40).default(""),
   segment: z.string().trim().max(160).default(""),
-  size: z.enum(["pme", "corporacao"]).default("pme"),
+  size: z.enum(["pme", "corporacao", "micro", "pequena", "media", "grande"]).default("pequena"),
   country: z.string().trim().max(80).default("Brasil"),
   state: z.string().trim().max(80).default(""),
   city: z.string().trim().max(120).default(""),

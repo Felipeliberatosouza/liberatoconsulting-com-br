@@ -157,10 +157,8 @@ function PresentationPage() {
     if (o.sector) setSector(o.sector);
     if (o.location) setLocation(o.location);
     if (o.website && !site) setSite(o.website);
-    const [kind, id] = key.split(":");
-    const n = o.name.trim().toLowerCase();
-    const sc = kind === "scope" ? id : ctx.data?.scopes.find((s: any) => String(s.company).trim().toLowerCase() === n)?.id;
-    const dg = kind === "diag" ? id : ctx.data?.diagnostics.find((g: any) => String(g.client_name).trim().toLowerCase() === n)?.id;
+    const sc = o.scopeId;
+    const dg = o.diagId;
     if (sc) { setScopeId(sc); setUseScope(true); }
     if (dg) { setDiagId(dg); setUseDiag(true); }
     setDraft(null);
@@ -490,8 +488,8 @@ function PresentationPage() {
             <Field label="Porte do cliente">
               <select className={input} value={clientSize} onChange={e => setClientSize(e.target.value as PresentationSize | "")}>
                 <option value="">Selecione…</option>
-                <option value="pme">Micro, pequena ou média empresa / startup</option>
-                <option value="corporativo">Grande empresa</option>
+                <option value="pme">Microempresa, Pequena ou Média Empresa (Sebrae)</option>
+                <option value="corporativo">Grande Empresa (Sebrae)</option>
               </select>
             </Field>
             <Field label="Setor (segmento de mercado)">

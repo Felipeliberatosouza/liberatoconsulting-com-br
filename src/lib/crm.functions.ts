@@ -11,7 +11,7 @@ const companySchema = z.object({
   trade_name: z.string().trim().min(2).max(200),
   cnpj: z.string().trim().max(40).default(""),
   segment: z.string().trim().max(120).default(""),
-  size: z.enum(["pme", "corporacao"]).default("pme"),
+  size: z.enum(["pme", "corporacao", "micro", "pequena", "media", "grande"]).default("pequena"),
   status: z.enum(["lead", "prospect", "cliente", "inativo"]).default("lead"),
   country: z.string().trim().max(80).default("Brasil"),
   state: z.string().trim().max(80).default(""),

@@ -56,3 +56,27 @@ export function sectorFromSegment(segment: string): Sector {
     ? "industria"
     : "comercio_servicos";
 }
+
+export type PorteValue = Exclude<Porte, "">;
+export const PORTE_OPTIONS: PorteValue[] = ["micro", "pequena", "media", "grande"];
+
+/** Converte valores antigos (pme/corporacao/sme/corporate) para o porte Sebrae. */
+export function normalizePorte(value: unknown): PorteValue | "" {
+  const t = String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  if (!t) return "";
+  if (/^micro/.test(t)) return "micro";
+  if (/^media|medium/.test(t)) return "media";
+  if (/grande|corpor|enterprise|large/.test(t)) return "grande";
+  if (/pequen|pme|sme|small|startup/.test(t)) return "pequena";
+  return "";
+}
+
+export function porteLabel(value: unknown): string {
+  const p = normalizePorte(value);
+  return p ? PORTE_LABEL[p] : "—";
+}
+
+/** Tabela de valor-hora: grande empresa usa a tabela corporativa; demais portes, a de PME. */
+export function porteRateTier(value: unknown): "sme" | "corporate" {
+  return normalizePorte(value) === "grande" ? "corporate" : "sme";
+}
