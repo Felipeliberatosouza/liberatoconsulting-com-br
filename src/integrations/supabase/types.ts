@@ -1869,6 +1869,7 @@ export type Database = {
           created_at: string
           id: string
           modules: Json
+          public_slug: string | null
           public_token: string | null
           questions: Json
           scope_submission_id: string | null
@@ -1889,6 +1890,7 @@ export type Database = {
           created_at?: string
           id?: string
           modules?: Json
+          public_slug?: string | null
           public_token?: string | null
           questions?: Json
           scope_submission_id?: string | null
@@ -1909,6 +1911,7 @@ export type Database = {
           created_at?: string
           id?: string
           modules?: Json
+          public_slug?: string | null
           public_token?: string | null
           questions?: Json
           scope_submission_id?: string | null
