@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Sparkles, FileDown, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
@@ -14,7 +14,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { listServiceProducts } from "@/lib/services.functions";
 import { listCrmCompanies } from "@/lib/crm.functions";
-import { listProjectClients } from "@/lib/projects.functions";
+import { listDiagnostics, listProjectClients, type DiagnosticRow } from "@/lib/projects.functions";
+import { diagnosticToQuote } from "@/lib/diagnostic-quote";
+import { DEFAULT_BUDGET, type DiagnosticBudget, type ScopeModule } from "@/lib/diagnostic-catalog";
+import { normalizePorte, PORTE_LABEL, PORTE_OPTIONS, porteLabel, porteRateTier, type PorteValue } from "@/lib/company-size";
 import {
   buildQuotePdf,
   getFxRate,
@@ -44,9 +47,10 @@ const TABS = ["rates", "stages", "quote", "history"] as const;
 type PricingTab = (typeof TABS)[number];
 
 export const Route = createFileRoute("/admin/precificacao")({
-  validateSearch: (search: Record<string, unknown>): { aba?: PricingTab } => {
+  validateSearch: (search: Record<string, unknown>): { aba?: PricingTab; diag?: string } => {
     const aba = String(search["aba"] ?? "");
-    return TABS.includes(aba as PricingTab) ? { aba: aba as PricingTab } : {};
+    const diag = typeof search["diag"] === "string" ? search["diag"] : undefined;
+    return { ...(TABS.includes(aba as PricingTab) ? { aba: aba as PricingTab } : {}), ...(diag ? { diag } : {}) };
   },
   head: () => ({
     meta: [
@@ -81,7 +85,7 @@ function Num({
 }
 
 function PricingPage() {
-  const { aba } = Route.useSearch();
+  const { aba, diag } = Route.useSearch();
   const [settings, setSettings] = useState<PricingSettings>(DEFAULT_PRICING);
   const [slug, setSlug] = useState("");
   const [activities, setActivities] = useState<PricedActivity[]>([]);
@@ -89,7 +93,12 @@ function PricingPage() {
   const [rationale, setRationale] = useState("");
   const [busy, setBusy] = useState("");
 
-  const [companyType, setCompanyType] = useState<"sme" | "corporate">("sme");
+  const [porte, setPorte] = useState<PorteValue>("pequena");
+  const companyType = porteRateTier(porte);
+  /** Preço herdado do diagnóstico (mesmos valores-dia, contingência e impostos). */
+  const [override, setOverride] = useState<{ rates: PricingSettings["rates"]["sme"]; markupFactor: number } | null>(null);
+  const [diagInfo, setDiagInfo] = useState<{ id: string; title: string; total: number } | null>(null);
+  const skipServiceLoad = useRef(false);
   const [country, setCountry] = useState("BR");
   const [currency, setCurrency] = useState("BRL");
   const [startDate, setStartDate] = useState(today());
@@ -104,6 +113,41 @@ function PricingPage() {
   const history = useQuery({ queryKey: ["quotes"], queryFn: () => listQuotes() });
   const crmCompanies = useQuery({ queryKey: ["crm-companies"], queryFn: () => listCrmCompanies() });
   const clientList = useQuery({ queryKey: ["project-clients"], queryFn: () => listProjectClients() });
+  const diagnostics = useQuery({ queryKey: ["project-diagnostics"], queryFn: () => listDiagnostics() });
+
+  function applyDiagnostic(row: DiagnosticRow) {
+    const conv = diagnosticToQuote(
+      (Array.isArray(row.modules) ? row.modules : []) as unknown as ScopeModule[],
+      { ...DEFAULT_BUDGET, ...(row.budget as unknown as DiagnosticBudget) },
+      settings.hoursPerDay,
+    );
+    if (row.service_slug && row.service_slug !== slug) {
+      skipServiceLoad.current = true;
+      setSlug(row.service_slug);
+    }
+    setActivities(conv.activities);
+    setOverride(conv.override);
+    setDiscountPct(conv.discountPct);
+    setDiagInfo({ id: row.id, title: row.title, total: conv.expectedTotal });
+    if (row.client_name) setClientName(row.client_name);
+  }
+
+  // Vindo do diagnóstico: cliente, serviço e valor já chegam preenchidos.
+  const appliedDiag = useRef<string | null>(null);
+  useEffect(() => {
+    if (!diag || appliedDiag.current === diag || !diagnostics.data || !stored.data) return;
+    const row = diagnostics.data.find((d) => d.id === diag);
+    if (!row) return;
+    appliedDiag.current = diag;
+    applyDiagnostic(row);
+    const c = (clientList.data ?? []).find((x) => x.diagId === row.id || x.name.trim().toLowerCase() === row.client_name.trim().toLowerCase());
+    if (c) {
+      setClientId(c.key);
+      const p = normalizePorte(c.size);
+      if (p) setPorte(p);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [diag, diagnostics.data, stored.data, clientList.data]);
 
   useEffect(() => {
     if (stored.data) setSettings(stored.data);
@@ -116,6 +160,10 @@ function PricingPage() {
 
   useEffect(() => {
     if (!slug) return;
+    if (skipServiceLoad.current) {
+      skipServiceLoad.current = false;
+      return;
+    }
     getServicePricing({ data: { slug } }).then((r) => {
       setActivities(
         r.activities.length > 0 ? r.activities : CATALOG.map((c) => fromCatalog(c, false)),
@@ -141,8 +189,10 @@ function PricingPage() {
         remoteOnly,
         discountPct,
         fxRate: fx.rate,
+        porte,
+        ...(override ? { override } : {}),
       }),
-    [activities, settings, companyType, country, currency, startDate, remoteOnly, discountPct, fx.rate],
+    [activities, settings, companyType, porte, override, country, currency, startDate, remoteOnly, discountPct, fx.rate],
   );
 
   const enabledCount = useMemo(() => activities.filter((a) => a.enabled).length, [activities]);
@@ -240,7 +290,7 @@ function PricingPage() {
         clientName,
         activities,
         notes,
-        options: { companyType, country, currency: currency as "BRL", startDate, remoteOnly, discountPct, fxRate: fx.rate },
+        options: { companyType, porte, ...(override ? { override } : {}), country, currency: currency as "BRL", startDate, remoteOnly, discountPct, fxRate: fx.rate },
       },
     });
     setBusy("");
@@ -414,7 +464,11 @@ function PricingPage() {
               <select
                 className="h-10 w-80 max-w-full rounded-md border border-input bg-background px-3 text-sm"
                 value={slug}
-                onChange={(e) => setSlug(e.target.value)}
+                onChange={(e) => {
+                  setOverride(null);
+                  setDiagInfo(null);
+                  setSlug(e.target.value);
+                }}
               >
                 <option value="">Escolha um serviço…</option>
                 {(products.data ?? []).map((p) => (
@@ -504,6 +558,25 @@ function PricingPage() {
 
         {/* ---------------- Orçamento ---------------- */}
         <TabsContent value="quote" className="space-y-6">
+          {diagInfo && override && (
+            <div className="flex flex-wrap items-center gap-3 rounded-xl border border-accent/40 bg-accent/5 p-4 text-sm">
+              <p className="flex-1">
+                Orçamento montado a partir do diagnóstico <strong>{diagInfo.title}</strong>, com o mesmo
+                valor planejado ({formatMoney(diagInfo.total, "BRL")}). Todos os campos continuam editáveis.
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setOverride(null);
+                  setDiagInfo(null);
+                  if (slug) getServicePricing({ data: { slug } }).then((r) => r.activities.length && setActivities(r.activities));
+                }}
+              >
+                Usar etapas padrão do serviço
+              </Button>
+            </div>
+          )}
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-1.5">
               <Label>Serviço</Label>
@@ -521,7 +594,7 @@ function PricingPage() {
               </select>
             </div>
             <div className="space-y-1.5">
-              <Label>Cliente (CRM, escopos e diagnósticos)</Label>
+              <Label>Cliente</Label>
               <select
                 className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                 value={clientId}
@@ -538,12 +611,13 @@ function PricingPage() {
                     return;
                   }
                   setClientName(opt.name);
+                  const p = normalizePorte(opt.size);
+                  if (p) setPorte(p);
+                  const d = opt.diagId ? (diagnostics.data ?? []).find((x) => x.id === opt.diagId) : null;
+                  if (d) applyDiagnostic(d);
                   const c = opt.crmId ? (crmCompanies.data ?? []).find((x: any) => x.id === opt.crmId) : null;
                   if (!c) return;
                   setClientName(c.trade_name || c.name);
-                  if (c.size === "corporacao" || c.size === "pme") {
-                    setCompanyType(c.size === "corporacao" ? "corporate" : "sme");
-                  }
                   const match = COUNTRIES.find(
                     (x) =>
                       x.id === String(c.country ?? "").toUpperCase() ||
@@ -574,14 +648,17 @@ function PricingPage() {
               )}
             </div>
             <div className="space-y-1.5">
-              <Label>Tipo de empresa</Label>
+              <Label>Porte da empresa (Sebrae)</Label>
               <select
                 className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                value={companyType}
-                onChange={(e) => setCompanyType(e.target.value as "sme" | "corporate")}
+                value={porte}
+                onChange={(e) => setPorte(e.target.value as PorteValue)}
               >
-                <option value="sme">Pequena empresa / startup</option>
-                <option value="corporate">Corporação</option>
+                {PORTE_OPTIONS.map((p) => (
+                  <option key={p} value={p}>
+                    {PORTE_LABEL[p]}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="space-y-1.5">
@@ -758,7 +835,7 @@ function PricingPage() {
                 <p className="font-semibold">{q.service_title}</p>
                 <p className="text-sm text-muted-foreground">
                   {q.client_name || "sem cliente"} · {q.country} ·{" "}
-                  {q.company_type === "sme" ? "PME" : "Corporação"} ·{" "}
+                  {porteLabel((q.payload as any)?.options?.porte || (q.company_type === "corporate" ? "grande" : "pequena"))} ·{" "}
                   {formatMoney(Number(q.total_currency), q.currency)} ·{" "}
                   {new Date(q.created_at).toLocaleDateString("pt-BR")}
                 </p>
