@@ -50,8 +50,10 @@ export function toEditable(questions: DiagnosticQuestion[]): EditableQuestion[] 
 
 /** Toda resposta exige explicação; se houver alternativas, ao menos uma precisa ser escolhida. */
 export function answerMissing(q: EditableQuestion, a: ClientAnswer | undefined): boolean {
-  if (!a || a.detail.trim().length < 2) return true;
-  return q.options.length > 0 && a.choices.length === 0;
+  const empty = !a || (a.choices.length === 0 && !a.detail.trim());
+  if (empty) return q.required;
+  if (a!.detail.trim().length < 2) return true;
+  return q.options.length > 0 && a!.choices.length === 0;
 }
 
 export function answerText(a: ClientAnswer): string {
