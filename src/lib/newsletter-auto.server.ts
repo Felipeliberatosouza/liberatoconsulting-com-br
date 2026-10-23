@@ -6,34 +6,10 @@
  * envio. Sem conteúdo novo, nada é criado (o disparo simplesmente é pulado).
  */
 
-type Article = {
-  title: string;
-  summary: string;
-  slug: string;
-  authors: string;
-  article_date: string | null;
-  updated_at: string;
-};
-
 export type AutoResult =
   | { ok: true; campaignId: string }
   | { ok: false; skipped: string }
   | { ok: false; error: string; blocked?: boolean };
-
-/** Conteúdos publicados depois da data informada (ou os mais recentes). */
-async function recentArticles(since: string | null): Promise<Article[]> {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  let query = supabaseAdmin
-    .from("content_articles")
-    .select("title, summary, slug, authors, article_date, updated_at")
-    .eq("published", true)
-    .order("updated_at", { ascending: false })
-    .limit(6);
-  if (since) query = query.gt("updated_at", since);
-  const { data, error } = await query;
-  if (error) throw new Error(error.message);
-  return (data ?? []) as Article[];
-}
 
 /**
  * Cria (em rascunho) a próxima edição da newsletter "Liberato Insights" em
