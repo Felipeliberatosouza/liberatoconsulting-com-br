@@ -166,6 +166,7 @@ export type DiagnosticRow = {
   budget: Record<string, number>;
   questions: EditableQuestion[];
   public_token: string | null;
+  public_slug: string | null;
   client_answers: Record<string, ClientAnswer>;
   client_respondent: Record<string, string>;
   client_submitted_at: string | null;
@@ -181,23 +182,23 @@ export const createDiagnosticLink = createServerFn({ method: "POST" })
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
     const { data: row, error } = await context.supabase
-      .from("project_diagnostics").select("public_token, client_name").eq("id", data.id).single();
+      .from("project_diagnostics").select("public_slug, client_name").eq("id", data.id).single();
     if (error) return { ok: false as const, error: error.message };
-    const r = row as { public_token: string | null; client_name: string | null };
-    let token = r.public_token;
+    const r = row as { public_slug: string | null; client_name: string | null };
+    let token = r.public_slug;
     // Link curto com o nome da empresa (ex.: /diagnostico/lhs); links antigos com código são trocados.
-    if (!token || /^[0-9a-f-]{36}$/i.test(token)) {
+    if (!token) {
       const { shortSlug } = await import("./short-slug");
       const root = shortSlug(r.client_name ?? "", 1) || "cliente";
       token = root;
       for (let i = 2; i < 50; i++) {
         const { data: hit } = await context.supabase
-          .from("project_diagnostics").select("id").eq("public_token", token).maybeSingle();
+          .from("project_diagnostics").select("id").eq("public_slug", token).maybeSingle();
         if (!hit || (hit as { id: string }).id === data.id) break;
         token = `${root}-${i}`;
       }
       const { error: e2 } = await context.supabase
-        .from("project_diagnostics").update({ public_token: token } as never).eq("id", data.id);
+        .from("project_diagnostics").update({ public_slug: token } as never).eq("id", data.id);
       if (e2) return { ok: false as const, error: e2.message };
     }
     return { ok: true as const, token };
@@ -211,7 +212,7 @@ export const getPublicDiagnostic = createServerFn({ method: "GET" })
     const { data: row } = await supabaseAdmin
       .from("project_diagnostics")
       .select("client_name, service_title, questions, client_submitted_at")
-      .eq("public_token", data.token)
+      .eq(/^[0-9a-f-]{36}$/i.test(data.token) ? "public_token" : "public_slug", data.token.toLowerCase())
       .maybeSingle();
     if (!row) return null;
     const r = row as unknown as { client_name: string; service_title: string; questions: EditableQuestion[]; client_submitted_at: string | null };
@@ -233,7 +234,7 @@ export const submitPublicDiagnostic = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: row } = await supabaseAdmin
-      .from("project_diagnostics").select("id, questions, answers").eq("public_token", data.token).maybeSingle();
+      .from("project_diagnostics").select("id, questions, answers").eq(/^[0-9a-f-]{36}$/i.test(data.token) ? "public_token" : "public_slug", data.token.toLowerCase()).maybeSingle();
     if (!row) return { ok: false as const, error: "Link inválido." };
     const r = row as unknown as { id: string; questions: EditableQuestion[]; answers: Record<string, string> };
     const missing = (r.questions ?? []).filter((q) => answerMissing(q, data.answers[q.id]));
