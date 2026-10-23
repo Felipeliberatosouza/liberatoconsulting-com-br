@@ -5,6 +5,7 @@ import { Sparkles, FileDown, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
+import { QuoteScenarios } from "@/components/QuoteScenarios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,7 +38,9 @@ import {
   DEFAULT_PRICING,
   PHASES,
   buildQuote,
+  buildScenarioQuote,
   formatMoney,
+  type QuoteScenario,
   fromCatalog,
   type PricedActivity,
   type PricingSettings,
@@ -99,6 +102,7 @@ function PricingPage() {
   const [override, setOverride] = useState<{ rates: PricingSettings["rates"]["sme"]; markupFactor: number } | null>(null);
   const [diagInfo, setDiagInfo] = useState<{ id: string; title: string; total: number } | null>(null);
   const skipServiceLoad = useRef(false);
+  const [scenarios, setScenarios] = useState<QuoteScenario[]>([]);
   const [country, setCountry] = useState("BR");
   const [currency, setCurrency] = useState("BRL");
   const [startDate, setStartDate] = useState(today());
@@ -282,6 +286,10 @@ function PricingPage() {
       toast.error("Escolha um serviço primeiro.");
       return;
     }
+    if (scenarios.some((sc) => !sc.note.trim())) {
+      toast.error("Escreva a observação do que muda em cada cenário.");
+      return;
+    }
     setBusy("pdf");
     const res = await buildQuotePdf({
       data: {
@@ -290,6 +298,7 @@ function PricingPage() {
         clientName,
         activities,
         notes,
+        scenarios,
         options: { companyType, porte, ...(override ? { override } : {}), country, currency: currency as "BRL", startDate, remoteOnly, discountPct, fxRate: fx.rate },
       },
     });
@@ -800,6 +809,19 @@ function PricingPage() {
                   </tbody>
                 </table>
               </div>
+              <QuoteScenarios
+                activities={activities}
+                base={quote}
+                scenarios={scenarios}
+                onChange={setScenarios}
+                money={money}
+                compute={(sc) =>
+                  buildScenarioQuote(activities, settings, {
+                    companyType, country, currency, startDate, remoteOnly, discountPct, fxRate: fx.rate, porte,
+                    ...(override ? { override } : {}),
+                  }, sc)
+                }
+              />
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-3">
                 <p className="text-sm text-muted-foreground">
                   Subtotal {money(quote.subtotalBrl)}
