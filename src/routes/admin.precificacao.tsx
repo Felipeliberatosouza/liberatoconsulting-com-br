@@ -333,7 +333,7 @@ function PricingPage() {
             {(["sme", "corporate"] as const).map((kind) => (
               <section key={kind} className="rounded-xl border border-border p-5">
                 <h3 className="mb-4 font-semibold">
-                  {kind === "sme" ? "Pequenas empresas e startups" : "Corporações"}
+                  {kind === "sme" ? "Microempresa, Pequena e Média Empresa (Sebrae)" : "Grande Empresa (Sebrae)"}
                 </h3>
                 <div className="grid gap-3">
                   {(["consultant", "assistant", "freelancer"] as const).map((role) => (

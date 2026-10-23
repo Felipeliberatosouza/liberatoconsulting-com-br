@@ -1,3 +1,4 @@
+import { PORTE_LABEL, PORTE_OPTIONS, porteLabel } from "@/lib/company-size";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -518,7 +519,7 @@ function AdminCrm() {
                     {c.trade_name && <span className="block text-xs text-muted-foreground">{c.trade_name}</span>}
                   </td>
                   <td className="px-4 py-3">{c.segment || "—"}</td>
-                  <td className="px-4 py-3">{c.size === "corporacao" ? "Corporação" : "PME"}</td>
+                  <td className="px-4 py-3">{porteLabel(c.size)}</td>
                   <td className="px-4 py-3 capitalize">{c.status}</td>
                   <td className="px-4 py-3">{[c.city, c.state, c.country].filter(Boolean).join("/") || "—"}</td>
                   <td className="px-4 py-3">{c.contacts?.length ?? 0}</td>
@@ -558,7 +559,7 @@ function AdminCrm() {
                 <div>
                   <h2 className="font-display text-xl font-bold">{d.company.name}</h2>
                   <p className="text-sm text-muted-foreground">
-                    {[d.company.segment, d.company.size === "corporacao" ? "Corporação" : "PME", d.company.status]
+                    {[d.company.segment, porteLabel(d.company.size), d.company.status]
                       .filter(Boolean)
                       .join(" · ")}
                   </p>
@@ -987,8 +988,9 @@ function AdminCrm() {
                 value={companyForm['size']}
                 onChange={(e) => setCompanyField("size", e.target.value)}
               >
-                <option value="pme">Pequena ou média empresa</option>
-                <option value="corporacao">Corporação</option>
+                {PORTE_OPTIONS.map((p) => (
+                  <option key={p} value={p}>{PORTE_LABEL[p]}</option>
+                ))}
               </select>
             </Field>
             <Field label="Status" required>
