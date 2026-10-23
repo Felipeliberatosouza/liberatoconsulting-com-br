@@ -342,9 +342,10 @@ export const getProjectsOverview = createServerFn({ method: "GET" })
 export type ProjectClient = {
   key: string;
   name: string;
-  source: "crm" | "scope" | "diag";
   label: string;
   crmId?: string;
+  scopeId?: string;
+  diagId?: string;
   sector: string;
   location: string;
   website: string;
@@ -358,31 +359,54 @@ export const listProjectClients = createServerFn({ method: "GET" })
     const { assertAdmin } = await import("./access.server");
     await assertAdmin(context);
     const sb = context.supabase as any;
-    const [crm, scopes, diags] = await Promise.all([
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [crm, scopes, diags, leads] = await Promise.all([
       sb.from("crm_companies").select("id, name, trade_name, segment, city, state, website, size, country").order("name").limit(2000),
       sb.from("project_scope_submissions").select("id, company, created_at").order("created_at", { ascending: false }).limit(500),
       sb.from("project_diagnostics").select("id, client_name, service_title, updated_at").order("updated_at", { ascending: false }).limit(500),
+      supabaseAdmin.from("leads").select("company, country, email, phone, created_at").order("created_at", { ascending: false }).limit(1000),
     ]);
-    return buildProjectClients(crm.data ?? [], scopes.data ?? [], diags.data ?? []);
+    return buildProjectClients(crm.data ?? [], scopes.data ?? [], diags.data ?? [], leads.data ?? []);
   });
 
-export function buildProjectClients(crm: any[], scopes: any[], diags: any[]): ProjectClient[] {
+/** Um cliente = uma opção: CRM, leads com contato, escopos e diagnósticos são agrupados pelo nome. */
+export function buildProjectClients(crm: any[], scopes: any[], diags: any[], leads: any[] = []): ProjectClient[] {
   const clean = (v: unknown) => String(v ?? "").trim();
-  const out: ProjectClient[] = [];
-  for (const c of crm) {
-    const name = clean(c.trade_name) || clean(c.name);
-    if (!name) continue;
-    out.push({ key: `crm:${c.id}`, name, source: "crm", label: `${name} · CRM`, crmId: c.id, sector: clean(c.segment), location: [c.city, c.state].map(clean).filter(Boolean).join(" / "), website: clean(c.website), size: c.size, country: c.country });
+  const norm = (v: string) => v.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const map = new Map<string, ProjectClient>();
+  const get = (name: string) => {
+    const k = norm(name);
+    if (!k || k === "sem empresa") return null;
+    let c = map.get(k);
+    if (!c) {
+      c = { key: `client:${k}`, name, label: name, sector: "", location: "", website: "" };
+      map.set(k, c);
+    }
+    return c;
+  };
+  for (const r of crm) {
+    const c = get(clean(r.trade_name) || clean(r.name));
+    if (!c) continue;
+    c.crmId ??= r.id;
+    c.sector ||= clean(r.segment);
+    c.location ||= [r.city, r.state].map(clean).filter(Boolean).join(" / ");
+    c.website ||= clean(r.website);
+    c.size ||= r.size;
+    c.country ||= r.country;
   }
+  for (const l of leads) {
+    if (!clean(l.email) && !clean(l.phone)) continue;
+    const c = get(clean(l.company));
+    if (c) c.country ||= l.country;
+  }
+  // Listas já vêm do mais recente para o mais antigo: o primeiro encontrado é o vigente.
   for (const s of scopes) {
-    const name = clean(s.company);
-    if (!name) continue;
-    out.push({ key: `scope:${s.id}`, name, source: "scope", label: `${name} · Escopo inicial (${new Date(s.created_at).toLocaleDateString("pt-BR")})`, sector: "", location: "", website: "" });
+    const c = get(clean(s.company));
+    if (c) c.scopeId ??= s.id;
   }
   for (const g of diags) {
-    const name = clean(g.client_name);
-    if (!name) continue;
-    out.push({ key: `diag:${g.id}`, name, source: "diag", label: `${name} · Diagnóstico${g.service_title ? ` (${g.service_title})` : ""}`, sector: "", location: "", website: "" });
+    const c = get(clean(g.client_name));
+    if (c) c.diagId ??= g.id;
   }
-  return out.sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+  return [...map.values()].sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
 }
