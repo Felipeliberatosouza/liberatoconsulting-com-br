@@ -6,6 +6,7 @@ import {
   CATALOG,
   DEFAULT_PRICING,
   buildQuote,
+  buildScenarioQuote,
   formatMoney,
   type PricedActivity,
   type PricingSettings,
@@ -331,6 +332,16 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
         activities: z.array(activitySchema).max(120),
         options: optionsSchema,
         notes: z.string().trim().max(4000).default(""),
+        scenarios: z
+          .array(
+            z.object({
+              note: z.string().trim().min(1).max(1000),
+              removedIds: z.array(z.string().max(80)).max(120),
+              reducePct: z.number().min(0).max(90),
+            }),
+          )
+          .max(2)
+          .default([]),
       })
       .parse(d),
   )
@@ -361,6 +372,11 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
         serviceTitle: data.serviceTitle,
         clientName: data.clientName,
         notes: data.notes,
+        scenarios: data.scenarios.map((sc) => ({
+          ...sc,
+          quote: buildScenarioQuote(data.activities, settings, data.options, sc),
+          removedLabels: data.activities.filter((a) => a.enabled && sc.removedIds.includes(a.id)).map((a) => a.label),
+        })),
       });
 
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -387,7 +403,7 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
         total_brl: quote.totalBrl,
         total_currency: quote.totalCurrency,
         fx_rate: data.options.fxRate,
-        payload: { quote, options: data.options, notes: data.notes },
+        payload: { quote, options: data.options, notes: data.notes, scenarios: data.scenarios },
         file_path: path,
         file_name: fileName,
         created_by: context.userId,

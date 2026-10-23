@@ -31,6 +31,7 @@ export type QuotePdfInput = {
   serviceTitle: string;
   clientName: string;
   notes: string;
+  scenarios?: Array<{ note: string; reducePct: number; removedLabels: string[]; quote: QuoteResult }>;
 };
 
 /** Monta o corpo do orçamento (etapas, cronograma e total) e gera o PDF. */
@@ -89,6 +90,21 @@ export async function renderQuotePdf(input: QuotePdfInput) {
   }
   lines.push(`| **Total do projeto** | **${money(quote.totalBrl)}** |`);
   lines.push("");
+  const scenarios = input.scenarios ?? [];
+  if (scenarios.length > 0) {
+    lines.push("### Cenários de investimento");
+    lines.push("");
+    lines.push("| Cenário | O que muda | Prazo | Total |");
+    lines.push("|---|---|---|---|");
+    lines.push(`| Cenário 1 (planejado) | Escopo completo, conforme diagnóstico e etapas acima. | ${quote.totalDays.toFixed(0)} dias úteis | ${money(quote.totalBrl)} |`);
+    scenarios.forEach((sc, i) => {
+      const parts = [sc.note.replace(/\|/g, "/").replace(/\n+/g, " ")];
+      if (sc.removedLabels.length) parts.push(`Atividades retiradas: ${sc.removedLabels.join("; ")}.`);
+      if (sc.reducePct > 0) parts.push(`Redução proporcional de ${sc.reducePct}% em todas as atividades.`);
+      lines.push(`| Cenário ${i + 2} | ${parts.join(" ")} | ${sc.quote.totalDays.toFixed(0)} dias úteis | ${money(sc.quote.totalBrl)} |`);
+    });
+    lines.push("");
+  }
   if (cur !== "BRL") {
     lines.push(
       `Valores convertidos a partir de ${formatMoney(quote.totalBrl, "BRL")} pela cotação de referência utilizada na emissão desta proposta.`,
