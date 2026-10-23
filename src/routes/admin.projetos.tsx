@@ -141,7 +141,7 @@ function ProjectsPage() {
         { icon: Presentation, title: "Apresentações geradas", text: `Listagem de todos os materiais de apresentação gerados${counts ? ` (${counts.presentations})` : ""}.`, to: "/admin/projetos/apresentacoes" },
         { icon: Inbox, title: "Escopos iniciais recebidos", text: `Formulários de escopo enviados pelos clientes${counts ? ` (${counts.scopes})` : ""}.`, to: "/admin/projetos/escopos" },
         { icon: Smile, title: "Dashboard de satisfação do cliente", text: "Resultados das pesquisas de satisfação (NPS, notas e motivos).", to: "/admin/projetos/satisfacao" },
-        { icon: FileSearch, title: "Orçamentos gerados", text: "Todos os orçamentos emitidos, com o PDF para visualizar ou baixar.", to: "/admin/precificacao?aba=history" },
+        { icon: FileSearch, title: "Orçamentos gerados", text: "Todos os orçamentos emitidos, com o PDF para visualizar ou baixar.", to: "/admin/precificacao", search: { aba: "history" } },
         { icon: FileSearch, title: "Diagnósticos recebidos", text: `Diagnósticos detalhados registrados${counts ? ` (${counts.diagnostics})` : ""}.`, to: "/admin/projetos/diagnostico" },
       ].map((row) => (
         <div key={row.to} className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-background p-5">
@@ -152,6 +152,7 @@ function ProjectsPage() {
           </div>
           <Link
             to={row.to as never}
+            search={("search" in row ? row.search : undefined) as never}
             className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-ink-foreground hover:bg-accent hover:text-accent-foreground"
           >
             Abrir
