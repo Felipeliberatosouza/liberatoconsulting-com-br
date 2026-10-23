@@ -295,6 +295,7 @@ function PricingPage() {
       data: {
         slug: product.slug,
         serviceTitle: product.title,
+        serviceDescription: [product.lead, product.body].filter(Boolean).join("\n"),
         clientName,
         activities,
         notes,
@@ -788,7 +789,7 @@ function PricingPage() {
                         <tr className="border-t border-border bg-muted/40 font-medium">
                           <td className="px-4 py-2">{p.title}</td>
                           <td className="px-4 py-2">{new Date(`${p.start}T12:00:00`).toLocaleDateString("pt-BR")}</td>
-                          <td className="px-4 py-2">{p.days.toFixed(1)}</td>
+                          <td className="px-4 py-2">{Math.round(p.days)}</td>
                           <td className="px-4 py-2">{new Date(`${p.end}T12:00:00`).toLocaleDateString("pt-BR")}</td>
                           <td className="px-4 py-2 text-right">{money(p.priceBrl)}</td>
                         </tr>
@@ -799,7 +800,7 @@ function PricingPage() {
                               {i.remoteNote && <span className="ml-2 text-xs">(on-line)</span>}
                             </td>
                             <td className="px-4 py-2">{new Date(`${i.start}T12:00:00`).toLocaleDateString("pt-BR")}</td>
-                            <td className="px-4 py-2">{i.days.toFixed(1)}</td>
+                            <td className="px-4 py-2">{Math.round(i.days)}</td>
                             <td className="px-4 py-2">{new Date(`${i.end}T12:00:00`).toLocaleDateString("pt-BR")}</td>
                             <td className="px-4 py-2 text-right">{money(i.priceBrl)}</td>
                           </tr>

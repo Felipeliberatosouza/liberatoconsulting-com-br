@@ -154,6 +154,7 @@ export const saveServicePricing = createServerFn({ method: "POST" })
         slug: z.string().trim().min(1).max(120),
         activities: z.array(activitySchema).max(120),
         notes: z.string().trim().max(4000).default(""),
+        serviceDescription: z.string().trim().max(5000).default(""),
         aiRationale: z.string().trim().max(6000).default(""),
         /** Atualiza os preços do Cadastro de serviços com o valor calculado. */
         updateCatalogPrices: z.boolean().default(true),
@@ -176,6 +177,7 @@ export const saveServicePricing = createServerFn({ method: "POST" })
         product_id: product?.id ?? null,
         activities: data.activities,
         notes: data.notes,
+        serviceDescription: data.serviceDescription,
         ai_rationale: data.aiRationale,
       },
       { onConflict: "slug" },
