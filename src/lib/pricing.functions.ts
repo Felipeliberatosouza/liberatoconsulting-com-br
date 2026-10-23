@@ -6,6 +6,7 @@ import {
   CATALOG,
   DEFAULT_PRICING,
   buildQuote,
+  buildScenarioQuote,
   formatMoney,
   type PricedActivity,
   type PricingSettings,
