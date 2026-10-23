@@ -6,89 +6,95 @@
  * envio. Sem conteúdo novo, nada é criado (o disparo simplesmente é pulado).
  */
 
-type Article = {
-  title: string;
-  summary: string;
-  slug: string;
-  authors: string;
-  article_date: string | null;
-  updated_at: string;
-};
-
 export type AutoResult =
   | { ok: true; campaignId: string }
   | { ok: false; skipped: string }
   | { ok: false; error: string; blocked?: boolean };
 
-/** Conteúdos publicados depois da data informada (ou os mais recentes). */
-async function recentArticles(since: string | null): Promise<Article[]> {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  let query = supabaseAdmin
-    .from("content_articles")
-    .select("title, summary, slug, authors, article_date, updated_at")
-    .eq("published", true)
-    .order("updated_at", { ascending: false })
-    .limit(6);
-  if (since) query = query.gt("updated_at", since);
-  const { data, error } = await query;
-  if (error) throw new Error(error.message);
-  return (data ?? []) as Article[];
-}
-
 /**
- * Cria (em rascunho) a próxima edição da newsletter a partir dos conteúdos
- * publicados desde `since`. Retorna o id da campanha criada.
+ * Cria (em rascunho) a próxima edição da newsletter "Liberato Insights" em
+ * formato de jornal: 1) último artigo, 2) última ferramenta (ou guia + outra
+ * ferramenta), 3) radar econômico/político do Brasil com contato, e por fim
+ * links para o Boletim Semanal e o destaque rotativo.
  */
-export async function autoCreateCampaign(since: string | null): Promise<AutoResult> {
-  const articles = await recentArticles(since);
-  if (articles.length === 0) {
-    return { ok: false as const, skipped: "Nenhum conteúdo novo publicado desde o último envio." };
+export async function autoCreateCampaign(_since: string | null): Promise<AutoResult> {
+  const ed = await import("./editorial.server");
+  const { newsletterToolSection } = await import("./editorial-rules");
+  const article = await ed.latestArticle();
+  if (!article) {
+    return { ok: false as const, skipped: "Nenhum artigo publicado." };
   }
 
   const origin = process.env["PUBLIC_SITE_URL"] || "https://liberatoconsulting.com.br";
-  const { askJson } = await import("./ai.server");
+  const [tools, rot] = await Promise.all([ed.publishedTools(), ed.getRotation()]);
+  const section = newsletterToolSection(tools, rot.newsletterTool ?? null);
+  const footer = await ed.rotatingFeature(origin);
+  const { askJson, askJsonGrounded } = await import("./ai.server");
 
-  type Out = { subject: string; preheader: string; body: string };
-  let out: Out | null = null;
-  try {
-    out = await askJson<Out>(
-      "Você é editor sênior de uma consultoria de gestão brasileira (Liberato Consulting), " +
-        "escrevendo para executivos e investidores internacionais interessados no Brasil. " +
-        "Padrão acadêmico-executivo: dados com fonte e ano, linguagem clara, sem exageros. " +
-        "Português do Brasil.",
-      JSON.stringify({
-        tarefa:
-          "Monte a edição da newsletter periódica reunindo os conteúdos publicados abaixo. " +
-          "Cite cada conteúdo com seu link completo.",
-        conteudos: articles.map((a) => ({
-          titulo: a.title,
-          resumo: a.summary,
-          autores: a.authors,
-          link: `${origin}/content/${a.slug}`,
-        })),
-        formato: {
-          subject: "assunto do e-mail, até 90 caracteres",
-          preheader: "chamada curta de até 160 caracteres",
-          body:
-            "texto da newsletter em parágrafos curtos, no máximo 400 palavras, " +
-            "apresentando cada conteúdo com uma linha de contexto e o link completo. " +
-            "Apenas texto simples, sem markdown e sem HTML.",
-        },
-      }),
-    );
-  } catch {
-    // Sem IA disponível (créditos/limite), a edição é montada com os próprios
-    // conteúdos publicados — o envio nunca fica em silêncio por causa disso.
-    out = null;
-  }
+  type Out = {
+    articleHeadline: string; articleSummary: string;
+    toolHeadline: string; toolSummary: string;
+    preheader: string;
+  };
+  type News = { headline: string; summary: string };
+  const system =
+    "Você é editor sênior da Liberato Consulting (consultoria de gestão brasileira). " +
+    "Escreve para executivos. Português do Brasil, claro, sem exageros.";
+  const [out, news] = await Promise.all([
+    askJson<Out>(system, JSON.stringify({
+      artigo: { titulo: article.title, resumo: article.summary },
+      ferramenta: section.tool ? { titulo: section.tool.title, resumo: section.tool.summary } : null,
+      guia_incluido: section.guide,
+      formato: {
+        articleHeadline: "frase chamativa sobre o artigo, até 90 caracteres",
+        articleSummary: "resumo de 2 a 3 frases do artigo",
+        toolHeadline: "título chamativo para a ferramenta (e o guia, se incluído), até 90 caracteres",
+        toolSummary: "resumo de 2 frases do que o leitor ganha usando",
+        preheader: "chamada de até 160 caracteres",
+      },
+    })).catch(() => null),
+    askJsonGrounded<News>(system, JSON.stringify({
+      tarefa:
+        "Escolha UMA notícia econômica ou política do Brasil desta semana relevante para empresas. " +
+        "Escreva um título chamativo ligando a notícia ao impacto nos negócios e um resumo de 3 a 4 frases " +
+        "com alertas práticos de impacto, terminando com uma frase dizendo que a Liberato Consulting pode " +
+        "ajudar a empresa a se preparar para esses impactos. Sem links.",
+      formato: { headline: "até 100 caracteres", summary: "texto simples" },
+    })).catch(() => null),
+  ]);
 
-  const fallbackBody = [
-    "Confira os conteúdos publicados recentemente pela Liberato Consulting:",
-    ...articles.map((a) => `${a.title}\n${a.summary}\n${origin}/content/${a.slug}`),
-  ].join("\n\n");
+  const toolUrl = section.tool ? `${origin}/ferramentas/${section.tool.slug}` : "";
+  const toolBlock = section.tool || section.guide
+    ? [
+        section.guide ? "## Guia de Gestão e Ferramenta" : "## Nova ferramenta de gestão",
+        `### ${out?.toolHeadline || section.tool?.title || "Guia de Gestão Liberato"}`,
+        out?.toolSummary || section.tool?.summary || "",
+        section.guide ? `Acesse o Guia de Gestão: ${origin}/guia-gestao` : "",
+        section.tool ? `Acesse a ferramenta: ${toolUrl}` : "",
+      ].filter(Boolean).join("\n\n")
+    : "";
+  const newsBlock = news?.headline
+    ? [
+        "## Radar Brasil",
+        `### ${news.headline}`,
+        news.summary,
+        `Fale com a Liberato Consulting: ${origin}/contact`,
+      ].join("\n\n")
+    : "";
+  const body = [
+    "## Artigo em destaque",
+    `### ${out?.articleHeadline || article.title}`,
+    out?.articleSummary || article.summary,
+    `Leia o artigo completo: ${origin}/content/${article.slug}`,
+    toolBlock,
+    newsBlock,
+    "## Continue acompanhando",
+    `Veja como os principais indicadores da economia se moveram nesta semana no Boletim Semanal: ${origin}/boletins`,
+    `${footer.feature.kind === "tool" ? "Coloque os números da sua empresa à prova com" : "Organize a gestão da sua empresa com o"} ${footer.title}: ${footer.url}`,
+  ].filter(Boolean).join("\n\n");
 
-  const subject = (out?.subject ?? "").trim() || `Newsletter Liberato Consulting`;
-  const body = (out?.body ?? "").trim() || fallbackBody;
+  const subject = `Liberato Insights: ${out?.articleHeadline || article.title}`;
+  await ed.saveRotation({ newsletterTool: section.tool?.slug ?? null });
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: created, error } = await supabaseAdmin

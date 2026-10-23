@@ -42,16 +42,25 @@ export function renderCampaignHtml(input: {
   logoUrl?: string;
 }) {
   const labels = labelsFor(input.lang ?? "pt");
+  // Formato de jornal: "## " abre uma seção, "### " é a manchete da seção.
+  let first = true;
   const paragraphs = input.body
     .split(/\n{2,}/)
     .map((p) => p.trim())
     .filter(Boolean)
-    .map(
-      (p) =>
-        `<p style="margin:0 0 14px;font-size:15px;line-height:24px;color:#1f2937">${linkifyEmailHtml(escapeHtml(
-          p,
-        )).replace(/\n/g, "<br />")}</p>`,
-    )
+    .map((p) => {
+      if (p.startsWith("## ")) {
+        const top = first ? "" : "border-top:2px solid #0f172a;";
+        first = false;
+        return `<div style="${top}margin:22px 0 8px;padding-top:12px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#E8630A">${escapeHtml(p.slice(3))}</div>`;
+      }
+      if (p.startsWith("### ")) {
+        return `<h2 style="margin:0 0 10px;font-family:Georgia,'Times New Roman',serif;font-size:22px;line-height:28px;color:#0f172a">${escapeHtml(p.slice(4))}</h2>`;
+      }
+      return `<p style="margin:0 0 14px;font-size:15px;line-height:24px;color:#1f2937">${linkifyEmailHtml(escapeHtml(
+        p,
+      )).replace(/\n/g, "<br />")}</p>`;
+    })
     .join("");
 
   const brandName = input.company?.name || "Liberato Consulting";
@@ -97,7 +106,7 @@ export function renderCampaignText(
   lang: EmailLang = "pt",
 ) {
   const footer = company ? `\n\n${companyFooterText(company)}` : "";
-  return `${body}${footer}\n\n—\n${labelsFor(lang).unsubscribe}: ${unsubscribeUrl}`;
+  return `${body.replace(/^###? /gm, "")}${footer}\n\n—\n${labelsFor(lang).unsubscribe}: ${unsubscribeUrl}`;
 }
 
 
@@ -281,7 +290,7 @@ export async function dispatchCampaign(campaignId: string, testEmail?: string) {
       try {
         const v = await variantFor(lang);
         const { sendWhatsAppMessage } = await import("./bulletin.server");
-        const caption = `*${v.subject}*\n\n${v.body}\n\nCancelar: ${unsubscribeUrl}`;
+        const caption = `*${v.subject}*\n\n${v.body.replace(/^###? /gm, "")}\n\nCancelar: ${unsubscribeUrl}`;
         await sendWhatsAppMessage({
           to: r.whatsapp,
           caption,
@@ -335,15 +344,11 @@ export async function announceArticle(article: {
   };
   if (!settings.autoSendOnPublish || !settings.fromEmail) return;
 
-  const { siteOrigin } = await import("./bulletin.server");
-  const origin = siteOrigin();
-  const body = `${article.summary}\n\nLeia o conteúdo completo: ${origin}/content/${article.slug}`;
-
-  const { data: created } = await supabaseAdmin
-    .from("newsletter_campaigns")
-    .insert({ subject: article.title, preheader: article.summary.slice(0, 160), body, status: "draft" })
-    .select("id")
-    .single();
-  if (!created) return;
+  // Sempre monta a edição com o artigo mais recente, no formato de jornal.
+  void article;
+  const { autoCreateCampaign } = await import("./newsletter-auto.server");
+  const auto = await autoCreateCampaign(null);
+  if (!auto.ok) return;
+  const created = { id: auto.campaignId };
   await dispatchCampaign(created.id as string);
 }

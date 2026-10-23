@@ -58,6 +58,11 @@ export type BulletinContent = {
   articles: Article[];
   company: CompanyFooter;
   logoUrl: string;
+  /** Links finais: última Newsletter e destaque rotativo (ferramenta ou guia). */
+  crossLinks?: {
+    newsletter: { url: string; title: string } | null;
+    feature: { url: string; title: string; kind: "tool" | "guide"; slug: string };
+  };
 };
 
 const LOCALE: Record<EmailLang, string> = {
@@ -174,7 +179,37 @@ export async function buildBulletinContent(segment: string): Promise<BulletinCon
     articles: (articleRows ?? []) as Article[],
     company,
     logoUrl: logo,
+    crossLinks: await bulletinCrossLinks(),
   };
+}
+
+async function bulletinCrossLinks(): Promise<NonNullable<BulletinContent["crossLinks"]>> {
+  const origin = siteOrigin();
+  const ed = await import("./editorial.server");
+  const [nl, f] = await Promise.all([ed.latestNewsletter(), ed.rotatingFeature(origin)]);
+  return {
+    newsletter: nl ? { url: `${origin}/newsletter/${nl.slug}`, title: nl.subject } : null,
+    feature: { url: f.url, title: f.title, kind: f.feature.kind, slug: f.feature.slug },
+  };
+}
+
+function crossLinksHtml(c: BulletinContent["crossLinks"]) {
+  if (!c) return "";
+  const link = (u: string, t: string) =>
+    `<a href="${escapeHtml(u)}" style="font-weight:700;color:#e2751f">${escapeHtml(t)}</a>`;
+  return `<tr><td style="padding:8px 32px 20px">
+  <div style="border-top:2px solid #14192a;padding-top:14px">
+  ${c.newsletter ? `<p style="margin:0 0 10px;font-size:14px;color:#14192a">Quer ir além dos números? Leia a última edição da Newsletter Liberato Insights: ${link(c.newsletter.url, c.newsletter.title)}</p>` : ""}
+  <p style="margin:0;font-size:14px;color:#14192a">${c.feature.kind === "tool" ? "Teste agora com os dados da sua empresa:" : "Leve esses sinais para a sua gestão com o"} ${link(c.feature.url, c.feature.title)}</p>
+  </div></td></tr>`;
+}
+
+function crossLinksText(c: BulletinContent["crossLinks"]) {
+  if (!c) return "";
+  return [
+    c.newsletter ? `Leia a última Newsletter Liberato Insights: ${c.newsletter.title} — ${c.newsletter.url}` : "",
+    `${c.feature.title} — ${c.feature.url}`,
+  ].filter(Boolean).join("\n");
 }
 
 /** HTML do Boletim Semanal (corpo do e-mail), no idioma do destinatário. */
@@ -321,6 +356,8 @@ export function renderBulletinHtml(
   }
 </td></tr>
 
+${crossLinksHtml(content.crossLinks)}
+
 <tr><td style="padding:22px 32px;background:#14192a;color:#f7f6f4">
   ${companyFooterHtml(content.company)}
 </td></tr>
@@ -364,6 +401,8 @@ ${
     ? `\n${L.readLatest} ${content.articles[0].title} — ${origin}/content/${content.articles[0].slug}${suffix}\n`
     : ""
 }
+${crossLinksText(content.crossLinks)}
+
 ${companyFooterText(content.company)}
 
 ${L.stopReceiving}: ${unsubscribeUrl}`;
@@ -746,6 +785,13 @@ export async function dispatchBulletin(options?: {
     status: "enviado",
     segment: options?.testSegment ?? "",
   }).select("id").maybeSingle();
+
+  // Guarda o destaque usado para não repetir a mesma ferramenta na semana seguinte.
+  const usedFeature = [...cache.values()][0]?.crossLinks?.feature;
+  if (!isTest && usedFeature && (sentEmail > 0 || sentWhatsApp > 0)) {
+    const { saveRotation } = await import("./editorial.server");
+    await saveRotation({ bulletin: { kind: usedFeature.kind, slug: usedFeature.slug } });
+  }
 
   const { logDeliveries } = await import("./delivery-log.server");
   await logDeliveries(
