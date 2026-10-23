@@ -1,6 +1,6 @@
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { FormattedNumberInput } from "@/components/FormattedNumberInput";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -93,28 +93,21 @@ export function QuoteScenarios({ activities, base, scenarios, onChange, compute,
             <div className="grid gap-3 md:grid-cols-2">
               <div className="space-y-1.5">
                 <Label>Redução proporcional em todas as atividades (%)</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  max={90}
-                  step="0.5"
+                <FormattedNumberInput
+                  kind="percent"
                   value={s.reducePct}
-                  onChange={(e) => patch(i, { reducePct: Math.max(0, Math.min(90, Number(e.target.value) || 0)) })}
+                  onChange={(v) => patch(i, { reducePct: Math.max(0, Math.min(90, v)) })}
                 />
               </div>
               <div className="space-y-1.5">
                 <Label>Ou informe o preço final desejado (R$)</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  step="1"
-                  placeholder={String(withoutReduction.totalBrl)}
-                  onBlur={(e) => {
-                    const target = Number(e.target.value);
+                <FormattedNumberInput
+                  kind="currency"
+                  value={q.totalBrl}
+                  onChange={(target) => {
                     if (!target || withoutReduction.totalBrl <= 0) return;
                     const pct = (1 - target / withoutReduction.totalBrl) * 100;
                     patch(i, { reducePct: Math.max(0, Math.min(90, Number(pct.toFixed(2)))) });
-                    e.target.value = "";
                   }}
                 />
               </div>

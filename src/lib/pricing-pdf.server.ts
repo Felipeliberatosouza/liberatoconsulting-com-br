@@ -1,4 +1,3 @@
-import { porteLabel } from "./company-size";
 import {
   COUNTRIES,
   formatMoney,
@@ -31,6 +30,7 @@ export type QuotePdfInput = {
   serviceTitle: string;
   clientName: string;
   notes: string;
+  serviceDescription?: string;
   scenarios?: Array<{ note: string; reducePct: number; removedLabels: string[]; quote: QuoteResult }>;
 };
 
@@ -43,13 +43,18 @@ export async function renderQuotePdf(input: QuotePdfInput) {
   const country = COUNTRIES.find((c) => c.id === options.country);
 
   const lines: string[] = [];
+  const desc = (input.serviceDescription ?? "").trim();
+  if (desc) {
+    lines.push("## Sobre o serviço");
+    lines.push("");
+    for (const para of desc.split(/\n+/)) { lines.push(para.trim()); lines.push(""); }
+  }
   lines.push(`## Orçamento e cronograma de execução`);
   lines.push("");
   lines.push(
     [
       input.clientName ? `- Cliente: ${input.clientName}` : "",
       `- Serviço: ${input.serviceTitle}`,
-      `- Porte: ${porteLabel(options.porte || (options.companyType === "corporate" ? "grande" : "pequena"))} (critério Sebrae)`,
       `- Localização: ${country?.label ?? options.country}`,
       `- Início previsto: ${br(quote.start)} · Conclusão prevista: ${br(quote.end)}`,
       `- Prazo total: ${quote.totalDays.toFixed(0)} dias úteis`,
@@ -67,12 +72,12 @@ export async function renderQuotePdf(input: QuotePdfInput) {
   lines.push("|---|---|---|---|---|");
   for (const phase of quote.phases) {
     lines.push(
-      `| ${phase.title} | ${br(phase.start)} | ${phase.days.toFixed(1)} | ${br(phase.end)} | ${money(phase.priceBrl)} |`,
+      `| ${phase.title} | ${br(phase.start)} | ${Math.round(phase.days)} | ${br(phase.end)} | ${money(phase.priceBrl)} |`,
     );
     for (const item of phase.items) {
       const label = item.remoteNote ? `${item.label} (on-line)` : item.label;
       lines.push(
-        `| - ${label} | ${br(item.start)} | ${item.days.toFixed(1)} | ${br(item.end)} | ${money(item.priceBrl)} |`,
+        `| - ${label} | ${br(item.start)} | ${Math.round(item.days)} | ${br(item.end)} | ${money(item.priceBrl)} |`,
       );
     }
   }

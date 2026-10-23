@@ -332,6 +332,7 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
         activities: z.array(activitySchema).max(120),
         options: optionsSchema,
         notes: z.string().trim().max(4000).default(""),
+        serviceDescription: z.string().trim().max(5000).default(""),
         scenarios: z
           .array(
             z.object({
@@ -372,6 +373,7 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
         serviceTitle: data.serviceTitle,
         clientName: data.clientName,
         notes: data.notes,
+        serviceDescription: data.serviceDescription,
         scenarios: data.scenarios.map((sc) => ({
           ...sc,
           quote: buildScenarioQuote(data.activities, settings, data.options, sc),
