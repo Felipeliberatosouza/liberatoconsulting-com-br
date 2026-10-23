@@ -486,15 +486,29 @@ export async function sendWhatsAppMessage(params: {
   const evoInstance = process.env["EVOLUTION_INSTANCE"];
   const evoKey = process.env["EVOLUTION_API_KEY"];
   if (evoUrl && evoInstance && evoKey) {
-    const res = await fetch(
-      `${evoUrl.replace(/\/+$/, "")}/message/sendText/${encodeURIComponent(evoInstance)}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json", apikey: evoKey },
-        body: JSON.stringify({ number: to, text: params.caption }),
-      },
-    );
-    const detail = await res.text();
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 12_000);
+    let res: Response;
+    let detail: string;
+    try {
+      res = await fetch(
+        `${evoUrl.replace(/\/+$/, "")}/message/sendText/${encodeURIComponent(evoInstance)}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", apikey: evoKey },
+          body: JSON.stringify({ number: to, text: params.caption }),
+          signal: ctrl.signal,
+        },
+      );
+      detail = await res.text();
+    } catch (err) {
+      if (ctrl.signal.aborted) {
+        throw new Error("WhatsApp não respondeu em 12 segundos. Reinicie a instância no painel da Evolution API e tente novamente.");
+      }
+      throw err;
+    } finally {
+      clearTimeout(timer);
+    }
     if (!res.ok) {
       console.error(`Evolution API send failed [${res.status}]: ${detail}`);
       throw new Error(`Falha no envio por WhatsApp [${res.status}]: ${detail.slice(0, 200)}`);
