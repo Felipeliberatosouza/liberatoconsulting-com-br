@@ -575,13 +575,10 @@ function DiagnosticPage() {
               ).map(([key, label]) => (
                 <div key={key}>
                   <Label>{label}</Label>
-                  <Input
-                    type="number"
-                    min={0}
+                  <FormattedNumberInput
+                    kind={String(key).endsWith("Pct") ? "percent" : "currency"}
                     value={budget[key]}
-                    onChange={(e) =>
-                      setBudget({ ...budget, [key]: Number(e.target.value) || 0 })
-                    }
+                    onChange={(v) => setBudget((b) => ({ ...b, [key]: Math.max(0, v) }))}
                   />
                 </div>
               ))}
