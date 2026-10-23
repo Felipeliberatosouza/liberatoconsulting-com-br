@@ -77,6 +77,7 @@ import { Route as BoletimCancelarRouteImport } from './routes/boletim.cancelar'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
 import { Route as ContentSlugRouteImport } from './routes/content_.$slug'
 import { Route as ContentEnviarRouteImport } from './routes/content_.enviar'
+import { Route as DiagnosticoTokenRouteImport } from './routes/diagnostico.$token'
 import { Route as FerramentasSlugRouteImport } from './routes/ferramentas_.$slug'
 import { Route as NewsletterSlugRouteImport } from './routes/newsletter.$slug'
 import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
@@ -443,6 +444,11 @@ const ContentEnviarRoute = ContentEnviarRouteImport.update({
   path: '/content/enviar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DiagnosticoTokenRoute = DiagnosticoTokenRouteImport.update({
+  id: '/diagnostico/$token',
+  path: '/diagnostico/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FerramentasSlugRoute = FerramentasSlugRouteImport.update({
   id: '/ferramentas_/$slug',
   path: '/ferramentas/$slug',
@@ -624,6 +630,7 @@ export interface FileRoutesByFullPath {
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
   '/content/enviar': typeof ContentEnviarRoute
+  '/diagnostico/$token': typeof DiagnosticoTokenRoute
   '/ferramentas/$slug': typeof FerramentasSlugRoute
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
@@ -715,6 +722,7 @@ export interface FileRoutesByTo {
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
   '/content/enviar': typeof ContentEnviarRoute
+  '/diagnostico/$token': typeof DiagnosticoTokenRoute
   '/ferramentas/$slug': typeof FerramentasSlugRoute
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
@@ -807,6 +815,7 @@ export interface FileRoutesById {
   '/brasil_/$slug': typeof BrasilSlugRoute
   '/content_/$slug': typeof ContentSlugRoute
   '/content_/enviar': typeof ContentEnviarRoute
+  '/diagnostico/$token': typeof DiagnosticoTokenRoute
   '/ferramentas_/$slug': typeof FerramentasSlugRoute
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
@@ -900,6 +909,7 @@ export interface FileRouteTypes {
     | '/brasil/$slug'
     | '/content/$slug'
     | '/content/enviar'
+    | '/diagnostico/$token'
     | '/ferramentas/$slug'
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
@@ -991,6 +1001,7 @@ export interface FileRouteTypes {
     | '/brasil/$slug'
     | '/content/$slug'
     | '/content/enviar'
+    | '/diagnostico/$token'
     | '/ferramentas/$slug'
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
@@ -1082,6 +1093,7 @@ export interface FileRouteTypes {
     | '/brasil_/$slug'
     | '/content_/$slug'
     | '/content_/enviar'
+    | '/diagnostico/$token'
     | '/ferramentas_/$slug'
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
@@ -1174,6 +1186,7 @@ export interface RootRouteChildren {
   BrasilSlugRoute: typeof BrasilSlugRoute
   ContentSlugRoute: typeof ContentSlugRoute
   ContentEnviarRoute: typeof ContentEnviarRoute
+  DiagnosticoTokenRoute: typeof DiagnosticoTokenRoute
   FerramentasSlugRoute: typeof FerramentasSlugRoute
   NewsletterSlugRoute: typeof NewsletterSlugRoute
   NewsletterUnsubscribeRoute: typeof NewsletterUnsubscribeRoute
@@ -1676,6 +1689,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContentEnviarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/diagnostico/$token': {
+      id: '/diagnostico/$token'
+      path: '/diagnostico/$token'
+      fullPath: '/diagnostico/$token'
+      preLoaderRoute: typeof DiagnosticoTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ferramentas_/$slug': {
       id: '/ferramentas_/$slug'
       path: '/ferramentas/$slug'
@@ -1894,6 +1914,7 @@ const rootRouteChildren: RootRouteChildren = {
   BrasilSlugRoute: BrasilSlugRoute,
   ContentSlugRoute: ContentSlugRoute,
   ContentEnviarRoute: ContentEnviarRoute,
+  DiagnosticoTokenRoute: DiagnosticoTokenRoute,
   FerramentasSlugRoute: FerramentasSlugRoute,
   NewsletterSlugRoute: NewsletterSlugRoute,
   NewsletterUnsubscribeRoute: NewsletterUnsubscribeRoute,
