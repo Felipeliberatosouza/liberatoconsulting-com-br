@@ -85,6 +85,7 @@ type Loaded = Extract<Awaited<ReturnType<typeof getInteractiveTool>>, { found: t
 
 function Calculator({ toolId, spec }: { toolId: string; spec: NonNullable<Loaded["spec"]> }) {
   const tt = useTT();
+  const { lang: clang } = useLanguage();
   const [contextEdits, setCtx] = useState<Record<string, string>>({});
   const account = useQuery({ queryKey: ["tools-account"], queryFn: () => getToolsAccount(), retry: false });
   const ctx = prefillCompany(spec.context_fields, contextEdits, account.data?.profile?.company);
@@ -154,7 +155,7 @@ function Calculator({ toolId, spec }: { toolId: string; spec: NonNullable<Loaded
       <div className="bg-background p-5">
         <h3 className="font-bold">Conclusões e recomendações</h3>
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm">{(result.recommendations.length ? result.recommendations : [tt.ok]).map((r) => <li key={r}>{r}</li>)}</ul>
-        <p className="mt-4 text-xs text-muted-foreground"><ShieldCheck className="mr-1 inline size-3.5" />{({pt:"Metodologia",en:"Methodology",es:"Metodología",zh:"方法"} as const)[useLanguage().lang] ?? "Metodologia"}: {spec.methodology}</p>
+        <p className="mt-4 text-xs text-muted-foreground"><ShieldCheck className="mr-1 inline size-3.5" />{({pt:"Metodologia",en:"Methodology",es:"Metodología",zh:"方法"} as const)[clang] ?? "Metodologia"}: {spec.methodology}</p>
       </div>
     </section>
   );
