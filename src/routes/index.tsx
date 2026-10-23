@@ -22,6 +22,7 @@ import { SeoKeywordLinks } from "@/components/SeoKeywordLinks";
 import { FilterScopeBadge } from "@/components/SiteFilterBar";
 import { useAudienceFilters } from "@/lib/audience-filters";
 import { useLanguage } from "@/i18n";
+import { homeText } from "@/lib/home-translations";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { seoPageMeta } from "@/lib/seo-meta";
 import { itemList, jsonLd, webPageSchema } from "@/lib/schema";
@@ -73,7 +74,8 @@ const SLIDE_IMAGES: Record<string, string> = {
 };
 
 function HeroCarousel() {
-  const { t, hero } = useLanguage();
+  const { t, hero, lang } = useLanguage();
+  const h = homeText(lang);
   const scope = useAudienceFilters();
   const [index, setIndex] = useState(0);
   const [loadedAll, setLoadedAll] = useState(false);
@@ -198,7 +200,7 @@ function HeroCarousel() {
         <p className="mt-6 max-w-xl text-lg text-ink-foreground/75">{slide.body}</p>
         {scope.applied && (
           <p className="mt-4 max-w-xl text-sm text-ink-foreground/70">
-            Conteúdo destacado para{" "}
+            {h.highlightedFor}{" "}
             <span className="font-semibold text-accent">{scope.label}</span>.
           </p>
         )}
@@ -240,7 +242,7 @@ function HeroCarousel() {
             <button
               type="button"
               onClick={() => setIndex((i) => (i - 1 + count) % count)}
-              aria-label="Banner anterior"
+              aria-label={h.prevBanner}
               className="rounded-full border border-ink-foreground/25 p-3 transition-colors hover:bg-ink-foreground/10"
             >
               <ChevronLeft className="size-4" />
@@ -248,7 +250,7 @@ function HeroCarousel() {
             <button
               type="button"
               onClick={() => setIndex((i) => (i + 1) % count)}
-              aria-label="Próximo banner"
+              aria-label={h.nextBanner}
               className="rounded-full border border-ink-foreground/25 p-3 transition-colors hover:bg-ink-foreground/10"
             >
               <ChevronRight className="size-4" />
@@ -277,7 +279,7 @@ function HeroCarousel() {
 }
 
 function Index() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   return (
     <div>
@@ -421,7 +423,7 @@ function Index() {
 
       <SeoKeywordLinks
         themeIds={["gestao", "operacoes", "treinamento", "ia", "pesquisas", "brasil", "financas"]}
-        title="Consultoria empresarial: temas mais procurados"
+        title={homeText(lang).keywordsTitle}
       />
 
       <FaqSection />
