@@ -111,3 +111,8 @@
 - [x] Página do cliente: coleta de dados, resultados, gráfico, PDF e PowerPoint com dados da empresa
 - [x] Cadastro de compra com CPF/CNPJ e confirmação de celular; cobrança PIX/boleto/cartão via Asaas
 - [ ] Chaves do Asaas (aguardando o usuário)
+
+## Projetos em 6 etapas + Contrato e NDA (23/10/2026)
+- [x] Menu e visão em 6 etapas
+- [x] NDA e contrato de consultoria (cláusula de uso da marca, confidencialidade, Anexo I = orçamento)
+- [ ] Ferramentas "gratuita com indicação de amigo" (pedido anterior; aguarda confirmação do usuário para iniciar)

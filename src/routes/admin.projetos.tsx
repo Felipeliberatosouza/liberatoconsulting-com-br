@@ -48,26 +48,36 @@ function ProjectsPage() {
     },
     {
       n: 3,
-      title: "Organização e Precificação do Projeto",
-      description: "Parâmetros de custo e desenho das etapas de cada serviço.",
+      title: "Precificação e Orçamentos",
+      description: "Custo, etapas de cada serviço, orçamento em cenários e orçamentos gerados.",
       icon: Wallet,
       to: "/admin/precificacao",
       search: { aba: "rates" } as never,
       badge: "",
-      items: ["Valor do homem-hora", "Etapas por serviço"],
+      items: ["Valor do homem-hora", "Etapas por serviço", "Gerar orçamento", "Orçamentos gerados"],
     },
     {
       n: 4,
-      title: "Apresentação e Orçamento",
-      description: "Orçamento em PDF e material de apresentação comercial personalizado.",
-      icon: Receipt,
-      to: "/admin/precificacao",
-      search: { aba: "quote" } as never,
+      title: "Apresentações",
+      description: "Apresentação comercial personalizada, com preço e prazos do orçamento.",
+      icon: Presentation,
+      to: "/admin/projetos/apresentacoes",
+      search: undefined as never,
       badge: "",
-      items: ["Valor do homem-hora", "Etapas por serviço", "Gerar orçamento", "Material para Apresentação"],
+      items: ["Gerar apresentação", "Apresentações geradas"],
     },
     {
       n: 5,
+      title: "Contrato e NDA",
+      description: "NDA antes de qualquer troca de informações e contrato com o orçamento como anexo.",
+      icon: Receipt,
+      to: "/admin/projetos/contratos",
+      search: undefined as never,
+      badge: "",
+      items: ["NDA (confidencialidade)", "Contrato de consultoria", "Anexo I: orçamento aprovado"],
+    },
+    {
+      n: 6,
       title: "Satisfação do Cliente",
       description: "Pesquisas de serviço executado e não executado, com dashboard de resultados.",
       icon: Smile,
@@ -81,10 +91,10 @@ function ProjectsPage() {
   return (
     <AdminShell
       title="Projetos"
-      description="Atendimento às solicitações de clientes em cinco etapas, do primeiro contato ao orçamento enviado."
+      description="Atendimento às solicitações de clientes em seis etapas, do primeiro contato à satisfação do cliente."
       requireAdmin
     >
-      <div className="grid gap-4 lg:grid-cols-5">
+      <div className="grid gap-4 lg:grid-cols-6">
         {steps.map((step, i) => (
           <div key={step.n} className="relative">
             <Link
