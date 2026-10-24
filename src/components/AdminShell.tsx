@@ -26,12 +26,13 @@ const NAV_GROUPS: Array<{ label: string; items: NavItem[] }> = [
   {
     label: "Projetos",
     items: [
-      { to: "/admin/projetos", label: "Visão das 5 etapas", exact: true },
+      { to: "/admin/projetos", label: "Visão das 6 etapas", exact: true },
       { to: "/admin/projetos/escopos", label: "1. Escopos iniciais" },
       { to: "/admin/projetos/diagnostico", label: "2. Diagnóstico detalhado" },
-      { to: "/admin/precificacao", label: "3. Precificação" },
-      { to: "/admin/projetos/apresentacoes", label: "4. Apresentações e orçamentos" },
-      { to: "/admin/projetos/satisfacao", label: "5. Satisfação do cliente" },
+      { to: "/admin/precificacao", label: "3. Precificação e orçamentos" },
+      { to: "/admin/projetos/apresentacoes", label: "4. Apresentações" },
+      { to: "/admin/projetos/contratos", label: "5. Contrato e NDA" },
+      { to: "/admin/projetos/satisfacao", label: "6. Satisfação do cliente" },
     ],
   },
   {
