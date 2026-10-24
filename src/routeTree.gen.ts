@@ -85,6 +85,7 @@ import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as AdminProjetosApresentacaoRouteImport } from './routes/admin.projetos_.apresentacao'
 import { Route as AdminProjetosApresentacoesRouteImport } from './routes/admin.projetos_.apresentacoes'
+import { Route as AdminProjetosContratosRouteImport } from './routes/admin.projetos_.contratos'
 import { Route as AdminProjetosDiagnosticoRouteImport } from './routes/admin.projetos_.diagnostico'
 import { Route as AdminProjetosEscoposRouteImport } from './routes/admin.projetos_.escopos'
 import { Route as AdminProjetosSatisfacaoRouteImport } from './routes/admin.projetos_.satisfacao'
@@ -486,6 +487,11 @@ const AdminProjetosApresentacoesRoute =
     path: '/admin/projetos/apresentacoes',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AdminProjetosContratosRoute = AdminProjetosContratosRouteImport.update({
+  id: '/admin/projetos_/contratos',
+  path: '/admin/projetos/contratos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminProjetosDiagnosticoRoute =
   AdminProjetosDiagnosticoRouteImport.update({
     id: '/admin/projetos_/diagnostico',
@@ -639,6 +645,7 @@ export interface FileRoutesByFullPath {
   '/services/': typeof ServicesIndexRoute
   '/admin/projetos/apresentacao': typeof AdminProjetosApresentacaoRoute
   '/admin/projetos/apresentacoes': typeof AdminProjetosApresentacoesRoute
+  '/admin/projetos/contratos': typeof AdminProjetosContratosRoute
   '/admin/projetos/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
   '/admin/projetos/satisfacao': typeof AdminProjetosSatisfacaoRoute
@@ -731,6 +738,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesIndexRoute
   '/admin/projetos/apresentacao': typeof AdminProjetosApresentacaoRoute
   '/admin/projetos/apresentacoes': typeof AdminProjetosApresentacoesRoute
+  '/admin/projetos/contratos': typeof AdminProjetosContratosRoute
   '/admin/projetos/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos/escopos': typeof AdminProjetosEscoposRoute
   '/admin/projetos/satisfacao': typeof AdminProjetosSatisfacaoRoute
@@ -824,6 +832,7 @@ export interface FileRoutesById {
   '/services/': typeof ServicesIndexRoute
   '/admin/projetos_/apresentacao': typeof AdminProjetosApresentacaoRoute
   '/admin/projetos_/apresentacoes': typeof AdminProjetosApresentacoesRoute
+  '/admin/projetos_/contratos': typeof AdminProjetosContratosRoute
   '/admin/projetos_/diagnostico': typeof AdminProjetosDiagnosticoRoute
   '/admin/projetos_/escopos': typeof AdminProjetosEscoposRoute
   '/admin/projetos_/satisfacao': typeof AdminProjetosSatisfacaoRoute
@@ -918,6 +927,7 @@ export interface FileRouteTypes {
     | '/services/'
     | '/admin/projetos/apresentacao'
     | '/admin/projetos/apresentacoes'
+    | '/admin/projetos/contratos'
     | '/admin/projetos/diagnostico'
     | '/admin/projetos/escopos'
     | '/admin/projetos/satisfacao'
@@ -1010,6 +1020,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/admin/projetos/apresentacao'
     | '/admin/projetos/apresentacoes'
+    | '/admin/projetos/contratos'
     | '/admin/projetos/diagnostico'
     | '/admin/projetos/escopos'
     | '/admin/projetos/satisfacao'
@@ -1102,6 +1113,7 @@ export interface FileRouteTypes {
     | '/services/'
     | '/admin/projetos_/apresentacao'
     | '/admin/projetos_/apresentacoes'
+    | '/admin/projetos_/contratos'
     | '/admin/projetos_/diagnostico'
     | '/admin/projetos_/escopos'
     | '/admin/projetos_/satisfacao'
@@ -1195,6 +1207,7 @@ export interface RootRouteChildren {
   ServicesIndexRoute: typeof ServicesIndexRoute
   AdminProjetosApresentacaoRoute: typeof AdminProjetosApresentacaoRoute
   AdminProjetosApresentacoesRoute: typeof AdminProjetosApresentacoesRoute
+  AdminProjetosContratosRoute: typeof AdminProjetosContratosRoute
   AdminProjetosDiagnosticoRoute: typeof AdminProjetosDiagnosticoRoute
   AdminProjetosEscoposRoute: typeof AdminProjetosEscoposRoute
   AdminProjetosSatisfacaoRoute: typeof AdminProjetosSatisfacaoRoute
@@ -1745,6 +1758,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProjetosApresentacoesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/projetos_/contratos': {
+      id: '/admin/projetos_/contratos'
+      path: '/admin/projetos/contratos'
+      fullPath: '/admin/projetos/contratos'
+      preLoaderRoute: typeof AdminProjetosContratosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/projetos_/diagnostico': {
       id: '/admin/projetos_/diagnostico'
       path: '/admin/projetos/diagnostico'
@@ -1923,6 +1943,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesIndexRoute: ServicesIndexRoute,
   AdminProjetosApresentacaoRoute: AdminProjetosApresentacaoRoute,
   AdminProjetosApresentacoesRoute: AdminProjetosApresentacoesRoute,
+  AdminProjetosContratosRoute: AdminProjetosContratosRoute,
   AdminProjetosDiagnosticoRoute: AdminProjetosDiagnosticoRoute,
   AdminProjetosEscoposRoute: AdminProjetosEscoposRoute,
   AdminProjetosSatisfacaoRoute: AdminProjetosSatisfacaoRoute,
