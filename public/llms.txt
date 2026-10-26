@@ -2,19 +2,26 @@
 
 > Consultoria em gestão empresarial com inteligência artificial aplicada à estratégia, operações, finanças, vendas, treinamentos in company e pesquisas de mercado sobre o Brasil. Atende em português, inglês, espanhol e chinês.
 
-A Liberato Consulting apoia micro, pequenas, médias e grandes empresas (classificação Sebrae), investidores e empresas estrangeiras que querem entrar ou crescer no Brasil. O trabalho segue um processo em etapas: escopo inicial, diagnóstico empresarial, orçamento (com até três cenários de investimento), execução e pesquisa de satisfação. Oferece ferramentas interativas de gestão com relatórios em PDF e PowerPoint, a Newsletter Insights e o Boletim Semanal de indicadores do Brasil.
+A Liberato Consulting apoia micro, pequenas, médias e grandes empresas (classificação Sebrae), investidores e empresas estrangeiras que querem entrar ou crescer no Brasil. Projetos são organizados em seis etapas: Escopo Inicial, Diagnóstico, Precificação e Orçamentos, Apresentações, Contrato e NDA, Satisfação do Cliente. O NDA é assinado antes da troca de informações confidenciais; o contrato reforça a confidencialidade e anexa o orçamento aprovado.
 
-Contato: contato@liberatoconsulting.com.br · +55 11 91325-8668. Versões em outros idiomas usam o prefixo /en, /es e /zh.
+O diagnóstico utiliza perguntas personalizadas, alternativas e explicações detalhadas. O orçamento pode apresentar até três cenários, mantendo o planejamento original no primeiro e explicando alterações nos demais. Apresentações podem utilizar preços e prazos do orçamento selecionado. Documentos de assinatura, respostas de clientes e convites exclusivos não são conteúdos públicos.
+
+Ferramentas interativas oferecem resultados, gráficos e relatórios em PDF e PowerPoint. Cada ferramenta informa sua modalidade: gratuita, paga ou gratuita com indicação autorizada de amigo por e-mail ou WhatsApp. O convite permite uma abertura sem cadastro; acessos posteriores exigem cadastro e seguem a modalidade da ferramenta. Pagamentos, quando disponíveis, são processados pelo Asaas.
+
+Liberato Insights apresenta o artigo publicado mais recente, ferramentas ou guia de gestão e o Radar Brasil, com possíveis impactos de notícias econômicas ou políticas nos negócios. O Boletim Semanal reúne indicadores do Brasil; os dois conteúdos incluem links cruzados e alternam ferramentas e guia. O recebimento depende das autorizações aplicáveis e permite descadastro.
+
+Os idiomas utilizam o mesmo caminho com o parâmetro ?lang=en, ?lang=es ou ?lang=zh; português é a fonte do conteúdo. Para contato, consulte os dados atuais na página Contato.
 
 ## Páginas
 
 - [Início](https://liberatoconsulting.com.br/): Visão geral, resultados, impactos e perguntas frequentes.
-- [Serviços](https://liberatoconsulting.com.br/services): Onze famílias de soluções de consultoria.
+- [Serviços](https://liberatoconsulting.com.br/services): Catálogo atualizado de soluções de consultoria.
 - [Treinamento in Company](https://liberatoconsulting.com.br/services/treinamento-in-company): Oito programas de capacitação para equipes.
 - [Quem somos](https://liberatoconsulting.com.br/about): História, DNA Liberato, equipe e valores.
 - [Brasil](https://liberatoconsulting.com.br/brasil): Dados, indicadores e pesquisas de mercado sobre o Brasil.
 - [Conteúdos](https://liberatoconsulting.com.br/content): Artigos sobre gestão, estratégia e IA.
-- [Ferramentas de Gestão](https://liberatoconsulting.com.br/ferramentas): Guias, planilhas e ferramentas interativas gratuitas ou pagas.
+- [Ferramentas de Gestão](https://liberatoconsulting.com.br/ferramentas): Guias, planilhas e ferramentas interativas gratuitas, pagas ou gratuitas com indicação.
+- [Guia de Gestão](https://liberatoconsulting.com.br/guia-gestao): Apresentação pública do guia e acesso à biblioteca; materiais podem exigir cadastro.
 - [Newsletters](https://liberatoconsulting.com.br/newsletters): Edições da Newsletter Insights.
 - [Boletins Semanais](https://liberatoconsulting.com.br/boletins): Indicadores econômicos e análises semanais.
 - [Contato](https://liberatoconsulting.com.br/contact): Fale com a consultoria.

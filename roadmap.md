@@ -1,4 +1,9 @@
 
+## FAQ e descoberta pública (26/10/2026)
+- [x] Revisar perguntas existentes e acrescentar processos recentes em PT/EN/ES/ZH (22 perguntas por idioma)
+- [x] Atualizar llms.txt, robots.txt e sitemap preservando páginas privadas
+- [x] Conferir FAQ nos quatro idiomas, arquivos públicos e 133 URLs por sitemap; dois testes de paginação aprovados
+
 ## Apresentações comerciais — Tiki (22/10/2026)
 - [x] Contraste automático das logos sem recoloração
 - [x] Guia, ferramenta relevante e últimas publicações com links no PPT/PDF
