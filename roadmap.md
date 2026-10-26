@@ -115,6 +115,8 @@
 ## Projetos em 6 etapas + Contrato e NDA (23/10/2026)
 - [x] Menu e visão em 6 etapas
 - [x] NDA e contrato de consultoria (cláusula de uso da marca, confidencialidade, Anexo I = orçamento)
-- [ ] Ferramentas gratuitas por indicação: modalidade, envio, descadastro e acesso único sem cadastro
-- [ ] Assinatura eletrônica de NDA e contrato: documento imutável, confirmação de e-mail e evidências
-- [ ] Testes de acesso, assinatura e verificação visual dos novos fluxos
+- [x] Ferramentas gratuitas por indicação: modalidade, envio, descadastro e acesso único sem cadastro
+- [x] Assinatura eletrônica de NDA e contrato: documento imutável, confirmação de e-mail e evidências
+- [x] 27 testes de regras/documentos e verificação visual de proteção dos links e direcionamento para cadastro
+- [ ] Validar indicação real e assinatura completa com conta autorizada — a sessão automática não encontrou conta do solicitante; aguarda login no preview e confirmação de e-mail dos signatários
+- [ ] Verificar entrega real de WhatsApp por indicação — depende da conexão Evolution ativa e teste autorizado com destinatário
