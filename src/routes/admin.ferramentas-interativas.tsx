@@ -34,7 +34,8 @@ async function spreadsheetToText(file: File): Promise<string> {
   const parts: string[] = [];
   let count = 0;
   for (const name of wb.SheetNames) {
-    const ws = wb.Sheets[name]!;
+    const ws = wb.Sheets[name];
+    if (!ws) continue;
     parts.push(`### Aba: ${name}`);
     for (const addr of Object.keys(ws)) {
       if (addr.startsWith("!")) continue;
@@ -51,6 +52,7 @@ function AdminInteractiveTools() {
   const q = useQuery({ queryKey: ["admin-interactive-tools"], queryFn: () => listInteractiveToolsAdmin() });
   const generate = useServerFn(generateInteractiveTool);
   const [prompt, setPrompt] = useState("");
+  const [pricingMode, setPricingMode] = useState<"free" | "paid" | "referral">("free");
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -60,7 +62,7 @@ function AdminInteractiveTools() {
     setBusy(true);
     try {
       const spreadsheet = file ? await spreadsheetToText(file) : undefined;
-      const r = await generate({ data: { prompt: text, spreadsheet, toolId } });
+      const r = await generate({ data: { prompt: text, spreadsheet, toolId, pricing_mode: pricingMode } });
       if (!r.ok) { toast.error(r.error); return; }
       if (r.issues.length) toast.warning("A ferramenta foi criada, mas não passou em todos os testes de cálculo. Revise antes de publicar.");
       else if (r.reviewIssues.length) toast.warning("Testes aprovados; o auditor deixou observações.");
@@ -77,6 +79,7 @@ function AdminInteractiveTools() {
       <section className="border border-border bg-card p-6">
         <h2 className="text-xl font-bold">Criar nova ferramenta</h2>
         <p className="mt-1 text-sm text-muted-foreground">Um agente de IA desenha a ferramenta; o sistema executa os cálculos em código e roda casos de teste; um segundo agente audita conceitos e fórmulas. Só ferramentas aprovadas nos testes podem ser publicadas.</p>
+        <label className="mt-4 block text-sm font-medium">Forma de acesso<select className={field} value={pricingMode} onChange={e => setPricingMode(e.target.value as "free" | "paid" | "referral" | "referral")}><option value="free">Gratuita</option><option value="paid">Paga</option><option value="referral">Gratuita com indicação de amigo</option></select></label>
         <label className="mt-4 block text-sm font-medium">O que a ferramenta deve fazer? *
           <textarea rows={4} value={prompt} onChange={(e) => setPrompt(e.target.value)} className={field} placeholder="Ex.: Ferramenta de Ponto de Equilíbrio de um produto: coletar custo fixo mensal, preço e custo variável unitário, e mostrar a quantidade mínima a vender e o preço mínimo para não ter prejuízo, com gráfico." />
         </label>
@@ -113,7 +116,7 @@ function ToolCard({ tool, sales, busy, onChanged, onRegenerate }: { tool: Intera
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">{tool.category} · {tool.status === "published" ? "Publicada" : "Rascunho"}</p>
           <h3 className="mt-1 text-lg font-bold">{tool.title}</h3>
-          <p className={`mt-1 text-xs font-semibold ${failed ? "text-destructive" : "text-accent"}`}>{failed ? `Reprovada nos testes de cálculo (${v.issues!.length} problema(s))` : `Aprovada em ${tool.spec.test_cases?.length ?? 0} casos de teste${v.reviewIssues?.length ? " · auditor com observações" : " · auditoria sem ressalvas"}`}</p>
+          <p className={`mt-1 text-xs font-semibold ${failed ? "text-destructive" : "text-accent"}`}>{failed ? `Reprovada nos testes de cálculo (${v.issues?.length ?? 0} problema(s))` : `Aprovada em ${tool.spec.test_cases?.length ?? 0} casos de teste${v.reviewIssues?.length ? " · auditor com observações" : " · auditoria sem ressalvas"}`}</p>
         </div>
         <div className="flex gap-2">
           <Button size="sm" variant="outline" onClick={() => { void navigator.clipboard.writeText(url); toast.success("Link copiado."); }}><Copy /> Copiar link</Button>
@@ -131,9 +134,9 @@ function ToolCard({ tool, sales, busy, onChanged, onRegenerate }: { tool: Intera
 
       <div className="mt-4 grid gap-3 rounded-md bg-secondary/50 p-4 md:grid-cols-5">
         <div><p className="text-xs text-muted-foreground">Custo de IA (estimado)</p><p className="text-lg font-bold">{brl(cost, 4)}</p><p className="text-[11px] text-muted-foreground">{v.usage?.length ?? 0} chamadas de agentes</p></div>
-        <label className="text-sm font-medium">Cobrança<select value={f.pricing_mode} onChange={(e) => setF({ ...f, pricing_mode: e.target.value as "free" | "paid" })} className={field}><option value="free">Gratuita</option><option value="paid">Paga</option></select></label>
+        <label className="text-sm font-medium">Cobrança<select value={f.pricing_mode} onChange={(e) => setF({ ...f, pricing_mode: e.target.value as "free" | "paid" | "referral" })} className={field}><option value="free">Gratuita</option><option value="paid">Paga</option><option value="referral">Gratuita com indicação de amigo</option></select></label>
         <label className="text-sm font-medium">Markup (%)<input type="number" min={0} value={f.markup_pct} onChange={(e) => setF({ ...f, markup_pct: Number(e.target.value) })} className={field} /><span className="text-[11px] font-normal text-muted-foreground">Sugerido: {brl(suggested)}</span></label>
-        <label className="text-sm font-medium">Preço de venda (R$)<input type="number" min={0} step="0.01" value={f.price_brl} disabled={f.pricing_mode === "free"} onChange={(e) => setF({ ...f, price_brl: Number(e.target.value) })} className={field} /><button type="button" className="text-[11px] text-accent underline" onClick={() => setF({ ...f, price_brl: Math.max(5, suggested) })}>Usar custo + markup</button></label>
+        <label className="text-sm font-medium">Preço de venda (R$)<input type="number" min={0} step="0.01" value={f.price_brl} disabled={f.pricing_mode !== "paid"} onChange={(e) => setF({ ...f, price_brl: Number(e.target.value) })} className={field} /><button type="button" className="text-[11px] text-accent underline" onClick={() => setF({ ...f, price_brl: Math.max(5, suggested) })}>Usar custo + markup</button></label>
         <div><p className="text-xs text-muted-foreground">Vendas</p><p className="text-lg font-bold">{paid.length}</p><p className="text-[11px] text-muted-foreground">{brl(paid.reduce((s, o) => s + Number(o.amount_brl), 0))} recebidos</p></div>
       </div>
 

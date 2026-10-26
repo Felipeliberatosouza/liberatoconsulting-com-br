@@ -9,7 +9,7 @@ export const referTool = createServerFn({method:'POST'}).middleware([requireSupa
  const recipient=data.channel==='email'?z.string().email().parse(data.recipient).toLowerCase():data.recipient.replace(/\D/g,'');
  if(data.channel==='whatsapp'&&!/^[1-9]\d{9,14}$/.test(recipient)) throw new Error('Informe o WhatsApp com código do país e DDD.');
  if(data.channel==='email'&&recipient===String(context.claims?.email??'').toLowerCase()) throw new Error('Indique outra pessoa, não seu próprio contato.');
- const {data:profile,error:profileError}=await sb.from('tools_profiles').select('phone').eq('user_id',context.userId).maybeSingle();
+ const {data:profile,error:profileError}=await sb.from('tool_user_profiles').select('phone').eq('user_id',context.userId).maybeSingle();
  if(profileError) throw profileError;
  if(data.channel==='whatsapp'&&profile?.phone?.replace(/\D/g,'')===recipient) throw new Error('Indique outra pessoa, não seu próprio contato.');
  const {data:t,error:te}=await sb.from('interactive_tools').select('id,slug,title,summary,status,pricing_mode').eq('id',data.toolId).eq('status','published').maybeSingle();
@@ -22,7 +22,6 @@ export const referTool = createServerFn({method:'POST'}).middleware([requireSupa
  const token=crypto.randomUUID().replace(/-/g,'')+crypto.randomUUID().replace(/-/g,'');
  const {data:r,error}=await sb.from('tool_referrals').insert({tool_id:t.id,slug:t.slug,user_id:context.userId,channel:data.channel,recipient,recipient_hash:rh,token_hash:await hash(token)}).select('id').single(); if(error) throw error;
  const url=`https://liberatoconsulting.com.br/indicar/${t.slug}#${token}`;
- const sender=String(context.claims?.email??'Um amigo');
  const message=`Um amigo indicou a ferramenta ${t.title}, da Liberato Consulting.\n${t.summary}\nExperimente uma vez gratuitamente, sem cadastro: ${url}\nPara não receber mais indicações, abra o mesmo link e escolha “Não receber indicações”.`;
  try {
   if(data.channel==='email') {

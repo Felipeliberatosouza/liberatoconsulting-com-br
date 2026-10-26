@@ -72,6 +72,7 @@ import { Route as AdminTextsRouteImport } from './routes/admin.texts'
 import { Route as AdminThemeRouteImport } from './routes/admin.theme'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminUsoRouteImport } from './routes/admin.uso'
+import { Route as AssinarSlugRouteImport } from './routes/assinar.$slug'
 import { Route as AutorizarTokenRouteImport } from './routes/autorizar.$token'
 import { Route as BoletimCancelarRouteImport } from './routes/boletim.cancelar'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
@@ -79,6 +80,7 @@ import { Route as ContentSlugRouteImport } from './routes/content_.$slug'
 import { Route as ContentEnviarRouteImport } from './routes/content_.enviar'
 import { Route as DiagnosticoTokenRouteImport } from './routes/diagnostico.$token'
 import { Route as FerramentasSlugRouteImport } from './routes/ferramentas_.$slug'
+import { Route as IndicarSlugRouteImport } from './routes/indicar.$slug'
 import { Route as NewsletterSlugRouteImport } from './routes/newsletter.$slug'
 import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
@@ -420,6 +422,11 @@ const AdminUsoRoute = AdminUsoRouteImport.update({
   path: '/admin/uso',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AssinarSlugRoute = AssinarSlugRouteImport.update({
+  id: '/assinar/$slug',
+  path: '/assinar/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AutorizarTokenRoute = AutorizarTokenRouteImport.update({
   id: '/autorizar/$token',
   path: '/autorizar/$token',
@@ -453,6 +460,11 @@ const DiagnosticoTokenRoute = DiagnosticoTokenRouteImport.update({
 const FerramentasSlugRoute = FerramentasSlugRouteImport.update({
   id: '/ferramentas_/$slug',
   path: '/ferramentas/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndicarSlugRoute = IndicarSlugRouteImport.update({
+  id: '/indicar/$slug',
+  path: '/indicar/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsletterSlugRoute = NewsletterSlugRouteImport.update({
@@ -631,6 +643,7 @@ export interface FileRoutesByFullPath {
   '/admin/theme': typeof AdminThemeRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/uso': typeof AdminUsoRoute
+  '/assinar/$slug': typeof AssinarSlugRoute
   '/autorizar/$token': typeof AutorizarTokenRoute
   '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil/$slug': typeof BrasilSlugRoute
@@ -638,6 +651,7 @@ export interface FileRoutesByFullPath {
   '/content/enviar': typeof ContentEnviarRoute
   '/diagnostico/$token': typeof DiagnosticoTokenRoute
   '/ferramentas/$slug': typeof FerramentasSlugRoute
+  '/indicar/$slug': typeof IndicarSlugRoute
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
@@ -724,6 +738,7 @@ export interface FileRoutesByTo {
   '/admin/theme': typeof AdminThemeRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/uso': typeof AdminUsoRoute
+  '/assinar/$slug': typeof AssinarSlugRoute
   '/autorizar/$token': typeof AutorizarTokenRoute
   '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil/$slug': typeof BrasilSlugRoute
@@ -731,6 +746,7 @@ export interface FileRoutesByTo {
   '/content/enviar': typeof ContentEnviarRoute
   '/diagnostico/$token': typeof DiagnosticoTokenRoute
   '/ferramentas/$slug': typeof FerramentasSlugRoute
+  '/indicar/$slug': typeof IndicarSlugRoute
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
@@ -818,6 +834,7 @@ export interface FileRoutesById {
   '/admin/theme': typeof AdminThemeRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/uso': typeof AdminUsoRoute
+  '/assinar/$slug': typeof AssinarSlugRoute
   '/autorizar/$token': typeof AutorizarTokenRoute
   '/boletim/cancelar': typeof BoletimCancelarRoute
   '/brasil_/$slug': typeof BrasilSlugRoute
@@ -825,6 +842,7 @@ export interface FileRoutesById {
   '/content_/enviar': typeof ContentEnviarRoute
   '/diagnostico/$token': typeof DiagnosticoTokenRoute
   '/ferramentas_/$slug': typeof FerramentasSlugRoute
+  '/indicar/$slug': typeof IndicarSlugRoute
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
@@ -913,6 +931,7 @@ export interface FileRouteTypes {
     | '/admin/theme'
     | '/admin/users'
     | '/admin/uso'
+    | '/assinar/$slug'
     | '/autorizar/$token'
     | '/boletim/cancelar'
     | '/brasil/$slug'
@@ -920,6 +939,7 @@ export interface FileRouteTypes {
     | '/content/enviar'
     | '/diagnostico/$token'
     | '/ferramentas/$slug'
+    | '/indicar/$slug'
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
@@ -1006,6 +1026,7 @@ export interface FileRouteTypes {
     | '/admin/theme'
     | '/admin/users'
     | '/admin/uso'
+    | '/assinar/$slug'
     | '/autorizar/$token'
     | '/boletim/cancelar'
     | '/brasil/$slug'
@@ -1013,6 +1034,7 @@ export interface FileRouteTypes {
     | '/content/enviar'
     | '/diagnostico/$token'
     | '/ferramentas/$slug'
+    | '/indicar/$slug'
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
@@ -1099,6 +1121,7 @@ export interface FileRouteTypes {
     | '/admin/theme'
     | '/admin/users'
     | '/admin/uso'
+    | '/assinar/$slug'
     | '/autorizar/$token'
     | '/boletim/cancelar'
     | '/brasil_/$slug'
@@ -1106,6 +1129,7 @@ export interface FileRouteTypes {
     | '/content_/enviar'
     | '/diagnostico/$token'
     | '/ferramentas_/$slug'
+    | '/indicar/$slug'
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
@@ -1193,6 +1217,7 @@ export interface RootRouteChildren {
   AdminThemeRoute: typeof AdminThemeRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminUsoRoute: typeof AdminUsoRoute
+  AssinarSlugRoute: typeof AssinarSlugRoute
   AutorizarTokenRoute: typeof AutorizarTokenRoute
   BoletimCancelarRoute: typeof BoletimCancelarRoute
   BrasilSlugRoute: typeof BrasilSlugRoute
@@ -1200,6 +1225,7 @@ export interface RootRouteChildren {
   ContentEnviarRoute: typeof ContentEnviarRoute
   DiagnosticoTokenRoute: typeof DiagnosticoTokenRoute
   FerramentasSlugRoute: typeof FerramentasSlugRoute
+  IndicarSlugRoute: typeof IndicarSlugRoute
   NewsletterSlugRoute: typeof NewsletterSlugRoute
   NewsletterUnsubscribeRoute: typeof NewsletterUnsubscribeRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
@@ -1667,6 +1693,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUsoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/assinar/$slug': {
+      id: '/assinar/$slug'
+      path: '/assinar/$slug'
+      fullPath: '/assinar/$slug'
+      preLoaderRoute: typeof AssinarSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/autorizar/$token': {
       id: '/autorizar/$token'
       path: '/autorizar/$token'
@@ -1714,6 +1747,13 @@ declare module '@tanstack/react-router' {
       path: '/ferramentas/$slug'
       fullPath: '/ferramentas/$slug'
       preLoaderRoute: typeof FerramentasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/indicar/$slug': {
+      id: '/indicar/$slug'
+      path: '/indicar/$slug'
+      fullPath: '/indicar/$slug'
+      preLoaderRoute: typeof IndicarSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/newsletter/$slug': {
@@ -1929,6 +1969,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminThemeRoute: AdminThemeRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminUsoRoute: AdminUsoRoute,
+  AssinarSlugRoute: AssinarSlugRoute,
   AutorizarTokenRoute: AutorizarTokenRoute,
   BoletimCancelarRoute: BoletimCancelarRoute,
   BrasilSlugRoute: BrasilSlugRoute,
@@ -1936,6 +1977,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContentEnviarRoute: ContentEnviarRoute,
   DiagnosticoTokenRoute: DiagnosticoTokenRoute,
   FerramentasSlugRoute: FerramentasSlugRoute,
+  IndicarSlugRoute: IndicarSlugRoute,
   NewsletterSlugRoute: NewsletterSlugRoute,
   NewsletterUnsubscribeRoute: NewsletterUnsubscribeRoute,
   ServicesSlugRoute: ServicesSlugRoute,
