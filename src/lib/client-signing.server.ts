@@ -1,6 +1,6 @@
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import type { LegalDoc } from './client-contracts';
-export async function digest(bytes: Uint8Array | string) { const b=typeof bytes==='string'?new TextEncoder().encode(bytes):bytes;return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',b))).map(n=>n.toString(16).padStart(2,'0')).join(''); }
+export async function digest(bytes: Uint8Array | string) { const b=typeof bytes==='string'?new TextEncoder().encode(bytes):bytes;return Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new Uint8Array(b).buffer))).map(n=>n.toString(16).padStart(2,'0')).join(''); }
 export async function documentPdf(legal:LegalDoc,annex?:Uint8Array,evidence?:string[]) {
  const pdf=await PDFDocument.create(); const font=await pdf.embedFont(StandardFonts.Helvetica); let page=pdf.addPage();let y=790;
  const lines=[legal.title,...legal.preamble,...legal.sections.flatMap(s=>[s.title,...s.paragraphs]),...legal.closing,...(evidence??[])];

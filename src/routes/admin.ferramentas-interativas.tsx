@@ -79,7 +79,7 @@ function AdminInteractiveTools() {
       <section className="border border-border bg-card p-6">
         <h2 className="text-xl font-bold">Criar nova ferramenta</h2>
         <p className="mt-1 text-sm text-muted-foreground">Um agente de IA desenha a ferramenta; o sistema executa os cálculos em código e roda casos de teste; um segundo agente audita conceitos e fórmulas. Só ferramentas aprovadas nos testes podem ser publicadas.</p>
-        <label className="mt-4 block text-sm font-medium">Forma de acesso<select className={field} value={pricingMode} onChange={e => setPricingMode(e.target.value as "free" | "paid" | "referral" | "referral")}><option value="free">Gratuita</option><option value="paid">Paga</option><option value="referral">Gratuita com indicação de amigo</option></select></label>
+        <label className="mt-4 block text-sm font-medium">Forma de acesso<select className={field} value={pricingMode} onChange={e => setPricingMode(e.target.value as "free" | "paid" | "referral")}><option value="free">Gratuita</option><option value="paid">Paga</option><option value="referral">Gratuita com indicação de amigo</option></select></label>
         <label className="mt-4 block text-sm font-medium">O que a ferramenta deve fazer? *
           <textarea rows={4} value={prompt} onChange={(e) => setPrompt(e.target.value)} className={field} placeholder="Ex.: Ferramenta de Ponto de Equilíbrio de um produto: coletar custo fixo mensal, preço e custo variável unitário, e mostrar a quantidade mínima a vender e o preço mínimo para não ter prejuízo, com gráfico." />
         </label>

@@ -1,0 +1,8 @@
+import { expect, it } from 'vitest';
+import { PDFDocument } from 'pdf-lib';
+import { documentPdf,digest } from './client-signing.server';
+import { buildNda,buildContract,type Party } from './client-contracts';
+const p:Party={legal_name:'Cliente Ltda',cnpj:'12345678000190',address:'Rua de Teste, 1',representative:'Nome Completo',representative_cpf:'12345678900',representative_role:'Diretor',email:'test@example.com'};
+it('NDA protege escopo e orçamento antes da contratação',()=>{const d=buildNda({client:p,consultant:p,city:'São Paulo',date:'25/10/2026'});expect(d.preamble.join(' ')).toContain('antes de qualquer contratação');expect(d.preamble.join(' ')).toContain('plano de trabalho e proposta comercial');});
+it('contrato mantém o valor aprovado e referência ao NDA',()=>{const d=buildContract({client:p,consultant:p,city:'São Paulo',date:'25/10/2026',ndaDate:'24/10/2026',quote:{service_title:'Gestão',total:'R$ 6.676,00',start_date:null,end_date:null,issued_at:'25/10/2026',file_name:'orcamento.pdf'}});const text=d.sections.flatMap(s=>s.paragraphs).join(' ');expect(text).toContain('R$ 6.676,00');expect(text).toContain('firmado em 24/10/2026');expect(text).toContain('ANEXO I');});
+it('PDF integra o anexo original e hash detecta qualquer alteração',async()=>{const annex=await PDFDocument.create();annex.addPage();const ab=new Uint8Array(await annex.save());const d=buildNda({client:p,consultant:p,city:'São Paulo',date:'25/10/2026'});const bytes=await documentPdf(d,ab);const pdf=await PDFDocument.load(bytes);const base=await PDFDocument.load(await documentPdf(d));expect(pdf.getPageCount()).toBe(base.getPageCount()+1);const changed=new Uint8Array(bytes);changed[0]=0;expect(await digest(bytes)).not.toEqual(await digest(changed));});
