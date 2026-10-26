@@ -368,6 +368,146 @@ export type Database = {
         }
         Relationships: []
       }
+      client_document_signers: {
+        Row: {
+          code_attempts: number
+          code_expires_at: string | null
+          code_hash: string | null
+          code_sent_at: string | null
+          cpf: string
+          email: string
+          id: string
+          invite_error: string | null
+          invited_at: string | null
+          ip: string | null
+          name: string
+          packet_id: string
+          role: string
+          signed_at: string | null
+          signed_hash: string | null
+          token_hash: string
+          user_agent: string | null
+        }
+        Insert: {
+          code_attempts?: number
+          code_expires_at?: string | null
+          code_hash?: string | null
+          code_sent_at?: string | null
+          cpf: string
+          email: string
+          id?: string
+          invite_error?: string | null
+          invited_at?: string | null
+          ip?: string | null
+          name: string
+          packet_id: string
+          role: string
+          signed_at?: string | null
+          signed_hash?: string | null
+          token_hash: string
+          user_agent?: string | null
+        }
+        Update: {
+          code_attempts?: number
+          code_expires_at?: string | null
+          code_hash?: string | null
+          code_sent_at?: string | null
+          cpf?: string
+          email?: string
+          id?: string
+          invite_error?: string | null
+          invited_at?: string | null
+          ip?: string | null
+          name?: string
+          packet_id?: string
+          role?: string
+          signed_at?: string | null
+          signed_hash?: string | null
+          token_hash?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_document_signers_packet_id_fkey"
+            columns: ["packet_id"]
+            isOneToOne: false
+            referencedRelation: "client_signing_packets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_signing_packets: {
+        Row: {
+          annex_hash: string | null
+          annex_path: string | null
+          client_cnpj: string
+          client_name: string
+          completed_at: string | null
+          created_at: string
+          created_by: string
+          document: Json
+          document_hash: string
+          expires_at: string
+          id: string
+          kind: string
+          nda_id: string | null
+          quote_id: string | null
+          slug: string
+          unsigned_path: string
+        }
+        Insert: {
+          annex_hash?: string | null
+          annex_path?: string | null
+          client_cnpj: string
+          client_name: string
+          completed_at?: string | null
+          created_at?: string
+          created_by: string
+          document: Json
+          document_hash: string
+          expires_at?: string
+          id?: string
+          kind: string
+          nda_id?: string | null
+          quote_id?: string | null
+          slug: string
+          unsigned_path: string
+        }
+        Update: {
+          annex_hash?: string | null
+          annex_path?: string | null
+          client_cnpj?: string
+          client_name?: string
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string
+          document?: Json
+          document_hash?: string
+          expires_at?: string
+          id?: string
+          kind?: string
+          nda_id?: string | null
+          quote_id?: string | null
+          slug?: string
+          unsigned_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_signing_packets_nda_id_fkey"
+            columns: ["nda_id"]
+            isOneToOne: false
+            referencedRelation: "client_signing_packets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_signing_packets_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_profile: {
         Row: {
           address_city: string
@@ -2433,6 +2573,86 @@ export type Database = {
           },
         ]
       }
+      tool_referral_blocks: {
+        Row: {
+          channel: string
+          created_at: string
+          recipient_hash: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          recipient_hash: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          recipient_hash?: string
+        }
+        Relationships: []
+      }
+      tool_referrals: {
+        Row: {
+          accepted_at: string | null
+          channel: string
+          created_at: string
+          error: string | null
+          expires_at: string
+          id: string
+          opted_out_at: string | null
+          recipient: string
+          recipient_hash: string
+          slug: string
+          state: string
+          token_hash: string
+          tool_id: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          channel: string
+          created_at?: string
+          error?: string | null
+          expires_at?: string
+          id?: string
+          opted_out_at?: string | null
+          recipient: string
+          recipient_hash: string
+          slug: string
+          state?: string
+          token_hash: string
+          tool_id: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string | null
+          channel?: string
+          created_at?: string
+          error?: string | null
+          expires_at?: string
+          id?: string
+          opted_out_at?: string | null
+          recipient?: string
+          recipient_hash?: string
+          slug?: string
+          state?: string
+          token_hash?: string
+          tool_id?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tool_referrals_tool_id_fkey"
+            columns: ["tool_id"]
+            isOneToOne: false
+            referencedRelation: "interactive_tools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tool_user_profiles: {
         Row: {
           company: string
@@ -2519,6 +2739,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_document_signature: {
+        Args: { p_agent: string; p_hash: string; p_id: string; p_ip: string }
+        Returns: string
+      }
+      claim_tool_referral: {
+        Args: { p_hash: string; p_slug: string }
+        Returns: string
+      }
       get_weekly_schedules: {
         Args: never
         Returns: {
@@ -2531,6 +2759,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      issue_signing_code: {
+        Args: { p_hash: string; p_id: string }
         Returns: boolean
       }
       list_public_consultants: {

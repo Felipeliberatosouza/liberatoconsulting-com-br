@@ -115,4 +115,6 @@
 ## Projetos em 6 etapas + Contrato e NDA (23/10/2026)
 - [x] Menu e visão em 6 etapas
 - [x] NDA e contrato de consultoria (cláusula de uso da marca, confidencialidade, Anexo I = orçamento)
-- [ ] Ferramentas "gratuita com indicação de amigo" (pedido anterior; aguarda confirmação do usuário para iniciar)
+- [ ] Ferramentas gratuitas por indicação: modalidade, envio, descadastro e acesso único sem cadastro
+- [ ] Assinatura eletrônica de NDA e contrato: documento imutável, confirmação de e-mail e evidências
+- [ ] Testes de acesso, assinatura e verificação visual dos novos fluxos

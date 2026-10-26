@@ -18,7 +18,7 @@ async function db() {
 
 export type InteractiveToolRow = {
   id: string; slug: string; title: string; summary: string; category: string; status: string;
-  pricing_mode: "free" | "paid"; ai_cost_brl: number; markup_pct: number; price_brl: number;
+  pricing_mode: "free" | "paid" | "referral"; ai_cost_brl: number; markup_pct: number; price_brl: number;
   spec: ToolSpec; verification: { issues?: string[]; reviewIssues?: string[]; attempts?: number; usage?: Array<{ step: string; cost_brl: number }> };
   created_at: string; updated_at: string;
 };
@@ -38,7 +38,7 @@ export const listInteractiveToolsAdmin = createServerFn({ method: "GET" })
 
 export const generateInteractiveTool = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: unknown) => z.object({ prompt: z.string().trim().min(10).max(4000), spreadsheet: z.string().max(60000).optional(), toolId: z.string().uuid().optional() }).parse(d))
+  .inputValidator((d: unknown) => z.object({ prompt: z.string().trim().min(10).max(4000), spreadsheet: z.string().max(60000).optional(), pricing_mode: z.enum(["free","paid","referral"]).optional(), toolId: z.string().uuid().optional() }).parse(d))
   .handler(async ({ data, context }) => {
     const sb = await admin(context);
     const { generateToolSpec } = await import("./interactive-tools.server");
@@ -62,12 +62,12 @@ export const generateInteractiveTool = createServerFn({ method: "POST" })
       else {
         const { shortSlug, uniqueShortSlug } = await import("./short-slug");
         const slug = await uniqueShortSlug(sb, "interactive_tools", shortSlug(result.spec.title), "ferramenta");
-        const { data: ins, error } = await sb.from("interactive_tools").insert({ ...row, slug, markup_pct: markup, created_by: context.userId }).select("id").single();
+        const { data: ins, error } = await sb.from("interactive_tools").insert({ ...row, slug, pricing_mode: data.pricing_mode ?? "free", markup_pct: markup, created_by: context.userId }).select("id").single();
         if (error) throw error;
         id = ins.id;
       }
       await sb.from("interactive_tool_ai_usage").insert(result.usage.map((u) => ({ ...u, tool_id: id })));
-      return { ok: true as const, id: id!, cost, issues: result.issues, reviewIssues: result.reviewIssues };
+      return { ok: true as const, id: String(id), cost, issues: result.issues, reviewIssues: result.reviewIssues };
     } catch (err) {
       console.error("[interactive-tools]", err);
       return { ok: false as const, error: err instanceof Error ? err.message : "Falha ao gerar a ferramenta." };
@@ -78,7 +78,7 @@ export const updateInteractiveTool = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({
     id: z.string().uuid(), title: z.string().trim().min(3).max(160), summary: z.string().trim().max(600), category: z.string().trim().max(80),
-    status: z.enum(["draft", "published"]), pricing_mode: z.enum(["free", "paid"]), markup_pct: z.number().min(0).max(100000), price_brl: z.number().min(0).max(100000),
+    status: z.enum(["draft", "published"]), pricing_mode: z.enum(["free", "paid", "referral"]), markup_pct: z.number().min(0).max(100000), price_brl: z.number().min(0).max(100000),
   }).parse(d))
   .handler(async ({ data, context }) => {
     const sb = await admin(context);
@@ -109,10 +109,13 @@ export const listPublishedInteractiveTools = createServerFn({ method: "GET" })
     const { data } = await context.supabase.from("interactive_tools").select("id, slug, title, summary, category, pricing_mode, price_brl").eq("status", "published").order("created_at", { ascending: false });
     const { data: paid } = await context.supabase.from("interactive_tool_orders").select("tool_id").eq("user_id", context.userId).eq("status", "paid");
     const owned = new Set((paid ?? []).map((o) => o.tool_id as string));
+    const { data: referrals } = await context.supabase.from("tool_referrals").select("tool_id").eq("user_id", context.userId).eq("state", "accepted");
+    const referred = new Set((referrals ?? []).map(o => o.tool_id));
+    const { toolAccess } = await import("./access-rules");
     const lang = input?.lang ?? "pt";
     const { translateTool } = await import("./tool-i18n.server");
     const rows = await Promise.all((data ?? []).map(async (t) => (await translateTool(lang, t as any, null)).tool));
-    return rows.map((t: any) => ({ ...t, access: t.pricing_mode !== "paid" || owned.has(t.id) })) as Array<{ id: string; slug: string; title: string; summary: string; category: string; pricing_mode: string; price_brl: number; access: boolean }>;
+    return rows.map((t: any) => ({ ...t, access: toolAccess(t.pricing_mode, owned.has(t.id), referred.has(t.id)) })) as Array<{ id: string; slug: string; title: string; summary: string; category: string; pricing_mode: string; price_brl: number; access: boolean }>;
   });
 
 /** Dados públicos (somente título/resumo/categoria) de ferramenta publicada, para SEO. */
@@ -126,7 +129,12 @@ export const getPublicToolMeta = createServerFn({ method: "GET" })
 
 /** Ferramenta paga só abre após pagamento confirmado — inclusive para administradores, para que o checkout Asaas seja sempre exibido. */
 async function hasAccess(context: Ctx, tool: { id: string; pricing_mode: string }) {
-  if (tool.pricing_mode !== "paid") return true;
+  if (tool.pricing_mode === "free") return true;
+  if (tool.pricing_mode === "referral") {
+    const { data, error } = await context.supabase.from("tool_referrals").select("id").eq("tool_id",tool.id).eq("user_id",context.userId).eq("state","accepted").limit(1);
+    if (error) throw error; return Boolean(data?.length);
+  }
+  if (tool.pricing_mode !== "paid") return false;
   const { data } = await context.supabase.from("interactive_tool_orders").select("id").eq("tool_id", tool.id).eq("user_id", context.userId).eq("status", "paid").limit(1);
   return Boolean(data?.length);
 }
@@ -136,7 +144,7 @@ export const getInteractiveTool = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) => z.object({ slug: z.string().min(1).max(100), lang: z.enum(["pt","en","es","zh"]).optional() }).parse(d))
   .handler(async ({ data, context }) => {
     const { data: raw } = await context.supabase.from("interactive_tools").select("id, slug, title, summary, category, pricing_mode, price_brl, spec, status").eq("slug", data.slug).maybeSingle();
-    if (!raw) return { found: false as const };
+    if (!raw || raw.status !== "published") return { found: false as const };
     const { translateTool } = await import("./tool-i18n.server");
     const tr = await translateTool(data.lang ?? "pt", raw as any, raw.spec as ToolSpec);
     const tool = { ...raw, ...tr.tool, spec: tr.spec };

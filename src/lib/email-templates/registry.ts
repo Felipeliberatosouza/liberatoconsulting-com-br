@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import { template as documentSigning } from './document-signing'
 
 import { template as leadNotification } from './lead-notification'
 import { template as applicationNotification } from './application-notification'
@@ -24,6 +25,7 @@ export interface TemplateEntry {
  *   // then add to TEMPLATES: 'welcome': welcomeTemplate
  */
 export const TEMPLATES: Record<string, TemplateEntry> = {
+  'document-signing': documentSigning,
   'lead-notification': leadNotification,
   'application-notification': applicationNotification,
   'crm-birthday': crmBirthday,
