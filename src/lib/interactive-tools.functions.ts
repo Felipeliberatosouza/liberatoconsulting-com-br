@@ -106,7 +106,8 @@ export const listPublishedInteractiveTools = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ lang: z.enum(["pt","en","es","zh"]).optional() }).optional().parse(d))
   .handler(async ({ context, data: input }) => {
-    const { data } = await context.supabase.from("interactive_tools").select("id, slug, title, summary, category, pricing_mode, price_brl").eq("status", "published").order("created_at", { ascending: false });
+    const publicDb = await db();
+    const { data } = await publicDb.from("interactive_tools").select("id, slug, title, summary, category, pricing_mode, price_brl").eq("status", "published").order("created_at", { ascending: false });
     const { data: paid } = await context.supabase.from("interactive_tool_orders").select("tool_id").eq("user_id", context.userId).eq("status", "paid");
     const owned = new Set((paid ?? []).map((o) => o.tool_id as string));
     const { data: referrals } = await context.supabase.from("tool_referrals").select("tool_id").eq("user_id", context.userId).eq("state", "accepted");
@@ -143,7 +144,8 @@ export const getInteractiveTool = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ slug: z.string().min(1).max(100), lang: z.enum(["pt","en","es","zh"]).optional() }).parse(d))
   .handler(async ({ data, context }) => {
-    const { data: raw } = await context.supabase.from("interactive_tools").select("id, slug, title, summary, category, pricing_mode, price_brl, spec, status").eq("slug", data.slug).maybeSingle();
+    const privileged = await db();
+    const { data: raw } = await privileged.from("interactive_tools").select("id, slug, title, summary, category, pricing_mode, price_brl, spec, status").eq("slug", data.slug).maybeSingle();
     if (!raw || raw.status !== "published") return { found: false as const };
     const { translateTool } = await import("./tool-i18n.server");
     const tr = await translateTool(data.lang ?? "pt", raw as any, raw.spec as ToolSpec);
