@@ -19,3 +19,7 @@
 - Commercial presentation rules live in a shared browser-safe module and both exporters use the same drawing board; logo background decisions are scoped by logo role, while pixel contrast, resource ranking and size-selected duration are deterministic, not AI decisions, to keep PDF/PPT consistent.
 - Quotes opened from a diagnostic convert its modules via `src/lib/diagnostic-quote.ts` with a rate/markup override in `buildQuote`, so the quote total always equals the diagnostic price.
 - Company size everywhere uses Sebrae portes from `src/lib/company-size.ts` (`normalizePorte` maps legacy pme/corporacao); project client pickers list one entry per client name (`buildProjectClients`).
+- Tool referrals use atomic database claims for one anonymous opening; pricing guards apply both in server functions and RLS, and referral outreach uses Brevo/Evolution rather than managed app emails because recipients are third parties.
+- Client signing freezes the original PDF including the quote annex and its SHA-256 before invitations; signer-bound email codes are consumed atomically, signatures are append-only, and issued contracts require a completed NDA for the same client.
+- Signing and referral URLs use short readable paths with high-entropy authorization in the fragment; never authorize private content by the readable slug alone.
+- ToolCalculator is a shared component used by authenticated and one-time guest pages, so routes never import each other's code-split modules.

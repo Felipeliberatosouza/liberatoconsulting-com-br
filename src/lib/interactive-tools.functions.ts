@@ -115,7 +115,7 @@ export const listPublishedInteractiveTools = createServerFn({ method: "GET" })
     const { toolAccess } = await import("./access-rules");
     const lang = input?.lang ?? "pt";
     const { translateTool } = await import("./tool-i18n.server");
-    const rows = await Promise.all((data ?? []).map(async (t) => (await translateTool(lang, t as any, null)).tool));
+    const rows = await Promise.all((data ?? []).map(async (t: any) => (await translateTool(lang, t, null)).tool));
     return rows.map((t: any) => ({ ...t, access: toolAccess(t.pricing_mode, owned.has(t.id), referred.has(t.id)) })) as Array<{ id: string; slug: string; title: string; summary: string; category: string; pricing_mode: string; price_brl: number; access: boolean }>;
   });
 
