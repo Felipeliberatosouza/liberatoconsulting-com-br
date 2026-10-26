@@ -85,6 +85,13 @@
       "when": 1793017899532,
       "tag": "0011_tool_referrals_and_client_signing",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793054083962,
+      "tag": "0012_protect_tool_spec_access",
+      "breakpoints": true
     }
   ]
 }
