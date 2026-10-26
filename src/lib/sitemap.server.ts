@@ -1,15 +1,14 @@
 /**
  * Geração dos sitemaps por idioma.
  *
- * `/sitemap.xml` é um índice que aponta para um sitemap por idioma
- * (`/sitemap-pt.xml`, `/sitemap-en.xml`, `/sitemap-es.xml`, `/sitemap-zh.xml`).
- * Cada sitemap lista as URLs daquele idioma com os alternates hreflang
- * recíprocos, o que reduz conflitos de rastreamento.
+ * `/sitemap.xml` lista as páginas em português com alternates recíprocos;
+ * os sitemaps por idioma mantêm as mesmas páginas públicas.
  */
 
 import { pt } from "@/i18n/pt";
 import { HREFLANGS, localizedUrl, SITE_URL, absoluteUrl } from "@/lib/seo";
 import { topicSlug } from "@/lib/brazil-topic";
+import { collectSitemapRows } from "./sitemap-pagination";
 
 export interface SitemapEntry {
   path: string;
@@ -30,6 +29,7 @@ export async function collectEntries(): Promise<SitemapEntry[]> {
     { path: "/content", changefreq: "weekly", priority: "0.8" },
     { path: "/contact", changefreq: "monthly", priority: "0.7" },
     { path: "/ferramentas", changefreq: "weekly", priority: "0.8" },
+    { path: "/guia-gestao", changefreq: "monthly", priority: "0.7" },
     { path: "/newsletters", changefreq: "weekly", priority: "0.6" },
     { path: "/boletins", changefreq: "weekly", priority: "0.6" },
     { path: "/careers", changefreq: "monthly", priority: "0.5" },
@@ -44,12 +44,12 @@ export async function collectEntries(): Promise<SitemapEntry[]> {
     entries.push({ path: `/services/${page.id}`, changefreq: "monthly", priority: "0.8" });
   }
   // Serviços e famílias cadastrados no painel que ainda não estão no dicionário.
-  try {
+  {
     const { publicClient } = await import("./admin.server");
-    const { data } = await publicClient()
-      .from("service_products")
-      .select("slug, family_id")
-      .eq("published", true);
+    const db = publicClient();
+    const data = await collectSitemapRows((from, to) => db
+      .from("service_products").select("slug, family_id")
+      .eq("published", true).order("id").range(from, to));
     const seen = new Set(entries.map((e) => e.path));
     for (const r of (data ?? []) as { slug: string; family_id: string }[]) {
       for (const slug of [r.family_id, r.slug]) {
@@ -60,8 +60,6 @@ export async function collectEntries(): Promise<SitemapEntry[]> {
         }
       }
     }
-  } catch {
-    /* sitemap mantém a lista do dicionário */
   }
   for (const page of pt.aboutDetail.pages) {
     entries.push({ path: `/about/${page.id}`, changefreq: "monthly", priority: "0.6" });
@@ -77,27 +75,24 @@ export async function collectEntries(): Promise<SitemapEntry[]> {
     });
   }
 
-  try {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const [{ data: articles }, { data: campaigns }, { data: tools }] = await Promise.all([
-      supabaseAdmin.from("content_articles").select("slug, updated_at").eq("published", true),
-      supabaseAdmin.from("newsletter_campaigns").select("slug, published_at").not("published_at", "is", null),
-      supabaseAdmin.from("interactive_tools").select("slug").eq("status", "published"),
+  {
+    const { publicClient } = await import("./admin.server");
+    const db = publicClient();
+    const [articles, campaigns] = await Promise.all([
+      collectSitemapRows((from, to) => db.from("content_articles").select("slug, updated_at").eq("published", true).order("id").range(from, to)),
+      collectSitemapRows((from, to) => db.from("newsletter_campaigns").select("slug, published_at").not("published_at", "is", null).order("id").range(from, to)),
     ]);
-    for (const t of tools ?? []) {
-      if ((t as any)?.slug) entries.push({ path: `/ferramentas/${(t as any).slug}`, changefreq: "monthly", priority: "0.7" });
-    }
+    // Individual calculators require an account; advertise the public catalog,
+    // never bypass their access policies to enumerate restricted tool records.
     for (const a of articles ?? []) {
       if (a?.slug) entries.push({ path: `/content/${a.slug}`, changefreq: "monthly", priority: "0.6", lastmod: (a as any).updated_at });
     }
     for (const c of campaigns ?? []) {
       if (c?.slug) entries.push({ path: `/newsletter/${c.slug}`, changefreq: "monthly", priority: "0.5", lastmod: (c as any).published_at });
     }
-  } catch {
-    // Banco indisponível: o sitemap segue válido apenas com as rotas fixas.
   }
 
-  return entries;
+  return [...new Map(entries.map((entry) => [entry.path, entry])).values()];
 }
 
 function xmlResponse(xml: string) {
@@ -122,7 +117,7 @@ export async function buildLanguageSitemap(lang: string, origin: string = SITE_U
           `    <xhtml:link rel="alternate" hreflang="${hreflang}" href="${localizedUrl(e.path, code, origin)}" />`,
       ),
       `    <xhtml:link rel="alternate" hreflang="x-default" href="${absoluteUrl(e.path, origin)}" />`,
-      e.lastmod ? `    <lastmod>${new Date(e.lastmod).toISOString().slice(0, 10)}</lastmod>` : null,
+      e.lastmod && Number.isFinite(Date.parse(e.lastmod)) ? `    <lastmod>${new Date(e.lastmod).toISOString().slice(0, 10)}</lastmod>` : null,
       e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
       e.priority ? `    <priority>${e.priority}</priority>` : null,
       `  </url>`,

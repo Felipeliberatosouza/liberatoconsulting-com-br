@@ -24,3 +24,4 @@
 - Signing and referral URLs use short readable paths with high-entropy authorization in the fragment; never authorize private content by the readable slug alone.
 - ToolCalculator is a shared component used by authenticated and one-time guest pages, so routes never import each other's code-split modules.
 - Diagnostic alternatives keep raw per-question editor drafts separate from normalized stored choices; parsing must never rewrite the text during typing.
+- Sitemaps enumerate public content through paginated public-client queries and fail on query errors; account-gated calculators and private invitation/signing forms are excluded to preserve access boundaries.
