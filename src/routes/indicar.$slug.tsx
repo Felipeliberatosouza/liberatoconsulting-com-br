@@ -1,0 +1,13 @@
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
+import { useLanguage } from '@/i18n';
+import { Button } from '@/components/ui/button';
+import { ToolCalculator } from '@/components/ToolCalculator';
+import { referralText } from '@/components/ToolReferralPanel';
+import { referralInfo,openReferredTool,stopReferrals } from '@/lib/referrals.functions';
+import { toast } from 'sonner';
+export const Route=createFileRoute('/indicar/$slug')({head:()=>({meta:[{title:'Ferramenta indicada por um amigo — Liberato Consulting'},{name:'description',content:'Experimente a ferramenta indicada por um amigo.'},{property:'og:title',content:'Ferramenta indicada — Liberato Consulting'},{property:'og:description',content:'Convite pessoal para experimentar uma ferramenta de gestão.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary'},{name:'robots',content:'noindex,nofollow'}]}),component:Referral});
+function Referral(){const {slug}=Route.useParams();const {lang}=useLanguage();const c=referralText[lang];const [token,setToken]=useState('');const [info,setInfo]=useState<{available:boolean;title:string}|null>(null);const [opened,setOpened]=useState<Extract<Awaited<ReturnType<typeof openReferredTool>>,{ok:true}>|null>(null);const [busy,setBusy]=useState(false);const [stopped,setStopped]=useState(false);
+ useEffect(()=>{const t=window.location.hash.slice(1);setToken(t);if(t)void referralInfo({data:{slug,token:t}}).then(setInfo).catch(()=>setInfo({available:false,title:''}));else setInfo({available:false,title:''});},[slug]);
+ return <main className="mx-auto max-w-5xl px-6 py-16"><h1 className="text-3xl font-bold">{info?.title||c.title}</h1>{opened&&opened.spec?<ToolCalculator toolId={opened.tool.id} spec={opened.spec} guest/>:info?.available?<Button className="mt-6" disabled={busy} onClick={async()=>{setBusy(true);try{const r=await openReferredTool({data:{slug,token,lang}});if(r.ok)setOpened(r);else setInfo(i=>({...i,title:i?.title??'',available:false}));}catch(e){toast.error(e instanceof Error?e.message:'Erro');}finally{setBusy(false);}}}>{busy?c.busy:c.try}</Button>:info?<><p className="mt-4">{c.signup}</p><Button asChild className="mt-5"><Link to="/ferramentas" search={{modo:'cadastro'}}>{c.register}</Link></Button></>:null}{token&&<div className="mt-8 border-t border-border pt-5">{stopped?<p>{c.stopped}</p>:<Button variant="ghost" disabled={busy} onClick={async()=>{setBusy(true);try{await stopReferrals({data:{slug,token}});setStopped(true);}catch(e){toast.error(e instanceof Error?e.message:'Erro');}finally{setBusy(false);}}}>{c.stop}</Button>}</div>}</main>;
+}
