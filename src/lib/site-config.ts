@@ -150,9 +150,9 @@ export const DEFAULT_INSTITUTIONAL: InstitutionalSettings = {
   ],
   faq: [
     { question: "Como a Liberato Consulting atua?", answer: "Trabalhamos ao lado da liderança e das equipes, conectando diagnóstico, metas, execução e acompanhamento dos resultados." },
-    { question: "A consultoria atende empresas de quais portes?", answer: "Atendemos pequenas e médias empresas, corporações e investidores, com escopo ajustado ao desafio e à estrutura de cada organização." },
+    { question: "A consultoria atende empresas de quais portes?", answer: "Atendemos micro, pequenas, médias e grandes empresas, além de investidores, com escopo ajustado ao desafio, ao setor e à estrutura de cada organização." },
     { question: "A inteligência artificial substitui a equipe?", answer: "Não. Aplicamos IA como ferramenta de análise, produtividade e decisão, sempre com validação humana e transferência de conhecimento." },
-    { question: "Como acesso as ferramentas gratuitas de gestão?", answer: "Crie uma conta gratuita, complete seu perfil e acesse a biblioteca de guias e planilhas disponibilizados pela Liberato Consulting." },
+    { question: "Como acesso as ferramentas de gestão?", answer: "Crie uma conta gratuita e complete seu perfil para acessar a biblioteca. Cada ferramenta informa sua modalidade: gratuita, paga ou gratuita com indicação de amigo. O cadastro não libera automaticamente os recursos que exigem pagamento ou indicação." },
   ],
   mission: "Transformar estratégia em resultados mensuráveis, com método, tecnologia e desenvolvimento das pessoas.",
   values: "Ética, objetividade, excelência, respeito às pessoas, decisões baseadas em evidências e compromisso com o resultado do cliente.",
