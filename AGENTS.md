@@ -23,3 +23,4 @@
 - Client signing freezes the original PDF including the quote annex and its SHA-256 before invitations; signer-bound email codes are consumed atomically, signatures are append-only, and issued contracts require a completed NDA for the same client.
 - Signing and referral URLs use short readable paths with high-entropy authorization in the fragment; never authorize private content by the readable slug alone.
 - ToolCalculator is a shared component used by authenticated and one-time guest pages, so routes never import each other's code-split modules.
+- Diagnostic alternatives keep raw per-question editor drafts separate from normalized stored choices; parsing must never rewrite the text during typing.
