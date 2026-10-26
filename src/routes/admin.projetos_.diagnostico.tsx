@@ -22,6 +22,7 @@ import {
   type DiagnosticRow,
 } from "@/lib/projects.functions";
 import { answerText, diagnosticLink, toEditable, type ClientAnswer, type EditableQuestion } from "@/lib/diagnostic-form";
+import { parseDiagnosticOptions } from "@/lib/diagnostic-options";
 import {
   DEFAULT_BUDGET,
   DEFAULT_MODULES,
@@ -65,6 +66,7 @@ function DiagnosticPage() {
   const [modules, setModules] = useState<ScopeModule[]>(DEFAULT_MODULES);
   const [budget, setBudget] = useState<DiagnosticBudget>(DEFAULT_BUDGET);
   const [editQs, setEditQs] = useState<EditableQuestion[]>([]);
+  const [optionDrafts, setOptionDrafts] = useState<Record<string, string>>({});
   const [token, setToken] = useState<string | null>(null);
   const [clientAnswers, setClientAnswers] = useState<Record<string, ClientAnswer>>({});
   const [respondent, setRespondent] = useState<Record<string, string>>({});
@@ -102,6 +104,7 @@ function DiagnosticPage() {
       return;
     }
     setEditQs(toEditable(questions));
+    setOptionDrafts({});
   }, [questions]);
 
   function reset() {
@@ -115,6 +118,7 @@ function DiagnosticPage() {
     setModules(DEFAULT_MODULES);
     setBudget(DEFAULT_BUDGET);
     setEditQs(toEditable(questions));
+    setOptionDrafts({});
     setToken(null);
     setClientAnswers({});
     setRespondent({});
@@ -122,6 +126,7 @@ function DiagnosticPage() {
   }
 
   function load(row: DiagnosticRow) {
+    setOptionDrafts({});
     setId(row.id);
     setTitle(row.title);
     setClientName(row.client_name);
@@ -383,7 +388,11 @@ function DiagnosticPage() {
                         <Label className="flex items-center gap-1 text-xs text-muted-foreground"><HelpCircle className="size-3" /> Motivo da pergunta (aparece no ? para o cliente)</Label>
                         <Input value={q.purpose} onChange={(e) => patchQ(q.id, { purpose: e.target.value })} />
                         <Label className="text-xs text-muted-foreground">Alternativas (separe por ponto e vírgula; vazio = só texto)</Label>
-                        <Input value={q.options.join("; ")} onChange={(e) => patchQ(q.id, { options: e.target.value.split(";").map((s) => s.trim()).filter(Boolean) })} />
+                        <Input aria-label={`Alternativas: ${q.question}`} value={optionDrafts[q.id] ?? q.options.join("; ")} onChange={(e) => {
+                          const text = e.target.value;
+                          setOptionDrafts(prev => ({ ...prev, [q.id]: text }));
+                          patchQ(q.id, { options: parseDiagnosticOptions(text) });
+                        }} />
                         <div className="flex gap-4 text-xs">
                           <label className="flex items-center gap-1"><Checkbox checked={q.multi} onCheckedChange={(v) => patchQ(q.id, { multi: Boolean(v) })} /> Permite várias</label>
                           <label className="flex items-center gap-1"><Checkbox checked={q.required} onCheckedChange={(v) => patchQ(q.id, { required: Boolean(v) })} /> Obrigatória</label>
