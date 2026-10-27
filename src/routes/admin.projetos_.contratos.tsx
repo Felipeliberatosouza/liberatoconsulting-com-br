@@ -17,10 +17,10 @@ export const Route = createFileRoute("/admin/projetos_/contratos")({
     typeof s["cliente"] === "string" ? { cliente: s["cliente"] } : {},
   head: () => ({
     meta: [
-      { title: "Contrato e NDA — Painel Liberato Consulting" },
+      { title: "NDA e Contrato — Painel Liberato Consulting" },
       { name: "robots", content: "noindex" },
       { name: "description", content: "Emissão e assinatura de NDA e contratos de consultoria." },
-      { property: "og:title", content: "Contrato e NDA — Liberato Consulting" },
+      { property: "og:title", content: "NDA e Contrato — Liberato Consulting" },
       { property: "og:description", content: "Documentos, orçamento anexo e registros de assinatura." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
