@@ -108,6 +108,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         if (cancelled) return;
         setConfig(c);
         applyTheme(c.theme);
+        // Favicon definido no painel substitui o provisório.
+        const fav = c.branding?.faviconUrl;
+        if (fav) {
+          document.querySelectorAll<HTMLLinkElement>('link[rel="icon"]').forEach((l) => {
+            l.href = fav;
+            l.removeAttribute("type");
+          });
+        }
       })
       .catch(() => undefined);
     return () => {

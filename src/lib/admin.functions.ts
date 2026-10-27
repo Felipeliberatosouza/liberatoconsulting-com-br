@@ -550,6 +550,46 @@ export const resetLogo = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+/** Favicon personalizado (ícone da aba do navegador). */
+export const saveFavicon = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        dataUrl: z
+          .string()
+          .regex(/^data:image\/(png|jpeg|webp|svg\+xml|x-icon|vnd\.microsoft\.icon);base64,[A-Za-z0-9+/=]+$/)
+          .max(1_400_000),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("site_settings")
+      .upsert(
+        { key: "branding", value: { ...(await currentBranding(context)), faviconUrl: data.dataUrl } },
+        { onConflict: "key" },
+      );
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
+/** Exclui o favicon personalizado e volta ao provisório. */
+export const resetFavicon = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase
+      .from("site_settings")
+      .upsert(
+        { key: "branding", value: { ...(await currentBranding(context)), faviconUrl: undefined } },
+        { onConflict: "key" },
+      );
+    if (error) return { ok: false as const, error: error.message };
+    return { ok: true as const };
+  });
+
 const whatsappSchema = z.object({
   number: z
     .string()

@@ -13,6 +13,8 @@ import {
   getSiteConfig,
   getWhatsApp,
   resetLogo,
+  resetFavicon,
+  saveFavicon,
   saveAlertEmail,
   saveLogo,
   saveWhatsApp,
@@ -172,6 +174,81 @@ function BrandingBlock() {
           >
             Usar logo padrão
           </button>
+        </div>
+      </div>
+      <FaviconBlock
+        current={config.data?.branding?.faviconUrl}
+        onChanged={() => config.refetch()}
+      />
+    </div>
+  );
+}
+
+function FaviconBlock({ current, onChanged }: { current?: string; onChanged: () => unknown }) {
+  const [busy, setBusy] = useState(false);
+  const src = current || "/favicon.png";
+  return (
+    <div className="mt-6 border-t border-border pt-6">
+      <h3 className="font-display text-base font-bold">Favicon</h3>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Ícone da aba do navegador. Use imagem quadrada (PNG, ICO, SVG ou WEBP, até 1 MB).
+        {current ? " Favicon personalizado em uso." : " Favicon provisório em uso."}
+      </p>
+      <div className="mt-3 flex items-center gap-4">
+        <img src={src} alt="Favicon atual" className="h-16 w-16 rounded border border-border object-contain" />
+        <img src={src} alt="" className="h-4 w-4" />
+        <div className="flex flex-col gap-2">
+          <label className="cursor-pointer rounded-md bg-ink px-4 py-2 text-center text-sm font-semibold text-ink-foreground hover:bg-accent hover:text-accent-foreground">
+            {busy ? "Enviando…" : "Enviar novo favicon"}
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/svg+xml,image/x-icon,.ico"
+              className="hidden"
+              disabled={busy}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (!file) return;
+                if (file.size > 1_000_000) return void toast.error("Use um arquivo de até 1 MB.");
+                setBusy(true);
+                try {
+                  let dataUrl: string = await new Promise((resolve, reject) => {
+                    const r = new FileReader();
+                    r.onload = () => resolve(String(r.result));
+                    r.onerror = () => reject(new Error("read"));
+                    r.readAsDataURL(file);
+                  });
+                  dataUrl = dataUrl.replace(/^data:(application\/octet-stream|image\/ico);/, "data:image/x-icon;");
+                  const res = await saveFavicon({ data: { dataUrl } });
+                  if (!res.ok) toast.error(res.error);
+                  else {
+                    toast.success("Favicon atualizado.");
+                    await onChanged();
+                  }
+                } catch {
+                  toast.error("Não foi possível enviar o favicon.");
+                } finally {
+                  setBusy(false);
+                }
+              }}
+            />
+          </label>
+          {current && (
+            <button
+              type="button"
+              className="text-xs text-muted-foreground hover:text-destructive"
+              onClick={async () => {
+                const res = await resetFavicon();
+                if (!res.ok) toast.error(res.error);
+                else {
+                  toast.success("Favicon excluído; provisório restaurado.");
+                  await onChanged();
+                }
+              }}
+            >
+              Excluir favicon personalizado
+            </button>
+          )}
         </div>
       </div>
     </div>
