@@ -31,7 +31,7 @@ export function AutoFieldHelp({ scope, parent }: { scope: RefObject<HTMLElement 
       const found: Array<{ host: HTMLElement; text: string }> = [];
       root.querySelectorAll<HTMLElement>(SELECTOR).forEach((el) => {
         if (el.closest("[data-no-auto-help], [role=dialog]:not([data-auto-help-ok])")) return;
-        let host = el.querySelector<HTMLElement>(":scope > [data-auto-help]");
+        let host = el.querySelector<HTMLElement>("[data-auto-help]");
         const label = ownText(el);
         if (!label || label.length > 90) return;
         if (!host && el.querySelector("button[aria-label], [aria-haspopup]")) return;
