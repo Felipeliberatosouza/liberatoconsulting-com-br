@@ -41,9 +41,10 @@ export function ProjectFlowGuide({
   nextLabel?: string;
   nextPending?: boolean;
 }) {
-  const stage = PROJECT_STAGES[current - 1];
-  const prev = current > 1 ? PROJECT_STAGES[current - 2] : null;
-  const next = current < 6 ? PROJECT_STAGES[current] : null;
+  const stages: ReadonlyArray<(typeof PROJECT_STAGES)[number]> = PROJECT_STAGES;
+  const stage = stages[current - 1]!;
+  const prev = current > 1 ? stages[current - 2] : null;
+  const next = current < 6 ? stages[current] : null;
   const btn = "inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium";
   return (
     <nav aria-label="Etapas do projeto" className="mb-8 rounded-2xl border border-border bg-background p-4">
