@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Check, HelpCircle } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { AutoFieldHelp } from "@/components/AutoFieldHelp";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 /** The six Projects stages, in order. Each stage feeds the next one. */
@@ -45,9 +47,14 @@ export function ProjectFlowGuide({
   const stage = stages[current - 1]!;
   const prev = current > 1 ? stages[current - 2] : null;
   const next = current < 6 ? stages[current] : null;
+  const navRef = useRef<HTMLElement | null>(null);
+  const scopeRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    scopeRef.current = navRef.current?.parentElement ?? null;
+  });
   const btn = "inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium";
   return (
-    <nav aria-label="Etapas do projeto" className="mb-8 rounded-2xl border border-border bg-background p-4">
+    <nav ref={navRef} data-no-auto-help aria-label="Etapas do projeto" className="mb-8 rounded-2xl border border-border bg-background p-4">
       <ol className="flex flex-wrap items-center gap-2">
         {PROJECT_STAGES.map((s) => {
           const done = s.n < current;
@@ -95,6 +102,7 @@ export function ProjectFlowGuide({
           ) : null}
         </div>
       </div>
+      <AutoFieldHelp scope={navRef} parent />
     </nav>
   );
 }
