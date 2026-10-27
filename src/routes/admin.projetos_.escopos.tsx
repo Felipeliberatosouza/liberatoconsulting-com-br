@@ -1,3 +1,4 @@
+import { ProjectFlowGuide } from "@/components/ProjectFlowGuide";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -89,6 +90,7 @@ function ScopesPage() {
       description="Respostas enviadas pelo formulário público de escopo inicial, com o guia do consultor para leitura rápida."
       requireAdmin
     >
+      <ProjectFlowGuide current={1} />
       <div className="mb-6"><FormLinkBar form="escopo" /></div>
       <Link
         to="/admin/projetos"

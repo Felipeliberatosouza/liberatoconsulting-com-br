@@ -1,3 +1,4 @@
+import { ProjectFlowGuide } from "@/components/ProjectFlowGuide";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
@@ -438,6 +439,7 @@ function PresentationPage() {
       description="Etapa 4 · Gere uma apresentação comercial personalizada em PowerPoint e PDF."
       requireAdmin
     >
+      <ProjectFlowGuide current={4} />
       <Link to="/admin/projetos" className="mb-6 inline-flex items-center gap-1 text-sm text-accent hover:underline">
         <ArrowLeft className="size-4" /> Voltar para Projetos
       </Link>
