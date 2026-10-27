@@ -184,7 +184,7 @@ function BrandingBlock() {
   );
 }
 
-function FaviconBlock({ current, onChanged }: { current?: string; onChanged: () => unknown }) {
+function FaviconBlock({ current, onChanged }: { current?: string | undefined; onChanged: () => unknown }) {
   const [busy, setBusy] = useState(false);
   const src = current || "/favicon.png";
   return (
