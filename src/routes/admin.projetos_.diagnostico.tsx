@@ -124,6 +124,7 @@ function DiagnosticPage() {
 
   function reset() {
     setId(null);
+    setScopeId(null);
     setTitle("");
     setClientName("");
     setAnswers({});
@@ -143,6 +144,7 @@ function DiagnosticPage() {
   function load(row: DiagnosticRow) {
     setOptionDrafts({});
     setId(row.id);
+    setScopeId(row.scope_submission_id ?? null);
     setTitle(row.title);
     setClientName(row.client_name);
     const sameService = row.service_slug === serviceSlug;
