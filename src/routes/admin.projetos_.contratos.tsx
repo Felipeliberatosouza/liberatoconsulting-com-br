@@ -13,6 +13,8 @@ import { listQuotes, quoteFileUrl } from "@/lib/pricing.functions";
 import { annexLines, buildContract, buildNda, type LegalDoc, type Party, type QuoteAnnex } from "@/lib/client-contracts";
 
 export const Route = createFileRoute("/admin/projetos_/contratos")({
+  validateSearch: (s: Record<string, unknown>): { cliente?: string } =>
+    typeof s["cliente"] === "string" ? { cliente: s["cliente"] } : {},
   head: () => ({
     meta: [
       { title: "Contrato e NDA — Painel Liberato Consulting" },
@@ -80,6 +82,16 @@ function ContractsPage() {
         file_name: selected.file_name,
       }
     : null;
+
+  const { cliente } = Route.useSearch();
+  // Vindo da etapa 4: cliente e orçamento mais recente dele já entram preenchidos.
+  useEffect(() => {
+    if (!cliente) return;
+    setClient((c) => (c.legal_name ? c : { ...c, legal_name: cliente }));
+    const norm = (v: string) => v.trim().toLowerCase();
+    const latest = rows.find((r) => norm(r.client_name) === norm(cliente));
+    if (latest) setQuoteId((q) => q || latest.id);
+  }, [cliente, rows]);
 
   function pickQuote(id: string) {
     setQuoteId(id);

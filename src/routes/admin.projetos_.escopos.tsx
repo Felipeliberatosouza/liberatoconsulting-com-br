@@ -257,9 +257,10 @@ function ScopesPage() {
             <p className="mt-2 text-sm text-muted-foreground">{SCOPE_MIGRATE_NOTE}</p>
             <Link
               to="/admin/projetos/diagnostico"
+              search={{ escopo: open.id } as never}
               className="mt-4 inline-block rounded-full bg-ink px-4 py-2 text-sm font-medium text-ink-foreground hover:bg-accent hover:text-accent-foreground"
             >
-              Abrir Diagnóstico Detalhado
+              Avançar para o diagnóstico deste cliente
             </Link>
           </section>
         </div>

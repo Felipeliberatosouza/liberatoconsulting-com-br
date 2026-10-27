@@ -1,4 +1,5 @@
 import { ProjectFlowGuide } from "@/components/ProjectFlowGuide";
+import { useNavigate } from "@tanstack/react-router";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
@@ -94,6 +95,7 @@ function PresentationPage() {
   const consultants = useQuery({ queryKey: ["presentation-consultants"], queryFn: () => listConsultants(), retry: false });
   const [consultantId, setConsultantId] = useState("");
   const [site, setSite] = useState("");
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [clientSize, setClientSize] = useState<PresentationSize | "">("");
   const [sector, setSector] = useState("");
@@ -439,7 +441,7 @@ function PresentationPage() {
       description="Etapa 4 · Gere uma apresentação comercial personalizada em PowerPoint e PDF."
       requireAdmin
     >
-      <ProjectFlowGuide current={4} />
+      <ProjectFlowGuide current={4} onNext={() => void navigate({ to: "/admin/projetos/contratos", search: { cliente: name.trim() || undefined } as never })} nextLabel="Avançar: Contrato e NDA" />
       <Link to="/admin/projetos" className="mb-6 inline-flex items-center gap-1 text-sm text-accent hover:underline">
         <ArrowLeft className="size-4" /> Voltar para Projetos
       </Link>
