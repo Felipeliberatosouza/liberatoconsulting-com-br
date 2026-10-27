@@ -86,7 +86,7 @@ function ScopesPage() {
 
   return (
     <AdminShell
-      title="Etapa 1 — Escopos recebidos de clientes"
+      title="1. Escopo Inicial"
       description="Respostas enviadas pelo formulário público de escopo inicial, com o guia do consultor para leitura rápida."
       requireAdmin
     >

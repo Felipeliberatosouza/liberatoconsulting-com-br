@@ -240,7 +240,7 @@ function DiagnosticPage() {
 
   return (
     <AdminShell
-      title="Etapa 2 — Diagnóstico Detalhado"
+      title="2. Diagnóstico Detalhado"
       description="Coleta das informações do cliente por serviço, avaliação de esforço, desenho do escopo e orçamento indicativo."
       requireAdmin
     >

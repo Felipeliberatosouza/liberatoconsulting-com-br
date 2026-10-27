@@ -28,7 +28,7 @@ function ProjectsPage() {
   const steps = [
     {
       n: 1,
-      title: "Escopo Inicial de Necessidade do Cliente",
+      title: "Escopo Inicial",
       description: "Formulário curto enviado ao cliente para abrir a conversa.",
       icon: ClipboardList,
       to: "/admin/projetos/escopos",
@@ -48,7 +48,7 @@ function ProjectsPage() {
     },
     {
       n: 3,
-      title: "Precificação e Orçamentos",
+      title: "Precificação e Orçamento",
       description: "Custo, etapas de cada serviço, orçamento em cenários e orçamentos gerados.",
       icon: Wallet,
       to: "/admin/precificacao",
@@ -58,7 +58,7 @@ function ProjectsPage() {
     },
     {
       n: 4,
-      title: "Apresentações",
+      title: "Apresentação",
       description: "Apresentação comercial personalizada, com preço e prazos do orçamento.",
       icon: Presentation,
       to: "/admin/projetos/apresentacoes",
@@ -68,7 +68,7 @@ function ProjectsPage() {
     },
     {
       n: 5,
-      title: "Contrato e NDA",
+      title: "NDA e Contrato",
       description: "NDA antes de qualquer troca de informações e contrato com o orçamento como anexo.",
       icon: Receipt,
       to: "/admin/projetos/contratos",

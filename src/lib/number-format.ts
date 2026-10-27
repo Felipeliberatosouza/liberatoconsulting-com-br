@@ -14,8 +14,8 @@ export function parseLocaleNumber(text: string): number {
   return Number.isFinite(n) ? n : 0;
 }
 
-export function formatNumberKind(value: number, kind: NumberKind): string {
-  const body = value.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+export function formatNumberKind(value: number, kind: NumberKind, decimals = 2): string {
+  const body = value.toLocaleString("pt-BR", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
   if (kind === "currency") return `R$ ${body}`;
   if (kind === "percent") return `${body}%`;
   return body;

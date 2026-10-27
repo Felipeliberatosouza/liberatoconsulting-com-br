@@ -437,11 +437,11 @@ function PresentationPage() {
 
   return (
     <AdminShell
-      title="Material para Apresentação"
+      title="4. Apresentação"
       description="Etapa 4 · Gere uma apresentação comercial personalizada em PowerPoint e PDF."
       requireAdmin
     >
-      <ProjectFlowGuide current={4} onNext={() => void navigate({ to: "/admin/projetos/contratos", search: { cliente: name.trim() || undefined } as never })} nextLabel="Avançar: Contrato e NDA" />
+      <ProjectFlowGuide current={4} onNext={() => void navigate({ to: "/admin/projetos/contratos", search: { cliente: name.trim() || undefined } as never })} nextLabel="Avançar: NDA e Contrato" />
       <Link to="/admin/projetos" className="mb-6 inline-flex items-center gap-1 text-sm text-accent hover:underline">
         <ArrowLeft className="size-4" /> Voltar para Projetos
       </Link>

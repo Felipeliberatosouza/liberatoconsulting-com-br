@@ -6,12 +6,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 /** The six Projects stages, in order. Each stage feeds the next one. */
 export const PROJECT_STAGES = [
-  { n: 1, short: "Escopo inicial", to: "/admin/projetos/escopos", search: undefined, help: "O cliente responde um formulário curto. As respostas abrem a conversa e alimentam o diagnóstico." },
-  { n: 2, short: "Diagnóstico", to: "/admin/projetos/diagnostico", search: undefined, help: "Perguntas por serviço, score de esforço e escopo. O planejamento salvo aqui vira o orçamento da etapa 3." },
-  { n: 3, short: "Precificação e orçamento", to: "/admin/precificacao", search: { aba: "quote" }, help: "Premissas de preço, etapas, cenários e o orçamento final. O orçamento gerado alimenta preço e prazos da apresentação." },
+  { n: 1, short: "Escopo Inicial", to: "/admin/projetos/escopos", search: undefined, help: "O cliente responde um formulário curto. As respostas abrem a conversa e alimentam o diagnóstico." },
+  { n: 2, short: "Diagnóstico Detalhado", to: "/admin/projetos/diagnostico", search: undefined, help: "Perguntas por serviço, score de esforço e escopo. O planejamento salvo aqui vira o orçamento da etapa 3." },
+  { n: 3, short: "Precificação e Orçamento", to: "/admin/precificacao", search: { aba: "quote" }, help: "Premissas de preço, etapas, cenários e o orçamento final. O orçamento gerado alimenta preço e prazos da apresentação." },
   { n: 4, short: "Apresentação", to: "/admin/projetos/apresentacao", search: undefined, help: "Apresentação comercial personalizada. Marque “Usar orçamento gerado” para trazer preço e prazos." },
-  { n: 5, short: "Contrato e NDA", to: "/admin/projetos/contratos", search: undefined, help: "NDA antes de trocar informações e contrato com o orçamento aprovado como Anexo I." },
-  { n: 6, short: "Satisfação", to: "/admin/projetos/satisfacao", search: undefined, help: "Pesquisas de serviço executado e não executado, com dashboard de resultados." },
+  { n: 5, short: "NDA e Contrato", to: "/admin/projetos/contratos", search: undefined, help: "NDA antes de trocar informações e contrato com o orçamento aprovado como Anexo I." },
+  { n: 6, short: "Satisfação do Cliente", to: "/admin/projetos/satisfacao", search: undefined, help: "Pesquisas de serviço executado e não executado, com dashboard de resultados." },
 ] as const;
 
 export function HelpTip({ text, label = "Ajuda" }: { text: string; label?: string }) {
