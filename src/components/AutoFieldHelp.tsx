@@ -10,7 +10,7 @@ const CONTROLS = "input, select, textarea";
 function ownText(el: HTMLElement): string {
   let t = "";
   el.childNodes.forEach((n) => {
-    if (n instanceof HTMLElement && (n.matches(CONTROLS) || n.dataset.autoHelp || n.querySelector(CONTROLS))) return;
+    if (n instanceof HTMLElement && (n.matches(CONTROLS) || n.dataset["autoHelp"] || n.querySelector(CONTROLS))) return;
     t += n.textContent ?? "";
   });
   return t.replace(/\s+/g, " ").trim();
@@ -39,7 +39,7 @@ export function AutoFieldHelp({ scope, parent }: { scope: RefObject<HTMLElement 
         if (!text) return;
         if (!host) {
           host = document.createElement("span");
-          host.dataset.autoHelp = "1";
+          host.dataset["autoHelp"] = "1";
           host.className = "ml-1 inline-flex align-middle normal-case";
           const lead = el.firstElementChild;
           const control = Array.from(el.children).find((c) => c.matches(CONTROLS) || c.querySelector(CONTROLS));
