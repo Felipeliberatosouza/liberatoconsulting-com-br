@@ -9,11 +9,11 @@ const SELECTOR = "label, th, h2, h3, legend, [data-slot=card-title]";
  * Adds a "?" explanation next to every field label and box title inside the
  * scope element. Texts come from the shared field-help dictionary.
  */
-export function AutoFieldHelp({ scope }: { scope: RefObject<HTMLElement | null> }) {
+export function AutoFieldHelp({ scope, parent }: { scope: RefObject<HTMLElement | null>; parent?: boolean }) {
   const [targets, setTargets] = useState<Array<{ host: HTMLElement; text: string }>>([]);
 
   useEffect(() => {
-    const root = scope.current;
+    const root = parent ? scope.current?.parentElement : scope.current;
     if (!root) return;
     const scan = () => {
       const found: Array<{ host: HTMLElement; text: string }> = [];
@@ -41,7 +41,7 @@ export function AutoFieldHelp({ scope }: { scope: RefObject<HTMLElement | null> 
     const obs = new MutationObserver(() => requestAnimationFrame(scan));
     obs.observe(root, { childList: true, subtree: true });
     return () => obs.disconnect();
-  }, [scope]);
+  }, [scope, parent]);
 
   return <>{targets.map((t, i) => createPortal(<HelpTip text={t.text} label="O que é este campo" />, t.host, `h${i}`))}</>;
 }
