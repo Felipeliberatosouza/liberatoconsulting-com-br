@@ -13,7 +13,8 @@ export function AutoFieldHelp({ scope, parent }: { scope: RefObject<HTMLElement 
   const [targets, setTargets] = useState<Array<{ host: HTMLElement; text: string }>>([]);
 
   useEffect(() => {
-    const root = parent ? scope.current?.parentElement : scope.current;
+    let root: HTMLElement | null | undefined = parent ? scope.current?.parentElement : scope.current;
+    while (parent && root?.parentElement && root.childElementCount === 1) root = root.parentElement;
     if (!root) return;
     const scan = () => {
       const found: Array<{ host: HTMLElement; text: string }> = [];
