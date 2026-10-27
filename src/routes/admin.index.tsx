@@ -112,7 +112,7 @@ const CARDS = [
   },
   {
     to: "/admin/precificacao",
-    title: "Precificação e orçamentos",
+    title: "Precificação e Orçamento",
     text: "Homem-hora, etapas por serviço e orçamentos em PDF com cronograma.",
   },
   {

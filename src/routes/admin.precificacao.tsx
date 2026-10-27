@@ -6,6 +6,7 @@ import { Sparkles, FileDown, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 import { AdminShell } from "@/components/AdminShell";
+import { FormattedNumberInput } from "@/components/FormattedNumberInput";
 import { QuoteScenarios } from "@/components/QuoteScenarios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,7 +59,7 @@ export const Route = createFileRoute("/admin/precificacao")({
   },
   head: () => ({
     meta: [
-      { title: "Precificação e orçamentos — Painel Liberato Consulting" },
+      { title: "Precificação e Orçamento — Painel Liberato Consulting" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -320,7 +321,7 @@ function PricingPage() {
 
   return (
     <AdminShell
-      title="Projetos — Organização, precificação e orçamento"
+      title="3. Precificação e Orçamento"
       description="Defina o valor do homem-hora, as etapas de cada serviço e gere o orçamento com cronograma em PDF para enviar ao cliente. O valor calculado alimenta automaticamente os preços do Cadastro de serviços."
       requireAdmin
     >
@@ -728,7 +729,7 @@ function PricingPage() {
             </div>
             <div className="space-y-1.5">
               <Label>Desconto comercial (%)</Label>
-              <Num value={discountPct} onChange={setDiscountPct} className="w-full" />
+              <FormattedNumberInput kind="percent" decimals={0} value={discountPct} onChange={(v) => setDiscountPct(Math.round(v))} className="w-full" />
             </div>
             <label className="flex items-center gap-3 self-end pb-2 text-sm">
               <Switch checked={remoteOnly} onCheckedChange={(v) => setRemoteOnly(Boolean(v))} />

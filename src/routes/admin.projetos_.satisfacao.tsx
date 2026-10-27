@@ -80,7 +80,7 @@ function SatisfactionPage() {
   const fmt = (v: number | null, suf = "") => (v == null ? "—" : `${v}${suf}`);
 
   return (
-    <AdminShell title="6. Satisfação do cliente" description="Dashboard das pesquisas de satisfação de serviços executados e não executados." requireAdmin>
+    <AdminShell title="6. Satisfação do Cliente" description="Dashboard das pesquisas de satisfação de serviços executados e não executados." requireAdmin>
       <ProjectFlowGuide current={6} />
       <div className="grid gap-3">
         <FormLinkBar form="executado" />

@@ -17,10 +17,10 @@ export const Route = createFileRoute("/admin/projetos_/contratos")({
     typeof s["cliente"] === "string" ? { cliente: s["cliente"] } : {},
   head: () => ({
     meta: [
-      { title: "Contrato e NDA — Painel Liberato Consulting" },
+      { title: "NDA e Contrato — Painel Liberato Consulting" },
       { name: "robots", content: "noindex" },
       { name: "description", content: "Emissão e assinatura de NDA e contratos de consultoria." },
-      { property: "og:title", content: "Contrato e NDA — Liberato Consulting" },
+      { property: "og:title", content: "NDA e Contrato — Liberato Consulting" },
       { property: "og:description", content: "Documentos, orçamento anexo e registros de assinatura." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -126,7 +126,7 @@ function ContractsPage() {
   );
 
   return (
-    <AdminShell title="5. Contrato e NDA" description="Primeiro o NDA, assinado antes de qualquer troca de informações. Depois o contrato de consultoria, com o orçamento aprovado como Anexo I." requireAdmin>
+    <AdminShell title="5. NDA e Contrato" description="Primeiro o NDA, assinado antes de qualquer troca de informações. Depois o contrato de consultoria, com o orçamento aprovado como Anexo I." requireAdmin>
       <div className="print:hidden"><ProjectFlowGuide current={5} /></div>
       <div className="print:hidden">
         <div className="flex gap-2">
