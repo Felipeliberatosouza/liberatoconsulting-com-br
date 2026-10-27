@@ -1,3 +1,4 @@
+import { listScopeSubmissions } from "@/lib/projects.functions";
 import { ProjectFlowGuide } from "@/components/ProjectFlowGuide";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -38,6 +39,8 @@ import {
 } from "@/lib/diagnostic-catalog";
 
 export const Route = createFileRoute("/admin/projetos_/diagnostico")({
+  validateSearch: (s: Record<string, unknown>): { escopo?: string } =>
+    typeof s["escopo"] === "string" ? { escopo: s["escopo"] } : {},
   head: () => ({
     meta: [
       { title: "Diagnóstico detalhado — Painel Liberato Consulting" },
@@ -73,6 +76,17 @@ function DiagnosticPage() {
   const [respondent, setRespondent] = useState<Record<string, string>>({});
   const [submittedAt, setSubmittedAt] = useState<string | null>(null);
   const [tab, setTab] = useState("leiame");
+  const [scopeId, setScopeId] = useState<string | null>(null);
+  const { escopo } = Route.useSearch();
+  const scopes = useQuery({ queryKey: ["scope-submissions"], queryFn: () => listScopeSubmissions(), enabled: !!escopo, retry: false });
+  // Vindo da etapa 1: o cliente do escopo já entra preenchido e o diagnóstico fica ligado a ele.
+  useEffect(() => {
+    const s = escopo ? scopes.data?.find((x) => x.id === escopo) : undefined;
+    if (!s) return;
+    setScopeId(s.id);
+    setClientName((c) => c || s.company);
+    setTitle((t) => t || `Diagnóstico — ${s.company}`);
+  }, [escopo, scopes.data]);
   const keepQs = useRef(false);
 
   const services = useQuery({
@@ -164,7 +178,7 @@ function DiagnosticPage() {
           client_name: clientName,
           service_slug: serviceSlug,
           service_title: service?.title ?? "",
-          scope_submission_id: null,
+          scope_submission_id: scopeId,
           answers,
           consultant_notes: { ...consultantNotes, __why: JSON.stringify(scoreWhy) },
           scores: scoreValues,
