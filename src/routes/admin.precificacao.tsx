@@ -1,3 +1,4 @@
+import { ProjectFlowGuide } from "@/components/ProjectFlowGuide";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
@@ -323,6 +324,7 @@ function PricingPage() {
       description="Defina o valor do homem-hora, as etapas de cada serviço e gere o orçamento com cronograma em PDF para enviar ao cliente. O valor calculado alimenta automaticamente os preços do Cadastro de serviços."
       requireAdmin
     >
+      <ProjectFlowGuide current={3} />
       <Tabs defaultValue={aba ?? "rates"}>
         <TabsList className="mb-6 flex-wrap">
           <TabsTrigger value="rates">Valor do homem-hora</TabsTrigger>

@@ -1,3 +1,4 @@
+import { ProjectFlowGuide } from "@/components/ProjectFlowGuide";
 import { Button } from "@/components/ui/button";
 import { issueClientDocument, listClientDocuments, downloadClientDocument, inviteDocumentSigner } from "@/lib/client-signing.functions";
 import { createFileRoute } from "@tanstack/react-router";
@@ -114,6 +115,7 @@ function ContractsPage() {
 
   return (
     <AdminShell title="5. Contrato e NDA" description="Primeiro o NDA, assinado antes de qualquer troca de informações. Depois o contrato de consultoria, com o orçamento aprovado como Anexo I." requireAdmin>
+      <div className="print:hidden"><ProjectFlowGuide current={5} /></div>
       <div className="print:hidden">
         <div className="flex gap-2">
           {([["nda", "1. NDA (antes do escopo)"], ["contract", "2. Contrato de consultoria"]] as const).map(([k, l]) => (

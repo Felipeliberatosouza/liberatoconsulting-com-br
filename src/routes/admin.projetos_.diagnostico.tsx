@@ -1,3 +1,4 @@
+import { ProjectFlowGuide } from "@/components/ProjectFlowGuide";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -227,6 +228,17 @@ function DiagnosticPage() {
       description="Coleta das informações do cliente por serviço, avaliação de esforço, desenho do escopo e orçamento indicativo."
       requireAdmin
     >
+      <ProjectFlowGuide
+        current={2}
+        nextLabel="Salvar e avançar: Precificação"
+        nextPending={save.isPending}
+        onNext={async () => {
+          // O planejamento salvo aqui vira o orçamento da etapa 3.
+          const res = await save.mutateAsync();
+          if (!res.ok) return;
+          void navigate({ to: "/admin/precificacao", search: { aba: "quote", diag: res.id } as never });
+        }}
+      />
       <Link
         to="/admin/projetos"
         className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-accent"
@@ -291,8 +303,7 @@ function DiagnosticPage() {
           <TabsTrigger value="diagnostico">Diagnóstico</TabsTrigger>
           <TabsTrigger value="score">Score de esforço</TabsTrigger>
           <TabsTrigger value="escopo">Escopo e esforço</TabsTrigger>
-          <TabsTrigger value="orcamento">Orçamento</TabsTrigger>
-          <TabsTrigger value="resumo">Resumo</TabsTrigger>
+          <TabsTrigger value="resumo">Resumo e premissas de preço</TabsTrigger>
         </TabsList>
 
         {/* ---------------- Leia-me ---------------- */}
@@ -313,11 +324,11 @@ function DiagnosticPage() {
                 ajuste quantidade, dias e composição por perfil.
               </li>
               <li>
-                Na aba Orçamento, revise taxas, custos de terceiros, contingência, impostos e
-                desconto.
+                Na aba Resumo e premissas de preço, revise taxas, custos de terceiros,
+                contingência, impostos e desconto.
               </li>
               <li>
-                Use o Resumo como revisão interna antes de gerar o orçamento final na etapa 4.
+                Use o Resumo como revisão interna antes de gerar o orçamento final na etapa 3.
               </li>
             </ol>
           </section>
@@ -571,8 +582,55 @@ function DiagnosticPage() {
           </p>
         </TabsContent>
 
-        {/* ---------------- Orçamento ---------------- */}
-        <TabsContent value="orcamento" className="space-y-6">
+        {/* ---------------- Resumo ---------------- */}
+        <TabsContent value="resumo" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-3">
+            {[
+              ["Perguntas respondidas", `${answered} de ${questions.length}`],
+              ["Obrigatórias pendentes", String(pending)],
+              ["Média ponderada de esforço", `${num(avg)} — ${scoreBand(avg)}`],
+              ["Dias sênior", num(totals.days.senior)],
+              ["Dias analista", num(totals.days.analyst)],
+              ["Dias PM", num(totals.days.pm)],
+              ["Custos diretos", brl(totals.days.direct)],
+              ["Contingência", brl(totals.contingency)],
+              ["Preço indicativo", brl(totals.final)],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-2xl border border-border bg-background p-5">
+                <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
+                <p className="mt-2 font-display text-lg font-bold">{value}</p>
+              </div>
+            ))}
+          </div>
+          {pending > 0 ? (
+            <p className="rounded-xl border border-destructive/40 bg-destructive/5 p-4 text-sm">
+              Existem {pending} perguntas obrigatórias sem resposta. Trate-as como pendência,
+              condição ou exclusão antes de fechar o preço.
+            </p>
+          ) : (
+            <p className="rounded-xl border border-accent/40 bg-accent/5 p-4 text-sm">
+              Todas as perguntas obrigatórias foram respondidas. Você pode avançar para a etapa 3 e
+              gerar o orçamento.
+            </p>
+          )}
+          <button
+            type="button"
+            disabled={save.isPending}
+            onClick={async () => {
+              // Salva antes de seguir: o orçamento é montado a partir deste diagnóstico.
+              const res = await save.mutateAsync();
+              if (!res.ok) return;
+              void navigate({ to: "/admin/precificacao", search: { aba: "quote", diag: res.id } as never });
+            }}
+            className="inline-block rounded-full bg-ink px-4 py-2 text-sm font-medium text-ink-foreground hover:bg-accent hover:text-accent-foreground"
+          >
+            {save.isPending ? "Salvando…" : "Salvar e avançar: Precificação e orçamento"}
+          </button>
+          <div className="space-y-6 border-t border-border pt-6">
+            <p className="text-sm text-muted-foreground">
+              Premissas de preço deste diagnóstico. Elas seguem para a etapa 3 (Precificação e
+              orçamento), onde o orçamento final é gerado com o mesmo total.
+            </p>
           <section className="rounded-2xl border border-border bg-background p-6">
             <h3 className="font-display text-base font-semibold">Premissas de preço</h3>
             <div className="mt-4 grid gap-4 md:grid-cols-3">
@@ -662,52 +720,7 @@ function DiagnosticPage() {
               ))}
             </div>
           </section>
-        </TabsContent>
-
-        {/* ---------------- Resumo ---------------- */}
-        <TabsContent value="resumo" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-3">
-            {[
-              ["Perguntas respondidas", `${answered} de ${questions.length}`],
-              ["Obrigatórias pendentes", String(pending)],
-              ["Média ponderada de esforço", `${num(avg)} — ${scoreBand(avg)}`],
-              ["Dias sênior", num(totals.days.senior)],
-              ["Dias analista", num(totals.days.analyst)],
-              ["Dias PM", num(totals.days.pm)],
-              ["Custos diretos", brl(totals.days.direct)],
-              ["Contingência", brl(totals.contingency)],
-              ["Preço indicativo", brl(totals.final)],
-            ].map(([label, value]) => (
-              <div key={label} className="rounded-2xl border border-border bg-background p-5">
-                <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
-                <p className="mt-2 font-display text-lg font-bold">{value}</p>
-              </div>
-            ))}
-          </div>
-          {pending > 0 ? (
-            <p className="rounded-xl border border-destructive/40 bg-destructive/5 p-4 text-sm">
-              Existem {pending} perguntas obrigatórias sem resposta. Trate-as como pendência,
-              condição ou exclusão antes de fechar o preço.
-            </p>
-          ) : (
-            <p className="rounded-xl border border-accent/40 bg-accent/5 p-4 text-sm">
-              Todas as perguntas obrigatórias foram respondidas. Você pode avançar para a etapa 3 e
-              gerar o orçamento.
-            </p>
-          )}
-          <button
-            type="button"
-            disabled={save.isPending}
-            onClick={async () => {
-              // Salva antes de seguir: o orçamento é montado a partir deste diagnóstico.
-              const res = await save.mutateAsync();
-              if (!res.ok) return;
-              void navigate({ to: "/admin/precificacao", search: { aba: "quote", diag: res.id } as never });
-            }}
-            className="inline-block rounded-full bg-ink px-4 py-2 text-sm font-medium text-ink-foreground hover:bg-accent hover:text-accent-foreground"
-          >
-            {save.isPending ? "Salvando…" : "Ir para Gerar orçamento"}
-          </button>
+                  </div>
         </TabsContent>
       </Tabs>
 
