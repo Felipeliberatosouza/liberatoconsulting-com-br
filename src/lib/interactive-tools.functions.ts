@@ -146,7 +146,11 @@ export const getInteractiveTool = createServerFn({ method: "GET" })
   .handler(async ({ data, context }) => {
     const privileged = await db();
     const { data: raw } = await privileged.from("interactive_tools").select("id, slug, title, summary, category, pricing_mode, price_brl, spec, status").eq("slug", data.slug).maybeSingle();
-    if (!raw || raw.status !== "published") return { found: false as const };
+    if (!raw) return { found: false as const };
+    if (raw.status !== "published") {
+      const { data: isAdmin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
+      if (!isAdmin) return { found: false as const };
+    }
     const { translateTool } = await import("./tool-i18n.server");
     const tr = await translateTool(data.lang ?? "pt", raw as any, raw.spec as ToolSpec);
     const tool = { ...raw, ...tr.tool, spec: tr.spec };
