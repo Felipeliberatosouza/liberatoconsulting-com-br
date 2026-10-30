@@ -22,6 +22,7 @@ import { Route as ContentRouteImport } from './routes/content'
 import { Route as DescadastroRouteImport } from './routes/descadastro'
 import { Route as EscopoinicialRouteImport } from './routes/escopoinicial'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
+import { Route as GuiaRouteImport } from './routes/guia'
 import { Route as GuiaGestaoRouteImport } from './routes/guia-gestao'
 import { Route as NewslettersRouteImport } from './routes/newsletters'
 import { Route as NovoconsultorRouteImport } from './routes/novoconsultor'
@@ -166,6 +167,11 @@ const EscopoinicialRoute = EscopoinicialRouteImport.update({
 const FerramentasRoute = FerramentasRouteImport.update({
   id: '/ferramentas',
   path: '/ferramentas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuiaRoute = GuiaRouteImport.update({
+  id: '/guia',
+  path: '/guia',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuiaGestaoRoute = GuiaGestaoRouteImport.update({
@@ -594,6 +600,7 @@ export interface FileRoutesByFullPath {
   '/descadastro': typeof DescadastroRoute
   '/escopoinicial': typeof EscopoinicialRoute
   '/ferramentas': typeof FerramentasRoute
+  '/guia': typeof GuiaRoute
   '/guia-gestao': typeof GuiaGestaoRoute
   '/newsletters': typeof NewslettersRoute
   '/novoconsultor': typeof NovoconsultorRoute
@@ -689,6 +696,7 @@ export interface FileRoutesByTo {
   '/descadastro': typeof DescadastroRoute
   '/escopoinicial': typeof EscopoinicialRoute
   '/ferramentas': typeof FerramentasRoute
+  '/guia': typeof GuiaRoute
   '/guia-gestao': typeof GuiaGestaoRoute
   '/newsletters': typeof NewslettersRoute
   '/novoconsultor': typeof NovoconsultorRoute
@@ -785,6 +793,7 @@ export interface FileRoutesById {
   '/descadastro': typeof DescadastroRoute
   '/escopoinicial': typeof EscopoinicialRoute
   '/ferramentas': typeof FerramentasRoute
+  '/guia': typeof GuiaRoute
   '/guia-gestao': typeof GuiaGestaoRoute
   '/newsletters': typeof NewslettersRoute
   '/novoconsultor': typeof NovoconsultorRoute
@@ -882,6 +891,7 @@ export interface FileRouteTypes {
     | '/descadastro'
     | '/escopoinicial'
     | '/ferramentas'
+    | '/guia'
     | '/guia-gestao'
     | '/newsletters'
     | '/novoconsultor'
@@ -977,6 +987,7 @@ export interface FileRouteTypes {
     | '/descadastro'
     | '/escopoinicial'
     | '/ferramentas'
+    | '/guia'
     | '/guia-gestao'
     | '/newsletters'
     | '/novoconsultor'
@@ -1072,6 +1083,7 @@ export interface FileRouteTypes {
     | '/descadastro'
     | '/escopoinicial'
     | '/ferramentas'
+    | '/guia'
     | '/guia-gestao'
     | '/newsletters'
     | '/novoconsultor'
@@ -1168,6 +1180,7 @@ export interface RootRouteChildren {
   DescadastroRoute: typeof DescadastroRoute
   EscopoinicialRoute: typeof EscopoinicialRoute
   FerramentasRoute: typeof FerramentasRoute
+  GuiaRoute: typeof GuiaRoute
   GuiaGestaoRoute: typeof GuiaGestaoRoute
   NewslettersRoute: typeof NewslettersRoute
   NovoconsultorRoute: typeof NovoconsultorRoute
@@ -1341,6 +1354,13 @@ declare module '@tanstack/react-router' {
       path: '/ferramentas'
       fullPath: '/ferramentas'
       preLoaderRoute: typeof FerramentasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guia': {
+      id: '/guia'
+      path: '/guia'
+      fullPath: '/guia'
+      preLoaderRoute: typeof GuiaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guia-gestao': {
@@ -1920,6 +1940,7 @@ const rootRouteChildren: RootRouteChildren = {
   DescadastroRoute: DescadastroRoute,
   EscopoinicialRoute: EscopoinicialRoute,
   FerramentasRoute: FerramentasRoute,
+  GuiaRoute: GuiaRoute,
   GuiaGestaoRoute: GuiaGestaoRoute,
   NewslettersRoute: NewslettersRoute,
   NovoconsultorRoute: NovoconsultorRoute,
