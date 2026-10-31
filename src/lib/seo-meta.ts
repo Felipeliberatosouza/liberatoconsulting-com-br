@@ -22,31 +22,31 @@ type PageSeoByLang = Record<SeoLang, PageSeo>;
 export const PAGE_SEO: Record<string, PageSeoByLang> = {
   "/": {
     pt: {
-      title: "Consultoria empresarial e gestão estratégica com IA | Liberato",
+      title: "Consultoria e Treinamento in Company com IA | Liberato",
       description:
-        "Consultoria empresarial com inteligência artificial: diagnóstico empresarial, gestão estratégica, finanças e pesquisas de mercado no Brasil. Fale conosco.",
-      ogTitle: "Consultoria empresarial e gestão estratégica com IA — Liberato Consulting",
+        "Consultoria em estratégia, operações e empreendedorismo, Treinamento in Company e pesquisas sobre o Brasil, com IA e autonomia para sua equipe.",
+      ogTitle: "Consultoria e Treinamento in Company com IA — Liberato Consulting",
       ogDescription:
-        "Diagnóstico empresarial, gestão estratégica, finanças e pesquisas de mercado no Brasil, com inteligência artificial.",
+        "Método clássico de gestão e inteligência artificial para decidir melhor, com equipes capacitadas para seguir com autonomia.",
     },
     en: {
-      title: "Brazil market research and AI-driven management — Liberato Consulting",
+      title: "Brazil market research, consulting and in-company training — Liberato",
       description:
-        "Research and data on the Brazilian market for international investors, covering agribusiness, energy and industry, with strategic management and AI.",
+        "Brazil market entry research for international companies and investors, plus AI-driven management consulting and in-company training.",
       ogTitle: "Brazil market research — Liberato Consulting",
       ogDescription:
         "Intelligence on Brazilian economic sectors for international companies, with strategic management and AI at the core.",
     },
     es: {
-      title: "Investigación de mercado en Brasil y gestión con IA — Liberato Consulting",
+      title: "Investigación de mercado en Brasil, consultoría y capacitación — Liberato",
       description:
-        "Estudios y datos sobre el mercado brasileño para inversores internacionales: agronegocio, energía e industria, con gestión estratégica e IA.",
+        "Estudios del mercado brasileño para empresas e inversores internacionales, consultoría de gestión con IA y capacitación in company.",
       ogTitle: "Investigación de mercado sobre Brasil — Liberato Consulting",
       ogDescription:
         "Inteligencia sobre los sectores de la economía brasileña para empresas internacionales, con gestión estratégica e IA.",
     },
     zh: {
-      title: "巴西市场研究与人工智能管理咨询 — Liberato Consulting",
+      title: "巴西市场研究、管理咨询与企业内训 — Liberato Consulting",
       description:
         "面向国际投资者的巴西市场研究与数据，涵盖农业综合企业、能源与制造业，并以战略管理和人工智能为核心。",
       ogTitle: "巴西市场研究 — Liberato Consulting",
@@ -55,15 +55,15 @@ export const PAGE_SEO: Record<string, PageSeoByLang> = {
   },
   "/services": {
     pt: {
-      title: "Consultoria empresarial, financeira e estratégica | Liberato",
+      title: "Consultoria e Treinamento in Company | Liberato Consulting",
       description:
-        "Diagnóstico empresarial, consultoria financeira, estratégica e de negócios com IA: eficiência, vendas, ESG e pessoas. Escopo, prazo e metas definidos.",
-      ogTitle: "Serviços de consultoria empresarial — Liberato Consulting",
+        "Consultoria em Estratégia, Operações, Empreendedorismo e Pesquisas sobre o Brasil, e Treinamento in Company com IA. Escopo, prazo e metas definidos.",
+      ogTitle: "Consultoria e Treinamento in Company — Liberato Consulting",
       ogDescription:
         "Produtos de consultoria com escopo, prazo e indicadores definidos, com inteligência artificial aplicada ao método.",
     },
     en: {
-      title: "Management consulting services | Liberato Consulting",
+      title: "Consulting and in-company training | Liberato Consulting",
       description:
         "Business management consulting in Brazil: operational efficiency, growth, digital and AI, finance, sales, ESG, people and market intelligence.",
       ogTitle: "Management consulting services — Liberato Consulting",
@@ -71,7 +71,7 @@ export const PAGE_SEO: Record<string, PageSeoByLang> = {
         "Consulting products with defined scope, timeline and indicators, with artificial intelligence applied to the method.",
     },
     es: {
-      title: "Servicios de consultoría empresarial | Liberato Consulting",
+      title: "Consultoría y capacitación in company | Liberato Consulting",
       description:
         "Consultoría de gestión empresarial en Brasil: eficiencia operativa, crecimiento, digital e IA, finanzas, ventas, ESG, personas e inteligencia de mercado.",
       ogTitle: "Servicios de consultoría empresarial — Liberato Consulting",
@@ -79,7 +79,7 @@ export const PAGE_SEO: Record<string, PageSeoByLang> = {
         "Productos de consultoría con alcance, plazo e indicadores definidos, con inteligencia artificial aplicada al método.",
     },
     zh: {
-      title: "企业管理咨询服务 | Liberato Consulting",
+      title: "管理咨询与企业内训 | Liberato Consulting",
       description:
         "在巴西提供企业管理咨询：运营效率、业务增长、数字化与人工智能、财务、销售、ESG、人才与市场情报。",
       ogTitle: "企业管理咨询服务 — Liberato Consulting",
