@@ -7,6 +7,7 @@ import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { seoPageMeta } from "@/lib/seo-meta";
 import { trackEvent } from "@/lib/gtag";
+import { serviceMacro } from "@/lib/service-macro";
 import { submitLead } from "@/lib/leads.functions";
 import { getPublicCompanyAddress } from "@/lib/company-public.functions";
 import { postalAddressSchema } from "@/lib/company-address";
@@ -360,10 +361,19 @@ function ContactPage() {
                   className={cls("service")}
                 >
                   <option value="">{t.contact.servicePlaceholder}</option>
-                  {products.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.family ? `${p.family} — ${p.title}` : p.title}
-                    </option>
+                  {(["consultoria", "treinamento"] as const).map((m) => (
+                    <optgroup
+                      key={m}
+                      label={m === "treinamento" ? t.megaMenu.groups.find((g) => g.id === "treinamento")?.title ?? "Treinamento in Company" : t.contact.consultingGroup}
+                    >
+                      {products
+                        .filter((p) => serviceMacro(p) === m)
+                        .map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.family ? `${p.family} — ${p.title}` : p.title}
+                          </option>
+                        ))}
+                    </optgroup>
                   ))}
                   <option value="outros">{t.contact.serviceOther}</option>
                 </select>

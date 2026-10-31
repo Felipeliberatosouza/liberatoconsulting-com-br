@@ -697,6 +697,7 @@ export const pt = {
     serviceLabel: "Serviços da Liberato Consulting",
     servicePlaceholder: "Selecione um serviço",
     serviceOther: "Outros serviços",
+    consultingGroup: "Consultoria",
     messageIntro: "Olá! Gostaria de obter mais informações de como a Liberato Consulting pode ajudar com ",
     messageOutro: "Espero um contato.",
     required: "Preencha este campo.",
