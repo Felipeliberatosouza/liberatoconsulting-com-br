@@ -21,11 +21,15 @@ const pt = {
   highlightedFor: "Conteúdo destacado para",
   prevBanner: "Banner anterior",
   nextBanner: "Próximo banner",
-  keywordsTitle: "Consultoria empresarial: temas mais procurados",
+  keywordsTitle: "Consultoria, Treinamento in Company e pesquisas sobre o Brasil: temas mais procurados",
   footerNewsletter: "Receba nossos conteúdos sobre gestão, IA e o mercado brasileiro.",
   interactiveTitle: "Ferramentas interativas",
   interactiveBody: "Informe os dados do seu negócio e receba resultados, gráfico e relatório em PDF e PowerPoint.",
   extraFaq: [
+      {"question": "Quais serviços a Liberato Consulting oferece?", "answer": "Dois serviços: Consultoria (Estratégia, Operações, Empreendedorismo e Decisões, Pesquisas e Inteligência sobre o Brasil) e Treinamento in Company (liderança e gestão da rotina, IA na gestão, Lean, vendas B2B, precificação, gestão de projetos, transformação digital e relacionamento com clientes)."},
+      {"question": "Qual a diferença entre Consultoria e Treinamento in Company?", "answer": "Na Consultoria diagnosticamos, estruturamos decisões e implementamos melhorias junto com a sua equipe. No Treinamento in Company capacitamos líderes e times dentro da empresa; cada turma termina com um plano de ação aplicado ao negócio. Os dois podem ser combinados."},
+      {"question": "Como a consultoria desenvolve a autonomia da minha empresa?", "answer": "Todo projeto inclui transferência de método, ferramentas e rotinas de gestão com apoio de IA, para que a sua equipe sustente e continue as melhorias sem depender da consultoria."},
+      {"question": "Vocês fazem pesquisas sobre o Brasil para empresas e investidores internacionais?", "answer": "Sim. Produzimos estudos setoriais, dimensionamento de mercado, análise competitiva e regulatória e mapeamento de parceiros locais para decisões de entrada, expansão e investimento no Brasil, em português, inglês, espanhol e chinês."},
       {
           "question": "Como a empresa é classificada por porte?",
           "answer": "Usamos a classificação Sebrae por número de funcionários e setor: Micro, Pequena, Média e Grande Empresa. Microempresas têm menos de 10 funcionários em comércio e serviços e menos de 20 na indústria. O planejamento considera também o desafio e a estrutura da empresa."
@@ -119,6 +123,10 @@ const en: HomeDict = {
   interactiveTitle: "Interactive tools",
   interactiveBody: "Enter your business data and get results, charts and a PDF and PowerPoint report.",
   extraFaq: [
+      {"question": "What services does Liberato Consulting offer?", "answer": "Two services: Consulting (Strategy, Operations, Entrepreneurship and Decisions, Brazil Research and Intelligence) and In-Company Training (leadership and daily management, AI in management, Lean, B2B sales, pricing, project management, digital transformation and customer relationship)."},
+      {"question": "What is the difference between Consulting and In-Company Training?", "answer": "In Consulting we diagnose, structure decisions and implement improvements alongside your team. In In-Company Training we develop leaders and teams inside your company; each group finishes with an action plan applied to the business. Both can be combined."},
+      {"question": "How does the consultancy build my company's autonomy?", "answer": "Every project transfers methods, tools and AI-supported management routines so your team can sustain and continue the improvements without depending on the consultancy."},
+      {"question": "Do you research Brazil for international companies and investors?", "answer": "Yes. We deliver sector studies, market sizing, competitive and regulatory analysis and local partner mapping for decisions to enter, expand or invest in Brazil, in Portuguese, English, Spanish and Chinese."},
       {
           "question": "How are companies classified by size?",
           "answer": "We use Sebrae classifications based on employee count and sector: Micro, Small, Medium and Large. Micro companies have fewer than 10 employees in retail and services and fewer than 20 in industry. Planning also considers the challenge and company structure."
@@ -210,6 +218,10 @@ const es: HomeDict = {
   interactiveTitle: "Herramientas interactivas",
   interactiveBody: "Ingrese los datos de su negocio y reciba resultados, gráficos e informe en PDF y PowerPoint.",
   extraFaq: [
+      {"question": "¿Qué servicios ofrece Liberato Consulting?", "answer": "Dos servicios: Consultoría (Estrategia, Operaciones, Emprendimiento y Decisiones, Investigación e Inteligencia sobre Brasil) y Capacitación In Company (liderazgo y gestión de la rutina, IA en la gestión, Lean, ventas B2B, precios, gestión de proyectos, transformación digital y relación con clientes)."},
+      {"question": "¿Cuál es la diferencia entre Consultoría y Capacitación In Company?", "answer": "En la Consultoría diagnosticamos, estructuramos decisiones e implementamos mejoras junto con su equipo. En la Capacitación In Company formamos líderes y equipos dentro de la empresa; cada grupo termina con un plan de acción aplicado al negocio. Ambos pueden combinarse."},
+      {"question": "¿Cómo desarrolla la consultoría la autonomía de mi empresa?", "answer": "Cada proyecto transfiere métodos, herramientas y rutinas de gestión apoyadas por IA para que su equipo sostenga y continúe las mejoras sin depender de la consultoría."},
+      {"question": "¿Realizan investigaciones sobre Brasil para empresas e inversores internacionales?", "answer": "Sí. Elaboramos estudios sectoriales, dimensionamiento de mercado, análisis competitivo y regulatorio y mapeo de socios locales para decisiones de entrada, expansión e inversión en Brasil, en portugués, inglés, español y chino."},
       {
           "question": "¿Cómo se clasifica la empresa por tamaño?",
           "answer": "Usamos la clasificación Sebrae por número de empleados y sector: Micro, Pequeña, Mediana y Gran Empresa. Las microempresas tienen menos de 10 empleados en comercio y servicios y menos de 20 en industria. La planificación también considera el desafío y la estructura de la empresa."
@@ -301,6 +313,10 @@ const zh: HomeDict = {
   interactiveTitle: "互动工具",
   interactiveBody: "输入您的企业数据，即可获得结果、图表以及 PDF 和 PowerPoint 报告。",
   extraFaq: [
+      {"question": "Liberato Consulting 提供哪些服务？", "answer": "两大服务：咨询（战略、运营、创业与决策、巴西研究与情报）和企业内训（领导力与日常管理、管理中的人工智能、精益、B2B销售、定价、项目管理、数字化转型与客户关系）。"},
+      {"question": "咨询与企业内训有什么区别？", "answer": "在咨询中，我们与您的团队一起诊断问题、构建决策并落实改进。在企业内训中，我们在企业内部培养管理者和团队；每期培训都以落地到业务的行动计划结束。两者可以组合。"},
+      {"question": "咨询如何培养企业的自主能力？", "answer": "每个项目都会转移方法、工具以及人工智能辅助的管理机制，使您的团队无需依赖顾问即可维持并持续改进。"},
+      {"question": "你们为国际企业和投资者开展巴西研究吗？", "answer": "是的。我们提供行业研究、市场规模测算、竞争与监管分析以及本地合作伙伴梳理，支持进入、扩张和投资巴西的决策，提供葡萄牙语、英语、西班牙语和中文版本。"},
       {
           "question": "企业规模如何划分？",
           "answer": "我们依据 Sebrae 的员工人数和行业标准划分微型、小型、中型和大型企业。商业与服务业微型企业员工少于 10 人，工业少于 20 人。规划也会考虑企业面临的挑战和组织结构。"

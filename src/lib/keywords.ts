@@ -349,11 +349,39 @@ export const KEYWORD_THEMES: KeywordTheme[] = [
   },
   {
     id: "pesquisas",
-    title: "Pesquisa de mercado e inteligência competitiva",
+    title: "Pesquisas e inteligência de mercado sobre o Brasil",
     titleEn: "Market research and competitive intelligence",
     titleEs: "Investigación de mercado e inteligencia competitiva",
     titleZh: "市场研究与竞争情报",
     terms: [
+      {
+        term: "brazil market entry consulting",
+        en: "Brazil market entry consulting",
+        es: "consultoría de entrada al mercado brasileño",
+        zh: "巴西市场进入咨询",
+        path: "/brasil",
+      },
+      {
+        term: "estudo setorial do Brasil para investidores",
+        en: "Brazil sector study for investors",
+        es: "estudio sectorial de Brasil para inversores",
+        zh: "面向投资者的巴西行业研究",
+        path: "/brasil",
+      },
+      {
+        term: "due diligence de mercado no Brasil",
+        en: "market due diligence in Brazil",
+        es: "due diligence de mercado en Brasil",
+        zh: "巴西市场尽职调查",
+        path: "/brasil",
+      },
+      {
+        term: "inteligência de mercado sobre o Brasil",
+        en: "Brazil business intelligence",
+        es: "inteligencia de mercado sobre Brasil",
+        zh: "巴西商业情报",
+        path: "/brasil",
+      },
       {
         term: "pesquisa de mercado para empresas",
         en: "market research for companies",
@@ -690,6 +718,41 @@ export const KEYWORD_THEMES: KeywordTheme[] = [
     titleEs: "Capacitación in company y formación corporativa",
     titleZh: "企业内训与员工培训",
     terms: [
+      {
+        term: "treinamento de liderança e gestão da rotina",
+        en: "leadership and daily management training",
+        es: "capacitación en liderazgo y gestión de la rutina",
+        zh: "领导力与日常管理培训",
+        path: "/services/treinamento-in-company",
+      },
+      {
+        term: "treinamento de inteligência artificial para empresas",
+        en: "AI training for companies",
+        es: "capacitación en inteligencia artificial para empresas",
+        zh: "企业人工智能培训",
+        path: "/services/treinamento-in-company",
+      },
+      {
+        term: "treinamento de vendas B2B in company",
+        en: "in-company B2B sales training",
+        es: "capacitación en ventas B2B in company",
+        zh: "企业B2B销售内训",
+        path: "/services/treinamento-in-company",
+      },
+      {
+        term: "treinamento de formação de preço e margem",
+        en: "pricing and margin training",
+        es: "capacitación en fijación de precios y margen",
+        zh: "定价与利润培训",
+        path: "/services/treinamento-in-company",
+      },
+      {
+        term: "workshop lean in company",
+        en: "in-company lean workshop",
+        es: "taller lean in company",
+        zh: "企业精益工作坊",
+        path: "/services/treinamento-in-company",
+      },
       {
         term: "treinamento in company",
         en: "in-company training",
