@@ -26,6 +26,7 @@ import {
 } from "@/lib/services.functions";
 import { EMPTY_PRODUCT, type ServiceProduct } from "@/lib/services-catalog";
 import { pt } from "@/i18n/pt";
+import { SERVICE_MACROS, serviceMacro, type ServiceMacro } from "@/lib/service-macro";
 
 export const Route = createFileRoute("/admin/servicos")({
   head: () => ({
@@ -88,6 +89,7 @@ function AdminServicesPage() {
   const [draft, setDraft] = useState<ServiceProduct | null>(null);
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState("");
+  const [macro, setMacro] = useState<ServiceMacro | "todos">("todos");
   const [slugTouched, setSlugTouched] = useState(false);
   const [aiBusy, setAiBusy] = useState(false);
   const [aiTitle, setAiTitle] = useState("");
@@ -154,14 +156,16 @@ function AdminServicesPage() {
   });
 
   const grouped = useMemo(() => {
-    const rows = (list.data ?? []).filter((r) =>
-      `${r.title} ${r.family_title} ${r.group_id}`.toLowerCase().includes(filter.toLowerCase()),
+    const rows = (list.data ?? []).filter(
+      (r) =>
+        (macro === "todos" || serviceMacro(r) === macro) &&
+        `${r.title} ${r.family_title} ${r.group_id}`.toLowerCase().includes(filter.toLowerCase()),
     );
     return FAMILIES.map((f) => ({
       family: f,
       rows: rows.filter((r) => r.family_id === f.id),
     })).filter((g) => g.rows.length > 0);
-  }, [list.data, filter]);
+  }, [list.data, filter, macro]);
 
   function set<K extends keyof ServiceProduct>(key: K, value: ServiceProduct[K]) {
     setDraft((d) => (d ? { ...d, [key]: value } : d));
@@ -247,7 +251,7 @@ function AdminServicesPage() {
   return (
     <AdminShell
       title="Cadastro de serviços"
-      description="Fonte única dos produtos exibidos em Serviços. Os textos salvos aqui alimentam automaticamente as páginas do site e a seção Áreas e textos. Preços são internos e nunca aparecem no site."
+      description="Todo serviço pertence a um dos dois macro serviços: Consultoria ou Treinamento in Company (frente Treinamento). Fonte única dos produtos exibidos em Serviços. Os textos salvos aqui alimentam automaticamente as páginas do site e a seção Áreas e textos. Preços são internos e nunca aparecem no site."
       requireAdmin
     >
       <div className="mb-6 flex flex-wrap items-center gap-3">
@@ -257,6 +261,18 @@ function AdminServicesPage() {
           onChange={(e) => setFilter(e.target.value)}
           className="max-w-xs"
         />
+        <div className="flex flex-wrap gap-2" role="group" aria-label="Macro serviço">
+          {[{ id: "todos" as const, label: "Todos" }, ...SERVICE_MACROS].map((m) => (
+            <Button
+              key={m.id}
+              size="sm"
+              variant={macro === m.id ? "default" : "outline"}
+              onClick={() => setMacro(m.id)}
+            >
+              {m.label}
+            </Button>
+          ))}
+        </div>
         <div className="flex-1" />
         <Button onClick={openNew}>
           <Plus className="size-4" />
@@ -286,7 +302,12 @@ function AdminServicesPage() {
                   className="flex flex-wrap items-center gap-4 rounded-xl border border-border p-4"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold">{r.title}</p>
+                    <p className="font-semibold">
+                      <span className="mr-2 rounded-full bg-accent/15 px-2 py-0.5 text-xs font-semibold text-accent">
+                        {serviceMacro(r) === "treinamento" ? "Treinamento in Company" : "Consultoria"}
+                      </span>
+                      {r.title}
+                    </p>
                     <p className="truncate text-sm text-muted-foreground">{r.lead}</p>
                     <p className="mt-1 text-xs text-muted-foreground">
                       {r.published ? "Publicado" : "Oculto"} · ordem {r.position} · {r.duration}

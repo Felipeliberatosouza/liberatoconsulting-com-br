@@ -229,12 +229,22 @@ function HeroCarousel() {
               {slide.primary} <ArrowRight className="size-4" />
             </Link>
           )}
-          <Link
-            to="/contact"
-            className="inline-flex items-center rounded-full border border-ink-foreground/25 px-7 py-3.5 text-sm font-semibold transition-colors hover:bg-ink-foreground/10"
-          >
-            {slide.secondary}
-          </Link>
+          {slide.id === "consultoria" ? (
+            <Link
+              to="/services/$slug"
+              params={{ slug: "treinamento-in-company" }}
+              className="inline-flex items-center rounded-full border border-ink-foreground/25 px-7 py-3.5 text-sm font-semibold transition-colors hover:bg-ink-foreground/10"
+            >
+              {slide.secondary}
+            </Link>
+          ) : (
+            <Link
+              to="/contact"
+              className="inline-flex items-center rounded-full border border-ink-foreground/25 px-7 py-3.5 text-sm font-semibold transition-colors hover:bg-ink-foreground/10"
+            >
+              {slide.secondary}
+            </Link>
+          )}
         </div>
 
         {count > 1 && (
