@@ -17,10 +17,12 @@ describe("catálogo reorganizado", () => {
     for (const target of Object.values(LEGACY_SERVICE_REDIRECTS)) {
       let current = target;
       const seen = new Set<string>();
-      while (LEGACY_SERVICE_REDIRECTS[current]) {
+      while (true) {
+        const next = LEGACY_SERVICE_REDIRECTS[current];
+        if (!next) break;
         expect(seen.has(current)).toBe(false);
         seen.add(current);
-        current = LEGACY_SERVICE_REDIRECTS[current];
+        current = next;
       }
       expect(slugs).toContain(current);
     }
