@@ -153,7 +153,7 @@ export function applyServiceProducts(
     .map((id) => {
       const products = published.filter((r) => r.family_id === id);
       const base = knownFamilies.get(id);
-      if (base) return { ...base, products: products.map((r) => r.slug) };
+      if (base) return products.length ? { ...base, products: products.map((r) => r.slug) } : null;
       const first = products[0];
       if (!first) return null;
       const sample = dict.serviceFamilies.items[0];
