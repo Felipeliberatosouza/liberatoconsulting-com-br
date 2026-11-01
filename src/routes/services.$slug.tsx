@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-route
 import { ArrowLeft, ArrowRight, Check, Clock, Gauge, Layers, ShieldAlert, Sparkles, Target, Users } from "lucide-react";
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
-import { OG_IMAGE, headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
+import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, serviceSchema, courseSchema, trainingProgramSchema } from "@/lib/schema";
 import { ServiceLeadForm } from "@/components/ServiceLeadForm";
 import { LEGACY_SERVICE_REDIRECTS } from "@/lib/service-redirects";

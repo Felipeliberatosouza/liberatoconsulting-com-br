@@ -9,6 +9,7 @@ import { pt } from "@/i18n/pt";
 import { HREFLANGS, localizedUrl, SITE_URL, absoluteUrl } from "@/lib/seo";
 import { topicSlug } from "@/lib/brazil-topic";
 import { collectSitemapRows } from "./sitemap-pagination";
+import { LEGACY_SERVICE_REDIRECTS } from "./service-redirects";
 
 export interface SitemapEntry {
   path: string;
@@ -54,7 +55,7 @@ export async function collectEntries(): Promise<SitemapEntry[]> {
     for (const r of (data ?? []) as { slug: string; family_id: string }[]) {
       for (const slug of [r.family_id, r.slug]) {
         const path = `/services/${slug}`;
-        if (slug && !seen.has(path)) {
+        if (slug && !LEGACY_SERVICE_REDIRECTS[slug] && !seen.has(path)) {
           seen.add(path);
           entries.push({ path, changefreq: "monthly", priority: "0.8" });
         }
