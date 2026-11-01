@@ -25,6 +25,8 @@ import {
 } from "@/lib/projects.functions";
 import { answerText, diagnosticLink, toEditable, type ClientAnswer, type EditableQuestion } from "@/lib/diagnostic-form";
 import { parseDiagnosticOptions } from "@/lib/diagnostic-options";
+import { PROJECT_KINDS, PROJECT_KIND_KEY, projectKindFromAnswers, projectKindText, type ProjectKind } from "@/lib/project-kind";
+import { serviceMacro } from "@/lib/service-macro";
 import {
   DEFAULT_BUDGET,
   DEFAULT_MODULES,
@@ -44,6 +46,11 @@ export const Route = createFileRoute("/admin/projetos_/diagnostico")({
   head: () => ({
     meta: [
       { title: "Diagnóstico detalhado — Painel Liberato Consulting" },
+      { name: "description", content: "Diagnósticos de consultoria, treinamento e pacotes combinados com escopo e orçamento." },
+      { property: "og:title", content: "Diagnóstico detalhado — Liberato Consulting" },
+      { property: "og:description", content: "Gestão dos diagnósticos e planejamento dos projetos." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -63,6 +70,7 @@ function DiagnosticPage() {
   const [clientName, setClientName] = useState("");
   const clientList = useQuery({ queryKey: ["project-clients"], queryFn: () => listProjectClients() });
   const [serviceSlug, setServiceSlug] = useState("");
+  const [projectKind, setProjectKind] = useState<ProjectKind | "">("");
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [consultantNotes, setConsultantNotes] = useState<Record<string, string>>({});
   const [scoreValues, setScoreValues] = useState<Record<string, number>>({});
@@ -86,6 +94,7 @@ function DiagnosticPage() {
     setScopeId(s.id);
     setClientName((c) => c || s.company);
     setTitle((t) => t || `Diagnóstico — ${s.company}`);
+    setProjectKind((kind) => kind || projectKindFromAnswers(s.answers));
   }, [escopo, scopes.data]);
   const keepQs = useRef(false);
 
@@ -101,6 +110,7 @@ function DiagnosticPage() {
   });
 
   const service = (services.data ?? []).find((s) => s.slug === serviceSlug);
+  const visibleServices = (services.data ?? []).filter((s) => s.slug === serviceSlug || (s.published && (!projectKind || projectKind === "pacote" || serviceMacro(s) === projectKind)));
   const questions = useMemo(
     () => questionsForFamily(service?.family_id ?? ""),
     [service?.family_id],
@@ -108,7 +118,8 @@ function DiagnosticPage() {
 
   useEffect(() => {
     if (!serviceSlug && (services.data ?? []).length > 0) {
-      setServiceSlug(services.data![0]!.slug);
+      const first = services.data?.find((s) => s.published);
+      if (first) setServiceSlug(first.slug);
     }
   }, [services.data, serviceSlug]);
 
@@ -125,6 +136,7 @@ function DiagnosticPage() {
   function reset() {
     setId(null);
     setScopeId(null);
+    setProjectKind("");
     setTitle("");
     setClientName("");
     setAnswers({});
@@ -147,6 +159,7 @@ function DiagnosticPage() {
     setScopeId(row.scope_submission_id ?? null);
     setTitle(row.title);
     setClientName(row.client_name);
+    setProjectKind(projectKindFromAnswers(row.answers));
     const sameService = row.service_slug === serviceSlug;
     if (row.questions?.length && !sameService) keepQs.current = true;
     setServiceSlug(row.service_slug);
@@ -181,7 +194,7 @@ function DiagnosticPage() {
           service_slug: serviceSlug,
           service_title: service?.title ?? "",
           scope_submission_id: scopeId,
-          answers,
+          answers: { ...answers, ...(projectKind ? { [PROJECT_KIND_KEY]: projectKind } : {}) },
           consultant_notes: { ...consultantNotes, __why: JSON.stringify(scoreWhy) },
           scores: scoreValues,
           modules: modules as unknown as Array<Record<string, string | number | boolean>>,
@@ -289,12 +302,22 @@ function DiagnosticPage() {
         </div>
         <div>
           <Label>Serviço</Label>
+          <Label htmlFor="diagnostic-project-kind">Tipo de projeto</Label>
+          <select id="diagnostic-project-kind" className="mb-3 h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={projectKind} onChange={(e) => {
+            const kind = e.target.value as ProjectKind;
+            setProjectKind(kind);
+            const next = (services.data ?? []).find((s) => s.published && (kind === "pacote" || serviceMacro(s) === kind));
+            if (next && service && kind !== "pacote" && serviceMacro(service) !== kind) setServiceSlug(next.slug);
+          }}>
+            <option value="">Selecione…</option>
+            {PROJECT_KINDS.map((kind) => <option key={kind} value={kind}>{projectKindText("pt").options[kind]}</option>)}
+          </select>
           <select
             className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
             value={serviceSlug}
             onChange={(e) => setServiceSlug(e.target.value)}
           >
-            {(services.data ?? []).map((s) => (
+            {visibleServices.map((s) => (
               <option key={s.slug} value={s.slug}>
                 {s.title}
               </option>

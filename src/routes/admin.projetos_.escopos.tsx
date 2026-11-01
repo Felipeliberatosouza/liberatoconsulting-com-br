@@ -17,6 +17,7 @@ import {
   type ScopeSubmission,
 } from "@/lib/projects.functions";
 import { SCOPE_QUESTIONS } from "@/lib/scope-form";
+import { projectKindFromAnswers, projectKindText } from "@/lib/project-kind";
 import {
   activeSignals,
   SCOPE_CHECKLIST,
@@ -28,6 +29,11 @@ export const Route = createFileRoute("/admin/projetos_/escopos")({
   head: () => ({
     meta: [
       { title: "Escopos recebidos — Painel Liberato Consulting" },
+      { name: "description", content: "Escopos de consultoria, treinamento e pacotes recebidos de clientes." },
+      { property: "og:title", content: "Escopos recebidos — Liberato Consulting" },
+      { property: "og:description", content: "Necessidades e modalidades dos projetos de clientes." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -168,6 +174,7 @@ function ScopesPage() {
               {open.employees ? ` · ${open.employees} funcionários` : ""} · {formatDate(open.created_at)}
             </p>
             <div className="mt-5 space-y-4">
+              <p className="text-sm"><strong>Tipo de projeto: </strong>{(() => { const kind = projectKindFromAnswers(open.answers); return kind ? projectKindText("pt").options[kind] : "Não informado (escopo anterior)"; })()}</p>
               {SCOPE_QUESTIONS.map((q) => (
                 <div key={q.id}>
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">

@@ -19,6 +19,7 @@ import { getPublicCompanyIdentity } from "@/lib/company-public.functions";
 import { submitScopeForm } from "@/lib/projects.functions";
 import { scopeQuestions, scopeTexts } from "@/lib/scope-form-i18n";
 import { pageText } from "@/lib/page-translations";
+import { PROJECT_KINDS, PROJECT_KIND_KEY, projectKindText, projectKindFromAnswers } from "@/lib/project-kind";
 import {
   formatPhone,
   isValidEmail,
@@ -50,7 +51,7 @@ export const Route = createFileRoute("/escopoinicial")({
       { property: "og:title", content: "Escopo inicial de necessidade — Liberato Consulting" },
       {
         property: "og:description",
-        content: "Responda 10 perguntas objetivas para recebermos o escopo do seu projeto.",
+        content: "Escolha Consultoria, Treinamento in Company ou um pacote combinado e descreva a necessidade do seu projeto.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -93,6 +94,7 @@ function ScopePage() {
   const p = pageText(lang).scope;
   const texts = scopeTexts(lang);
   const questions = scopeQuestions(lang);
+  const kindText = projectKindText(lang);
   const company = useQuery({
     queryKey: ["public-company-identity"],
     queryFn: () => getPublicCompanyIdentity(),
@@ -132,12 +134,13 @@ function ScopePage() {
   const emailInvalid = form.email.trim().length > 0 && !isValidEmail(form.email);
   const phoneInvalid = !isValidPhone(form.phone);
   const missing =
+    !projectKindFromAnswers(answers) ||
     form.company.trim().length < 2 ||
     form.respondent_name.trim().length < 2 ||
     !isValidEmail(form.email) ||
     phoneInvalid ||
     questions.some(
-      (q) => !answers[q.id] || (isOtherOption(answers[q.id]!) && !answers[`${q.id}_outro`]?.trim()),
+      (q) => !answers[q.id] || (isOtherOption(answers[q.id] ?? "") && !answers[`${q.id}_outro`]?.trim()),
     );
 
   return (
@@ -253,6 +256,17 @@ function ScopePage() {
 
             <section className="mt-6 space-y-4">
               <h2 className="font-display text-lg font-semibold">{p.questionsTitle}</h2>
+              <fieldset className="border-b border-border pb-6">
+                <legend className="mb-3 font-medium">{kindText.title} *</legend>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {PROJECT_KINDS.map((kind) => (
+                    <label key={kind} className="flex cursor-pointer items-start gap-2 text-sm">
+                      <input type="radio" name="project_kind" value={kind} checked={answers[PROJECT_KIND_KEY] === kind} onChange={() => setAnswers({ ...answers, [PROJECT_KIND_KEY]: kind })} />
+                      {kindText.options[kind]}
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
               {questions.map((q) => (
                 <div
                   key={q.id}

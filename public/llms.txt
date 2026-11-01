@@ -5,7 +5,9 @@
 ## Serviços
 
 1. Consultoria: Estratégia; Operações; Empreendedorismo e Decisões; Pesquisas e Inteligência sobre o Brasil (estudos setoriais, dimensionamento de mercado, leitura regulatória, parceiros locais e due diligence de mercado para entrada, expansão e investimento).
-2. Treinamento in Company (Treinamento-Ação, cada turma termina com plano de ação aplicado): Liderança, Lean, Gestão de Projetos, Precificação, Transformação Digital, IA na Gestão, Prospecção de Clientes e Relacionamento com Clientes.
+2. Treinamento in Company (Treinamento-Ação, cada turma termina com plano de ação aplicado): Liderança Operacional e Gestão da Rotina; IA Prática para Gestores e Equipes; Lean Manufacturing e Eficiência de Processos; Vendas Consultivas B2B e Prospecção Estratégica; Finanças, Formação de Preço e Margem para Não-Financeiros; Gestão de Projetos e Execução com Agilidade.
+
+O catálogo principal reúne 12 consultorias (três por área) e seis treinamentos. Projetos podem combinar Consultoria e Treinamento em um pacote; pacote é uma modalidade de contratação, não uma terceira área de serviço.
 
 A Liberato Consulting apoia micro, pequenas, médias e grandes empresas (classificação Sebrae), investidores e empresas estrangeiras que querem entrar ou crescer no Brasil. Projetos são organizados em seis etapas: Escopo Inicial, Diagnóstico, Precificação e Orçamentos, Apresentações, Contrato e NDA, Satisfação do Cliente. O NDA é assinado antes da troca de informações confidenciais; o contrato reforça a confidencialidade e anexa o orçamento aprovado.
 
@@ -21,7 +23,8 @@ Os idiomas utilizam o mesmo caminho com o parâmetro ?lang=en, ?lang=es ou ?lang
 
 - [Início](https://liberatoconsulting.com.br/): Visão geral, resultados, impactos e perguntas frequentes.
 - [Serviços](https://liberatoconsulting.com.br/services): Consultoria e Treinamento in Company.
-- [Treinamento in Company](https://liberatoconsulting.com.br/services/treinamento-in-company): Oito programas de capacitação para equipes.
+- [Treinamento in Company](https://liberatoconsulting.com.br/services/treinamento-in-company): Seis programas de capacitação aplicada para equipes.
+- [Pesquisas Brasil](https://liberatoconsulting.com.br/services/pesquisas-brasil): Dimensionamento, inteligência competitiva e testes de demanda para empresas e investidores internacionais.
 - [Quem somos](https://liberatoconsulting.com.br/about): História, DNA Liberato, equipe e valores.
 - [Brasil](https://liberatoconsulting.com.br/brasil): Pesquisas de dados sobre o Brasil para empresas e investidores internacionais.
 - [Conteúdos](https://liberatoconsulting.com.br/content): Artigos sobre gestão, estratégia e IA.
