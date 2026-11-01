@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 
@@ -26,10 +26,10 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
   const send = useServerFn(submitLead);
 
   const startedAt = useRef(Date.now());
-  const challenge = useMemo(
-    () => ({ a: 1 + Math.floor(Math.random() * 8), b: 1 + Math.floor(Math.random() * 8) }),
-    [],
-  );
+  const [challenge, setChallenge] = useState({ a: 1, b: 1 });
+  useEffect(() => {
+    setChallenge({ a: 1 + Math.floor(Math.random() * 8), b: 1 + Math.floor(Math.random() * 8) });
+  }, []);
 
   const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
   const [error, setError] = useState<string | null>(null);
