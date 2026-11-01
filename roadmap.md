@@ -1,4 +1,10 @@
 
+## Posicionamento — pendências (01/11/2026)
+- [ ] Consolidar catálogo de consultoria e treinamentos conforme plano, preservando históricos
+- [ ] Incluir Consultoria / Treinamento / Pacote nos formulários de Projetos
+- [ ] Marcar treinamentos como cursos para buscadores e manter traduções/descoberta coerentes
+- [ ] Verificar testes e navegação do catálogo/formulário
+
 ## FAQ e descoberta pública (26/10/2026)
 - [x] Revisar perguntas existentes e acrescentar processos recentes em PT/EN/ES/ZH (22 perguntas por idioma)
 - [x] Atualizar llms.txt, robots.txt e sitemap preservando páginas privadas
