@@ -3,10 +3,11 @@ import { ArrowLeft, ArrowRight, Check, Clock, Gauge, Layers, ShieldAlert, Sparkl
 import { pt } from "@/i18n/pt";
 import { useLanguage } from "@/i18n";
 import { OG_IMAGE, headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
-import { breadcrumb, jsonLd, serviceSchema } from "@/lib/schema";
+import { breadcrumb, jsonLd, serviceSchema, courseSchema, trainingProgramSchema } from "@/lib/schema";
 import { ServiceLeadForm } from "@/components/ServiceLeadForm";
 import { LEGACY_SERVICE_REDIRECTS } from "@/lib/service-redirects";
 import { listPublicServiceSlugs } from "@/lib/services.functions";
+import { serviceMacro } from "@/lib/service-macro";
 
 const PRODUCT_SLUGS = pt.serviceDetail.pages.map((p) => p.id);
 const FAMILY_SLUGS = pt.serviceFamilies.items.map((f) => f.id);
@@ -14,7 +15,7 @@ const FAMILY_SLUGS = pt.serviceFamilies.items.map((f) => f.id);
 export const Route = createFileRoute("/services/$slug")({
   loader: async ({ params }) => {
     const target = LEGACY_SERVICE_REDIRECTS[params.slug];
-    if (target) throw redirect({ to: "/services/$slug", params: { slug: target } });
+    if (target) throw redirect({ to: "/services/$slug", params: { slug: target }, statusCode: 301 });
     if (PRODUCT_SLUGS.includes(params.slug) || FAMILY_SLUGS.includes(params.slug)) return null;
     // Serviços cadastrados no painel ainda não estão no dicionário estático.
     const slugs = await listPublicServiceSlugs().catch(() => [] as string[]);
@@ -34,7 +35,8 @@ export const Route = createFileRoute("/services/$slug")({
         ],
       };
     }
-    const title = `${name} | Consultoria empresarial Liberato`;
+    const training = product ? serviceMacro(product) === "treinamento" : family?.id === "treinamento-in-company";
+    const title = `${name} | ${training ? "Treinamento in Company" : "Consultoria empresarial"} Liberato`;
     const clip = (t: string) => (t.length <= 155 ? t : `${t.slice(0, 152).replace(/\s+\S*$/, "")}…`);
     return {
       meta: [
@@ -43,15 +45,15 @@ export const Route = createFileRoute("/services/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: clip(description) },
         { property: "og:type", content: "website" },
-        { property: "og:image", content: OG_IMAGE },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: clip(description) },
-        { name: "twitter:image", content: OG_IMAGE },
         ...seoLocaleMeta(headLang(ctx)),
       ],
       links: seoLinks(`/services/${params.slug}`, headLang(ctx)),
       scripts: [
+        ...(training && product ? [jsonLd(courseSchema({ name, description, path: `/services/${params.slug}`, audience: product.audience, teaches: product.bullets }))] : []),
+        ...(training && family ? [jsonLd(trainingProgramSchema({ name, description, path: `/services/${params.slug}`, courses: pt.serviceDetail.pages.filter((p) => family.products.includes(p.id)).map((p) => ({ name: p.title, path: `/services/${p.id}` })) }))] : []),
         jsonLd(
           breadcrumb([
             { name: "Início", path: "/" },
@@ -104,7 +106,8 @@ function ServiceDetailPage() {
 function FamilyPage({ slug }: { slug: string }) {
   const { t } = useLanguage();
   const L = t.serviceDetail.labels;
-  const family = t.serviceFamilies.items.find((f) => f.id === slug)!;
+  const family = t.serviceFamilies.items.find((f) => f.id === slug);
+  if (!family) return null;
   const products = t.serviceDetail.pages.filter((p) => family.products.includes(p.id));
 
   return (
@@ -169,7 +172,8 @@ function FamilyPage({ slug }: { slug: string }) {
 function ProductPage({ slug }: { slug: string }) {
   const { t } = useLanguage();
   const L = t.serviceDetail.labels;
-  const page = t.serviceDetail.pages.find((p) => p.id === slug) ?? t.serviceDetail.pages[0]!;
+  const page = t.serviceDetail.pages.find((p) => p.id === slug);
+  if (!page) return null;
   const family = t.serviceFamilies.items.find((f) => f.title === page.family || f.products.includes(page.id));
   const related = t.serviceDetail.pages.filter((p) => p.family === page.family && p.id !== page.id);
 
