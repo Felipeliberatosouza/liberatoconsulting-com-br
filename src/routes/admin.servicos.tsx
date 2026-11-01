@@ -32,6 +32,11 @@ export const Route = createFileRoute("/admin/servicos")({
   head: () => ({
     meta: [
       { title: "Cadastro de serviços — Painel Liberato Consulting" },
+      { name: "description", content: "Gestão do catálogo de consultoria e treinamento in company." },
+      { property: "og:title", content: "Cadastro de serviços — Liberato Consulting" },
+      { property: "og:description", content: "Catálogo, publicação e tradução dos serviços." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -161,7 +166,11 @@ function AdminServicesPage() {
         (macro === "todos" || serviceMacro(r) === macro) &&
         `${r.title} ${r.family_title} ${r.group_id}`.toLowerCase().includes(filter.toLowerCase()),
     );
-    return FAMILIES.map((f) => ({
+    const families = [...FAMILIES];
+    for (const row of rows) {
+      if (!families.some((f) => f.id === row.family_id)) families.push({ id: row.family_id, title: row.family_title, code: row.code, groups: row.groups });
+    }
+    return families.map((f) => ({
       family: f,
       rows: rows.filter((r) => r.family_id === f.id),
     })).filter((g) => g.rows.length > 0);

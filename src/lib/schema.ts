@@ -91,6 +91,33 @@ export function serviceSchema(input: {
   };
 }
 
+/** Curso corporativo sem inventar preços, datas, avaliações ou certificações externas. */
+export function courseSchema(input: { name: string; description: string; path: string; audience: string; teaches: string[]; inLanguage?: string }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: input.name,
+    description: input.description,
+    url: absoluteUrl(input.path),
+    provider: publisherOrg,
+    inLanguage: input.inLanguage ?? "pt-BR",
+    audience: { "@type": "EducationalAudience", educationalRole: input.audience },
+    teaches: input.teaches,
+  };
+}
+
+export function trainingProgramSchema(input: { name: string; description: string; path: string; courses: Array<{ name: string; path: string }> }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "EducationalOccupationalProgram",
+    name: input.name,
+    description: input.description,
+    url: absoluteUrl(input.path),
+    provider: publisherOrg,
+    hasCourse: input.courses.map((course) => ({ "@type": "Course", name: course.name, url: absoluteUrl(course.path), provider: publisherOrg })),
+  };
+}
+
 /** Lista de itens (usada nas páginas índice de serviços e conteúdos). */
 export function itemList(input: {
   name: string;

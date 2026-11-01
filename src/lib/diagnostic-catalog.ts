@@ -148,7 +148,19 @@ export const FAMILY_BLOCKS: Record<string, DiagnosticQuestion[]> = {
 
 /** Conjunto de perguntas para um serviço, pela família. */
 export function questionsForFamily(familyId: string): DiagnosticQuestion[] {
-  const specific = FAMILY_BLOCKS[familyId] ?? FAMILY_BLOCKS["inteligencia-de-mercado-e-decisoes"]!;
+  const aliases: Record<string, string> = {
+    "estrategia-metas": "crescimento-expansao-e-novos-produtos",
+    "operacoes-eficiencia": "eficiencia-operacional",
+    "negocios-decisoes": "crescimento-expansao-e-novos-produtos",
+    "pesquisas-brasil": "inteligencia-de-mercado-e-decisoes",
+  };
+  const specific = familyId === "treinamento-in-company" ? [
+    q("TRN-01", "Treinamento-Ação", "Qual competência e qual melhoria prática a turma deve desenvolver?", "Texto livre", true, "Muito alto"),
+    q("TRN-02", "Treinamento-Ação", "Quantos participantes e turmas, quais funções e qual nível de conhecimento atual?", "Números + texto", true, "Muito alto"),
+    q("TRN-03", "Treinamento-Ação", "Qual formato, local, carga horária e disponibilidade da equipe?", "Lista + horários", true, "Alto"),
+    q("TRN-04", "Treinamento-Ação", "Qual caso real será trabalhado e quem acompanhará o plano de ação após a turma?", "Texto livre", true, "Alto"),
+    q("TRN-05", "Treinamento-Ação", "Como serão avaliados aprendizado, aplicação e autonomia da equipe?", "Texto livre", true, "Alto"),
+  ] : (FAMILY_BLOCKS[aliases[familyId] ?? familyId] ?? FAMILY_BLOCKS["inteligencia-de-mercado-e-decisoes"] ?? []);
   const base = BASE_BLOCKS;
   return [
     ...base.filter((b) => b.block === "Objetivo e decisão" || b.block === "Empresa e contexto"),

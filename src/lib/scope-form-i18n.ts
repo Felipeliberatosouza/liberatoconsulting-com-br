@@ -29,8 +29,8 @@ const MULTI_ZH = "请选择最符合您需求的主要选项；如有其他情�
 const EN: QuestionText[] = [
   {
     theme: "Objective",
-    question: "What is the main objective of the consulting engagement?",
-    purpose: "Understand the core focus of the work to guide the consulting approach.",
+    question: "What is the main objective of the project?",
+    purpose: "Understand the focus of the consulting, training or combined project.",
     hint: MULTI_EN,
     options: [
       "Assess business viability",
@@ -168,8 +168,8 @@ const EN: QuestionText[] = [
 const ES: QuestionText[] = [
   {
     theme: "Objetivo",
-    question: "¿Cuál es el principal objetivo de la consultoría?",
-    purpose: "Entender el foco central del trabajo para orientar el enfoque de la consultoría.",
+    question: "¿Cuál es el principal objetivo del proyecto?",
+    purpose: "Entender el foco del proyecto de consultoría, capacitación o paquete combinado.",
     hint: MULTI_ES,
     options: [
       "Evaluar la viabilidad del negocio",
@@ -307,8 +307,8 @@ const ES: QuestionText[] = [
 const ZH: QuestionText[] = [
   {
     theme: "目标",
-    question: "本次咨询的主要目标是什么？",
-    purpose: "了解工作的核心重点，以确定咨询方式。",
+    question: "本次项目的主要目标是什么？",
+    purpose: "了解咨询、培训或组合项目的核心重点。",
     hint: MULTI_ZH,
     options: [
       "评估业务可行性",
