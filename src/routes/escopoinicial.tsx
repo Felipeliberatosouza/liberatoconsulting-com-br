@@ -46,7 +46,7 @@ export const Route = createFileRoute("/escopoinicial")({
       {
         name: "description",
         content:
-          "Formulário rápido para entendermos sua necessidade e preparar uma proposta de consultoria adequada.",
+          "Formulário para preparar uma proposta de consultoria, treinamento in company ou pacote combinado.",
       },
       { property: "og:title", content: "Escopo inicial de necessidade — Liberato Consulting" },
       {

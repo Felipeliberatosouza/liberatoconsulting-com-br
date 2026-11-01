@@ -32,11 +32,11 @@ export const SCOPE_NOTE =
 export const SCOPE_QUESTIONS: ScopeQuestion[] = [
   {
     id: "q1",
-    purpose: "Entender o foco central do trabalho para orientar a abordagem da consultoria.",
+    purpose: "Entender o foco central do projeto de consultoria, treinamento ou pacote combinado.",
     hint: MULTI_HINT,
     index: 1,
     theme: "Objetivo",
-    question: "Qual é o principal objetivo da consultoria?",
+    question: "Qual é o principal objetivo do projeto?",
     options: [
       "Avaliar a viabilidade do negócio",
       "Definir posicionamento e público-alvo",
