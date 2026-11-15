@@ -35,7 +35,9 @@ import { Route as SitemapEsDotxmlRouteImport } from './routes/sitemap-es[.]xml'
 import { Route as SitemapPtDotxmlRouteImport } from './routes/sitemap-pt[.]xml'
 import { Route as SitemapZhDotxmlRouteImport } from './routes/sitemap-zh[.]xml'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SolucoesRouteImport } from './routes/solucoes'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TreinamentosRouteImport } from './routes/treinamentos'
 import { Route as AboutSlugRouteImport } from './routes/about_.$slug'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminApplicationsRouteImport } from './routes/admin.applications'
@@ -86,6 +88,8 @@ import { Route as NewsletterSlugRouteImport } from './routes/newsletter.$slug'
 import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter.unsubscribe'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
+import { Route as SolucoesSlugRouteImport } from './routes/solucoes_.$slug'
+import { Route as TreinamentosSlugRouteImport } from './routes/treinamentos_.$slug'
 import { Route as AdminProjetosApresentacaoRouteImport } from './routes/admin.projetos_.apresentacao'
 import { Route as AdminProjetosApresentacoesRouteImport } from './routes/admin.projetos_.apresentacoes'
 import { Route as AdminProjetosContratosRouteImport } from './routes/admin.projetos_.contratos'
@@ -234,9 +238,19 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SolucoesRoute = SolucoesRouteImport.update({
+  id: '/solucoes',
+  path: '/solucoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TreinamentosRoute = TreinamentosRouteImport.update({
+  id: '/treinamentos',
+  path: '/treinamentos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutSlugRoute = AboutSlugRouteImport.update({
@@ -493,6 +507,16 @@ const ServicesSlugRoute = ServicesSlugRouteImport.update({
   path: '/services/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SolucoesSlugRoute = SolucoesSlugRouteImport.update({
+  id: '/solucoes_/$slug',
+  path: '/solucoes/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TreinamentosSlugRoute = TreinamentosSlugRouteImport.update({
+  id: '/treinamentos_/$slug',
+  path: '/treinamentos/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminProjetosApresentacaoRoute =
   AdminProjetosApresentacaoRouteImport.update({
     id: '/admin/projetos_/apresentacao',
@@ -613,7 +637,9 @@ export interface FileRoutesByFullPath {
   '/sitemap-pt.xml': typeof SitemapPtDotxmlRoute
   '/sitemap-zh.xml': typeof SitemapZhDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/solucoes': typeof SolucoesRoute
   '/terms': typeof TermsRoute
+  '/treinamentos': typeof TreinamentosRoute
   '/about/$slug': typeof AboutSlugRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/approvals': typeof AdminApprovalsRoute
@@ -662,6 +688,8 @@ export interface FileRoutesByFullPath {
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/solucoes/$slug': typeof SolucoesSlugRoute
+  '/treinamentos/$slug': typeof TreinamentosSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/admin/projetos/apresentacao': typeof AdminProjetosApresentacaoRoute
@@ -709,7 +737,9 @@ export interface FileRoutesByTo {
   '/sitemap-pt.xml': typeof SitemapPtDotxmlRoute
   '/sitemap-zh.xml': typeof SitemapZhDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/solucoes': typeof SolucoesRoute
   '/terms': typeof TermsRoute
+  '/treinamentos': typeof TreinamentosRoute
   '/about/$slug': typeof AboutSlugRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/approvals': typeof AdminApprovalsRoute
@@ -758,6 +788,8 @@ export interface FileRoutesByTo {
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/solucoes/$slug': typeof SolucoesSlugRoute
+  '/treinamentos/$slug': typeof TreinamentosSlugRoute
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
   '/admin/projetos/apresentacao': typeof AdminProjetosApresentacaoRoute
@@ -806,7 +838,9 @@ export interface FileRoutesById {
   '/sitemap-pt.xml': typeof SitemapPtDotxmlRoute
   '/sitemap-zh.xml': typeof SitemapZhDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/solucoes': typeof SolucoesRoute
   '/terms': typeof TermsRoute
+  '/treinamentos': typeof TreinamentosRoute
   '/about_/$slug': typeof AboutSlugRoute
   '/admin/applications': typeof AdminApplicationsRoute
   '/admin/approvals': typeof AdminApprovalsRoute
@@ -855,6 +889,8 @@ export interface FileRoutesById {
   '/newsletter/$slug': typeof NewsletterSlugRoute
   '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/services/$slug': typeof ServicesSlugRoute
+  '/solucoes_/$slug': typeof SolucoesSlugRoute
+  '/treinamentos_/$slug': typeof TreinamentosSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/admin/projetos_/apresentacao': typeof AdminProjetosApresentacaoRoute
@@ -904,7 +940,9 @@ export interface FileRouteTypes {
     | '/sitemap-pt.xml'
     | '/sitemap-zh.xml'
     | '/sitemap.xml'
+    | '/solucoes'
     | '/terms'
+    | '/treinamentos'
     | '/about/$slug'
     | '/admin/applications'
     | '/admin/approvals'
@@ -953,6 +991,8 @@ export interface FileRouteTypes {
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
+    | '/solucoes/$slug'
+    | '/treinamentos/$slug'
     | '/admin/'
     | '/services/'
     | '/admin/projetos/apresentacao'
@@ -1000,7 +1040,9 @@ export interface FileRouteTypes {
     | '/sitemap-pt.xml'
     | '/sitemap-zh.xml'
     | '/sitemap.xml'
+    | '/solucoes'
     | '/terms'
+    | '/treinamentos'
     | '/about/$slug'
     | '/admin/applications'
     | '/admin/approvals'
@@ -1049,6 +1091,8 @@ export interface FileRouteTypes {
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
+    | '/solucoes/$slug'
+    | '/treinamentos/$slug'
     | '/admin'
     | '/services'
     | '/admin/projetos/apresentacao'
@@ -1096,7 +1140,9 @@ export interface FileRouteTypes {
     | '/sitemap-pt.xml'
     | '/sitemap-zh.xml'
     | '/sitemap.xml'
+    | '/solucoes'
     | '/terms'
+    | '/treinamentos'
     | '/about_/$slug'
     | '/admin/applications'
     | '/admin/approvals'
@@ -1145,6 +1191,8 @@ export interface FileRouteTypes {
     | '/newsletter/$slug'
     | '/newsletter/unsubscribe'
     | '/services/$slug'
+    | '/solucoes_/$slug'
+    | '/treinamentos_/$slug'
     | '/admin/'
     | '/services/'
     | '/admin/projetos_/apresentacao'
@@ -1193,7 +1241,9 @@ export interface RootRouteChildren {
   SitemapPtDotxmlRoute: typeof SitemapPtDotxmlRoute
   SitemapZhDotxmlRoute: typeof SitemapZhDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SolucoesRoute: typeof SolucoesRoute
   TermsRoute: typeof TermsRoute
+  TreinamentosRoute: typeof TreinamentosRoute
   AboutSlugRoute: typeof AboutSlugRoute
   AdminApplicationsRoute: typeof AdminApplicationsRoute
   AdminApprovalsRoute: typeof AdminApprovalsRoute
@@ -1242,6 +1292,8 @@ export interface RootRouteChildren {
   NewsletterSlugRoute: typeof NewsletterSlugRoute
   NewsletterUnsubscribeRoute: typeof NewsletterUnsubscribeRoute
   ServicesSlugRoute: typeof ServicesSlugRoute
+  SolucoesSlugRoute: typeof SolucoesSlugRoute
+  TreinamentosSlugRoute: typeof TreinamentosSlugRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
   AdminProjetosApresentacaoRoute: typeof AdminProjetosApresentacaoRoute
@@ -1447,11 +1499,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/solucoes': {
+      id: '/solucoes'
+      path: '/solucoes'
+      fullPath: '/solucoes'
+      preLoaderRoute: typeof SolucoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/treinamentos': {
+      id: '/treinamentos'
+      path: '/treinamentos'
+      fullPath: '/treinamentos'
+      preLoaderRoute: typeof TreinamentosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about_/$slug': {
@@ -1804,6 +1870,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/solucoes_/$slug': {
+      id: '/solucoes_/$slug'
+      path: '/solucoes/$slug'
+      fullPath: '/solucoes/$slug'
+      preLoaderRoute: typeof SolucoesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/treinamentos_/$slug': {
+      id: '/treinamentos_/$slug'
+      path: '/treinamentos/$slug'
+      fullPath: '/treinamentos/$slug'
+      preLoaderRoute: typeof TreinamentosSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/projetos_/apresentacao': {
       id: '/admin/projetos_/apresentacao'
       path: '/admin/projetos/apresentacao'
@@ -1953,7 +2033,9 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapPtDotxmlRoute: SitemapPtDotxmlRoute,
   SitemapZhDotxmlRoute: SitemapZhDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SolucoesRoute: SolucoesRoute,
   TermsRoute: TermsRoute,
+  TreinamentosRoute: TreinamentosRoute,
   AboutSlugRoute: AboutSlugRoute,
   AdminApplicationsRoute: AdminApplicationsRoute,
   AdminApprovalsRoute: AdminApprovalsRoute,
@@ -2002,6 +2084,8 @@ const rootRouteChildren: RootRouteChildren = {
   NewsletterSlugRoute: NewsletterSlugRoute,
   NewsletterUnsubscribeRoute: NewsletterUnsubscribeRoute,
   ServicesSlugRoute: ServicesSlugRoute,
+  SolucoesSlugRoute: SolucoesSlugRoute,
+  TreinamentosSlugRoute: TreinamentosSlugRoute,
   AdminIndexRoute: AdminIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
   AdminProjetosApresentacaoRoute: AdminProjetosApresentacaoRoute,

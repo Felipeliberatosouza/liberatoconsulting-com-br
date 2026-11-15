@@ -18,6 +18,8 @@ import { CtaBand } from "@/components/CtaBand";
 import { FaqSection } from "@/components/FaqSection";
 import { ImpactSection } from "@/components/ImpactSection";
 import { InstitutionalShowcase } from "@/components/InstitutionalShowcase";
+import { PainChips, SolutionCards, StartLadder, TrainingBadges, TrainingCards } from "@/components/SolutionBlocks";
+import { SOLUTION_UI as U, SOLUTIONS, pick } from "@/lib/solutions";
 import { SeoKeywordLinks } from "@/components/SeoKeywordLinks";
 import { FilterScopeBadge } from "@/components/SiteFilterBar";
 import { useAudienceFilters } from "@/lib/audience-filters";
@@ -49,8 +51,8 @@ export const Route = createFileRoute("/")({
         itemList({
           name: "Frentes de atuação",
           items: [
-            { name: "Serviços", path: "/services" },
-            { name: "Treinamento in Company", path: "/services/treinamento-in-company" },
+            ...SOLUTIONS.map((s) => ({ name: s.title.pt, path: `/solucoes/${s.slug}` })),
+            { name: "Treinamento in Company", path: "/treinamentos" },
             { name: "Dados do Brasil", path: "/brasil" },
             { name: "Quem somos", path: "/about" },
             { name: "Conteúdo", path: "/content" },
@@ -288,153 +290,70 @@ function HeroCarousel() {
   );
 }
 
+function PainHero() {
+  const { lang } = useLanguage();
+  return (
+    <section className="bg-ink text-ink-foreground">
+      <div className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+        <h1 className="max-w-4xl text-4xl font-bold leading-tight md:text-6xl">{pick(U.slogan, lang)}</h1>
+        <p className="mt-6 max-w-2xl text-lg opacity-80">{pick(U.support, lang)}</p>
+        <p className="mt-12 text-sm font-semibold uppercase tracking-[0.2em] text-accent">{pick(U.question, lang)}</p>
+        <div className="mt-5"><PainChips /></div>
+      </div>
+    </section>
+  );
+}
+
 function Index() {
   const { t, lang } = useLanguage();
 
   return (
     <div>
-      <HeroCarousel />
+      <PainHero />
 
-      <InstitutionalShowcase />
-
-      <ImpactSection />
-
-
-
-      <section className="bg-secondary py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-12 lg:grid-cols-2">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
-                {t.brazilFocus.eyebrow}
-              </p>
-              <h2 className="mt-5 text-3xl font-bold leading-tight md:text-5xl">
-                {t.brazilFocus.title}
-              </h2>
-              <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-                {t.brazilFocus.body}
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  to="/brasil"
-                  className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-ink-foreground transition-opacity hover:opacity-90"
-                >
-                  {t.brazilFocus.primary} <ArrowRight className="size-4" />
-                </Link>
-                <Link
-                  to="/contact"
-                  className="inline-flex items-center rounded-full border border-border px-6 py-3 text-sm font-semibold transition-colors hover:text-accent"
-                >
-                  {t.brazilFocus.secondary}
-                </Link>
-              </div>
-            </div>
-            <div>
-              <ul className="space-y-6">
-                {t.brazilFocus.points.map((p) => (
-                  <li key={p.t} className="border-t border-border pt-5">
-                    <h3 className="text-lg font-bold">{p.t}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">{p.d}</p>
-                  </li>
-                ))}
-              </ul>
-              {/* Bloco oculto visualmente (sr-only), mantido no HTML para SEO */}
-              <div className="sr-only">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-                  {t.brazilFocus.sectorsLabel}
-                </p>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                  {t.brazilFocus.sectors.map((s) => (
-                    <li
-                      key={s}
-                      className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground"
-                    >
-                      {s}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
+      <section className="mx-auto max-w-7xl px-6 py-20">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{pick(U.solutionsEyebrow, lang)}</p>
+        <h2 className="mb-12 mt-4 max-w-3xl text-3xl font-bold leading-tight md:text-5xl">{pick(U.solutionsTitle, lang)}</h2>
+        <SolutionCards />
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-24">
-        <div className="grid gap-12 md:grid-cols-2">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
-              {t.purpose.eyebrow}
-            </p>
-            <h2 className="mt-5 text-3xl font-bold leading-tight md:text-5xl">
-              {t.purpose.title}
-            </h2>
-          </div>
-          <div>
-            <Compass className="size-8 text-accent" strokeWidth={1.5} />
-            <p className="mt-5 text-lg leading-relaxed text-muted-foreground">{t.purpose.body}</p>
-            <ul className="mt-8 space-y-4 border-t border-border pt-6">
-              {t.purpose.points.map((p) => (
-                <li key={p} className="flex gap-3 text-sm font-medium">
-                  <span className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
-                  {p}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-secondary py-24">
+      <section className="bg-secondary py-20">
         <div className="mx-auto max-w-7xl px-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
-            {t.services.eyebrow}
-          </p>
-          <h2 className="mt-5 max-w-2xl text-3xl font-bold leading-tight md:text-5xl">
-            {t.services.title}
-          </h2>
-          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
-            {t.services.items.map((s, i) => {
-              const Icon = icons[i] ?? Compass;
-              return (
-                <article key={s.title} className="border-t-2 border-ink bg-card p-8">
-                  <Icon className="size-7 text-accent" />
-                  <h3 className="mt-6 text-xl font-bold">{s.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
-                </article>
-              );
-            })}
-          </div>
-          <Link
-            to="/services"
-            className="mt-10 inline-flex items-center gap-2 text-sm font-semibold hover:text-accent"
-          >
-            {t.hero.primary} <ArrowRight className="size-4" />
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{pick(U.trainingsEyebrow, lang)}</p>
+          <h2 className="mt-4 max-w-3xl text-3xl font-bold leading-tight md:text-5xl">{pick(U.trainingsTitle, lang)}</h2>
+          <p className="mt-5 max-w-2xl text-lg text-muted-foreground">{pick(U.trainingsBody, lang)}</p>
+          <div className="mt-8"><TrainingBadges /></div>
+          <div className="mt-10"><TrainingCards /></div>
+          <Link to="/treinamentos" className="mt-10 inline-flex items-center gap-2 text-sm font-semibold hover:text-accent">
+            {pick(U.allTrainings, lang)} <ArrowRight className="size-4" />
           </Link>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-24">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
-          {t.approach.eyebrow}
-        </p>
-        <h2 className="mt-5 max-w-2xl text-3xl font-bold leading-tight md:text-5xl">
-          {t.approach.title}
-        </h2>
-        <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {t.approach.steps.map((s) => (
-            <div key={s.n} className="border-t border-border pt-5">
-              <span className="font-display text-sm font-bold text-accent">{s.n}</span>
-              <h3 className="mt-3 text-lg font-bold">{s.t}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{s.d}</p>
-            </div>
-          ))}
-        </div>
+      <section className="mx-auto max-w-7xl px-6 py-20">
+        <h2 className="mb-10 text-3xl font-bold md:text-4xl">{pick(U.ladderTitle, lang)}</h2>
+        <StartLadder />
       </section>
 
-      <SeoKeywordLinks
-        themeIds={["gestao", "operacoes", "treinamento", "ia", "pesquisas", "brasil", "financas"]}
-        title={homeText(lang).keywordsTitle}
-      />
+      <ImpactSection />
+
+      <section className="bg-secondary py-20">
+        <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-2">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">{t.brazilFocus.eyebrow}</p>
+            <h2 className="mt-5 text-3xl font-bold leading-tight md:text-4xl">{t.brazilFocus.title}</h2>
+            <p className="mt-6 text-lg leading-relaxed text-muted-foreground">{t.brazilFocus.body}</p>
+          </div>
+          <div className="flex flex-wrap items-end gap-3">
+            <Link to="/solucoes/$slug" params={{ slug: "entrada-no-brasil" }} className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-ink-foreground hover:opacity-90">
+              {pick(SOLUTIONS[6]!.title, lang)} <ArrowRight className="size-4" />
+            </Link>
+            <Link to="/brasil" className="inline-flex items-center rounded-full border border-border px-6 py-3 text-sm font-semibold hover:text-accent">
+              {t.brazilFocus.primary}
+            </Link>
+          </div>
+        </div>
+      </section>
 
       <FaqSection />
 

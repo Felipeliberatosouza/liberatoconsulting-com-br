@@ -40,3 +40,25 @@ Os idiomas utilizam o mesmo caminho com o parâmetro ?lang=en, ?lang=es ou ?lang
 - [Privacidade](https://liberatoconsulting.com.br/privacy): Política de privacidade (LGPD).
 - [Termos de uso](https://liberatoconsulting.com.br/terms): Condições de uso do site.
 - [Sitemap](https://liberatoconsulting.com.br/sitemap.xml): Lista completa de páginas públicas em todos os idiomas.
+
+## Portfólio por problema (novembro/2026)
+Slogan: Do problema ao resultado medido. Diagnóstico rápido, plano de 90 dias e resultado medido em indicadores, com IA aplicada onde dá retorno.
+
+### Consultoria — 7 problemas que resolvemos
+- [Preço Certo e Lucro Real em Cada Venda](https://liberatoconsulting.com.br/solucoes/preco-certo-lucro-real): "Faturo bem, mas não sei para onde vai o dinheiro nem se meu preço está certo." Margem por produto/cliente, precificação, DRE gerencial, fluxo de caixa de 13 semanas. KPI: margem de contribuição, EBITDA, ciclo de caixa.
+- [Vendas B2B sem Depender do Dono](https://liberatoconsulting.com.br/solucoes/vendas-sem-depender-do-dono): "Só eu consigo vender." ICP, proposta de valor, funil/CRM, prospecção. KPI: conversão, ciclo de vendas, concentração de receita.
+- [Operação sem Retrabalho e sem Atrasos](https://liberatoconsulting.com.br/solucoes/operacao-sem-retrabalho): "Vivemos apagando incêndio." VSM, Lean, 5S, POP, PDCA. KPI: lead time, retrabalho, custo unitário.
+- [Metas que Saem do Papel e Rotina de Gestão](https://liberatoconsulting.com.br/solucoes/metas-que-saem-do-papel): "Fazemos planejamento e nada muda." OKR, metas SMART, BSC, rituais semanais, RACI. KPI: metas atingidas, projetos no prazo.
+- [Automação e IA Onde Dá Retorno](https://liberatoconsulting.com.br/solucoes/automacao-e-ia): "Minha equipe perde horas copiando dados." Automação no-code/RPA, assistentes de IA, dashboards, LGPD. KPI: horas economizadas, payback.
+- [Validar Nova Ideia antes de Investir](https://liberatoconsulting.com.br/solucoes/validar-ideia-antes-de-investir): "Tenho medo de investir no escuro." BMC, entrevistas, MVP, TAM-SAM-SOM, VPL/TIR. KPI: hipóteses validadas, payback.
+- [Entrada no Brasil sem Surpresas](https://liberatoconsulting.com.br/solucoes/entrada-no-brasil) (for international companies and investors): market sizing, PESTEL, competitors, tax/regulation, local partners. KPI: evidence-based go/no-go.
+
+### Treinamento in Company (8h a 16h, com dados reais da empresa)
+- [Finanças e Precificação para Gestores Não Financeiros](https://liberatoconsulting.com.br/treinamentos/financas-para-nao-financeiros)
+- [Vendas Consultivas B2B e Prospecção](https://liberatoconsulting.com.br/treinamentos/vendas-consultivas-b2b)
+- [Lean e Eficiência de Processos na Prática](https://liberatoconsulting.com.br/treinamentos/lean-eficiencia-processos)
+- [Liderança e Gestão da Rotina](https://liberatoconsulting.com.br/treinamentos/lideranca-gestao-da-rotina)
+- [IA Prática para Gestores e Equipes](https://liberatoconsulting.com.br/treinamentos/ia-pratica-gestores)
+- [Modelagem de Negócios e Validação de Ideias](https://liberatoconsulting.com.br/treinamentos/modelagem-validacao-ideias)
+
+Como começar: Radar Executivo (45 min) → Plano 90 Dias → Sprint de Resultado → Autonomia (treinamento e acompanhamento mensal).

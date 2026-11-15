@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import { useLanguage, LANGS, LANG_LABELS, LANG_SHORT } from "@/i18n";
 import { AccountMenu } from "@/components/AccountMenu";
 import { CONTENT_ARTICLE_GROUPS } from "@/lib/content-menu";
+import { SOLUTION_UI } from "@/lib/solutions";
 
 function LangSwitch() {
   const { lang, setLang } = useLanguage();
@@ -110,7 +111,8 @@ function AboutMenuLink({
 }
 
 export function SiteHeader() {
-  const { t, logoUrl } = useLanguage();
+  const { t, logoUrl, lang } = useLanguage();
+  const ui = (v: Record<string, string>) => v[lang] ?? v["pt"];
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
@@ -148,6 +150,8 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
+          <Link to="/solucoes" onClick={closeAll} className="text-sm font-semibold text-foreground transition-colors hover:text-accent">{ui(SOLUTION_UI.menuSolve)}</Link>
+          <Link to="/treinamentos" onClick={closeAll} className="text-sm font-medium text-muted-foreground transition-colors hover:text-accent">{ui(SOLUTION_UI.menuTrainings)}</Link>
           <div
             onMouseEnter={() => setServicesOpen(true)}
             onMouseLeave={() => setServicesOpen(false)}
@@ -428,6 +432,8 @@ export function SiteHeader() {
 
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
+          <Link to="/solucoes" onClick={closeAll} className="block border-b border-border py-3 text-sm font-semibold">{ui(SOLUTION_UI.menuSolve)}</Link>
+          <Link to="/treinamentos" onClick={closeAll} className="block border-b border-border py-3 text-sm font-semibold">{ui(SOLUTION_UI.menuTrainings)}</Link>
           <MobileAccordion title={t.nav.services} to="/services" onNavigate={closeAll}>
             <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
               {groups.map((g) => (
