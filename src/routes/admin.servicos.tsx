@@ -1,3 +1,4 @@
+import { DeParaPanel } from "@/components/DeParaPanel";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -288,6 +289,8 @@ function AdminServicesPage() {
           Novo serviço
         </Button>
       </div>
+
+      <DeParaPanel services={(list.data ?? []).map((s) => ({ slug: s.slug, title: s.title, published: s.published }))} />
 
       {list.isLoading && <p className="text-sm text-muted-foreground">Carregando…</p>}
 

@@ -29,7 +29,6 @@ export async function collectEntries(): Promise<SitemapEntry[]> {
     ...SOLUTIONS.map((x) => ({ path: `/solucoes/${x.slug}`, changefreq: "monthly" as const, priority: "0.9" })),
     { path: "/treinamentos", changefreq: "weekly", priority: "0.9" },
     ...TRAININGS.map((x) => ({ path: `/treinamentos/${x.slug}`, changefreq: "monthly" as const, priority: "0.8" })),
-    { path: "/services", changefreq: "weekly", priority: "0.8" },
     { path: "/about", changefreq: "monthly", priority: "0.7" },
     { path: "/brasil", changefreq: "weekly", priority: "0.9" },
     { path: "/content", changefreq: "weekly", priority: "0.8" },

@@ -1,3 +1,4 @@
+import { deParaFor, deParaPath } from "@/lib/services-depara";
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, Check, Clock, Gauge, Layers, ShieldAlert, Sparkles, Target, Users } from "lucide-react";
 import { pt } from "@/i18n/pt";
@@ -14,6 +15,8 @@ const FAMILY_SLUGS = pt.serviceFamilies.items.map((f) => f.id);
 
 export const Route = createFileRoute("/services/$slug")({
   loader: async ({ params }) => {
+    const novo = deParaFor(params.slug);
+    if (novo) throw redirect({ href: deParaPath(novo), statusCode: 301 });
     const target = LEGACY_SERVICE_REDIRECTS[params.slug];
     if (target) throw redirect({ to: "/services/$slug", params: { slug: target }, statusCode: 301 });
     if (PRODUCT_SLUGS.includes(params.slug) || FAMILY_SLUGS.includes(params.slug)) return null;

@@ -1,5 +1,5 @@
 import { AreaBannerSection } from "@/components/AreaBannerSection";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { ArrowRight, Clock } from "lucide-react";
 import { CtaBand } from "@/components/CtaBand";
@@ -11,6 +11,9 @@ import { breadcrumb, itemList, jsonLd } from "@/lib/schema";
 import { useLanguage } from "@/i18n";
 
 export const Route = createFileRoute("/services/")({
+  beforeLoad: () => {
+    throw redirect({ to: "/solucoes", statusCode: 301 });
+  },
   head: (ctx) => ({
     meta: [
       ...seoPageMeta("/services", headLang(ctx)),

@@ -114,11 +114,9 @@ export function SiteHeader() {
   const { t, logoUrl, lang } = useLanguage();
   const ui = (v: Record<string, string>) => v[lang] ?? v["pt"];
   const [open, setOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [contentOpen, setContentOpen] = useState(false);
   const [brasilOpen, setBrasilOpen] = useState(false);
-  const groups = t.megaMenu.groups;
   const aboutItems = t.aboutMenu.items;
   const contentGroups = t.contentMenu.groups;
   const brazilItems = t.brazilMenu.items;
@@ -126,7 +124,6 @@ export function SiteHeader() {
 
   const closeAll = () => {
     setOpen(false);
-    setServicesOpen(false);
     setAboutOpen(false);
     setContentOpen(false);
     setBrasilOpen(false);
@@ -152,86 +149,6 @@ export function SiteHeader() {
         <nav className="hidden items-center gap-8 md:flex">
           <Link to="/solucoes" onClick={closeAll} className="text-sm font-semibold text-foreground transition-colors hover:text-accent">{ui(SOLUTION_UI.menuSolve)}</Link>
           <Link to="/treinamentos" onClick={closeAll} className="text-sm font-medium text-muted-foreground transition-colors hover:text-accent">{ui(SOLUTION_UI.menuTrainings)}</Link>
-          <div
-            onMouseEnter={() => setServicesOpen(true)}
-            onMouseLeave={() => setServicesOpen(false)}
-          >
-            <Link
-              to="/services"
-              onClick={closeAll}
-              className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
-              activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
-            >
-              {t.nav.services}
-              <ChevronDown className={`size-3.5 transition-transform ${servicesOpen ? "rotate-180" : ""}`} />
-            </Link>
-
-            <div
-              className={`absolute inset-x-0 top-full z-40 max-h-[calc(100vh-5rem)] overflow-y-auto border-b border-border bg-background shadow-lg transition-all duration-200 ${
-                servicesOpen ? "visible opacity-100" : "invisible opacity-0"
-              }`}
-            >
-              <div className="mx-auto max-w-7xl px-6 py-7">
-                <div className="grid grid-cols-2 gap-x-8 gap-y-8 md:grid-cols-4">
-                  {groups.map((g, i) => (
-                    <div
-                      key={g.id}
-                      className={`min-w-0 ${i > 0 ? "md:border-l md:border-border md:pl-8" : ""}`}
-                    >
-                      <p className="mb-4 text-sm font-semibold leading-snug text-accent">{g.title}</p>
-                      <ul className="space-y-4">
-                        {g.items.map((item) => {
-                          const family = t.serviceFamilies.items.find((entry) => entry.id === item.id);
-                          const products = t.serviceDetail.pages.filter(
-                            (product) =>
-                              (family?.products?.includes(product.id) ?? false) &&
-                              product.groups.includes(g.id),
-                          );
-                          return (
-                            <li key={item.id}>
-                              <Link
-                                to="/services/$slug"
-                                params={{ slug: item.id }}
-                                onClick={closeAll}
-                                className="block text-sm font-semibold leading-snug text-foreground transition-colors hover:text-accent"
-                              >
-                                {item.label}
-                              </Link>
-                              <ul className="mt-2 space-y-1.5 border-l border-border pl-3">
-                                {products.map((product) => (
-                                  <li key={product.id}>
-                                    <Link
-                                      to="/services/$slug"
-                                      params={{ slug: product.id }}
-                                      onClick={closeAll}
-                                      className="block text-xs leading-snug text-muted-foreground transition-colors hover:text-accent"
-                                    >
-                                      {product.title}
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-
-
-                <div className="mt-8 text-right">
-                  <Link
-                    to="/services"
-                    onClick={closeAll}
-                    className="text-xs font-semibold uppercase tracking-[0.2em] text-accent"
-                  >
-                    {t.megaMenu.more}
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <div
             onMouseEnter={() => setAboutOpen(true)}
@@ -434,50 +351,6 @@ export function SiteHeader() {
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
           <Link to="/solucoes" onClick={closeAll} className="block border-b border-border py-3 text-sm font-semibold">{ui(SOLUTION_UI.menuSolve)}</Link>
           <Link to="/treinamentos" onClick={closeAll} className="block border-b border-border py-3 text-sm font-semibold">{ui(SOLUTION_UI.menuTrainings)}</Link>
-          <MobileAccordion title={t.nav.services} to="/services" onNavigate={closeAll}>
-            <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
-              {groups.map((g) => (
-                <div key={g.id} className="min-w-0">
-                  <p className="pt-2 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-                    {g.title}
-                  </p>
-                  {g.items.map((item) => {
-                    const family = t.serviceFamilies.items.find((entry) => entry.id === item.id);
-                    const products = t.serviceDetail.pages.filter(
-                      (product) =>
-                        (family?.products?.includes(product.id) ?? false) &&
-                        product.groups.includes(g.id),
-                    );
-                    return (
-                      <div key={item.id} className="py-1.5">
-                        <Link
-                          to="/services/$slug"
-                          params={{ slug: item.id }}
-                          onClick={closeAll}
-                          className="block text-sm font-semibold leading-snug text-foreground"
-                        >
-                          {item.label}
-                        </Link>
-                        <div className="mt-1.5 border-l border-border pl-2.5">
-                          {products.map((product) => (
-                            <Link
-                              key={product.id}
-                              to="/services/$slug"
-                              params={{ slug: product.id }}
-                              onClick={closeAll}
-                              className="block py-1 text-xs leading-snug text-muted-foreground"
-                            >
-                              {product.title}
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          </MobileAccordion>
 
           <MobileAccordion title={t.nav.about} to="/about" onNavigate={closeAll}>
             <div className="border-l border-border pl-3">

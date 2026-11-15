@@ -27,3 +27,4 @@
 - Sitemaps enumerate public content through paginated public-client queries and fail on query errors; account-gated calculators and private invitation/signing forms are excluded to preserve access boundaries.
 - Catalog consolidation archives old service rows and redirects legacy slugs to canonical short URLs without rewriting historical quotes or diagnostics; published offerings are editable in the existing services registry.
 - Project contracting modality is stored under a stable shared key in scope/diagnostic answers, separate from the two service macros, so language changes and hybrid packages cannot reclassify catalog services.
+- Old service_products slugs map to the pain-based portfolio via src/lib/services-depara.ts; old /services URLs redirect there while history keeps old names — one source for admin view and redirects.
