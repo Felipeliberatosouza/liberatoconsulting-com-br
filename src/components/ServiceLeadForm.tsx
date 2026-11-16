@@ -16,11 +16,11 @@ import {
   PHONE_PLACEHOLDER,
 } from "@/lib/validation";
 
-type Props = { serviceSlug: string; serviceTitle: string };
+type Props = { serviceSlug: string; serviceTitle: string; problem?: string };
 
 const EMPTY = { name: "", company: "", country: "", email: "", phone: "", message: "", captcha: "" };
 
-export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
+export function ServiceLeadForm({ serviceSlug, serviceTitle, problem: problemOverride }: Props) {
   const { t, lang } = useLanguage();
   const F = t.serviceDetail.form;
   const send = useServerFn(submitLead);
@@ -42,7 +42,7 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle }: Props) {
 
   /** Mensagem sugerida com o problema do serviço e assinatura do visitante. */
   function buildMessage(name: string) {
-    const problem = product?.problem ?? "";
+    const problem = problemOverride ?? product?.problem ?? "";
     const lowered = problem ? problem.charAt(0).toLowerCase() + problem.slice(1) : "";
     return `${t.contact.messageIntro}${lowered}\n\n${t.contact.messageOutro}\n${name}`.trimEnd();
   }

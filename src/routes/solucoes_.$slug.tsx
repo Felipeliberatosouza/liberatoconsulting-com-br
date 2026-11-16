@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowRight, Check } from "lucide-react";
 import { useLanguage } from "@/i18n";
+import { ServiceLeadForm } from "@/components/ServiceLeadForm";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { breadcrumb, jsonLd, serviceSchema } from "@/lib/schema";
 import { SOLUTION_UI as U, findSolution, findTraining, pick, pickList } from "@/lib/solutions";
@@ -80,9 +81,9 @@ function SolutionPage() {
             <p className="mt-1 font-bold">{pick(U.trainingsEyebrow, lang)}: {pick(training.title, lang)} →</p>
           </Link>
         )}
-        <Link to="/contact" className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-ink-foreground hover:opacity-90">
-          {pick(U.talk, lang)} <ArrowRight className="size-4" />
-        </Link>
+        <div id="contato" className="scroll-mt-28">
+          <ServiceLeadForm serviceSlug={s.slug} serviceTitle={pick(s.title, lang)} problem={pick(s.pain, lang).replace(/[“”"]/g, "")} />
+        </div>
       </section>
     </div>
   );

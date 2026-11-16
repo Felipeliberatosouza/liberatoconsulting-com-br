@@ -132,3 +132,10 @@
 - [x] 27 testes de regras/documentos e verificação visual de proteção dos links e direcionamento para cadastro
 - [ ] Validar indicação real e assinatura completa com conta autorizada — a sessão automática não encontrou conta do solicitante; aguarda login no preview e confirmação de e-mail dos signatários
 - [ ] Verificar entrega real de WhatsApp por indicação — depende da conexão Evolution ativa e teste autorizado com destinatário
+
+## Voltar layout anterior com conteúdo novo
+- [x] Restaurar logo e cores anteriores
+- [x] Restaurar banners antigos (quantidade/configuração do painel) com textos novos + bloco fixo "Qual problema está travando sua empresa?" com chips que abrem pedido de contato + botões originais por banner
+- [x] Trazer de volta as 3 seções das imagens (incl. carrossel de clientes)
+- [x] Cabeçalho anterior, trocando "Consultoria e Treinamento" por "O que você precisa resolver"
+- [ ] (pausado) Itens novos editáveis no painel e formulários com serviços novos

@@ -32,7 +32,7 @@ export function SolutionCards() {
   );
 }
 
-export function PainChips() {
+export function PainChips({ toContact = false }: { toContact?: boolean }) {
   const { lang } = useLanguage();
   return (
     <div className="flex flex-wrap gap-2">
@@ -41,7 +41,8 @@ export function PainChips() {
           key={s.slug}
           to="/solucoes/$slug"
           params={{ slug: s.slug }}
-          className="rounded-full border border-ink-foreground/25 px-4 py-2 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
+          {...(toContact ? { hash: "contato" } : {})}
+          className="rounded-full border border-ink-foreground/25 bg-ink/40 px-4 py-2 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
         >
           {pick(s.chip, lang)}
         </Link>
@@ -98,5 +99,43 @@ export function TrainingBadges() {
         </li>
       ))}
     </ul>
+  );
+}
+
+/** Conteúdo do menu "O que você precisa resolver?" (desktop e celular). */
+export function SolveMenuGrid({ onNavigate }: { onNavigate?: () => void }) {
+  const { lang } = useLanguage();
+  return (
+    <div className="grid gap-x-8 gap-y-6 md:grid-cols-[2fr_1fr]">
+      <div className="min-w-0">
+        <Link to="/solucoes" onClick={onNavigate} className="mb-3 block text-sm font-semibold text-accent">
+          {pick(U.solutionsEyebrow, lang)}
+        </Link>
+        <ul className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+          {SOLUTIONS.map((s) => (
+            <li key={s.slug}>
+              <Link to="/solucoes/$slug" params={{ slug: s.slug }} onClick={onNavigate} className="block text-sm font-semibold leading-snug text-foreground hover:text-accent">
+                {pick(s.title, lang)}
+              </Link>
+              <span className="mt-0.5 block text-xs text-muted-foreground">{pick(s.chip, lang)}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="min-w-0 md:border-l md:border-border md:pl-8">
+        <Link to="/treinamentos" onClick={onNavigate} className="mb-3 block text-sm font-semibold text-accent">
+          {pick(U.trainingsEyebrow, lang)}
+        </Link>
+        <ul className="space-y-2.5">
+          {TRAININGS.map((t) => (
+            <li key={t.slug}>
+              <Link to="/treinamentos/$slug" params={{ slug: t.slug }} onClick={onNavigate} className="block text-sm leading-snug text-muted-foreground hover:text-accent">
+                {pick(t.title, lang)}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 }

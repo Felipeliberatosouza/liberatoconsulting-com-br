@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="395" viewBox="0 0 700 197.5">
-<g transform="translate(14,38.75)"><rect x="0" y="0" width="120" height="120" rx="22" fill="#0B1E3D"/>
-<path d="M38 26 H54 V78 H86 V94 H38 Z" fill="#FFFFFF"/>
-<rect x="66" y="26" width="20" height="4" rx="2" fill="#C9A44C"/></g>
-<text x="158" y="104" font-family="Noto Serif, serif" font-size="66" font-weight="600" letter-spacing="9" fill="#0B1E3D">LIBERATO</text>
-<rect x="160" y="122" width="34" height="2.5" fill="#C9A44C"/>
-<text x="206" y="131" font-family="DejaVu Sans, sans-serif" font-size="17" letter-spacing="10.5" fill="#5B6B85">CONSULTING</text>
-</svg>

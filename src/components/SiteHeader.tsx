@@ -1,10 +1,11 @@
+import { SolveMenuGrid } from "@/components/SolutionBlocks";
+import { SOLUTION_UI, pick } from "@/lib/solutions";
 import { Link } from "@tanstack/react-router";
 import { ChevronDown, ChevronRight, Menu, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { useLanguage, LANGS, LANG_LABELS, LANG_SHORT } from "@/i18n";
 import { AccountMenu } from "@/components/AccountMenu";
 import { CONTENT_ARTICLE_GROUPS } from "@/lib/content-menu";
-import { SOLUTION_UI } from "@/lib/solutions";
 
 function LangSwitch() {
   const { lang, setLang } = useLanguage();
@@ -36,7 +37,7 @@ function MobileAccordion({
   children,
 }: {
   title: string;
-  to: "/services" | "/about" | "/content" | "/brasil";
+  to: "/solucoes" | "/about" | "/content" | "/brasil";
   onNavigate?: () => void;
   children: ReactNode;
 }) {
@@ -112,8 +113,8 @@ function AboutMenuLink({
 
 export function SiteHeader() {
   const { t, logoUrl, lang } = useLanguage();
-  const ui = (v: Record<string, string>) => v[lang] ?? v["pt"];
   const [open, setOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [contentOpen, setContentOpen] = useState(false);
   const [brasilOpen, setBrasilOpen] = useState(false);
@@ -124,6 +125,7 @@ export function SiteHeader() {
 
   const closeAll = () => {
     setOpen(false);
+    setServicesOpen(false);
     setAboutOpen(false);
     setContentOpen(false);
     setBrasilOpen(false);
@@ -147,8 +149,40 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-8 md:flex">
-          <Link to="/solucoes" onClick={closeAll} className="text-sm font-semibold text-foreground transition-colors hover:text-accent">{ui(SOLUTION_UI.menuSolve)}</Link>
-          <Link to="/treinamentos" onClick={closeAll} className="text-sm font-medium text-muted-foreground transition-colors hover:text-accent">{ui(SOLUTION_UI.menuTrainings)}</Link>
+          <div
+            onMouseEnter={() => setServicesOpen(true)}
+            onMouseLeave={() => setServicesOpen(false)}
+          >
+            <Link
+              to="/solucoes"
+              onClick={closeAll}
+              className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-accent"
+              activeProps={{ className: "flex items-center gap-1 text-sm font-medium text-foreground hover:text-accent" }}
+            >
+              {pick(SOLUTION_UI.menuSolve, lang)}
+              <ChevronDown className={`size-3.5 transition-transform ${servicesOpen ? "rotate-180" : ""}`} />
+            </Link>
+
+            <div
+              className={`absolute inset-x-0 top-full z-40 max-h-[calc(100vh-5rem)] overflow-y-auto border-b border-border bg-background shadow-lg transition-all duration-200 ${
+                servicesOpen ? "visible opacity-100" : "invisible opacity-0"
+              }`}
+            >
+              <div className="mx-auto max-w-7xl px-6 py-7">
+                <SolveMenuGrid onNavigate={closeAll} />
+
+                <div className="mt-8 text-right">
+                  <Link
+                    to="/solucoes"
+                    onClick={closeAll}
+                    className="text-xs font-semibold uppercase tracking-[0.2em] text-accent"
+                  >
+                    {pick(SOLUTION_UI.allSolutions, lang)}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div
             onMouseEnter={() => setAboutOpen(true)}
@@ -349,8 +383,9 @@ export function SiteHeader() {
 
       {open && (
         <nav className="border-t border-border bg-background px-6 py-4 md:hidden">
-          <Link to="/solucoes" onClick={closeAll} className="block border-b border-border py-3 text-sm font-semibold">{ui(SOLUTION_UI.menuSolve)}</Link>
-          <Link to="/treinamentos" onClick={closeAll} className="block border-b border-border py-3 text-sm font-semibold">{ui(SOLUTION_UI.menuTrainings)}</Link>
+          <MobileAccordion title={pick(SOLUTION_UI.menuSolve, lang)} to="/solucoes" onNavigate={closeAll}>
+            <SolveMenuGrid onNavigate={closeAll} />
+          </MobileAccordion>
 
           <MobileAccordion title={t.nav.about} to="/about" onNavigate={closeAll}>
             <div className="border-l border-border pl-3">
