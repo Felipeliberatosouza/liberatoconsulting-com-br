@@ -41,9 +41,10 @@ export const Route = createFileRoute("/solucoes_/$slug")({
 
 function SolutionPage() {
   const { slug } = Route.useLoaderData();
-  const { lang } = useLanguage();
-  const s = findSolution(slug)!;
-  const training = s.trainingSlug ? findTraining(s.trainingSlug) : undefined;
+  const { lang, solutions, trainings } = useLanguage();
+  const s = solutions.find((item) => item.slug === slug);
+  if (!s) return null;
+  const training = trainings.find((item) => item.slug === s.trainingSlug);
   return (
     <div>
       <section className="bg-ink text-ink-foreground">

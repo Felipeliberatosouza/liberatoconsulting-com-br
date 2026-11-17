@@ -484,7 +484,7 @@ function PricingPage() {
                 }}
               >
                 <option value="">Escolha um serviço…</option>
-                {(products.data ?? []).map((p) => (
+                {(products.data ?? []).filter((p) => p.published || p.slug === slug).map((p) => (
                   <option key={p.slug} value={p.slug}>
                     {p.title}
                   </option>
@@ -610,7 +610,7 @@ function PricingPage() {
                 onChange={(e) => setSlug(e.target.value)}
               >
                 <option value="">Escolha um serviço…</option>
-                {(products.data ?? []).map((p) => (
+                {(products.data ?? []).filter((p) => p.published || p.slug === slug).map((p) => (
                   <option key={p.slug} value={p.slug}>
                     {p.title}
                   </option>

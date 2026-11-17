@@ -45,9 +45,10 @@ export const Route = createFileRoute("/treinamentos_/$slug")({
 
 function TrainingPage() {
   const { slug } = Route.useLoaderData();
-  const { lang } = useLanguage();
-  const t = findTraining(slug)!;
-  const sol = findSolution(t.solutionSlug);
+  const { lang, solutions, trainings } = useLanguage();
+  const t = trainings.find((item) => item.slug === slug);
+  if (!t) return null;
+  const sol = solutions.find((item) => item.slug === t.solutionSlug);
   return (
     <div>
       <section className="bg-ink text-ink-foreground">

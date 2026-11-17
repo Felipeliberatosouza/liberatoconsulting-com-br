@@ -9,7 +9,7 @@ export function DeParaPanel({ services }: { services: Row[] }) {
     ...SOLUTIONS.map((s) => ({ kind: "solucao" as const, slug: s.slug, title: s.title.pt, label: "Consultoria" })),
     ...TRAININGS.map((t) => ({ kind: "treinamento" as const, slug: t.slug, title: t.title.pt, label: "Treinamento" })),
   ];
-  const unmapped = services.filter((s) => !SERVICES_DEPARA[s.slug]);
+  const unmapped = services.filter((s) => !SERVICES_DEPARA[s.slug] && !targets.some((t) => t.slug === s.slug));
   return (
     <details className="mb-8 rounded-md border border-border bg-card p-4">
       <summary className="cursor-pointer text-lg font-semibold">

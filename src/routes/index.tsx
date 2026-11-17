@@ -104,7 +104,7 @@ function HeroCarousel() {
       .filter((s): s is NonNullable<typeof s> => s !== null);
     return list.length > 0
       ? list
-      : [{ ...t.hero.slides[0]!, image: heroImage }];
+      : t.hero.slides.slice(0, 1).map((s) => ({ ...s, image: heroImage }));
   }, [hero, t]);
 
   const count = slides.length;
@@ -148,7 +148,8 @@ function HeroCarousel() {
     };
   }, [count, autoplay, nextSlide]);
 
-  const slide = slides[Math.min(index, count - 1)]!;
+  const slide = slides[Math.min(index, count - 1)];
+  if (!slide) return null;
 
   return (
     <section
@@ -359,7 +360,7 @@ function Index() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-24">
+      <section hidden>
         <div className="grid gap-12 md:grid-cols-2">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
@@ -410,28 +411,12 @@ function Index() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-24">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent">
-          {t.approach.eyebrow}
-        </p>
-        <h2 className="mt-5 max-w-2xl text-3xl font-bold leading-tight md:text-5xl">
-          {t.approach.title}
-        </h2>
-        <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {t.approach.steps.map((s) => (
-            <div key={s.n} className="border-t border-border pt-5">
-              <span className="font-display text-sm font-bold text-accent">{s.n}</span>
-              <h3 className="mt-3 text-lg font-bold">{s.t}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{s.d}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
+      <div hidden>
       <SeoKeywordLinks
         themeIds={["gestao", "operacoes", "treinamento", "ia", "pesquisas", "brasil", "financas"]}
         title={homeText(lang).keywordsTitle}
       />
+      </div>
 
       <FaqSection />
 

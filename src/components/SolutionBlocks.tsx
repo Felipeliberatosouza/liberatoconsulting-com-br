@@ -1,13 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Check } from "lucide-react";
 import { useLanguage } from "@/i18n";
-import { SOLUTIONS, SOLUTION_UI as U, TRAININGS, pick, pickList } from "@/lib/solutions";
+import { SOLUTION_UI as U, pick, pickList } from "@/lib/solutions";
 
 export function SolutionCards() {
-  const { lang } = useLanguage();
+  const { lang, solutions } = useLanguage();
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {SOLUTIONS.map((s) => (
+      {solutions.map((s) => (
         <Link
           key={s.slug}
           to="/solucoes/$slug"
@@ -33,10 +33,10 @@ export function SolutionCards() {
 }
 
 export function PainChips({ toContact = false }: { toContact?: boolean }) {
-  const { lang } = useLanguage();
+  const { lang, solutions } = useLanguage();
   return (
     <div className="flex flex-wrap gap-2">
-      {SOLUTIONS.map((s) => (
+      {solutions.map((s) => (
         <Link
           key={s.slug}
           to="/solucoes/$slug"
@@ -68,10 +68,10 @@ export function StartLadder() {
 }
 
 export function TrainingCards() {
-  const { lang } = useLanguage();
+  const { lang, trainings } = useLanguage();
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {TRAININGS.map((t) => (
+      {trainings.map((t) => (
         <Link
           key={t.slug}
           to="/treinamentos/$slug"
@@ -104,7 +104,7 @@ export function TrainingBadges() {
 
 /** Conteúdo do menu "O que você precisa resolver?" (desktop e celular). */
 export function SolveMenuGrid({ onNavigate }: { onNavigate?: () => void }) {
-  const { lang } = useLanguage();
+  const { lang, solutions, trainings } = useLanguage();
   return (
     <div className="grid gap-x-8 gap-y-6 md:grid-cols-[2fr_1fr]">
       <div className="min-w-0">
@@ -112,7 +112,7 @@ export function SolveMenuGrid({ onNavigate }: { onNavigate?: () => void }) {
           {pick(U.solutionsEyebrow, lang)}
         </Link>
         <ul className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
-          {SOLUTIONS.map((s) => (
+          {solutions.map((s) => (
             <li key={s.slug}>
               <Link to="/solucoes/$slug" params={{ slug: s.slug }} onClick={onNavigate} className="block text-sm font-semibold leading-snug text-foreground hover:text-accent">
                 {pick(s.title, lang)}
@@ -127,7 +127,7 @@ export function SolveMenuGrid({ onNavigate }: { onNavigate?: () => void }) {
           {pick(U.trainingsEyebrow, lang)}
         </Link>
         <ul className="space-y-2.5">
-          {TRAININGS.map((t) => (
+          {trainings.map((t) => (
             <li key={t.slug}>
               <Link to="/treinamentos/$slug" params={{ slug: t.slug }} onClick={onNavigate} className="block text-sm leading-snug text-muted-foreground hover:text-accent">
                 {pick(t.title, lang)}
