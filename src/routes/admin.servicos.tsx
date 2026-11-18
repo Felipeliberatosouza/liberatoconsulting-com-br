@@ -28,6 +28,8 @@ import {
 import { EMPTY_PRODUCT, type ServiceProduct } from "@/lib/services-catalog";
 import { pt } from "@/i18n/pt";
 import { SERVICE_MACROS, serviceMacro, type ServiceMacro } from "@/lib/service-macro";
+import { deParaFor } from "@/lib/services-depara";
+import { shortSlug } from "@/lib/short-slug";
 
 export const Route = createFileRoute("/admin/servicos")({
   head: () => ({
@@ -53,12 +55,7 @@ const FAMILIES = pt.serviceFamilies.items.map((f) => ({
 const GROUPS = pt.megaMenu.groups.map((g) => ({ id: g.id, title: g.title }));
 
 function slugify(value: string) {
-  return value
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+  return shortSlug(value);
 }
 
 function ListField({
@@ -96,6 +93,7 @@ function AdminServicesPage() {
   const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState("");
   const [macro, setMacro] = useState<ServiceMacro | "todos">("todos");
+  const [catalogView, setCatalogView] = useState<"atual" | "historico">("atual");
   const [slugTouched, setSlugTouched] = useState(false);
   const [aiBusy, setAiBusy] = useState(false);
   const [aiTitle, setAiTitle] = useState("");
@@ -164,6 +162,7 @@ function AdminServicesPage() {
   const grouped = useMemo(() => {
     const rows = (list.data ?? []).filter(
       (r) =>
+        (catalogView === "historico" ? Boolean(deParaFor(r.slug)) : !deParaFor(r.slug)) &&
         (macro === "todos" || serviceMacro(r) === macro) &&
         `${r.title} ${r.family_title} ${r.group_id}`.toLowerCase().includes(filter.toLowerCase()),
     );
@@ -175,7 +174,7 @@ function AdminServicesPage() {
       family: f,
       rows: rows.filter((r) => r.family_id === f.id),
     })).filter((g) => g.rows.length > 0);
-  }, [list.data, filter, macro]);
+  }, [list.data, filter, macro, catalogView]);
 
   function set<K extends keyof ServiceProduct>(key: K, value: ServiceProduct[K]) {
     setDraft((d) => (d ? { ...d, [key]: value } : d));
@@ -261,10 +260,14 @@ function AdminServicesPage() {
   return (
     <AdminShell
       title="Cadastro de serviços"
-      description="Todo serviço pertence a um dos dois macro serviços: Consultoria ou Treinamento in Company (frente Treinamento). Fonte única dos produtos exibidos em Serviços. Os textos salvos aqui alimentam automaticamente as páginas do site e a seção Áreas e textos. Preços são internos e nunca aparecem no site."
+      description="Edite as consultorias e os treinamentos da nova oferta. Os serviços anteriores continuam disponíveis em Histórico e DE-PARA, sem alterar trabalhos de clientes."
       requireAdmin
     >
       <div className="mb-6 flex flex-wrap items-center gap-3">
+        <div className="flex gap-2" role="group" aria-label="Catálogo">
+          <Button variant={catalogView === "atual" ? "default" : "outline"} onClick={() => setCatalogView("atual")}>Oferta atual</Button>
+          <Button variant={catalogView === "historico" ? "default" : "outline"} onClick={() => setCatalogView("historico")}>Histórico</Button>
+        </div>
         <Input
           placeholder="Buscar serviço, família ou frente…"
           value={filter}
@@ -505,7 +508,7 @@ function AdminServicesPage() {
 
               <div className="grid gap-4 md:grid-cols-3">
                 <ListField
-                  label="O que fazemos (entregas)"
+                  label={deParaFor(draft.slug) ? "O que fazemos (entregas)" : "Problema curto (botão dos banners)"}
                   value={draft.bullets}
                   onChange={(v) => set("bullets", v)}
                 />
@@ -515,7 +518,7 @@ function AdminServicesPage() {
                   onChange={(v) => set("results", v)}
                 />
                 <ListField
-                  label="Capacidades envolvidas"
+                  label="Método e ferramentas"
                   value={draft.modules}
                   onChange={(v) => set("modules", v)}
                 />

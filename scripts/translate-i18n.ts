@@ -18,6 +18,7 @@ const gateway = createOpenAICompatible({
 });
 
 const hash = contentHash(pt);
+const homeOnly = process.argv.includes("--home-only");
 
 for (const lang of ["en", "es", "zh"] as const) {
   const { text } = await generateText({
@@ -29,7 +30,7 @@ for (const lang of ["en", "es", "zh"] as const) {
       "Keep 'id' values, brand names (Liberato Consulting), numbers and short codes unchanged. " +
       "Localise acronyms such as 'IA' to the target language. Tone: concise, corporate, confident. " +
       "Return ONLY raw JSON, no markdown fences.",
-    prompt: JSON.stringify(pt),
+    prompt: JSON.stringify(homeOnly ? { hero: pt.hero } : pt),
   });
 
   const cleaned = text
@@ -37,7 +38,10 @@ for (const lang of ["en", "es", "zh"] as const) {
     .replace(/^```(?:json)?/i, "")
     .replace(/```$/, "")
     .trim();
-  const dict = JSON.parse(cleaned);
+  const translated = JSON.parse(cleaned);
+  const dict = homeOnly
+    ? { ...(await import(`../src/i18n/generated/${lang}.ts`)).dict, hero: translated.hero }
+    : translated;
 
   const file = `import type { Dict } from "../pt";
 

@@ -391,5 +391,12 @@ const zh: HomeDict = {
 const DICTS: Record<Lang, HomeDict> = { pt, en, es, zh };
 
 export function homeText(lang: Lang): HomeDict {
-  return DICTS[lang] ?? pt;
+  const base = DICTS[lang] ?? pt;
+  const answers: Record<Lang, string> = {
+    pt: "Consultoria para preço e lucro, vendas sem depender do dono, operação sem retrabalho, metas que saem do papel, automação e IA, validação de ideias e entrada no Brasil. Treinamentos in Company em finanças e precificação, vendas B2B, Lean e processos, liderança e rotina, IA prática e validação de ideias. Métodos clássicos e IA ajudam sua equipe a manter as melhorias com autonomia.",
+    en: "Consulting for pricing and profit, sales without relying on the owner, operations without rework, actionable goals, automation and AI, idea validation and entry into Brazil. In-company training in finance and pricing, B2B sales, Lean processes, leadership and daily management, practical AI and idea validation. Classic methods and AI help your team sustain improvements independently.",
+    es: "Consultoría en precios y rentabilidad, ventas sin depender del dueño, operaciones sin retrabajo, metas que se cumplen, automatización e IA, validación de ideas y entrada en Brasil. Capacitación in company en finanzas y precios, ventas B2B, Lean y procesos, liderazgo y rutina, IA práctica y validación de ideas. Métodos clásicos e IA ayudan a su equipo a sostener las mejoras con autonomía.",
+    zh: "咨询涵盖定价与利润、不依赖老板的销售、无返工运营、目标落地、自动化与AI、创意验证以及进入巴西市场。企业内训涵盖财务与定价、B2B销售、精益流程、领导力与日常管理、实用AI及创意验证。经典方法与AI帮助团队自主持续改进。",
+  };
+  return { ...base, extraFaq: base.extraFaq.map((item, index) => index === 0 ? { ...item, answer: answers[lang] } : item) };
 }

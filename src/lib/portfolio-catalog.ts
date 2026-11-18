@@ -43,7 +43,7 @@ export function resolvePortfolio(rows: ServiceProduct[]) {
   const bySlug = new Map(rows.map((row) => [row.slug, row]));
   const solutions: Solution[] = SOLUTIONS.flatMap((s) => {
     const row = bySlug.get(s.slug);
-    if (!row) return rows.length ? [] : [s];
+    if (!row) return [s];
     if (!row.published) return [];
     const chips = localized(row, "bullets", { pt: [s.chip.pt], en: [s.chip.en], es: [s.chip.es], zh: [s.chip.zh] });
     return [{ ...s, title: localized(row, "title", s.title), pain: localized(row, "problem", s.pain),
@@ -54,7 +54,7 @@ export function resolvePortfolio(rows: ServiceProduct[]) {
   });
   const trainings: Training[] = TRAININGS.flatMap((t) => {
     const row = bySlug.get(t.slug);
-    if (!row) return rows.length ? [] : [t];
+    if (!row) return [t];
     return row.published ? [{ ...t, title: localized(row, "title", t.title), audience: localized(row, "audience", t.audience), outcome: localized(row, "body", t.outcome) }] : [];
   });
   return { solutions, trainings };

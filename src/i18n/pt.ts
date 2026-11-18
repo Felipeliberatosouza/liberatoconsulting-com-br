@@ -318,6 +318,22 @@ export const pt = {
         primary: "Conhecer o serviço",
         secondary: "Agendar conversa",
       },
+      {
+        id: "empreendedorismo",
+        eyebrow: "Validar ideias antes de investir",
+        title: "Tenho uma ideia, mas tenho medo de investir errado.",
+        body: "Teste a demanda com clientes reais e calcule a viabilidade antes de investir. Decida com evidências se deve avançar, ajustar ou parar.",
+        primary: "Conhecer a consultoria",
+        secondary: "Agendar conversa",
+      },
+      {
+        id: "estrategia",
+        eyebrow: "Metas e rotina de gestão",
+        title: "O planejamento da sua empresa não sai do papel?",
+        body: "Metas com responsáveis, equipes alinhadas e reuniões curtas para transformar o plano em rotina — sem tudo depender do dono.",
+        primary: "Conhecer a consultoria",
+        secondary: "Agendar conversa",
+      },
     ],
   },
 
