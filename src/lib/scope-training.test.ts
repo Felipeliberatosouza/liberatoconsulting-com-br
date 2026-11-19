@@ -10,6 +10,13 @@ describe("escopo por tipo de projeto", () => {
   it("pacote combina 10 de consultoria + 10 de treinamento", () => {
     expect(scopeQuestionsForKind("pacote", "en")).toHaveLength(20);
   });
+  it.each(["Prospecção de Clientes: Novos Clientes", "Gestão de Carteira de Clientes"])(
+    "oferece %s no primeiro tema de Treinamento",
+    (option) => {
+      const theme = scopeQuestionsForKind("treinamento", "pt").find((q) => q.id === "t1");
+      expect(theme?.options).toContain(option);
+    },
+  );
   it("traduções mantêm o mesmo número de opções", () => {
     const pt = scopeQuestionsForKind("pacote", "pt");
     for (const lang of ["en", "es", "zh"] as const) {

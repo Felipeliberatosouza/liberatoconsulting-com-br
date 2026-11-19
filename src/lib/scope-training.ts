@@ -8,7 +8,7 @@ import type { ScopeQuestion } from "@/lib/scope-form";
 type Q = { theme: string; question: string; purpose: string; dateWhen?: string; options: string[] };
 
 const PT: Q[] = [
-  { theme: "Tema e foco", question: "Qual é o tema central que a equipe precisa desenvolver?", purpose: "Definir o conteúdo e o instrutor adequados.", options: ["Gestão Estratégica e Metas", "Vendas B2B e Negociação Comercial", "Eficiência Operacional e Processos", "Inteligência Artificial e Automação na Prática", "Finanças, Margem e Precificação", "Liderança e Formação de Gestores", "Outro"] },
+  { theme: "Tema e foco", question: "Qual é o tema central que a equipe precisa desenvolver?", purpose: "Definir o conteúdo e o instrutor adequados.", options: ["Gestão Estratégica e Metas", "Vendas B2B e Negociação Comercial", "Prospecção de Clientes: Novos Clientes", "Gestão de Carteira de Clientes", "Eficiência Operacional e Processos", "Inteligência Artificial e Automação na Prática", "Finanças, Margem e Precificação", "Liderança e Formação de Gestores", "Outro"] },
   { theme: "Formato", question: "Em qual modelo de entrega o treinamento deve acontecer?", purpose: "Planejar logística, plataforma e dinâmicas.", options: ["100% Presencial in company", "100% Online ao vivo (interativo)", "Híbrido (encontros presenciais + módulos remotos)", "Outro"] },
   { theme: "Público", question: "Quem serão os participantes do treinamento?", purpose: "Ajustar a linguagem e a profundidade do conteúdo.", options: ["Diretoria e C-Level", "Gerentes e Coordenadores", "Equipe operacional e analistas", "Força de vendas e comercial", "Turma mista (líderes e liderados)", "Outro"] },
   { theme: "Tamanho da turma", question: "Quantas pessoas devem participar da capacitação?", purpose: "Dimensionar número de turmas, materiais e facilitadores.", options: ["Até 10 participantes", "11 a 25 participantes", "26 a 50 participantes", "Mais de 50 participantes (divisão em turmas)", "A definir"] },
@@ -21,7 +21,7 @@ const PT: Q[] = [
 ];
 
 const EN: Q[] = [
-  { theme: "Topic and focus", question: "What core topic does the team need to develop?", purpose: "Define the right content and instructor.", options: ["Strategic Management and Goals", "B2B Sales and Negotiation", "Operational Efficiency and Processes", "Artificial Intelligence and Automation in Practice", "Finance, Margin and Pricing", "Leadership and Manager Development", "Other"] },
+  { theme: "Topic and focus", question: "What core topic does the team need to develop?", purpose: "Define the right content and instructor.", options: ["Strategic Management and Goals", "B2B Sales and Negotiation", "Client Prospecting: Finding New Clients", "Client Portfolio Management", "Operational Efficiency and Processes", "Artificial Intelligence and Automation in Practice", "Finance, Margin and Pricing", "Leadership and Manager Development", "Other"] },
   { theme: "Format", question: "Which delivery model should the training follow?", purpose: "Plan logistics, platform and activities.", options: ["100% on-site in company", "100% live online (interactive)", "Hybrid (on-site sessions + remote modules)", "Other"] },
   { theme: "Audience", question: "Who will attend the training?", purpose: "Adjust the language and depth of the content.", options: ["Board and C-Level", "Managers and Coordinators", "Operations team and analysts", "Sales force", "Mixed group (leaders and team members)", "Other"] },
   { theme: "Group size", question: "How many people should take part?", purpose: "Size the number of groups, materials and facilitators.", options: ["Up to 10 participants", "11 to 25 participants", "26 to 50 participants", "More than 50 participants (split into groups)", "To be defined"] },
@@ -34,7 +34,7 @@ const EN: Q[] = [
 ];
 
 const ES: Q[] = [
-  { theme: "Tema y enfoque", question: "¿Cuál es el tema central que el equipo necesita desarrollar?", purpose: "Definir el contenido y el instructor adecuados.", options: ["Gestión Estratégica y Metas", "Ventas B2B y Negociación Comercial", "Eficiencia Operativa y Procesos", "Inteligencia Artificial y Automatización en la Práctica", "Finanzas, Margen y Precios", "Liderazgo y Formación de Gestores", "Otro"] },
+  { theme: "Tema y enfoque", question: "¿Cuál es el tema central que el equipo necesita desarrollar?", purpose: "Definir el contenido y el instructor adecuados.", options: ["Gestión Estratégica y Metas", "Ventas B2B y Negociación Comercial", "Prospección de clientes: nuevos clientes", "Gestión de la cartera de clientes", "Eficiencia Operativa y Procesos", "Inteligencia Artificial y Automatización en la Práctica", "Finanzas, Margen y Precios", "Liderazgo y Formación de Gestores", "Otro"] },
   { theme: "Formato", question: "¿En qué modelo de entrega debe realizarse la capacitación?", purpose: "Planificar logística, plataforma y dinámicas.", options: ["100% presencial in company", "100% online en vivo (interactivo)", "Híbrido (encuentros presenciales + módulos remotos)", "Otro"] },
   { theme: "Público", question: "¿Quiénes participarán en la capacitación?", purpose: "Ajustar el lenguaje y la profundidad del contenido.", options: ["Dirección y C-Level", "Gerentes y Coordinadores", "Equipo operativo y analistas", "Fuerza de ventas y comercial", "Grupo mixto (líderes y colaboradores)", "Otro"] },
   { theme: "Tamaño del grupo", question: "¿Cuántas personas deben participar?", purpose: "Dimensionar grupos, materiales y facilitadores.", options: ["Hasta 10 participantes", "11 a 25 participantes", "26 a 50 participantes", "Más de 50 participantes (división en grupos)", "Por definir"] },
@@ -47,7 +47,7 @@ const ES: Q[] = [
 ];
 
 const ZH: Q[] = [
-  { theme: "主题与重点", question: "团队需要提升的核心主题是什么？", purpose: "确定合适的内容与讲师。", options: ["战略管理与目标", "B2B 销售与商务谈判", "运营效率与流程", "人工智能与自动化实操", "财务、利润与定价", "领导力与管理者培养", "其他"] },
+  { theme: "主题与重点", question: "团队需要提升的核心主题是什么？", purpose: "确定合适的内容与讲师。", options: ["战略管理与目标", "B2B 销售与商务谈判", "客户拓展：开发新客户", "客户组合管理", "运营效率与流程", "人工智能与自动化实操", "财务、利润与定价", "领导力与管理者培养", "其他"] },
   { theme: "形式", question: "培训应采用哪种交付模式？", purpose: "规划后勤、平台与互动环节。", options: ["100% 线下企业内训", "100% 线上直播（互动）", "混合式（线下课程＋远程模块）", "其他"] },
   { theme: "学员", question: "哪些人员将参加培训？", purpose: "调整内容的表达方式与深度。", options: ["董事会与高管", "经理与主管", "运营团队与分析人员", "销售团队", "混合班（管理者与员工）", "其他"] },
   { theme: "班级规模", question: "预计有多少人参加？", purpose: "确定班次、材料与讲师数量。", options: ["最多 10 人", "11 至 25 人", "26 至 50 人", "50 人以上（分班）", "待定"] },
