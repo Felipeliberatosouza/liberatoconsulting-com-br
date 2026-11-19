@@ -27,6 +27,7 @@ import {
   managed,
   metrics,
   money,
+  upcomingDates,
   urgency,
   type Deal,
   type DealInput,
@@ -113,6 +114,7 @@ export function Board(p: Props) {
     { name: "Alertas", Icon: Bell },
     { name: "Resultados", Icon: TrendingUp },
     { name: "Planilhas", Icon: List },
+    { name: "Datas", Icon: Bell },
     ...(!p.demo ? [{ name: "Prospecção", Icon: Search }] : []),
     ...(canManage ? [{ name: "Configuração", Icon: Settings2 }] : []),
   ];
@@ -454,6 +456,7 @@ export function Board(p: Props) {
             </section>
           </>
         )}
+        {tab === "Datas" && <Dates deals={p.deals} />}
         {tab === "Prospecção" && !p.demo && (
           <Prospecting
             workspace={p.user.workspace_id}
@@ -903,5 +906,45 @@ function Report({ deals, stages }: { deals: Deal[]; stages: Stage[] }) {
         [Funnel, "Ciclo médio", `${r.days.toFixed(1)} dias`],
       ]}
     />
+  );
+}
+
+function Dates({ deals }: { deals: Deal[] }) {
+  const list = upcomingDates(deals, new Date());
+  const text = (company: string, kind: string, contact: string) =>
+    kind === "empresa"
+      ? `Parabéns, ${company}, por mais um ano de história! Seguimos juntos.`
+      : `Feliz aniversário, ${contact || company}! Desejamos um ótimo dia.`;
+  return (
+    <section className="mt-5 space-y-3">
+      <p className="text-sm text-muted-foreground">
+        Aniversários de contatos e de fundação das empresas nos próximos 30 dias. A mensagem sai do seu e-mail ou WhatsApp, só para quem tem relacionamento com você.
+      </p>
+      {list.length === 0 && <p className="text-sm">Nenhuma data nos próximos 30 dias.</p>}
+      {list.map(({ deal, kind, inDays }) => {
+        const msg = text(deal.company, kind, deal.contact);
+        const phone = deal.phone.replace(/\D/g, "");
+        return (
+          <div key={deal.id + kind} className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card p-3">
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold">{kind === "empresa" ? deal.company : deal.contact || deal.company}</p>
+              <p className="text-xs text-muted-foreground">
+                {kind === "empresa" ? "Fundação da empresa" : "Aniversário do contato"} · {inDays === 0 ? "hoje" : `em ${inDays} dia(s)`}
+              </p>
+            </div>
+            {deal.email && (
+              <Button size="sm" variant="outline" asChild>
+                <a href={`mailto:${deal.email}?subject=${encodeURIComponent("Parabéns!")}&body=${encodeURIComponent(msg)}`}>E-mail</a>
+              </Button>
+            )}
+            {phone && (
+              <Button size="sm" variant="outline" asChild>
+                <a href={`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`} target="_blank" rel="noreferrer">WhatsApp</a>
+              </Button>
+            )}
+          </div>
+        );
+      })}
+    </section>
   );
 }

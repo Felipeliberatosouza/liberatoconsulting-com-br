@@ -169,3 +169,19 @@ export function importDeal(
   };
 }
 export const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+
+/** Upcoming anniversaries (company founding or contact birthday) within `days`, soonest first. */
+export function upcomingDates(deals: Deal[], today: Date, days = 30) {
+  const base = Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+  const out: { deal: Deal; kind: "empresa" | "contato"; inDays: number }[] = [];
+  for (const deal of deals)
+    for (const [kind, value] of [["empresa", deal.founded_on], ["contato", deal.birth_date]] as const) {
+      if (!value) continue;
+      const [, m = 1, d = 1] = value.split("-").map(Number);
+      let next = Date.UTC(today.getUTCFullYear(), m - 1, d);
+      if (next < base) next = Date.UTC(today.getUTCFullYear() + 1, m - 1, d);
+      const inDays = Math.round((next - base) / 86400000);
+      if (inDays <= days) out.push({ deal, kind, inDays });
+    }
+  return out.sort((a, b) => a.inDays - b.inDays);
+}

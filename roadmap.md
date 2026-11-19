@@ -153,4 +153,5 @@
 - [x] Adicionar assistente com indicadores calculados na carteira e pesquisa de empresas em fontes públicas
 - [x] Verificar demonstração no celular, planilhas, escopo e bloqueio de acesso anônimo
 - [ ] Validar persistência, isolamento entre contas, busca e IA com uma sessão real com segundo fator; a sessão de prévia não permite cadastrar o autenticador
-- [ ] Concluir automação de aniversários com consentimento por empresa, integração com ERP, leitura automática de marca e ativação de domínio após definir os provedores
+- [x] Aba "Datas" com aniversários de contatos e fundação das empresas (envio pelo e-mail/WhatsApp do vendedor)
+- [ ] Integração pronta com ERP específico, leitura automática da marca pelo site e cadastro do autenticador com conta real

@@ -211,6 +211,8 @@ export function Workspace() {
         </>
       ) : companies.isError || rows.isError ? (
         <p role="alert">{companies.error?.message ?? rows.error?.message}</p>
+      ) : workspace && rows.data && !member ? (
+        <p role="alert">Seu acesso a este espaço está desativado. Fale com o gestor comercial.</p>
       ) : companies.isPending || workspace ? (
         <p>Carregando sua empresa…</p>
       ) : (
