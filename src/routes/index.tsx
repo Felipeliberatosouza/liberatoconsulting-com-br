@@ -25,6 +25,7 @@ import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { seoPageMeta } from "@/lib/seo-meta";
 import { itemList, jsonLd, webPageSchema } from "@/lib/schema";
 import { DEFAULT_AUTOPLAY_MS, heroSlideOrder } from "@/lib/site-config";
+import { heroCopy } from "@/lib/hero-copy";
 
 
 export const Route = createFileRoute("/")({
@@ -71,7 +72,7 @@ const SLIDE_IMAGES: Record<string, string> = {
 };
 
 function HeroCarousel() {
-  const { t, hero, lang } = useLanguage();
+  const { hero, lang, texts } = useLanguage();
   const h = homeText(lang);
   const scope = useAudienceFilters();
   const [index, setIndex] = useState(0);
@@ -94,7 +95,8 @@ function HeroCarousel() {
 
   const slides = useMemo(() => {
     const order = heroSlideOrder(hero).filter((s) => s.enabled);
-    const byId = new Map(t.hero.slides.map((s) => [s.id, s]));
+    const copy = heroCopy(lang, texts);
+    const byId = new Map(copy.map((s) => [s.id, s]));
     const list = order
       .map((cfg) => {
         const content = byId.get(cfg.id);
@@ -104,8 +106,8 @@ function HeroCarousel() {
       .filter((s): s is NonNullable<typeof s> => s !== null);
     return list.length > 0
       ? list
-      : t.hero.slides.slice(0, 1).map((s) => ({ ...s, image: heroImage }));
-  }, [hero, t]);
+      : copy.slice(0, 1).map((s) => ({ ...s, image: heroImage }));
+  }, [hero, lang, texts]);
 
   const count = slides.length;
   const configuredAutoplay = Number(hero?.autoplayMs);
@@ -221,6 +223,10 @@ function HeroCarousel() {
               to="/brasil"
               className="inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
             >
+              {slide.primary} <ArrowRight className="size-4" />
+            </Link>
+          ) : slide.id === "operacoes" ? (
+            <Link to="/solucoes/$slug" params={{ slug: "operacao-sem-retrabalho" }} className="inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90">
               {slide.primary} <ArrowRight className="size-4" />
             </Link>
           ) : (

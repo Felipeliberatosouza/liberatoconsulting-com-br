@@ -408,7 +408,7 @@ function LogoEditor({
 
 function AdminConsultantsPage() {
   const serviceOptions = useServiceOptions();
-  const SERVICES: string[] = serviceOptions.filter((o) => o.kind === "family").map((o) => o.label);
+  const SERVICES: string[] = serviceOptions.map((o) => o.label);
   const qc = useQueryClient();
   const [draft, setDraft] = useState<ConsultantRecord | null>(null);
   const [saving, setSaving] = useState(false);

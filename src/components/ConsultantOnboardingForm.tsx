@@ -30,7 +30,7 @@ async function toSmallDataUrl(file: File, max = 600): Promise<string> {
 type Props = { value: OnboardingData; onChange: (v: OnboardingData) => void };
 
 export function ConsultantOnboardingForm({ value: v, onChange }: Props) {
-  const services = useServiceOptions().filter((o) => o.kind === "family").map((o) => o.label);
+  const services = useServiceOptions().map((o) => o.label);
   const [cepBusy, setCepBusy] = useState(false);
   const lookupCep = async (zip: string) => {
     const d = zip.replace(/\D+/g, "");

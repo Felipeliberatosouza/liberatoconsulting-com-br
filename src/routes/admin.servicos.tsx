@@ -422,6 +422,7 @@ function AdminServicesPage() {
                   <Label>Link (endereço da página)</Label>
                   <Input
                     value={draft.slug}
+                    readOnly={Boolean(draft.id)}
                     placeholder={slugify(draft.title)}
                     onChange={(e) => {
                       setSlugTouched(true);
@@ -429,7 +430,7 @@ function AdminServicesPage() {
                     }}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Preenchido a partir do nome; pode ser editado.
+                    Definido no cadastro e mantido para preservar links e históricos.
                   </p>
                 </div>
               </div>

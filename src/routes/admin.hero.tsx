@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { AdminShell } from "@/components/AdminShell";
 import { pt } from "@/i18n/pt";
 import { getSiteConfig, saveHeroSettings, saveTexts } from "@/lib/admin.functions";
+import { HERO_FIELDS, heroCopy, heroTextKey, type HeroField } from "@/lib/hero-copy";
+import { Button } from "@/components/ui/button";
 import {
   DEFAULT_AUTOPLAY_MS,
   heroSlideOrder,
@@ -31,16 +33,10 @@ const LABELS: Record<string, string> = Object.fromEntries(
   pt.hero.slides.map((s) => [s.id, `${s.eyebrow} — ${s.title}`]),
 );
 
-/** Índice de cada slide no dicionário PT (usado nos caminhos de texto). */
-const SLIDE_INDEX: Record<string, number> = Object.fromEntries(
-  pt.hero.slides.map((s, i) => [s.id, i]),
-);
-
-type SlideTexts = { eyebrow: string; title: string; body: string };
+type SlideTexts = Record<HeroField, string>;
 
 function defaultTexts(id: string): SlideTexts {
-  const s = pt.hero.slides[SLIDE_INDEX[id] ?? 0]!;
-  return { eyebrow: s.eyebrow, title: s.title, body: s.body };
+  return pt.hero.slides.find((s) => s.id === id) ?? { eyebrow: "", title: "", body: "", primary: "", secondary: "" };
 }
 
 function AdminHero() {
@@ -50,28 +46,20 @@ function AdminHero() {
   );
   const [autoplay, setAutoplay] = useState(DEFAULT_AUTOPLAY_MS);
   const [busy, setBusy] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [originalTexts, setOriginalTexts] = useState<Record<string, SlideTexts>>({});
 
   useEffect(() => {
     getSiteConfig()
       .then((c) => {
         setSlides(heroSlideOrder(c.hero));
         setAutoplay(c.hero?.autoplayMs ?? DEFAULT_AUTOPLAY_MS);
-        setTexts(
-          Object.fromEntries(
-            pt.hero.slides.map((s) => {
-              const i = SLIDE_INDEX[s.id]!;
-              const base = defaultTexts(s.id);
-              const get = (field: keyof SlideTexts) =>
-                c.texts?.[`hero.slides[${i}].${field}`]?.pt ?? base[field];
-              return [
-                s.id,
-                { eyebrow: get("eyebrow"), title: get("title"), body: get("body") },
-              ];
-            }),
-          ),
-        );
+        const copy = Object.fromEntries(heroCopy("pt", c.texts).map((s) => [s.id, s]));
+        setTexts(copy);
+        setOriginalTexts(copy);
+        setLoaded(true);
       })
-      .catch(() => undefined);
+      .catch(() => toast.error("Não foi possível carregar os banners. Recarregue a página antes de salvar."));
   }, []);
 
   function move(index: number, dir: -1 | 1) {
@@ -87,7 +75,7 @@ function AdminHero() {
   }
 
   function updateText(id: string, patch: Partial<SlideTexts>) {
-    setTexts((prev) => ({ ...prev, [id]: { ...prev[id]!, ...patch } }));
+    setTexts((prev) => ({ ...prev, [id]: { ...(prev[id] ?? defaultTexts(id)), ...patch } }));
   }
 
   async function pickImage(index: number, file: File) {
@@ -194,6 +182,15 @@ function AdminHero() {
                 </div>
               </div>
 
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                {([['primary', 'Texto do botão principal'], ['secondary', 'Texto do botão secundário']] as const).map(([key, label]) => (
+                  <label key={key} className="text-sm font-medium">
+                    {label}
+                    <input value={st[key]} onChange={(e) => updateText(s.id, { [key]: e.target.value })} className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+                  </label>
+                ))}
+              </div>
+
               <div className="mt-5 space-y-3">
                 <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Imagem de fundo
@@ -234,8 +231,8 @@ function AdminHero() {
           );
         })}
 
-        <button
-          disabled={busy}
+        <Button
+          disabled={busy || !loaded}
           onClick={async () => {
             setBusy(true);
             try {
@@ -254,16 +251,17 @@ function AdminHero() {
                 return;
               }
               const changes = slides.flatMap((s) => {
-                const i = SLIDE_INDEX[s.id];
-                if (i === undefined) return [];
                 const st = texts[s.id] ?? defaultTexts(s.id);
-                return (["eyebrow", "title", "body"] as const).map((field) => ({
-                  path: `hero.slides[${i}].${field}`,
+                return HERO_FIELDS.filter((field) => st[field] !== originalTexts[s.id]?.[field]).map((field) => ({
+                  path: heroTextKey(s.id, field),
                   pt: st[field],
                 }));
               });
-              const rt = await saveTexts({ data: { changes } });
-              if (rt.ok) toast.success("Carrossel salvo e traduzido.");
+              const rt = changes.length ? await saveTexts({ data: { changes } }) : { ok: true as const };
+              if (rt.ok) {
+                setOriginalTexts(texts);
+                toast.success("Carrossel salvo.");
+              }
               else toast.error(rt.error);
             } catch {
               toast.error("Não foi possível salvar.");
@@ -274,7 +272,7 @@ function AdminHero() {
           className="rounded-md bg-ink px-5 py-2.5 text-sm font-semibold text-ink-foreground disabled:opacity-60"
         >
           {busy ? "Salvando…" : "Salvar carrossel"}
-        </button>
+        </Button>
       </div>
     </AdminShell>
   );

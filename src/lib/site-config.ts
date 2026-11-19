@@ -68,18 +68,17 @@ export const HERO_SLIDE_IDS = ["consultoria", "pesquisas", "empreendedorismo", "
 export const DEFAULT_AUTOPLAY_MS = 7000;
 
 /**
- * Normaliza a configuração salva, garantindo todos os slides padrão.
- * Slides adicionados ao projeto entram no topo do painel e do carrossel,
- * sem alterar a ordem já escolhida para os banners existentes.
+ * Keep the saved carousel count and order. Missing slides are editable but
+ * stay off until the administrator explicitly enables them.
  */
 export function heroSlideOrder(hero: HeroSettings | undefined): HeroSlideSetting[] {
   const saved = hero?.slides ?? [];
   const known = saved.filter((s) => (HERO_SLIDE_IDS as readonly string[]).includes(s.id));
   const missing = HERO_SLIDE_IDS.filter((id) => !known.some((s) => s.id === id)).map((id) => ({
     id,
-    enabled: true,
+    enabled: known.length === 0,
   }));
-  return [...missing, ...known];
+  return [...known, ...missing];
 }
 
 /** Conteúdo editável de cada tema da seção "Dados do Brasil". */

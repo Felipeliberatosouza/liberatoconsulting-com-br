@@ -34,6 +34,7 @@ import {
   type AreaBanners,
   type HeroSettings,
   type SiteConfig,
+  type TextOverrides,
   type InstitutionalSettings,
 } from "@/lib/site-config";
 import { DEFAULT_SEGMENTS } from "@/lib/audience-filters";
@@ -52,7 +53,7 @@ function mergeInstitutional(base: InstitutionalSettings, lang: Lang): Institutio
   };
 }
 import { applyServiceProducts } from "@/lib/services-catalog";
-import { portfolioDefaults, resolvePortfolio } from "@/lib/portfolio-catalog";
+import { portfolioDefaults, resolvePortfolio, portfolioRows } from "@/lib/portfolio-catalog";
 import type { Solution, Training } from "@/lib/solutions";
 
 export type { Lang };
@@ -84,6 +85,7 @@ type LanguageContextValue = {
   /** Segmentos atendidos pela consultoria (configuráveis no painel). */
   segments: string[];
   institutional: InstitutionalSettings;
+  texts: TextOverrides;
   solutions: Solution[];
   trainings: Training[];
 };
@@ -189,7 +191,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       toggle: () => setLang(lang === "pt" ? "en" : "pt"),
       t: applyBrazilOverrides(
         applyTextOverrides(
-          applyServiceProducts(dicts[lang] ?? baseline[lang].dict, config.products.length ? config.products : portfolioDefaults(), lang),
+          applyServiceProducts(dicts[lang] ?? baseline[lang].dict, config === EMPTY_CONFIG ? portfolioDefaults() : portfolioRows(config.products), lang),
           config.texts,
           lang,
         ),
@@ -207,7 +209,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
           ? config.branding.segments
           : DEFAULT_SEGMENTS,
       institutional: mergeInstitutional(config.institutional, lang),
-      ...resolvePortfolio(config.products),
+      texts: config.texts,
+      ...resolvePortfolio(config === EMPTY_CONFIG ? portfolioDefaults() : config.products),
     }),
     [lang, setLang, dicts, translating, config],
   );
@@ -228,7 +231,8 @@ const FALLBACK_VALUE: LanguageContextValue = {
   banners: {},
   segments: DEFAULT_SEGMENTS,
   institutional: EMPTY_CONFIG.institutional,
-  ...resolvePortfolio([]),
+  texts: {},
+  ...resolvePortfolio(portfolioDefaults()),
 };
 
 export function useLanguage() {

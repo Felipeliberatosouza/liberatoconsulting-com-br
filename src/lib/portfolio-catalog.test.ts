@@ -14,7 +14,7 @@ describe("current editable portfolio", () => {
     if (!first) throw new Error("Missing first service");
     first.title = "Novo título";
     expect(resolvePortfolio(rows).solutions[0]?.title.pt).toBe("Novo título");
-    expect(resolvePortfolio([]).solutions[0]?.title.pt).toBe("Preço Certo e Lucro Real em Cada Venda");
+    expect(resolvePortfolio(portfolioDefaults()).solutions[0]?.title.pt).toBe("Preço Certo e Lucro Real em Cada Venda");
   });
   it("removes explicitly unpublished services", () => {
     const rows = portfolioDefaults();
@@ -22,5 +22,6 @@ describe("current editable portfolio", () => {
     if (!first) throw new Error("Missing first service");
     first.published = false;
     expect(resolvePortfolio(rows).solutions).toHaveLength(6);
+    expect(resolvePortfolio(rows.slice(1)).solutions).toHaveLength(6);
   });
 });

@@ -34,8 +34,20 @@ export function portfolioDefaults(): ServiceProduct[] {
 function localized<T extends string | string[]>(row: ServiceProduct, field: "title" | "lead" | "problem" | "body" | "audience" | "bullets" | "modules" | "results", fallback: Record<Lang, T>): Record<Lang, T> {
   return Object.fromEntries((["pt", "en", "es", "zh"] as const).map((lang) => {
     const value = lang === "pt" ? row[field] : row.translations?.[lang]?.[field];
-    return [lang, value === undefined ? fallback[lang] : value];
+    return [lang, value === undefined || value === "" ? fallback[lang] : value];
   })) as Record<Lang, T>;
+}
+
+export function portfolioRows(rows: ServiceProduct[]) {
+  const defaults = new Map(portfolioDefaults().map((row) => [row.slug, row]));
+  return rows.flatMap((row) => {
+    const base = defaults.get(row.slug);
+    if (!base) return [];
+    const translations = Object.fromEntries((["en", "es", "zh"] as const).map((lang) => [lang, {
+      ...base.translations?.[lang], ...row.translations?.[lang],
+    }]));
+    return [{ ...row, translations }];
+  });
 }
 
 /** Stable URLs/relationships; all visible service copy comes from the registry. */
@@ -43,7 +55,7 @@ export function resolvePortfolio(rows: ServiceProduct[]) {
   const bySlug = new Map(rows.map((row) => [row.slug, row]));
   const solutions: Solution[] = SOLUTIONS.flatMap((s) => {
     const row = bySlug.get(s.slug);
-    if (!row) return [s];
+    if (!row) return [];
     if (!row.published) return [];
     const chips = localized(row, "bullets", { pt: [s.chip.pt], en: [s.chip.en], es: [s.chip.es], zh: [s.chip.zh] });
     return [{ ...s, title: localized(row, "title", s.title), pain: localized(row, "problem", s.pain),
@@ -54,7 +66,7 @@ export function resolvePortfolio(rows: ServiceProduct[]) {
   });
   const trainings: Training[] = TRAININGS.flatMap((t) => {
     const row = bySlug.get(t.slug);
-    if (!row) return [t];
+    if (!row) return [];
     return row.published ? [{ ...t, title: localized(row, "title", t.title), audience: localized(row, "audience", t.audience), outcome: localized(row, "body", t.outcome) }] : [];
   });
   return { solutions, trainings };

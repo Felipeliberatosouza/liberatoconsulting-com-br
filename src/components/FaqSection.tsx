@@ -7,7 +7,9 @@ export function FaqSection() {
   const { institutional, lang } = useLanguage();
   const h = homeText(lang);
   const base = institutional.faq.filter((item) => item.question && item.answer);
-  const items = [...base, ...h.extraFaq.filter((extra) => !base.some((b) => b.question.trim() === extra.question))];
+  const [offer, ...other] = h.extraFaq;
+  const custom = base.filter((item) => item.question.trim() !== offer?.question);
+  const items = [...(offer ? [offer] : []), ...custom, ...other.filter((extra) => !custom.some((item) => item.question.trim() === extra.question))];
   if (!items.length) return null;
   return (
     <section className="border-t border-border bg-background py-24">

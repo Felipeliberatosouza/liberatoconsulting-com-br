@@ -120,7 +120,7 @@ export function applyServiceProducts(
   rows: ServiceProduct[] | undefined,
   lang: Lang,
 ): Dict {
-  if (!rows || rows.length === 0) return dict;
+  if (!rows) return dict;
 
   const bySlug = new Map(dict.serviceDetail.pages.map((p) => [p.id, p]));
   const ordered = [...rows].sort((a, b) => a.position - b.position);

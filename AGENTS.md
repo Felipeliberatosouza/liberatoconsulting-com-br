@@ -29,3 +29,4 @@
 - Project contracting modality is stored under a stable shared key in scope/diagnostic answers, separate from the two service macros, so language changes and hybrid packages cannot reclassify catalog services.
 - Old service_products slugs map to the pain-based portfolio via src/lib/services-depara.ts; old /services URLs redirect there while history keeps old names — one source for admin view and redirects.
 - Portfolio pages, navigation and form choices resolve public copy from the existing service registry through portfolio-catalog; stable identities and relationships remain browser-safe defaults, so admin edits propagate without rewriting client history.
+- Homepage banner overrides use stable slide IDs, never their array positions, so reordering cannot move text to a different banner.
