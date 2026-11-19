@@ -161,7 +161,7 @@ export function ServiceLeadForm({ serviceSlug, serviceTitle, problem: problemOve
     ) : null;
 
   return (
-    <div id="contato" className="mt-12 rounded-2xl border border-border bg-secondary p-8">
+    <div id="contato" className="mt-12 scroll-mt-28 rounded-2xl border border-border bg-secondary p-8">
       <h2 className="font-display text-2xl font-bold tracking-tight">{F.title}</h2>
       <p className="mt-2 max-w-xl text-sm text-muted-foreground">{F.body}</p>
 

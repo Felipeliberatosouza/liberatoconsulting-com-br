@@ -185,13 +185,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<LanguageContextValue>(
-    () => ({
+    () => {
+      const rows = config === EMPTY_CONFIG ? portfolioDefaults() : portfolioRows(config.products);
+      return {
       lang,
       setLang,
       toggle: () => setLang(lang === "pt" ? "en" : "pt"),
       t: applyBrazilOverrides(
         applyTextOverrides(
-          applyServiceProducts(dicts[lang] ?? baseline[lang].dict, config === EMPTY_CONFIG ? portfolioDefaults() : portfolioRows(config.products), lang),
+          applyServiceProducts(dicts[lang] ?? baseline[lang].dict, rows, lang),
           config.texts,
           lang,
         ),
@@ -210,8 +212,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
           : DEFAULT_SEGMENTS,
       institutional: mergeInstitutional(config.institutional, lang),
       texts: config.texts,
-      ...resolvePortfolio(config === EMPTY_CONFIG ? portfolioDefaults() : config.products),
-    }),
+      ...resolvePortfolio(rows),
+      };
+    },
     [lang, setLang, dicts, translating, config],
   );
 

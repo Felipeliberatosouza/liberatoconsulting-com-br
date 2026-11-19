@@ -82,9 +82,7 @@ function SolutionPage() {
             <p className="mt-1 font-bold">{pick(U.trainingsEyebrow, lang)}: {pick(training.title, lang)} →</p>
           </Link>
         )}
-        <div id="contato" className="scroll-mt-28">
-          <ServiceLeadForm serviceSlug={s.slug} serviceTitle={pick(s.title, lang)} problem={pick(s.pain, lang).replace(/[“”"]/g, "")} />
-        </div>
+        <ServiceLeadForm serviceSlug={s.slug} serviceTitle={pick(s.title, lang)} problem={pick(s.pain, lang).replace(/[“”"]/g, "")} />
       </section>
     </div>
   );

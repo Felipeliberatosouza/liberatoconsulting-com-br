@@ -138,11 +138,11 @@
 - [x] Restaurar banners antigos (quantidade/configuração do painel) com textos novos + bloco fixo "Qual problema está travando sua empresa?" com chips que abrem pedido de contato + botões originais por banner
 - [x] Trazer de volta as 3 seções das imagens (incl. carrossel de clientes)
 - [x] Cabeçalho anterior, trocando "Consultoria e Treinamento" por "O que você precisa resolver"
-- [ ] Itens novos editáveis no painel e formulários com serviços novos
+- [x] Itens novos editáveis no painel e formulários com serviços novos
 
 ## Home e catálogo — 17/11/2026
-- [ ] Aplicar textos dos novos banners na configuração administrativa, preservando imagens e ordem
-- [ ] Ocultar Propósito e temas pesquisados; remover Método em quatro tempos
-- [ ] Atualizar FAQ para as sete consultorias e seis treinamentos nos quatro idiomas
-- [ ] Conectar catálogo público editável e escolhas de serviço, preservando históricos e DE-PARA
-- [ ] Conferir home, painel e formulários; executar testes
+- [x] Aplicar textos dos novos banners editáveis no carrossel, preservando imagens e ordem
+- [x] Ocultar Propósito e temas pesquisados; remover Método em quatro tempos
+- [x] Atualizar FAQ para as sete consultorias e seis treinamentos nos quatro idiomas
+- [x] Conectar catálogo público editável e escolhas de serviço, preservando históricos e DE-PARA
+- [ ] Validar salvamento no painel com sessão de administrador e segundo fator
