@@ -17,7 +17,8 @@ import {
   getPresentationFileUrl,
   type PresentationDraft,
 } from "@/lib/presentation.functions";
-import { SCOPE_QUESTIONS } from "@/lib/scope-form";
+import { scopeQuestionsForKind } from "@/lib/scope-form-i18n";
+import { projectKindFromAnswers } from "@/lib/project-kind";
 import { activeSignals } from "@/lib/scope-guide";
 import { BASE_BLOCKS, FAMILY_BLOCKS, DEFAULT_MODULES } from "@/lib/diagnostic-catalog";
 import { listConsultants } from "@/lib/consultants.functions";
@@ -49,7 +50,7 @@ function scopeText(s: any): string {
   const answers = (s?.answers ?? {}) as Record<string, string>;
   const comments = (s?.comments ?? {}) as Record<string, string>;
   const out: string[] = ["Escopo Inicial — respostas:"];
-  for (const q of SCOPE_QUESTIONS) {
+  for (const q of scopeQuestionsForKind(projectKindFromAnswers(answers) || "consultoria", "pt")) {
     const a = answers[q.id];
     if (a) out.push(`- ${q.question} ${a}${comments[q.id] ? ` (comentário: ${comments[q.id]})` : ""}`);
   }

@@ -10,6 +10,7 @@ import {
   SCOPE_QUESTIONS,
   type ScopeQuestion,
 } from "@/lib/scope-form";
+import { trainingQuestions } from "@/lib/scope-training";
 
 type QuestionText = {
   theme: string;
@@ -38,7 +39,7 @@ const EN: QuestionText[] = [
       "Validate the business model",
       "Size the market and competition",
       "Prepare a launch or fundraising",
-      "In-company training for the team",
+      "Consulting with team training at the end for autonomy and lasting improvements",
       "Other",
     ],
   },
@@ -53,6 +54,7 @@ const EN: QuestionText[] = [
       "Validation with potential clients or partners",
       "TAM / SAM / SOM and scenarios",
       "Business model and financial model",
+      "Diagnosis + action plan with hands-on training of the internal team",
       "A combination of the items above",
     ],
   },
@@ -132,7 +134,7 @@ const EN: QuestionText[] = [
       "Executive presentation",
       "Spreadsheet or editable model",
       "Report plus presentation",
-      "Decision workshop",
+      "Decision workshop and method transfer with leadership training",
       "Other",
     ],
   },
@@ -177,7 +179,7 @@ const ES: QuestionText[] = [
       "Validar el modelo de negocio",
       "Dimensionar mercado y competencia",
       "Preparar lanzamiento o captación",
-      "Capacitación in company para el equipo",
+      "Consultoría con capacitación del equipo al final para autonomía y sostenibilidad de las mejoras",
       "Otro",
     ],
   },
@@ -192,6 +194,7 @@ const ES: QuestionText[] = [
       "Validación con clientes o socios potenciales",
       "TAM / SAM / SOM y escenarios",
       "Modelo de negocio y modelo financiero",
+      "Diagnóstico + plan de acción con capacitación práctica del equipo interno",
       "Combinación de los puntos anteriores",
     ],
   },
@@ -271,7 +274,7 @@ const ES: QuestionText[] = [
       "Presentación ejecutiva",
       "Planilla o modelo editable",
       "Informe más presentación",
-      "Taller de decisión",
+      "Taller de decisión y transferencia de método con capacitación de líderes",
       "Otro",
     ],
   },
@@ -316,7 +319,7 @@ const ZH: QuestionText[] = [
       "验证商业模式",
       "测算市场规模与竞争格局",
       "筹备发布或融资",
-      "为团队提供企业内训",
+      "咨询结束时为团队提供培训，确保自主执行与持续改进",
       "其他",
     ],
   },
@@ -331,6 +334,7 @@ const ZH: QuestionText[] = [
       "与潜在客户或合作伙伴的验证",
       "TAM / SAM / SOM 与情景分析",
       "商业模式与财务模型",
+      "诊断＋行动计划，并对内部团队进行实操培训",
       "以上内容的组合",
     ],
   },
@@ -403,7 +407,7 @@ const ZH: QuestionText[] = [
       "高管演示材料",
       "表格或可编辑模型",
       "报告加演示",
-      "决策工作坊",
+      "决策工作坊及方法传授，并培训管理者",
       "其他",
     ],
   },
@@ -482,4 +486,11 @@ export function scopeQuestions(lang: Lang): ScopeQuestion[] {
 
 export function scopeTexts(lang: Lang) {
   return TEXTS[lang];
+}
+
+/** Perguntas conforme o tipo de projeto: consultoria, treinamento ou ambos (pacote). */
+export function scopeQuestionsForKind(kind: string, lang: Lang): ScopeQuestion[] {
+  if (kind === "treinamento") return trainingQuestions(lang);
+  if (kind === "pacote") return [...scopeQuestions(lang), ...trainingQuestions(lang, 11)];
+  return scopeQuestions(lang);
 }
