@@ -6,6 +6,7 @@ import { isValidPhone, PHONE_ERROR } from "./validation";
 import { WHATSAPP_SENDING_ENABLED } from "./bulletin.server";
 
 export type BulletinSubscriberRow = {
+  updated_at?: string | null;
   id: string;
   full_name: string;
   company: string;
@@ -121,7 +122,7 @@ export const listBulletinSubscribers = createServerFn({ method: "GET" })
     const { data } = await supabaseAdmin
       .from("bulletin_subscribers")
       .select(
-        "id, full_name, company, segment, email, whatsapp, via_email, via_whatsapp, status, source_path, unsubscribed_at, last_sent_at, created_at",
+        "id, full_name, company, segment, email, whatsapp, via_email, via_whatsapp, status, source_path, unsubscribed_at, last_sent_at, created_at, updated_at",
       )
       .order("created_at", { ascending: false })
       .limit(2000);

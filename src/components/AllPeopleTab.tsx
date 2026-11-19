@@ -8,6 +8,7 @@ import { listBulletinSubscribers } from "@/lib/bulletin.functions";
 import { listToolClients } from "@/lib/tools.functions";
 import { listScopeSubmissions } from "@/lib/projects.functions";
 import { PersonPanel } from "@/components/PersonPanel";
+import { firstDate, fmtDate, lastChange } from "@/lib/record-dates";
 
 type Person = {
   key: string;
@@ -16,6 +17,8 @@ type Person = {
   phone: string;
   company: string;
   tags: Set<string>;
+  created: string | null;
+  updated: string | null;
 };
 
 const TAG_TAB: Record<string, string> = {
@@ -75,11 +78,13 @@ export function AllPeopleTab({ onOpenTab }: { onOpenTab: (tab: string) => void }
       const phone = String(r.phone ?? r.whatsapp ?? "");
       const key = email || `${name}|${phone}`;
       if (!key.replace("|", "")) return;
-      const p = map.get(key) ?? { key, name: "", email, phone: "", company: "", tags: new Set<string>() };
+      const p = map.get(key) ?? { key, name: "", email, phone: "", company: "", tags: new Set<string>(), created: null, updated: null };
       p.name ||= name;
       p.phone ||= phone;
       p.company ||= String(r.company ?? "");
       p.tags.add(t);
+      p.created = firstDate(p.created, r.created_at);
+      p.updated = lastChange(p.updated, r.created_at, r.updated_at, r.unsubscribed_at, r.contract_uploaded_at, r.signed_at);
       map.set(key, p);
     };
     for (const r of arr(team.data)) {
@@ -147,6 +152,8 @@ export function AllPeopleTab({ onOpenTab }: { onOpenTab: (tab: string) => void }
               <th className="px-3 py-2">Telefone</th>
               <th className="px-3 py-2">Empresa</th>
               <th className="px-3 py-2">Vínculos (clique para gerenciar)</th>
+              <th className="px-3 py-2">Cadastro</th>
+              <th className="px-3 py-2">Última modificação</th>
             </tr>
           </thead>
           <tbody>
@@ -179,11 +186,13 @@ export function AllPeopleTab({ onOpenTab }: { onOpenTab: (tab: string) => void }
                     ))}
                   </div>
                 </td>
+                <td className="px-3 py-2 text-muted-foreground">{fmtDate(p.created)}</td>
+                <td className="px-3 py-2 text-muted-foreground">{fmtDate(p.updated)}</td>
               </tr>
             ))}
             {!loading && rows.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-3 py-6 text-center text-muted-foreground">
+                <td colSpan={7} className="px-3 py-6 text-center text-muted-foreground">
                   Nenhum cadastro encontrado.
                 </td>
               </tr>
@@ -213,7 +222,8 @@ export function SimpleListTab({ kind }: { kind: "tools" | "scopes" }) {
               <th className="px-3 py-2">Telefone</th>
               <th className="px-3 py-2">Empresa</th>
               <th className="px-3 py-2">{kind === "tools" ? "Cargo / segmento" : "Cargo"}</th>
-              <th className="px-3 py-2">Data</th>
+              <th className="px-3 py-2">Cadastro</th>
+              <th className="px-3 py-2">Última modificação</th>
             </tr>
           </thead>
           <tbody>
@@ -229,8 +239,9 @@ export function SimpleListTab({ kind }: { kind: "tools" | "scopes" }) {
                   {kind === "tools" ? [r.job_title, r.segment].filter(Boolean).join(" · ") : r.respondent_role || "—"}
                 </td>
                 <td className="px-3 py-2">
-                  {r.created_at ? new Date(r.created_at).toLocaleDateString("pt-BR") : "—"}
+                  {fmtDate(r.created_at)}
                 </td>
+                <td className="px-3 py-2 text-muted-foreground">{fmtDate(lastChange(r.created_at, r.updated_at))}</td>
               </tr>
             ))}
           </tbody>

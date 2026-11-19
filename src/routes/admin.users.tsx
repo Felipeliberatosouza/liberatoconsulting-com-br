@@ -41,6 +41,7 @@ import {
   unsubscribeBulletinByAdmin,
 } from "@/lib/bulletin.functions";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
+import { fmtDate, lastChange } from "@/lib/record-dates";
 import { AllPeopleTab, SimpleListTab } from "@/components/AllPeopleTab";
 
 export const Route = createFileRoute("/admin/users")({
@@ -717,6 +718,8 @@ function TeamTab() {
               <th className="px-4 py-3">Tipo</th>
               <th className="px-4 py-3">Contrato</th>
               <th className="px-4 py-3">E-mails</th>
+              <th className="px-4 py-3">Cadastro</th>
+              <th className="px-4 py-3">Última modificação</th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
@@ -732,6 +735,8 @@ function TeamTab() {
                   <ContractCell row={row} onDone={() => void team.refetch()} />
                 </td>
                 <td className="px-4 py-3">{row.email_opt_in === false ? "não" : "sim"}</td>
+                <td className="px-4 py-3 text-muted-foreground">{fmtDate((row as any).created_at)}</td>
+                <td className="px-4 py-3 text-muted-foreground">{fmtDate(lastChange((row as any).created_at, (row as any).updated_at, row.contract_uploaded_at, row.signed_at))}</td>
                 <td className="px-4 py-3 text-right">
                   <button onClick={() => startEdit(row)} className="text-accent hover:underline">
                     editar
@@ -755,7 +760,7 @@ function TeamTab() {
             ))}
             {(team.data ?? []).length === 0 && (
               <tr>
-                <td className="px-4 py-6 text-muted-foreground" colSpan={6}>
+                <td className="px-4 py-6 text-muted-foreground" colSpan={8}>
                   Nenhum usuário com acesso cadastrado.
                 </td>
               </tr>
@@ -787,6 +792,8 @@ function SubscribersTab() {
             <th className="px-4 py-3">E-mail</th>
             <th className="px-4 py-3">Origem</th>
             <th className="px-4 py-3">Situação</th>
+            <th className="px-4 py-3">Solicitação</th>
+            <th className="px-4 py-3">Última modificação</th>
             <th className="px-4 py-3" />
           </tr>
         </thead>
@@ -799,6 +806,8 @@ function SubscribersTab() {
                 {s.source_path || "—"} {s.language ? `(${s.language})` : ""}
               </td>
               <td className="px-4 py-3">{s.status === "active" ? "ativo" : "cancelado"}</td>
+              <td className="px-4 py-3 text-muted-foreground">{fmtDate(s.created_at)}</td>
+              <td className="px-4 py-3 text-muted-foreground">{fmtDate(lastChange(s.created_at, (s as any).updated_at))}</td>
               <td className="px-4 py-3 text-right">
                 <button
                   onClick={async () => {
@@ -820,7 +829,7 @@ function SubscribersTab() {
           ))}
           {(q.data ?? []).length === 0 && (
             <tr>
-              <td className="px-4 py-6 text-muted-foreground" colSpan={5}>
+              <td className="px-4 py-6 text-muted-foreground" colSpan={7}>
                 Nenhum assinante.
               </td>
             </tr>
@@ -860,6 +869,7 @@ function BulletinTab() {
             <th className="px-4 py-3">Canais</th>
             <th className="px-4 py-3">Origem</th>
             <th className="px-4 py-3">Cadastro</th>
+            <th className="px-4 py-3">Última modificação</th>
             <th className="px-4 py-3">Situação</th>
             <th className="px-4 py-3" />
           </tr>
@@ -891,8 +901,9 @@ function BulletinTab() {
               </td>
               <td className="px-4 py-3 text-muted-foreground">{r.source_path || "—"}</td>
               <td className="px-4 py-3 text-muted-foreground">
-                {new Date(r.created_at).toLocaleDateString("pt-BR")}
+                {fmtDate(r.created_at)}
               </td>
+              <td className="px-4 py-3 text-muted-foreground">{fmtDate(lastChange(r.created_at, r.updated_at, r.unsubscribed_at))}</td>
               <td className="px-4 py-3">
                 {r.status === "active"
                   ? "ativo"
@@ -921,7 +932,7 @@ function BulletinTab() {
           ))}
           {rows.length === 0 && (
             <tr>
-              <td className="px-4 py-6 text-muted-foreground" colSpan={10}>
+              <td className="px-4 py-6 text-muted-foreground" colSpan={11}>
                 Nenhum assinante do Boletim Semanal.
               </td>
             </tr>
@@ -965,6 +976,7 @@ function ApplicantsTab() {
             <th className="px-4 py-3">Área</th>
             <th className="px-4 py-3">Currículo</th>
             <th className="px-4 py-3">Recebido</th>
+            <th className="px-4 py-3">Última modificação</th>
             <th className="px-4 py-3" />
           </tr>
         </thead>
@@ -1000,8 +1012,9 @@ function ApplicantsTab() {
                 )}
               </td>
               <td className="px-4 py-3 text-muted-foreground">
-                {new Date(a["created_at"] ?? "").toLocaleDateString("pt-BR")}
+                {fmtDate(a["created_at"])}
               </td>
+              <td className="px-4 py-3 text-muted-foreground">{fmtDate(lastChange(a["created_at"], a["updated_at"]))}</td>
               <td className="px-4 py-3 text-right">
 
                 <button
@@ -1035,7 +1048,7 @@ function ApplicantsTab() {
           ))}
           {(q.data ?? []).length === 0 && (
             <tr>
-              <td className="px-4 py-6 text-muted-foreground" colSpan={7}>
+              <td className="px-4 py-6 text-muted-foreground" colSpan={8}>
                 Nenhuma candidatura.
               </td>
             </tr>
@@ -1059,6 +1072,7 @@ function LeadsTab() {
             <th className="px-4 py-3">E-mail</th>
             <th className="px-4 py-3">Formulário preenchido</th>
             <th className="px-4 py-3">Recebido</th>
+            <th className="px-4 py-3">Última modificação</th>
             <th className="px-4 py-3" />
           </tr>
         </thead>
@@ -1072,8 +1086,9 @@ function LeadsTab() {
                 <span className="block text-xs">{l["source_path"]}</span>
               </td>
               <td className="px-4 py-3 text-muted-foreground">
-                {new Date(l["created_at"] ?? "").toLocaleDateString("pt-BR")}
+                {fmtDate(l["created_at"])}
               </td>
+              <td className="px-4 py-3 text-muted-foreground">{fmtDate(lastChange(l["created_at"], l["updated_at"]))}</td>
               <td className="px-4 py-3 text-right">
                 <button
                   onClick={async () => {
@@ -1106,7 +1121,7 @@ function LeadsTab() {
           ))}
           {(q.data ?? []).length === 0 && (
             <tr>
-              <td className="px-4 py-6 text-muted-foreground" colSpan={5}>
+              <td className="px-4 py-6 text-muted-foreground" colSpan={6}>
                 Nenhum lead recebido.
               </td>
             </tr>
