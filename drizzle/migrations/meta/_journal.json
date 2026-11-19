@@ -92,6 +92,13 @@
       "when": 1793054083962,
       "tag": "0012_protect_tool_spec_access",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1795117646416,
+      "tag": "0013_fechou_crm_workspaces",
+      "breakpoints": true
     }
   ]
 }

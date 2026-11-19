@@ -1412,6 +1412,241 @@ export type Database = {
         }
         Relationships: []
       }
+      fechou_audit: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          record_id: string
+          workspace_id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          record_id: string
+          workspace_id: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          record_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fechou_audit_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "fechou_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fechou_deals: {
+        Row: {
+          amount: number
+          birth_date: string | null
+          company: string
+          contact: string
+          created_at: string
+          email: string
+          entered_at: string
+          founded_on: string | null
+          id: string
+          instagram: string
+          linkedin: string
+          notes: string
+          owner_id: string
+          phone: string
+          segment: string
+          stage_id: string
+          workspace_id: string
+        }
+        Insert: {
+          amount?: number
+          birth_date?: string | null
+          company: string
+          contact?: string
+          created_at?: string
+          email?: string
+          entered_at?: string
+          founded_on?: string | null
+          id?: string
+          instagram?: string
+          linkedin?: string
+          notes?: string
+          owner_id: string
+          phone?: string
+          segment?: string
+          stage_id: string
+          workspace_id: string
+        }
+        Update: {
+          amount?: number
+          birth_date?: string | null
+          company?: string
+          contact?: string
+          created_at?: string
+          email?: string
+          entered_at?: string
+          founded_on?: string | null
+          id?: string
+          instagram?: string
+          linkedin?: string
+          notes?: string
+          owner_id?: string
+          phone?: string
+          segment?: string
+          stage_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fechou_deals_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "fechou_workspaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fechou_deals_workspace_id_owner_id_fkey"
+            columns: ["workspace_id", "owner_id"]
+            isOneToOne: false
+            referencedRelation: "fechou_members"
+            referencedColumns: ["workspace_id", "user_id"]
+          },
+          {
+            foreignKeyName: "fechou_deals_workspace_id_stage_id_fkey"
+            columns: ["workspace_id", "stage_id"]
+            isOneToOne: false
+            referencedRelation: "fechou_stages"
+            referencedColumns: ["workspace_id", "id"]
+          },
+        ]
+      }
+      fechou_goals: {
+        Row: {
+          amount: number
+          owner_id: string
+          period: string
+          workspace_id: string
+        }
+        Insert: {
+          amount: number
+          owner_id: string
+          period: string
+          workspace_id: string
+        }
+        Update: {
+          amount?: number
+          owner_id?: string
+          period?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fechou_goals_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "fechou_workspaces"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fechou_goals_workspace_id_owner_id_fkey"
+            columns: ["workspace_id", "owner_id"]
+            isOneToOne: false
+            referencedRelation: "fechou_members"
+            referencedColumns: ["workspace_id", "user_id"]
+          },
+        ]
+      }
+      fechou_members: {
+        Row: {
+          name: string
+          role: string
+          user_id: string
+          workspace_id: string
+        }
+        Insert: {
+          name: string
+          role: string
+          user_id: string
+          workspace_id: string
+        }
+        Update: {
+          name?: string
+          role?: string
+          user_id?: string
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fechou_members_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "fechou_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fechou_stages: {
+        Row: {
+          id: string
+          kind: string
+          name: string
+          position: number
+          target_days: number
+          workspace_id: string
+        }
+        Insert: {
+          id?: string
+          kind?: string
+          name: string
+          position: number
+          target_days?: number
+          workspace_id: string
+        }
+        Update: {
+          id?: string
+          kind?: string
+          name?: string
+          position?: number
+          target_days?: number
+          workspace_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fechou_stages_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "fechou_workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fechou_workspaces: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       interactive_tool_ai_usage: {
         Row: {
           cost_brl: number
@@ -2747,6 +2982,17 @@ export type Database = {
         Args: { p_hash: string; p_slug: string }
         Returns: string
       }
+      fechou_add_member: {
+        Args: {
+          p_email: string
+          p_name: string
+          p_role: string
+          p_workspace: string
+        }
+        Returns: undefined
+      }
+      fechou_create_workspace: { Args: { p_name: string }; Returns: string }
+      fechou_role: { Args: { p_workspace: string }; Returns: string }
       get_weekly_schedules: {
         Args: never
         Returns: {

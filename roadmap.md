@@ -146,3 +146,9 @@
 - [x] Atualizar FAQ para as sete consultorias e seis treinamentos nos quatro idiomas
 - [x] Conectar catálogo público editável e escolhas de serviço, preservando históricos e DE-PARA
 - [ ] Validar salvamento no painel com sessão de administrador e segundo fator
+
+## Fechou! CRM — 19/11/2026
+- [ ] Criar CRM isolado por empresa: funil, clientes, prazos, metas, permissões e importação
+- [ ] Criar demonstração e integrar oferta, conta, escopo e descoberta pública
+- [ ] Verificar fluxo real, demonstração e isolamento
+- [ ] Completar IA, prospecção/enriquecimento, integrações externas e ativação de domínios
