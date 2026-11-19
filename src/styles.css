@@ -60,6 +60,8 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-ink: var(--ink);
+  --color-fechou-coral: var(--fechou-coral);
+  --color-fechou-mint: var(--fechou-mint);
   --color-ink-foreground: var(--ink-foreground);
   --color-whatsapp: var(--whatsapp);
   --color-whatsapp-foreground: var(--whatsapp-foreground);
@@ -70,6 +72,8 @@
 
 :root {
   --radius: 0.25rem;
+  --fechou-coral: oklch(0.75 0.16 45);
+  --fechou-mint: oklch(0.76 0.16 166);
   --background: oklch(0.985 0.004 90);
   --foreground: oklch(0.19 0.02 265);
   --card: oklch(1 0 0);
@@ -197,3 +201,11 @@ body.no-copy [data-allow-copy] {
 .client-logo-track {
   animation: client-logo-scroll 24s linear infinite;
 }
+
+.fechou-stage { width: 100%; clip-path: polygon(0 0, 100% 0, 96% 100%, 4% 100%); }
+.fechou-stage-1 { width: 92%; }
+.fechou-stage-2 { width: 84%; }
+.fechou-stage-3 { width: 76%; }
+.fechou-stage-4 { width: 68%; }
+.fechou-stage-5 { width: 60%; }
+.fechou-stage:focus-visible { box-shadow: inset 0 0 0 3px var(--ring); }

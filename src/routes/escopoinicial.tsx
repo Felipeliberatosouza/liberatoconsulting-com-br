@@ -41,13 +41,14 @@ const OTHER_PLACEHOLDER: Record<string, string> = {
 };
 
 const KIND_WARN: Record<string, { title: string; text: string; action: string }> = {
-  pt: { title: "Selecione o tipo de projeto primeiro", text: "Para apresentar as perguntas corretas para a sua necessidade, escolha acima entre Consultoria, Treinamento in Company ou o Pacote combinado.", action: "Selecionar tipo de projeto" },
-  en: { title: "Select the project type first", text: "To show the right questions for your need, choose Consulting, In-company training or the combined Package above.", action: "Select project type" },
-  es: { title: "Seleccione primero el tipo de proyecto", text: "Para mostrar las preguntas correctas para su necesidad, elija arriba entre Consultoría, Capacitación in company o el Paquete combinado.", action: "Seleccionar tipo de proyecto" },
-  zh: { title: "请先选择项目类型", text: "为显示符合您需求的问题，请先在上方选择企业咨询、企业内训或组合方案。", action: "选择项目类型" },
+  pt: { title: "Selecione o tipo de projeto primeiro", text: "Para apresentar as perguntas corretas para a sua necessidade, escolha acima o tipo de projeto.", action: "Selecionar tipo de projeto" },
+  en: { title: "Select the project type first", text: "To show the right questions for your need, choose a project type above.", action: "Select project type" },
+  es: { title: "Seleccione primero el tipo de proyecto", text: "Para mostrar las preguntas correctas para su necesidad, elija arriba el tipo de proyecto.", action: "Seleccionar tipo de proyecto" },
+  zh: { title: "请先选择项目类型", text: "为显示符合您需求的问题，请先在上方选择项目类型。", action: "选择项目类型" },
 };
 
 export const Route = createFileRoute("/escopoinicial")({
+  validateSearch: (search: Record<string, unknown>): { tipo?: "crm" } => search["tipo"] === "crm" ? { tipo: "crm" } : {},
   head: () => ({
     meta: [
       { title: "Escopo inicial de necessidade — Liberato Consulting" },
@@ -120,7 +121,8 @@ function ScopePage() {
     phone: "",
     employees: "",
   });
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const { tipo } = Route.useSearch();
+  const [answers, setAnswers] = useState<Record<string, string>>(() => tipo === "crm" ? { [PROJECT_KIND_KEY]: tipo } : {});
   const [comments, setComments] = useState<Record<string, string>>({});
   const [sent, setSent] = useState(false);
   const kind = projectKindFromAnswers(answers);
@@ -270,7 +272,7 @@ function ScopePage() {
               <h2 className="font-display text-lg font-semibold">{p.questionsTitle}</h2>
               <fieldset ref={kindRef} tabIndex={-1} className="scroll-mt-24 rounded-xl border-b border-border pb-6 outline-none focus-visible:ring-2 focus-visible:ring-accent">
                 <legend className="mb-3 font-medium">{kindText.title} *</legend>
-                <div className="grid gap-3 sm:grid-cols-3">
+                <div className="grid gap-3 sm:grid-cols-2">
                   {PROJECT_KINDS.map((kind) => (
                     <label key={kind} className="flex cursor-pointer items-start gap-2 text-sm">
                       <input type="radio" name="project_kind" value={kind} checked={answers[PROJECT_KIND_KEY] === kind} onChange={() => setAnswers({ ...answers, [PROJECT_KIND_KEY]: kind })} />

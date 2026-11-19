@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CRM_ACTIVITIES, CRM_SERVICE_SLUG, withCrmService } from "@/lib/fechou-service";
 import { listServiceProducts } from "@/lib/services.functions";
 import { listCrmCompanies } from "@/lib/crm.functions";
 import { listDiagnostics, listProjectClients, type DiagnosticRow } from "@/lib/projects.functions";
@@ -162,7 +163,7 @@ function PricingPage() {
   }, [stored.data]);
 
   const product = useMemo(
-    () => (products.data ?? []).find((p) => p.slug === slug),
+    () => withCrmService(products.data).find((p) => p.slug === slug),
     [products.data, slug],
   );
 
@@ -174,7 +175,7 @@ function PricingPage() {
     }
     getServicePricing({ data: { slug } }).then((r) => {
       setActivities(
-        r.activities.length > 0 ? r.activities : CATALOG.map((c) => fromCatalog(c, false)),
+        r.activities.length > 0 ? r.activities : (slug === CRM_SERVICE_SLUG ? CRM_ACTIVITIES.map((c) => fromCatalog(c, true)) : CATALOG.map((c) => fromCatalog(c, false))),
       );
       setNotes(r.notes);
       setRationale(r.aiRationale);
@@ -484,7 +485,7 @@ function PricingPage() {
                 }}
               >
                 <option value="">Escolha um serviço…</option>
-                {(products.data ?? []).filter((p) => p.published || p.slug === slug).map((p) => (
+                {withCrmService(products.data).filter((p) => p.published || p.slug === slug).map((p) => (
                   <option key={p.slug} value={p.slug}>
                     {p.title}
                   </option>
@@ -610,7 +611,7 @@ function PricingPage() {
                 onChange={(e) => setSlug(e.target.value)}
               >
                 <option value="">Escolha um serviço…</option>
-                {(products.data ?? []).filter((p) => p.published || p.slug === slug).map((p) => (
+                {withCrmService(products.data).filter((p) => p.published || p.slug === slug).map((p) => (
                   <option key={p.slug} value={p.slug}>
                     {p.title}
                   </option>

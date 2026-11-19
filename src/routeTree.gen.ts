@@ -19,8 +19,10 @@ import { Route as BrasilRouteImport } from './routes/brasil'
 import { Route as CareersRouteImport } from './routes/careers'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContentRouteImport } from './routes/content'
+import { Route as CrmRouteImport } from './routes/crm'
 import { Route as DescadastroRouteImport } from './routes/descadastro'
 import { Route as EscopoinicialRouteImport } from './routes/escopoinicial'
+import { Route as FechouRouteImport } from './routes/fechou'
 import { Route as FerramentasRouteImport } from './routes/ferramentas'
 import { Route as GuiaRouteImport } from './routes/guia'
 import { Route as GuiaGestaoRouteImport } from './routes/guia-gestao'
@@ -81,6 +83,7 @@ import { Route as BoletimCancelarRouteImport } from './routes/boletim.cancelar'
 import { Route as BrasilSlugRouteImport } from './routes/brasil_.$slug'
 import { Route as ContentSlugRouteImport } from './routes/content_.$slug'
 import { Route as ContentEnviarRouteImport } from './routes/content_.enviar'
+import { Route as DemoCrmRouteImport } from './routes/demo.crm'
 import { Route as DiagnosticoTokenRouteImport } from './routes/diagnostico.$token'
 import { Route as FerramentasSlugRouteImport } from './routes/ferramentas_.$slug'
 import { Route as IndicarSlugRouteImport } from './routes/indicar.$slug'
@@ -158,6 +161,11 @@ const ContentRoute = ContentRouteImport.update({
   path: '/content',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CrmRoute = CrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DescadastroRoute = DescadastroRouteImport.update({
   id: '/descadastro',
   path: '/descadastro',
@@ -166,6 +174,11 @@ const DescadastroRoute = DescadastroRouteImport.update({
 const EscopoinicialRoute = EscopoinicialRouteImport.update({
   id: '/escopoinicial',
   path: '/escopoinicial',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FechouRoute = FechouRouteImport.update({
+  id: '/fechou',
+  path: '/fechou',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FerramentasRoute = FerramentasRouteImport.update({
@@ -472,6 +485,11 @@ const ContentEnviarRoute = ContentEnviarRouteImport.update({
   path: '/content/enviar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DemoCrmRoute = DemoCrmRouteImport.update({
+  id: '/demo/crm',
+  path: '/demo/crm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DiagnosticoTokenRoute = DiagnosticoTokenRouteImport.update({
   id: '/diagnostico/$token',
   path: '/diagnostico/$token',
@@ -621,8 +639,10 @@ export interface FileRoutesByFullPath {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/crm': typeof CrmRoute
   '/descadastro': typeof DescadastroRoute
   '/escopoinicial': typeof EscopoinicialRoute
+  '/fechou': typeof FechouRoute
   '/ferramentas': typeof FerramentasRoute
   '/guia': typeof GuiaRoute
   '/guia-gestao': typeof GuiaGestaoRoute
@@ -682,6 +702,7 @@ export interface FileRoutesByFullPath {
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
   '/content/enviar': typeof ContentEnviarRoute
+  '/demo/crm': typeof DemoCrmRoute
   '/diagnostico/$token': typeof DiagnosticoTokenRoute
   '/ferramentas/$slug': typeof FerramentasSlugRoute
   '/indicar/$slug': typeof IndicarSlugRoute
@@ -721,8 +742,10 @@ export interface FileRoutesByTo {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/crm': typeof CrmRoute
   '/descadastro': typeof DescadastroRoute
   '/escopoinicial': typeof EscopoinicialRoute
+  '/fechou': typeof FechouRoute
   '/ferramentas': typeof FerramentasRoute
   '/guia': typeof GuiaRoute
   '/guia-gestao': typeof GuiaGestaoRoute
@@ -782,6 +805,7 @@ export interface FileRoutesByTo {
   '/brasil/$slug': typeof BrasilSlugRoute
   '/content/$slug': typeof ContentSlugRoute
   '/content/enviar': typeof ContentEnviarRoute
+  '/demo/crm': typeof DemoCrmRoute
   '/diagnostico/$token': typeof DiagnosticoTokenRoute
   '/ferramentas/$slug': typeof FerramentasSlugRoute
   '/indicar/$slug': typeof IndicarSlugRoute
@@ -822,8 +846,10 @@ export interface FileRoutesById {
   '/careers': typeof CareersRoute
   '/contact': typeof ContactRoute
   '/content': typeof ContentRoute
+  '/crm': typeof CrmRoute
   '/descadastro': typeof DescadastroRoute
   '/escopoinicial': typeof EscopoinicialRoute
+  '/fechou': typeof FechouRoute
   '/ferramentas': typeof FerramentasRoute
   '/guia': typeof GuiaRoute
   '/guia-gestao': typeof GuiaGestaoRoute
@@ -883,6 +909,7 @@ export interface FileRoutesById {
   '/brasil_/$slug': typeof BrasilSlugRoute
   '/content_/$slug': typeof ContentSlugRoute
   '/content_/enviar': typeof ContentEnviarRoute
+  '/demo/crm': typeof DemoCrmRoute
   '/diagnostico/$token': typeof DiagnosticoTokenRoute
   '/ferramentas_/$slug': typeof FerramentasSlugRoute
   '/indicar/$slug': typeof IndicarSlugRoute
@@ -924,8 +951,10 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/crm'
     | '/descadastro'
     | '/escopoinicial'
+    | '/fechou'
     | '/ferramentas'
     | '/guia'
     | '/guia-gestao'
@@ -985,6 +1014,7 @@ export interface FileRouteTypes {
     | '/brasil/$slug'
     | '/content/$slug'
     | '/content/enviar'
+    | '/demo/crm'
     | '/diagnostico/$token'
     | '/ferramentas/$slug'
     | '/indicar/$slug'
@@ -1024,8 +1054,10 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/crm'
     | '/descadastro'
     | '/escopoinicial'
+    | '/fechou'
     | '/ferramentas'
     | '/guia'
     | '/guia-gestao'
@@ -1085,6 +1117,7 @@ export interface FileRouteTypes {
     | '/brasil/$slug'
     | '/content/$slug'
     | '/content/enviar'
+    | '/demo/crm'
     | '/diagnostico/$token'
     | '/ferramentas/$slug'
     | '/indicar/$slug'
@@ -1124,8 +1157,10 @@ export interface FileRouteTypes {
     | '/careers'
     | '/contact'
     | '/content'
+    | '/crm'
     | '/descadastro'
     | '/escopoinicial'
+    | '/fechou'
     | '/ferramentas'
     | '/guia'
     | '/guia-gestao'
@@ -1185,6 +1220,7 @@ export interface FileRouteTypes {
     | '/brasil_/$slug'
     | '/content_/$slug'
     | '/content_/enviar'
+    | '/demo/crm'
     | '/diagnostico/$token'
     | '/ferramentas_/$slug'
     | '/indicar/$slug'
@@ -1225,8 +1261,10 @@ export interface RootRouteChildren {
   CareersRoute: typeof CareersRoute
   ContactRoute: typeof ContactRoute
   ContentRoute: typeof ContentRoute
+  CrmRoute: typeof CrmRoute
   DescadastroRoute: typeof DescadastroRoute
   EscopoinicialRoute: typeof EscopoinicialRoute
+  FechouRoute: typeof FechouRoute
   FerramentasRoute: typeof FerramentasRoute
   GuiaRoute: typeof GuiaRoute
   GuiaGestaoRoute: typeof GuiaGestaoRoute
@@ -1286,6 +1324,7 @@ export interface RootRouteChildren {
   BrasilSlugRoute: typeof BrasilSlugRoute
   ContentSlugRoute: typeof ContentSlugRoute
   ContentEnviarRoute: typeof ContentEnviarRoute
+  DemoCrmRoute: typeof DemoCrmRoute
   DiagnosticoTokenRoute: typeof DiagnosticoTokenRoute
   FerramentasSlugRoute: typeof FerramentasSlugRoute
   IndicarSlugRoute: typeof IndicarSlugRoute
@@ -1387,6 +1426,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/crm': {
+      id: '/crm'
+      path: '/crm'
+      fullPath: '/crm'
+      preLoaderRoute: typeof CrmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/descadastro': {
       id: '/descadastro'
       path: '/descadastro'
@@ -1399,6 +1445,13 @@ declare module '@tanstack/react-router' {
       path: '/escopoinicial'
       fullPath: '/escopoinicial'
       preLoaderRoute: typeof EscopoinicialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fechou': {
+      id: '/fechou'
+      path: '/fechou'
+      fullPath: '/fechou'
+      preLoaderRoute: typeof FechouRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ferramentas': {
@@ -1821,6 +1874,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContentEnviarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/demo/crm': {
+      id: '/demo/crm'
+      path: '/demo/crm'
+      fullPath: '/demo/crm'
+      preLoaderRoute: typeof DemoCrmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/diagnostico/$token': {
       id: '/diagnostico/$token'
       path: '/diagnostico/$token'
@@ -2017,8 +2077,10 @@ const rootRouteChildren: RootRouteChildren = {
   CareersRoute: CareersRoute,
   ContactRoute: ContactRoute,
   ContentRoute: ContentRoute,
+  CrmRoute: CrmRoute,
   DescadastroRoute: DescadastroRoute,
   EscopoinicialRoute: EscopoinicialRoute,
+  FechouRoute: FechouRoute,
   FerramentasRoute: FerramentasRoute,
   GuiaRoute: GuiaRoute,
   GuiaGestaoRoute: GuiaGestaoRoute,
@@ -2078,6 +2140,7 @@ const rootRouteChildren: RootRouteChildren = {
   BrasilSlugRoute: BrasilSlugRoute,
   ContentSlugRoute: ContentSlugRoute,
   ContentEnviarRoute: ContentEnviarRoute,
+  DemoCrmRoute: DemoCrmRoute,
   DiagnosticoTokenRoute: DiagnosticoTokenRoute,
   FerramentasSlugRoute: FerramentasSlugRoute,
   IndicarSlugRoute: IndicarSlugRoute,

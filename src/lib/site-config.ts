@@ -64,7 +64,7 @@ export type Branding = { logoUrl?: string; faviconUrl?: string | undefined; what
 export type HeroSlideSetting = { id: string; enabled: boolean; imageUrl?: string };
 export type HeroSettings = { autoplayMs?: number; slides?: HeroSlideSetting[] };
 
-export const HERO_SLIDE_IDS = ["consultoria", "pesquisas", "empreendedorismo", "operacoes", "estrategia", "treinamento"] as const;
+export const HERO_SLIDE_IDS = ["consultoria", "pesquisas", "empreendedorismo", "operacoes", "estrategia", "treinamento", "crm"] as const;
 export const DEFAULT_AUTOPLAY_MS = 7000;
 
 /**
@@ -76,7 +76,7 @@ export function heroSlideOrder(hero: HeroSettings | undefined): HeroSlideSetting
   const known = saved.filter((s) => (HERO_SLIDE_IDS as readonly string[]).includes(s.id));
   const missing = HERO_SLIDE_IDS.filter((id) => !known.some((s) => s.id === id)).map((id) => ({
     id,
-    enabled: known.length === 0,
+    enabled: known.length === 0 || id === "crm",
   }));
   return [...known, ...missing];
 }

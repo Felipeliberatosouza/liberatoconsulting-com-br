@@ -2,9 +2,9 @@ import { expect, it } from "vitest";
 import { heroCopy, heroTextKey } from "./hero-copy";
 import { heroSlideOrder } from "./site-config";
 
-it("keeps the five configured banners in their original order", () => {
+it("appends CRM without changing the order of saved banners", () => {
   const ids = ["consultoria", "pesquisas", "empreendedorismo", "operacoes", "estrategia"];
-  expect(heroSlideOrder({ slides: ids.map((id) => ({ id, enabled: true })) }).filter((slide) => slide.enabled).map((slide) => slide.id)).toEqual(ids);
+  expect(heroSlideOrder({ slides: ids.map((id) => ({ id, enabled: true })) }).filter((slide) => slide.enabled).map((slide) => slide.id)).toEqual([...ids, "crm"]);
 });
 
 it("keeps saved copy on the named banner and ignores old position overrides", () => {

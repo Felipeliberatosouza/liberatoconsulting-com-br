@@ -148,7 +148,9 @@
 - [ ] Validar salvamento no painel com sessão de administrador e segundo fator
 
 ## Fechou! CRM — 19/11/2026
-- [ ] Criar CRM isolado por empresa: funil, clientes, prazos, metas, permissões e importação
-- [ ] Criar demonstração e integrar oferta, conta, escopo e descoberta pública
-- [ ] Verificar fluxo real, demonstração e isolamento
-- [ ] Completar IA, prospecção/enriquecimento, integrações externas e ativação de domínios
+- [x] Criar espaços por empresa, funil, cadastro de oportunidades, prazos, metas, cargos e importação/exportação
+- [x] Criar demonstração com marca manual e integrar catálogo, conta, escopo, diagnóstico, orçamento, apresentação, FAQ e descoberta
+- [x] Adicionar assistente com indicadores calculados na carteira e pesquisa de empresas em fontes públicas
+- [x] Verificar demonstração no celular, planilhas, escopo e bloqueio de acesso anônimo
+- [ ] Validar persistência, isolamento entre contas, busca e IA com uma sessão real com segundo fator; a sessão de prévia não permite cadastrar o autenticador
+- [ ] Concluir automação de aniversários com consentimento por empresa, integração com ERP, leitura automática de marca e ativação de domínio após definir os provedores

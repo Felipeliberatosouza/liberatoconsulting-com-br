@@ -51,6 +51,7 @@ export const Route = createFileRoute("/")({
             ...SOLUTIONS.map((s) => ({ name: s.title.pt, path: `/solucoes/${s.slug}` })),
             { name: "Treinamento in Company", path: "/treinamentos" },
             { name: "Dados do Brasil", path: "/brasil" },
+            { name: "Fechou! CRM", path: "/crm" },
             { name: "Quem somos", path: "/about" },
             { name: "Conteúdo", path: "/content" },
           ],
@@ -69,6 +70,7 @@ const SLIDE_IMAGES: Record<string, string> = {
   empreendedorismo: heroEmpreendedorismo,
   operacoes: heroOperacoes,
   estrategia: heroEstrategia,
+  crm: heroEstrategia,
 };
 
 function HeroCarousel() {
@@ -211,7 +213,9 @@ function HeroCarousel() {
           </div>
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          {slide.id === "treinamento" ? (
+          {slide.id === "crm" ? (
+            <Link to="/demo/crm" className="inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-accent-foreground">{slide.primary} <ArrowRight className="size-4" /></Link>
+          ) : slide.id === "treinamento" ? (
             <Link
               to="/treinamentos"
               className="inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-semibold text-accent-foreground transition-opacity hover:opacity-90"
@@ -237,7 +241,9 @@ function HeroCarousel() {
               {slide.primary} <ArrowRight className="size-4" />
             </Link>
           )}
-          {slide.id === "consultoria" ? (
+          {slide.id === "crm" ? (
+            <Link to="/crm" className="inline-flex items-center rounded-full border border-ink-foreground/25 px-7 py-3.5 text-sm font-semibold">{slide.secondary}</Link>
+          ) : slide.id === "consultoria" ? (
             <Link
               to="/treinamentos"
               className="inline-flex items-center rounded-full border border-ink-foreground/25 px-7 py-3.5 text-sm font-semibold transition-colors hover:bg-ink-foreground/10"
@@ -273,7 +279,7 @@ function HeroCarousel() {
               <ChevronRight className="size-4" />
             </button>
 
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {slides.map((s, i) => (
                 <button
                   key={s.id}

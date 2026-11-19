@@ -263,12 +263,14 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const isAdmin = useRouterState({ select: (s) => s.location.pathname.startsWith("/admin") });
 
-  if (isAdmin) {
+  const isCrm = useRouterState({ select: (s) => ["/fechou", "/demo/crm"].includes(s.location.pathname) });
+
+  if (isAdmin || isCrm) {
     return (
       <QueryClientProvider client={queryClient}>
         <LanguageProvider>
           <AudienceFilterProvider>
-            <RouteTracker />
+            {!isCrm && <RouteTracker />}
             <Outlet />
             <Toaster />
           </AudienceFilterProvider>

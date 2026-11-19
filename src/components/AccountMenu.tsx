@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { BookOpen, ChevronDown, FileText, LogIn, LogOut, Mail, Newspaper, Settings, Wrench } from "lucide-react";
+import { BookOpen, ChevronDown, Funnel, FileText, LogIn, LogOut, Mail, Newspaper, Settings, Wrench } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { getToolsAccount } from "@/lib/tools.functions";
@@ -51,6 +51,7 @@ export function AccountMenu({ mobile = false, onNavigate }: { mobile?: boolean; 
       <DropdownMenuContent align="end" className="w-80">
         <DropdownMenuLabel>{copy.areaTitle}</DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild><Link to="/fechou" onClick={onNavigate}><Funnel />Fechou! CRM</Link></DropdownMenuItem>
         {links.map((item) => <DropdownMenuItem key={item.section} asChild><Link to="/area-cliente" search={{ secao: item.section }} onClick={onNavigate}><item.icon />{copy[item.labelKey]}</Link></DropdownMenuItem>)}
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-muted-foreground focus:bg-accent focus:text-accent-foreground" onSelect={async () => { await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); onNavigate?.(); navigate({ to: "/ferramentas", search: { modo: undefined }, replace: true }); }}><LogOut /> {copy.signOut}</DropdownMenuItem>

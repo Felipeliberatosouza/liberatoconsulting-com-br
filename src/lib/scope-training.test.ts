@@ -24,3 +24,8 @@ describe("escopo por tipo de projeto", () => {
     }
   });
 });
+
+it("offers ten CRM questions with the same IDs in all four languages", () => {
+  const ids=Array.from({length:10},(_,i)=>`crm${i+1}`);
+  for(const lang of ["pt","en","es","zh"] as const) expect(scopeQuestionsForKind("crm",lang).map(q=>q.id)).toEqual(ids);
+});

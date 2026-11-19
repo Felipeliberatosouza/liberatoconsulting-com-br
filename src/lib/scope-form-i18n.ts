@@ -10,6 +10,7 @@ import {
   SCOPE_QUESTIONS,
   type ScopeQuestion,
 } from "@/lib/scope-form";
+import { crmScopeQuestions } from "@/lib/fechou-copy";
 import { trainingQuestions } from "@/lib/scope-training";
 
 type QuestionText = {
@@ -490,6 +491,7 @@ export function scopeTexts(lang: Lang) {
 
 /** Perguntas conforme o tipo de projeto: consultoria, treinamento ou ambos (pacote). */
 export function scopeQuestionsForKind(kind: string, lang: Lang): ScopeQuestion[] {
+  if (kind === "crm") return crmScopeQuestions(lang);
   if (kind === "treinamento") return trainingQuestions(lang);
   if (kind === "pacote") return [...scopeQuestions(lang), ...trainingQuestions(lang, 11)];
   return scopeQuestions(lang);

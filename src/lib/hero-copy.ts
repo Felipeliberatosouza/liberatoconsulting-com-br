@@ -1,5 +1,6 @@
 import type { Lang } from "@/i18n/config";
 import { pt } from "@/i18n/pt";
+import { fechouCopy } from "./fechou-copy";
 import type { TextOverrides } from "./site-config";
 
 export const HERO_FIELDS = ["eyebrow", "title", "body", "primary", "secondary"] as const;
@@ -35,7 +36,9 @@ const localized = {
 } satisfies Record<Exclude<Lang, "pt">, Record<string, readonly string[]>>;
 
 export function heroCopy(lang: Lang, overrides: TextOverrides = {}) {
-  return pt.hero.slides.map((slide) => {
+  const c = fechouCopy[lang];
+  const crm = {id: "crm", eyebrow: "Fechou! CRM", title: c.title, body: c.body, primary: c.demo, secondary: c.details};
+  return [...pt.hero.slides, crm].map((slide) => {
     const translations = lang === "pt" ? undefined : localized[lang][slide.id as keyof typeof localized.en];
     return { ...slide, ...Object.fromEntries(HERO_FIELDS.map((field, i) => [field,
       overrides[heroTextKey(slide.id, field)]?.[lang] || translations?.[i] || slide[field],

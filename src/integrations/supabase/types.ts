@@ -1412,6 +1412,24 @@ export type Database = {
         }
         Relationships: []
       }
+      fechou_ai_limits: {
+        Row: {
+          hour: string
+          user_id: string
+          uses: number
+        }
+        Insert: {
+          hour: string
+          user_id: string
+          uses: number
+        }
+        Update: {
+          hour?: string
+          user_id?: string
+          uses?: number
+        }
+        Relationships: []
+      }
       fechou_audit: {
         Row: {
           action: string
@@ -1567,18 +1585,21 @@ export type Database = {
       }
       fechou_members: {
         Row: {
+          active: boolean
           name: string
           role: string
           user_id: string
           workspace_id: string
         }
         Insert: {
+          active?: boolean
           name: string
           role: string
           user_id: string
           workspace_id: string
         }
         Update: {
+          active?: boolean
           name?: string
           role?: string
           user_id?: string
@@ -2991,8 +3012,22 @@ export type Database = {
         }
         Returns: undefined
       }
+      fechou_allow_ai: { Args: { p_workspace: string }; Returns: boolean }
       fechou_create_workspace: { Args: { p_name: string }; Returns: string }
+      fechou_import_deals: {
+        Args: { p_rows: Json; p_workspace: string }
+        Returns: number
+      }
       fechou_role: { Args: { p_workspace: string }; Returns: string }
+      fechou_update_member: {
+        Args: {
+          p_active: boolean
+          p_member: string
+          p_role: string
+          p_workspace: string
+        }
+        Returns: undefined
+      }
       get_weekly_schedules: {
         Args: never
         Returns: {

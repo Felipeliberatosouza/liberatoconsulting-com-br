@@ -18,6 +18,7 @@ import {
   type PresentationDraft,
 } from "@/lib/presentation.functions";
 import { scopeQuestionsForKind } from "@/lib/scope-form-i18n";
+import { withCrmService } from "@/lib/fechou-service";
 import { projectKindFromAnswers } from "@/lib/project-kind";
 import { activeSignals } from "@/lib/scope-guide";
 import { BASE_BLOCKS, FAMILY_BLOCKS, DEFAULT_MODULES } from "@/lib/diagnostic-catalog";
@@ -212,7 +213,7 @@ function PresentationPage() {
   }
   const [busy, setBusy] = useState<"" | "site" | "draft" | "files">("");
 
-  const services = ctx.data?.services ?? [];
+  const services = withCrmService(ctx.data?.services ?? []);
   const service = services.find((s) => s.slug === serviceSlug);
   const quotes = useMemo(() => {
     const all = ctx.data?.quotes ?? [];

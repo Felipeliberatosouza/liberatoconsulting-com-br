@@ -30,3 +30,6 @@
 - Old service_products slugs map to the pain-based portfolio via src/lib/services-depara.ts; old /services URLs redirect there while history keeps old names — one source for admin view and redirects.
 - Portfolio pages, navigation and form choices resolve public copy from the existing service registry through portfolio-catalog; stable identities and relationships remain browser-safe defaults, so admin edits propagate without rewriting client history.
 - Homepage banner overrides use stable slide IDs, never their array positions, so reordering cannot move text to a different banner.
+- Fechou! CRM keeps commercial workspaces separate from the institutional CRM; workspace membership and AAL2 are checked in database policies so direct calls cannot bypass team and seller boundaries.
+- Fechou! CRM uses the same board for live and demo workflows with separate data adapters; demo edits and uploaded branding stay in the browser.
+- Fechou! CRM imports whole batches atomically through an invoker RPC and updates only by exact record ID; reports calculate allowed metrics locally and never send CRM rows to the assistant.

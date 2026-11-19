@@ -26,6 +26,7 @@ import {
 import { answerText, diagnosticLink, toEditable, type ClientAnswer, type EditableQuestion } from "@/lib/diagnostic-form";
 import { parseDiagnosticOptions } from "@/lib/diagnostic-options";
 import { PROJECT_KINDS, PROJECT_KIND_KEY, projectKindFromAnswers, projectKindText, type ProjectKind } from "@/lib/project-kind";
+import { CRM_DIAGNOSTIC, CRM_SERVICE_SLUG, withCrmService } from "@/lib/fechou-service";
 import { serviceMacro } from "@/lib/service-macro";
 import {
   DEFAULT_BUDGET,
@@ -94,7 +95,9 @@ function DiagnosticPage() {
     setScopeId(s.id);
     setClientName((c) => c || s.company);
     setTitle((t) => t || `Diagnóstico — ${s.company}`);
-    setProjectKind((kind) => kind || projectKindFromAnswers(s.answers));
+    const kind = projectKindFromAnswers(s.answers);
+    setProjectKind(current => current || kind);
+    if (kind === "crm") setServiceSlug(CRM_SERVICE_SLUG);
   }, [escopo, scopes.data]);
   const keepQs = useRef(false);
 
@@ -109,8 +112,9 @@ function DiagnosticPage() {
     retry: false,
   });
 
-  const service = (services.data ?? []).find((s) => s.slug === serviceSlug);
-  const visibleServices = (services.data ?? []).filter((s) => s.slug === serviceSlug || (s.published && (!projectKind || projectKind === "pacote" || serviceMacro(s) === projectKind)));
+  const allServices = withCrmService(services.data);
+  const service = allServices.find((s) => s.slug === serviceSlug);
+  const visibleServices = allServices.filter((s) => s.slug === serviceSlug || (s.published && (!projectKind || projectKind === "pacote" || (projectKind === "crm" ? s.slug === CRM_SERVICE_SLUG : serviceMacro(s) === projectKind))));
   const questions = useMemo(
     () => questionsForFamily(service?.family_id ?? ""),
     [service?.family_id],
@@ -129,9 +133,9 @@ function DiagnosticPage() {
       keepQs.current = false;
       return;
     }
-    setEditQs(toEditable(questions));
+    setEditQs(serviceSlug === CRM_SERVICE_SLUG ? CRM_DIAGNOSTIC : toEditable(questions));
     setOptionDrafts({});
-  }, [questions]);
+  }, [questions, serviceSlug]);
 
   function reset() {
     setId(null);
@@ -306,8 +310,8 @@ function DiagnosticPage() {
           <select id="diagnostic-project-kind" className="mb-3 h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={projectKind} onChange={(e) => {
             const kind = e.target.value as ProjectKind;
             setProjectKind(kind);
-            const next = (services.data ?? []).find((s) => s.published && (kind === "pacote" || serviceMacro(s) === kind));
-            if (next && service && kind !== "pacote" && serviceMacro(service) !== kind) setServiceSlug(next.slug);
+            const next = allServices.find((s) => s.published && (kind === "pacote" || (kind === "crm" ? s.slug === CRM_SERVICE_SLUG : serviceMacro(s) === kind)));
+            if (next && kind !== "pacote" && (kind === "crm" || !service || serviceMacro(service) !== kind || service.slug === CRM_SERVICE_SLUG)) setServiceSlug(next.slug);
           }}>
             <option value="">Selecione…</option>
             {PROJECT_KINDS.map((kind) => <option key={kind} value={kind}>{projectKindText("pt").options[kind]}</option>)}

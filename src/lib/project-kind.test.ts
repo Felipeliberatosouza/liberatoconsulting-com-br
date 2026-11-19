@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { PROJECT_KINDS, PROJECT_KIND_KEY, projectKindFromAnswers, isProjectKind } from "./project-kind";
 
 describe("modalidade de projeto", () => {
-  it("oferece consultoria, treinamento e pacote sem criar uma terceira área de serviço", () => {
-    expect(PROJECT_KINDS).toEqual(["consultoria", "treinamento", "pacote"]);
+  it("oferece implantação do CRM além dos tipos existentes", () => {
+    expect(PROJECT_KINDS).toEqual(["consultoria", "treinamento", "pacote", "crm"]);
   });
   it("mantém a seleção estável quando as respostas são salvas e carregadas", () => {
     for (const kind of PROJECT_KINDS) expect(projectKindFromAnswers(JSON.parse(JSON.stringify({ [PROJECT_KIND_KEY]: kind })))).toBe(kind);

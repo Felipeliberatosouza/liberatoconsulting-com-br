@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { answerMissing, answerText, type ClientAnswer, type EditableQuestion } from "./diagnostic-form";
+import { crmScopeIds } from "./fechou-copy";
 import { isProjectKind, PROJECT_KIND_KEY } from "./project-kind";
 
 /* ------------------------------------------------------------------ */
@@ -48,6 +49,7 @@ export const submitScopeForm = createServerFn({ method: "POST" })
     // Honeypot: responde como sucesso para não ensinar o robô.
     if (data.website && data.website.trim() !== "") return { ok: true as const };
     if (!isProjectKind(data.answers[PROJECT_KIND_KEY])) return { ok: false as const, error: "Selecione o tipo de projeto." };
+    if (data.answers[PROJECT_KIND_KEY] === "crm" && crmScopeIds.some(id => !data.answers[id]?.trim())) return { ok: false as const, error: "Responda às dez perguntas do CRM." };
     if (data.elapsedMs !== undefined && data.elapsedMs < SCOPE_MIN_FILL_MS) {
       return { ok: false as const, error: "Envio muito rápido. Revise as respostas e tente novamente." };
     }

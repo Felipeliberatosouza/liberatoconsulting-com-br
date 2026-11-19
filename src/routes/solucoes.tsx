@@ -4,6 +4,7 @@ import { SolutionCards, StartLadder } from "@/components/SolutionBlocks";
 import { useLanguage } from "@/i18n";
 import { headLang, seoLinks, seoLocaleMeta } from "@/lib/seo";
 import { itemList, jsonLd } from "@/lib/schema";
+import { fechouCopy } from "@/lib/fechou-copy";
 import { SOLUTIONS, SOLUTION_UI as U, pick } from "@/lib/solutions";
 
 export const Route = createFileRoute("/solucoes")({
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/solucoes")({
 
 function SolucoesPage() {
   const { lang } = useLanguage();
+  const crm = fechouCopy[lang];
   return (
     <div>
       <section className="mx-auto max-w-7xl px-6 pb-12 pt-20">
@@ -41,6 +43,7 @@ function SolucoesPage() {
       </section>
       <section className="mx-auto max-w-7xl px-6 pb-20">
         <SolutionCards />
+        <div className="mt-8 border-t border-border pt-7"><span className="text-sm font-semibold text-accent">Fechou! CRM</span><h2 className="my-2 text-2xl font-bold">{crm.title}</h2><p className="mb-3 text-muted-foreground">{crm.body}</p><Link to="/crm" className="inline-flex items-center gap-2 font-semibold hover:text-accent">{crm.details}<ArrowRight className="size-4"/></Link></div>
       </section>
       <section className="bg-secondary py-20">
         <div className="mx-auto max-w-7xl px-6">

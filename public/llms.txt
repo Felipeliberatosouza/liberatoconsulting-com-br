@@ -21,6 +21,9 @@ Os idiomas utilizam o mesmo caminho com o parâmetro ?lang=en, ?lang=es ou ?lang
 
 ## Páginas
 
+- [Fechou! CRM](https://liberatoconsulting.com.br/crm): gestão de vendas com funil visual, alertas por prazo, metas de equipe e resultados.
+- [Demonstração do CRM](https://liberatoconsulting.com.br/demo/crm): experimente dados fictícios e personalize a demonstração com sua marca.
+
 - [Início](https://liberatoconsulting.com.br/): Visão geral, resultados, impactos e perguntas frequentes.
 - [Serviços](https://liberatoconsulting.com.br/services): Consultoria e Treinamento in Company.
 - [Treinamento in Company](https://liberatoconsulting.com.br/services/treinamento-in-company): Seis programas de capacitação aplicada para equipes.

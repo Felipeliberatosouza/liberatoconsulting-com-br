@@ -1,6 +1,7 @@
 import { useLanguage } from "@/i18n";
 import { homeText } from "@/lib/home-translations";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { fechouCopy } from "@/lib/fechou-copy";
 import { LinkifiedText } from "@/components/LinkifiedText";
 
 export function FaqSection() {
@@ -10,7 +11,8 @@ export function FaqSection() {
   const [offer, ...other] = h.extraFaq;
   const custom = base.filter((item) => item.question.trim() !== offer?.question);
   const items = [...(offer ? [offer] : []), ...custom, ...other.filter((extra) => !custom.some((item) => item.question.trim() === extra.question))];
-  if (!items.length) return null;
+  const crm = fechouCopy[lang];
+  items.push({ question: crm.faq, answer: crm.answer });
   return (
     <section className="border-t border-border bg-background py-24">
       <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-[0.7fr_1.3fr]">

@@ -74,6 +74,12 @@ export async function askJsonGrounded<T>(system: string, prompt: string): Promis
   }
 }
 
+/** Public-source discovery must fail rather than silently falling back to ungrounded guesses. */
+export async function askJsonGroundedOnly<T>(system: string, prompt: string): Promise<T> {
+  const result = await chat({model: TEXT_MODEL, messages: [{role:"system",content:system},{role:"user",content:prompt}], tools:[{type:"google_search"}]});
+  return JSON.parse(stripFences(result.choices?.[0]?.message?.content ?? "")) as T;
+}
+
 /** Pede um JSON ao modelo a partir de um arquivo (PDF) enviado como anexo. */
 export async function askJsonWithFile<T>(
   system: string,
