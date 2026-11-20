@@ -37,3 +37,4 @@
 - Service selectors use currentServiceChoices, retaining only the selected historical service as an exception; the canonical CRM registry row feeds public copy and project configuration without duplicate CRM choices.
 - Fechou branding uses one admin-owned PNG setting and a shared logo component; company setup shares profile defaults and editable website data, never importing executable website markup.
 - Quote and presentation corrections update the existing document ID with versioned files; database triggers record every revision and preserve the previous payload/files, leaving issued signing packets immutable.
+- Keep entities aliases limited to legacy deep imports; package-wide aliases bypass nested versions and break modern HTML parser exports.

@@ -32,7 +32,8 @@ export default defineConfig({
         "entities/lib/encode.js": fileURLToPath(
           new URL("./node_modules/entities/lib/encode.js", import.meta.url),
         ),
-        entities: fileURLToPath(new URL("./node_modules/entities", import.meta.url)),
+        // Keep only the legacy deep-path aliases above. A package-wide alias
+        // forces modern htmlparser2 onto entities v4, which has no /decode export.
       },
     },
   },
