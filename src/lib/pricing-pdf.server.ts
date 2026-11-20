@@ -31,7 +31,7 @@ export type QuotePdfInput = {
   clientName: string;
   notes: string;
   serviceDescription?: string;
-  scenarios?: Array<{ note: string; reducePct: number; removedLabels: string[]; quote: QuoteResult }>;
+  scenarios?: Array<{ note: string; reducePct: number; customDays?: number | undefined; removedLabels: string[]; quote: QuoteResult }>;
 };
 
 /** Monta o corpo do orçamento (etapas, cronograma e total) e gera o PDF. */
@@ -106,7 +106,8 @@ export async function renderQuotePdf(input: QuotePdfInput) {
       const parts = [sc.note.replace(/\|/g, "/").replace(/\n+/g, " ")];
       if (sc.removedLabels.length) parts.push(`Atividades retiradas: ${sc.removedLabels.join("; ")}.`);
       if (sc.reducePct > 0) parts.push(`Redução proporcional de ${sc.reducePct}% em todas as atividades.`);
-      lines.push(`| Cenário ${i + 2} | ${parts.join(" ")} | ${sc.quote.totalDays.toFixed(0)} dias úteis | ${money(sc.quote.totalBrl)} |`);
+      if (sc.customDays) parts.push(`Prazo ajustado para ${sc.customDays.toLocaleString("pt-BR")} dias úteis.`);
+      lines.push(`| Cenário ${i + 2} | ${parts.join(" ")} | ${sc.quote.totalDays.toLocaleString("pt-BR", { maximumFractionDigits: 0 })} dias úteis | ${money(sc.quote.totalBrl)} |`);
     });
     lines.push("");
   }

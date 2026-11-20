@@ -8,7 +8,36 @@ function apiKey() {
   return key;
 }
 
-async function chat(body: Record<string, unknown>) {
+type ChatJson = {
+  choices: Array<{ message: { content?: string; images?: Array<{ image_url?: { url?: string } }> } }>;
+};
+
+const CACHE_DAYS = 30;
+
+/** Respostas idênticas são reutilizadas; buscas na web e imagens nunca usam cache. */
+async function chat(body: Record<string, unknown>): Promise<ChatJson> {
+  const cacheable = !body["tools"] && !body["modalities"];
+  if (!cacheable) return chatLive(body);
+  let key = "";
+  try {
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(body)));
+    key = Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const since = new Date(Date.now() - CACHE_DAYS * 86400000).toISOString();
+    const { data } = await supabaseAdmin.from("ai_cache").select("response").eq("key", key).gte("created_at", since).maybeSingle();
+    if (data?.response) return data.response as unknown as ChatJson;
+  } catch { key = key || ""; }
+  const json = await chatLive(body);
+  if (key && json.choices?.[0]?.message?.content) {
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin.from("ai_cache").upsert({ key, response: json as never, created_at: new Date().toISOString() });
+    } catch { /* cache é opcional */ }
+  }
+  return json;
+}
+
+async function chatLive(body: Record<string, unknown>): Promise<ChatJson> {
   const res = await fetch(`${GATEWAY}/chat/completions`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "Lovable-API-Key": apiKey() },
@@ -17,14 +46,7 @@ async function chat(body: Record<string, unknown>) {
   if (res.status === 429) throw new Error("Limite de uso da IA atingido. Tente em instantes.");
   if (res.status === 402) throw new Error("Créditos de IA esgotados.");
   if (!res.ok) throw new Error(`Falha na IA (${res.status}).`);
-  return (await res.json()) as {
-    choices: Array<{
-      message: {
-        content?: string;
-        images?: Array<{ image_url?: { url?: string } }>;
-      };
-    }>;
-  };
+  return (await res.json()) as ChatJson;
 }
 
 function stripFences(text: string) {

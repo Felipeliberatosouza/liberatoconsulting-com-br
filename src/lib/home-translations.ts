@@ -392,11 +392,41 @@ const DICTS: Record<Lang, HomeDict> = { pt, en, es, zh };
 
 export function homeText(lang: Lang): HomeDict {
   const base = DICTS[lang] ?? pt;
-  const answers: Record<Lang, string> = {
-    pt: "Consultoria para preço e lucro, vendas sem depender do dono, operação sem retrabalho, metas que saem do papel, automação e IA, validação de ideias e entrada no Brasil. Treinamentos in Company em finanças e precificação, vendas B2B, Lean e processos, liderança e rotina, IA prática e validação de ideias. Métodos clássicos e IA ajudam sua equipe a manter as melhorias com autonomia.",
-    en: "Consulting for pricing and profit, sales without relying on the owner, operations without rework, actionable goals, automation and AI, idea validation and entry into Brazil. In-company training in finance and pricing, B2B sales, Lean processes, leadership and daily management, practical AI and idea validation. Classic methods and AI help your team sustain improvements independently.",
-    es: "Consultoría en precios y rentabilidad, ventas sin depender del dueño, operaciones sin retrabajo, metas que se cumplen, automatización e IA, validación de ideas y entrada en Brasil. Capacitación in company en finanzas y precios, ventas B2B, Lean y procesos, liderazgo y rutina, IA práctica y validación de ideas. Métodos clásicos e IA ayudan a su equipo a sostener las mejoras con autonomía.",
-    zh: "咨询涵盖定价与利润、不依赖老板的销售、无返工运营、目标落地、自动化与AI、创意验证以及进入巴西市场。企业内训涵盖财务与定价、B2B销售、精益流程、领导力与日常管理、实用AI及创意验证。经典方法与AI帮助团队自主持续改进。",
+  const pillars: Record<Lang, { offer: string; items: { question: string; answer: string }[] }> = {
+    pt: {
+      offer: "Três frentes: (1) Consultoria, para resolver problemas como preço e lucro, vendas sem depender do dono, operação sem retrabalho, metas, automação com IA, validação de ideias e entrada no Brasil; (2) Treinamento in Company, com turmas práticas para a sua equipe; e (3) Fechou! CRM, um CRM personalizável ao jeito de vender da sua empresa.",
+      items: [
+        { question: "Como funciona a Consultoria?", answer: "Começamos por um diagnóstico rápido com apoio de IA, combinamos métodos clássicos de gestão (margem, Lean, OKR, funil de vendas, pesquisas de mercado) e implementamos as melhorias junto com a sua equipe. Ao final, o método e as ferramentas ficam com a empresa, para que ela siga melhorando com autonomia." },
+        { question: "Como funciona o Treinamento in Company?", answer: "São turmas práticas de 8 a 16 horas, feitas dentro da empresa e com os desafios reais do seu negócio. Temas: finanças e precificação, vendas B2B e prospecção, gestão de carteira, Lean e processos, liderança e rotina, IA prática e validação de ideias. Cada turma termina com um plano de ação pronto para aplicar." },
+        { question: "O que é o Fechou! CRM?", answer: "É um CRM sob medida, adaptado às etapas e regras de venda da sua empresa, sem custo de licença por vendedor. Tem funil visual clicável, cadastro de clientes, metas por vendedor, alertas de prazo por cor, relatórios, importação por planilha e verificação em duas etapas. Teste a demonstração com a sua marca em https://liberatoconsulting.com.br/demo/crm" },
+      ],
+    },
+    en: {
+      offer: "Three pillars: (1) Consulting, to solve problems such as pricing and profit, sales that don't depend on the owner, operations without rework, goals, AI automation, idea validation and entry into Brazil; (2) In-company training, hands-on sessions for your team; and (3) Fechou! CRM, a CRM customized to the way your company sells.",
+      items: [
+        { question: "How does the Consulting work?", answer: "We start with a fast AI-supported diagnosis, combine classic management methods (margin, Lean, OKR, sales funnel, market research) and implement improvements together with your team. The method and tools stay with your company so it keeps improving independently." },
+        { question: "How does In-company Training work?", answer: "Hands-on sessions of 8 to 16 hours held at your company using your real business challenges. Topics: finance and pricing, B2B sales and prospecting, account management, Lean and processes, leadership and routine, practical AI and idea validation. Every session ends with a ready-to-use action plan." },
+        { question: "What is Fechou! CRM?", answer: "A tailor-made CRM adapted to your sales stages and rules, with no per-seller license fee. It offers a clickable visual funnel, client records, seller goals, color-coded deadline alerts, reports, spreadsheet import and two-step verification. Try the demo with your brand at https://liberatoconsulting.com.br/demo/crm" },
+      ],
+    },
+    es: {
+      offer: "Tres frentes: (1) Consultoría, para resolver problemas como precio y rentabilidad, ventas sin depender del dueño, operaciones sin retrabajo, metas, automatización con IA, validación de ideas y entrada en Brasil; (2) Capacitación in company, con clases prácticas para su equipo; y (3) Fechou! CRM, un CRM adaptado a la forma de vender de su empresa.",
+      items: [
+        { question: "¿Cómo funciona la Consultoría?", answer: "Empezamos con un diagnóstico rápido apoyado por IA, combinamos métodos clásicos de gestión (margen, Lean, OKR, embudo de ventas, investigación de mercado) e implementamos las mejoras junto con su equipo. El método y las herramientas quedan en la empresa para que siga mejorando con autonomía." },
+        { question: "¿Cómo funciona la Capacitación in company?", answer: "Clases prácticas de 8 a 16 horas dentro de la empresa, con los desafíos reales de su negocio. Temas: finanzas y precios, ventas B2B y prospección, gestión de cartera, Lean y procesos, liderazgo y rutina, IA práctica y validación de ideas. Cada clase termina con un plan de acción listo para aplicar." },
+        { question: "¿Qué es Fechou! CRM?", answer: "Un CRM a medida, adaptado a las etapas y reglas de venta de su empresa, sin costo de licencia por vendedor. Incluye embudo visual clicable, registro de clientes, metas por vendedor, alertas de plazo por color, informes, importación por planilla y verificación en dos pasos. Pruebe la demostración con su marca en https://liberatoconsulting.com.br/demo/crm" },
+      ],
+    },
+    zh: {
+      offer: "三大板块：（1）咨询：解决定价与利润、不依赖老板的销售、无返工运营、目标落地、AI自动化、创意验证及进入巴西市场等问题；（2）企业内训：为团队提供实战课程；（3）Fechou! CRM：按企业销售方式定制的CRM。",
+      items: [
+        { question: "咨询服务如何进行？", answer: "我们先借助AI进行快速诊断，结合经典管理方法（利润率、精益、OKR、销售漏斗、市场调研），与您的团队一起落地改进。方法和工具留在企业内部，让团队能够自主持续改进。" },
+        { question: "企业内训如何进行？", answer: "在企业内部开展8至16小时的实战课程，围绕您业务中的真实挑战。主题包括：财务与定价、B2B销售与客户开发、客户组合管理、精益与流程、领导力与日常管理、实用AI及创意验证。每期课程都以可直接执行的行动计划结束。" },
+        { question: "什么是 Fechou! CRM？", answer: "一款按企业销售阶段和规则定制的CRM，不按销售人员收取许可费。包含可点击的可视化销售漏斗、客户档案、销售目标、按颜色区分的期限提醒、报表、表格导入和两步验证。可在 https://liberatoconsulting.com.br/demo/crm 用您的品牌试用演示。" },
+      ],
+    },
   };
-  return { ...base, extraFaq: base.extraFaq.map((item, index) => index === 0 ? { ...item, answer: answers[lang] } : item) };
+  const p = pillars[lang] ?? pillars.pt;
+  const [first, ...rest] = base.extraFaq;
+  return { ...base, extraFaq: [...(first ? [{ ...first, answer: p.offer }] : []), ...p.items, ...rest] };
 }

@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { SOLUTIONS, TRAININGS, findSolution, findTraining } from "./solutions";
 
 describe("portfólio por dor", () => {
-  it("tem 7 consultorias e 6 treinamentos", () => {
-    expect(SOLUTIONS).toHaveLength(7);
+  it("tem 8 soluções (7 consultorias + Fechou! CRM) e 6 treinamentos", () => {
+    expect(SOLUTIONS).toHaveLength(8);
     expect(TRAININGS).toHaveLength(6);
   });
   it("nome escolhido para a solução 1", () => {

@@ -258,6 +258,37 @@ export const SOLUTIONS: Solution[] = [
       zh: ["有依据的进入决策", "进入所需时间", "合格合作伙伴数"],
     },
   },
+  {
+    slug: "crm-sob-medida",
+    n: 8,
+    title: { pt: "Fechou! CRM sob Medida", en: "Fechou! Tailor-made CRM", es: "Fechou! CRM a Medida", zh: "Fechou! 定制CRM" },
+    chip: { pt: "Perdemos vendas por falta de acompanhamento", en: "We lose sales for lack of follow-up", es: "Perdemos ventas por falta de seguimiento", zh: "因跟进不足而丢单" },
+    pain: {
+      pt: "“Perdemos vendas por falta de acompanhamento e nenhum CRM do mercado se adapta ao nosso jeito de vender.”",
+      en: "“We lose sales for lack of follow-up, and no off-the-shelf CRM fits the way we sell.”",
+      es: "“Perdemos ventas por falta de seguimiento y ningún CRM del mercado se adapta a nuestra forma de vender.”",
+      zh: "“我们因跟进不足而丢单，市面上的CRM都不适合我们的销售方式。”",
+    },
+    promise: {
+      pt: "Funil visual com as suas etapas, metas por vendedor, alertas de prazo e implantação assistida — sem licença por usuário.",
+      en: "A visual funnel with your stages, seller goals, deadline alerts and assisted rollout — no per-user license.",
+      es: "Embudo visual con sus etapas, metas por vendedor, alertas de plazo e implementación asistida — sin licencia por usuario.",
+      zh: "按您的阶段设计的可视化漏斗、销售目标、期限提醒和协助上线——不按用户收费。",
+    },
+    slogan: { pt: "Nenhuma venda esquecida no meio do caminho.", en: "No deal forgotten along the way.", es: "Ninguna venta olvidada en el camino.", zh: "不让任何一笔生意半途被遗忘。" },
+    tools: {
+      pt: ["Funil de vendas clicável", "Cadastro completo de clientes", "Metas por vendedor", "Alertas de prazo por urgência", "Relatórios e assistente de IA", "Importação por planilha"],
+      en: ["Clickable sales funnel", "Complete client records", "Seller goals", "Urgency deadline alerts", "Reports and AI assistant", "Spreadsheet import"],
+      es: ["Embudo de ventas clicable", "Registro completo de clientes", "Metas por vendedor", "Alertas de plazo por urgencia", "Informes y asistente de IA", "Importación por planilla"],
+      zh: ["可点击的销售漏斗", "完整客户档案", "销售目标", "按紧急程度的期限提醒", "报表与AI助手", "表格导入"],
+    },
+    kpi: {
+      pt: ["Taxa de conversão do funil", "Tempo médio por etapa", "Meta atingida por vendedor"],
+      en: ["Funnel conversion rate", "Average time per stage", "Goal attainment per seller"],
+      es: ["Tasa de conversión del embudo", "Tiempo medio por etapa", "Meta alcanzada por vendedor"],
+      zh: ["漏斗转化率", "各阶段平均时长", "销售目标达成率"],
+    },
+  },
 ];
 
 export const TRAININGS: Training[] = [

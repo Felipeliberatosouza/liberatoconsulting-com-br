@@ -349,7 +349,16 @@ export type QuoteScenario = {
   note: string;
   removedIds: string[];
   reducePct: number;
+  /** Prazo total informado manualmente (dias úteis inteiros); 0/ausente = soma das etapas. */
+  customDays?: number | undefined;
 };
+
+/** Aplica o prazo manual do cenário, sempre como número inteiro de dias úteis. */
+export function applyScenarioDays(q: QuoteResult, customDays?: number): QuoteResult {
+  const d = Math.round(customDays || 0);
+  if (d <= 0) return q;
+  return { ...q, totalDays: d, end: iso(addBusinessDays(new Date(`${q.start}T12:00:00`), d)) };
+}
 
 export function buildScenarioQuote(
   activities: PricedActivity[],
@@ -364,9 +373,9 @@ export function buildScenarioQuote(
     options,
   );
   const f = 1 - Math.max(0, Math.min(90, scenario.reducePct || 0)) / 100;
-  if (f === 1) return q;
+  if (f === 1) return applyScenarioDays(q, scenario.customDays);
   const r = (v: number) => Math.round(v * f);
-  return {
+  return applyScenarioDays({
     ...q,
     phases: q.phases.map((p) => ({
       ...p,
@@ -378,5 +387,5 @@ export function buildScenarioQuote(
     discountBrl: r(q.discountBrl),
     totalBrl: r(q.totalBrl),
     totalCurrency: r(q.totalCurrency),
-  };
+  }, scenario.customDays);
 }

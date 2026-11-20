@@ -31,6 +31,13 @@ export const Route = createFileRoute("/solucoes")({
   component: SolucoesPage,
 });
 
+const CUSTOM: Record<string, string> = {
+  pt: "Personalizável: as etapas do funil, campos, metas e alertas seguem as regras e o processo de vendas da sua empresa — sem licença por vendedor.",
+  en: "Customizable: funnel stages, fields, goals and alerts follow your company's own sales rules and process — no per-seller license.",
+  es: "Personalizable: etapas del embudo, campos, metas y alertas siguen las reglas y el proceso de ventas de su empresa — sin licencia por vendedor.",
+  zh: "可定制：漏斗阶段、字段、目标和提醒都按贵公司的销售规则和流程设置——不按销售人员收费。",
+};
+
 function SolucoesPage() {
   const { lang } = useLanguage();
   const crm = fechouCopy[lang];
@@ -43,7 +50,16 @@ function SolucoesPage() {
       </section>
       <section className="mx-auto max-w-7xl px-6 pb-20">
         <SolutionCards />
-        <div className="mt-8 border-t border-border pt-7"><span className="text-sm font-semibold text-accent">Fechou! CRM</span><h2 className="my-2 text-2xl font-bold">{crm.title}</h2><p className="mb-3 text-muted-foreground">{crm.body}</p><Link to="/crm" className="inline-flex items-center gap-2 font-semibold hover:text-accent">{crm.details}<ArrowRight className="size-4"/></Link></div>
+        <div className="mt-8 rounded-2xl border border-accent bg-secondary p-7">
+          <span className="text-sm font-semibold text-accent">Fechou! CRM</span>
+          <h2 className="my-2 text-2xl font-bold">{crm.title}</h2>
+          <p className="mb-2 text-muted-foreground">{crm.body}</p>
+          <p className="mb-4 text-sm text-muted-foreground">{CUSTOM[lang] ?? CUSTOM["pt"]}</p>
+          <div className="flex flex-wrap gap-5">
+            <Link to="/demo/crm" className="inline-flex items-center gap-2 font-semibold text-accent hover:opacity-80">{crm.demo}<ArrowRight className="size-4"/></Link>
+            <Link to="/crm" className="inline-flex items-center gap-2 font-semibold hover:text-accent">{crm.details}<ArrowRight className="size-4"/></Link>
+          </div>
+        </div>
       </section>
       <section className="bg-secondary py-20">
         <div className="mx-auto max-w-7xl px-6">

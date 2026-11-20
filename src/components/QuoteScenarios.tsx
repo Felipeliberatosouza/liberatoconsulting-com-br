@@ -90,7 +90,7 @@ export function QuoteScenarios({ activities, base, scenarios, onChange, compute,
                 ))}
               </div>
             </div>
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="grid gap-3 md:grid-cols-3">
               <div className="space-y-1.5">
                 <Label>Redução proporcional em todas as atividades (%)</Label>
                 <FormattedNumberInput
@@ -109,6 +109,15 @@ export function QuoteScenarios({ activities, base, scenarios, onChange, compute,
                     const pct = (1 - target / withoutReduction.totalBrl) * 100;
                     patch(i, { reducePct: Math.max(0, Math.min(90, Number(pct.toFixed(2)))) });
                   }}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Prazo de execução (dias úteis)</Label>
+                <FormattedNumberInput
+                  kind="number"
+                  decimals={0}
+                  value={s.customDays || Math.round(q.totalDays)}
+                  onChange={(v) => patch(i, { customDays: Math.max(0, Math.round(v)) })}
                 />
               </div>
             </div>

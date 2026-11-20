@@ -339,6 +339,7 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
               note: z.string().trim().min(1).max(1000),
               removedIds: z.array(z.string().max(80)).max(120),
               reducePct: z.number().min(0).max(90),
+              customDays: z.number().int().min(0).max(100000).optional(),
             }),
           )
           .max(2)

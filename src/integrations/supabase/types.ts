@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_cache: {
+        Row: {
+          created_at: string
+          key: string
+          response: Json
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          response: Json
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          response?: Json
+        }
+        Relationships: []
+      }
       article_submissions: {
         Row: {
           cpf: string

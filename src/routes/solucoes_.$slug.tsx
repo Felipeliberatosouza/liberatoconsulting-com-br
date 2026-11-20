@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { fechouCopy } from "@/lib/fechou-copy";
 import { ArrowRight, Check } from "lucide-react";
 import { useLanguage } from "@/i18n";
 import { ServiceLeadForm } from "@/components/ServiceLeadForm";
@@ -80,6 +81,11 @@ function SolutionPage() {
           <Link to="/treinamentos/$slug" params={{ slug: training.slug }} className="mb-8 block rounded-lg border border-border bg-secondary p-6 hover:border-accent">
             <p className="text-sm text-muted-foreground">{pick(U.linkedTraining, lang)}</p>
             <p className="mt-1 font-bold">{pick(U.trainingsEyebrow, lang)}: {pick(training.title, lang)} →</p>
+          </Link>
+        )}
+        {s.slug === "crm-sob-medida" && (
+          <Link to="/demo/crm" className="mb-8 block rounded-lg border border-border bg-secondary p-6 hover:border-accent">
+            <p className="font-bold">{fechouCopy[lang].demo} →</p>
           </Link>
         )}
         <ServiceLeadForm serviceSlug={s.slug} serviceTitle={pick(s.title, lang)} problem={pick(s.pain, lang).replace(/[“”"]/g, "")} />
