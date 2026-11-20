@@ -1,0 +1,12 @@
+CREATE TABLE public.project_document_revisions (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), document_id uuid NOT NULL, kind text NOT NULL CHECK (kind IN ('quote','presentation')), changed_at timestamptz NOT NULL DEFAULT now(), actor_id uuid, previous_data jsonb NOT NULL, current_data jsonb NOT NULL);
+GRANT SELECT ON public.project_document_revisions TO authenticated;
+GRANT ALL ON public.project_document_revisions TO service_role;
+ALTER TABLE public.project_document_revisions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Administrators read document revisions" ON public.project_document_revisions FOR SELECT TO authenticated USING (public.has_role(auth.uid(),'admin'));
+CREATE INDEX project_document_revisions_document ON public.project_document_revisions(document_id,changed_at);
+CREATE FUNCTION public.record_project_document_revision() RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$ BEGIN IF (to_jsonb(NEW)-'updated_at') IS DISTINCT FROM (to_jsonb(OLD)-'updated_at') THEN INSERT INTO public.project_document_revisions(document_id,kind,actor_id,previous_data,current_data) VALUES(NEW.id,CASE WHEN TG_TABLE_NAME='quotes' THEN 'quote' ELSE 'presentation' END,auth.uid(),to_jsonb(OLD),to_jsonb(NEW)); END IF; RETURN NEW; END $$;
+CREATE TRIGGER quote_revision AFTER UPDATE ON public.quotes FOR EACH ROW EXECUTE FUNCTION public.record_project_document_revision();
+CREATE TRIGGER presentation_revision AFTER UPDATE ON public.project_presentations FOR EACH ROW EXECUTE FUNCTION public.record_project_document_revision();
+ALTER TABLE public.fechou_workspaces ADD COLUMN company_data jsonb NOT NULL DEFAULT '{}'::jsonb;
+GRANT UPDATE ON public.fechou_workspaces TO authenticated;
+CREATE POLICY "Workspace admin updates company" ON public.fechou_workspaces FOR UPDATE TO authenticated USING (public.fechou_role(id)='admin') WITH CHECK (public.fechou_role(id)='admin');

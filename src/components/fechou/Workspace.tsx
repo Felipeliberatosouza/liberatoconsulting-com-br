@@ -1,3 +1,10 @@
+import { useServerFn } from "@tanstack/react-start";
+import type { CSSProperties } from "react";
+import { CompanyFields } from "./CompanyFields";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { emptyCompanyBrand, companyBrandCopy, type CompanyBrand } from "@/lib/fechou-brand";
+import { saveCrmCompany } from "@/lib/fechou-brand.functions";
+import { useLanguage } from "@/i18n";
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -14,6 +21,10 @@ function assert<T>(result: { data: T; error: { message: string } | null }) {
 
 export function Workspace() {
   const qc = useQueryClient();
+  const { lang } = useLanguage(); const copy = companyBrandCopy[lang];
+  const saveCompany = useServerFn(saveCrmCompany);
+  const [companyBrand, setCompanyBrand] = useState<CompanyBrand>({ ...emptyCompanyBrand });
+  const [editCompany, setEditCompany] = useState(false);
   const [identity, setIdentity] = useState<string | null>();
   const [aal, setAal] = useState(false);
   const [error, setError] = useState("");
@@ -222,18 +233,15 @@ export function Workspace() {
             className="grid gap-3"
             onSubmit={(e) => {
               e.preventDefault();
-              const name = String(new FormData(e.currentTarget).get("name"));
+
               void action(async () => {
-                const id = assert(await supabase.rpc("fechou_create_workspace", { p_name: name }));
+                const { id } = await saveCompany({ data: { company: companyBrand } });
                 if (id) setSelected(id);
                 await qc.invalidateQueries({ queryKey: ["fechou", identity, "workspaces"] });
               });
             }}
           >
-            <label className="grid gap-2 text-sm">
-              Nome da empresa
-              <Input name="name" maxLength={120} required />
-            </label>
+            <CompanyFields value={companyBrand} onChange={setCompanyBrand} />
             <Button disabled={busy}>Criar espaço</Button>
           </form>
         </>
@@ -259,13 +267,16 @@ export function Workspace() {
       )}
     </main>
   ) : (
+    <div style={(workspace.company_data as Partial<CompanyBrand>)?.color ? { "--fechou-coral": (workspace.company_data as Partial<CompanyBrand>).color } as CSSProperties : undefined}>
     <Board
       key={workspace.id}
       name={workspace.name}
+      branding={(workspace.company_data as Partial<CompanyBrand>)?.logo ? <img src={(workspace.company_data as Partial<CompanyBrand>).logo} alt={workspace.name} className="mb-3 h-12 max-w-48 object-contain" /> : undefined}
       user={member}
       {...rows.data}
       header={
         <>
+          {member.role === "admin" && <Button variant="outline" onClick={() => { setCompanyBrand({ ...emptyCompanyBrand, ...(workspace.company_data as Partial<CompanyBrand>), name: workspace.name }); setEditCompany(true); }}>{copy.title}</Button>}
           {(companies.data?.length ?? 0) > 1 && (
             <select
               aria-label="Empresa"
@@ -374,5 +385,12 @@ export function Workspace() {
         await refresh();
       }}
     />
+    <Dialog open={editCompany} onOpenChange={setEditCompany}>
+      <DialogContent className="max-h-[90dvh] overflow-y-auto"><DialogHeader><DialogTitle>{copy.title}</DialogTitle></DialogHeader>
+      <form className="grid gap-4" onSubmit={e => { e.preventDefault(); void action(async () => { await saveCompany({ data: { id: workspace.id, company: companyBrand } }); await qc.invalidateQueries({ queryKey: ["fechou", identity, "workspaces"] }); setEditCompany(false); }); }}>
+        <CompanyFields value={companyBrand} onChange={setCompanyBrand} /><Button disabled={busy}>{copy.apply}</Button>{error && <p role="alert" className="text-destructive">{error}</p>}
+      </form></DialogContent>
+    </Dialog>
+    </div>
   );
 }

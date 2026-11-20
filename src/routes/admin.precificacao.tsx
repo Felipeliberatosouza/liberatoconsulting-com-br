@@ -1,10 +1,11 @@
 import { ProjectFlowGuide } from "@/components/ProjectFlowGuide";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Sparkles, FileDown, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
+import { DocumentRevisions } from "@/components/DocumentRevisions";
 import { AdminShell } from "@/components/AdminShell";
 import { FormattedNumberInput } from "@/components/FormattedNumberInput";
 import { QuoteScenarios } from "@/components/QuoteScenarios";
@@ -98,6 +99,7 @@ function Num({
 }
 
 function PricingPage() {
+  const queryClient = useQueryClient();
   const { aba, diag } = Route.useSearch();
   const [settings, setSettings] = useState<PricingSettings>(DEFAULT_PRICING);
   const [slug, setSlug] = useState("");
@@ -122,14 +124,17 @@ function PricingPage() {
   const [clientName, setClientName] = useState("");
   const [clientId, setClientId] = useState("");
   const [fx, setFx] = useState({ rate: 1, source: "—" });
+  const [editingQuoteId, setEditingQuoteId] = useState("");
+  const [tab, setTab] = useState<PricingTab>(aba ?? "rates");
+  const skipFx = useRef(false);
   const [generatedQuote, setGeneratedQuote] = useState<{ id: string; fingerprint: string } | null>(null);
-  const flow = useProjectFlow(3, { settings, slug, activities, notes, rationale, porte, override, diagInfo, lastDiag, scenarios, country, currency, startDate, remoteOnly, discountPct, clientName, clientId, fx, generatedQuote }, d => {
+  const flow = useProjectFlow(3, { settings, slug, activities, notes, rationale, porte, override, diagInfo, lastDiag, scenarios, country, currency, startDate, remoteOnly, discountPct, clientName, clientId, fx, generatedQuote, editingQuoteId }, d => {
     skipServiceLoad.current = true;
     appliedDiag.current = diag ?? null;
     setSettings(d.settings); setSlug(d.slug); setActivities(d.activities); setNotes(d.notes); setRationale(d.rationale);
     setPorte(d.porte); setOverride(d.override); setDiagInfo(d.diagInfo); setLastDiag(d.lastDiag); setScenarios(d.scenarios);
     setCountry(d.country); setCurrency(d.currency); setStartDate(d.startDate); setRemoteOnly(d.remoteOnly); setDiscountPct(d.discountPct);
-    setClientName(d.clientName); setClientId(d.clientId); setFx(d.fx); setGeneratedQuote(d.generatedQuote);
+    setClientName(d.clientName); setClientId(d.clientId); setFx(d.fx); setGeneratedQuote(d.generatedQuote); setEditingQuoteId(d.editingQuoteId || "");
   });
 
   const products = useQuery({ queryKey: ["admin-service-products"], queryFn: () => listServiceProducts() });
@@ -207,6 +212,7 @@ function PricingPage() {
   }, [slug]);
 
   useEffect(() => {
+    if (skipFx.current) { skipFx.current = false; return; }
     getFxRate({ data: { currency: currency as "BRL" } }).then((r) =>
       setFx({ rate: r.rate, source: r.source }),
     );
@@ -323,6 +329,8 @@ function PricingPage() {
     setBusy("pdf");
     const res = await buildQuotePdf({
       data: {
+        ...(editingQuoteId ? { id: editingQuoteId } : {}),
+        pricingSettings: settings,
         slug: product.slug,
         serviceTitle: product.title,
         serviceDescription: [product.lead, product.body].filter(Boolean).join("\n"),
@@ -341,9 +349,24 @@ function PricingPage() {
     window.open(res.url, "_blank");
     setGeneratedQuote({ id: res.id, fingerprint });
     history.refetch();
-    toast.success("Orçamento em PDF gerado.");
+    await queryClient.invalidateQueries({ queryKey: ["document-revisions", res.id] });
+    toast.success(editingQuoteId ? "Orçamento alterado e PDF atualizado." : "Orçamento em PDF gerado.");
   }
 
+  function openQuote(row: NonNullable<typeof history.data>[number]) {
+    const payload = row.payload as unknown as { activities?: PricedActivity[]; options?: Parameters<typeof buildQuote>[2]; notes?: string; scenarios?: QuoteScenario[]; settings?: PricingSettings };
+    if (!payload?.activities?.length || !payload.options) { toast.error("Este orçamento antigo não tem dados suficientes para reedição."); return; }
+    if (slug !== row.slug) skipServiceLoad.current = true;
+    if (currency !== payload.options.currency) skipFx.current = true;
+    setSlug(row.slug); setActivities(payload.activities); setNotes(payload.notes || ""); setScenarios(payload.scenarios || []);
+    if (payload.settings) setSettings(payload.settings);
+    setPorte(normalizePorte(payload.options.porte) || (row.company_type === "corporate" ? "grande" : "pequena"));
+    setCountry(payload.options.country); setCurrency(payload.options.currency); setStartDate(payload.options.startDate);
+    setRemoteOnly(payload.options.remoteOnly); setDiscountPct(payload.options.discountPct); setFx({ rate: payload.options.fxRate, source: "Cotação do orçamento" });
+    setOverride(payload.options.override || null); setClientName(row.client_name); setClientId(""); setLastDiag(null); setDiagInfo(null);
+    setEditingQuoteId(row.id); setGeneratedQuote(null); setTab("quote");
+    toast.success("Orçamento carregado nos campos para edição.");
+  }
   const money = (brl: number) => formatMoney(brl * fx.rate, currency);
 
   return (
@@ -358,7 +381,11 @@ function PricingPage() {
         quoteId: generatedQuote?.fingerprint === fingerprint ? generatedQuote.id : "",
         ...(product ? { quoteDraft: { slug, title: product.title, clientName, quote, options: { companyType, porte, ...(override ? { override } : {}), country, currency, startDate, remoteOnly, discountPct, fxRate: fx.rate }, notes, scenarios } } : {}),
       })} />
-      <Tabs defaultValue={aba ?? "rates"}>
+      {editingQuoteId && <div className="mb-5 border-l-4 border-accent px-4 py-3">
+        <p className="font-semibold">Editando orçamento de {clientName}</p><DocumentRevisions id={editingQuoteId} kind="Orçamento" />
+        <Button variant="ghost" onClick={() => { setEditingQuoteId(""); setGeneratedQuote(null); setActivities([]); setSlug(""); setClientName(""); setClientId(""); setScenarios([]); setNotes(""); setOverride(null); setDiagInfo(null); setLastDiag(null); setSettings(stored.data || DEFAULT_PRICING); setDiscountPct(0); setRemoteOnly(false); setStartDate(today()); }}>Criar novo orçamento</Button>
+      </div>}
+      <Tabs value={tab} onValueChange={value => setTab(value as PricingTab)}>
         <TabsList className="mb-6 flex-wrap">
           <TabsTrigger value="rates">Valor do homem-hora</TabsTrigger>
           <TabsTrigger value="stages">Etapas por serviço</TabsTrigger>
@@ -516,7 +543,7 @@ function PricingPage() {
                 }}
               >
                 <option value="">Escolha um serviço…</option>
-                {currentServiceChoices(withCrmService(products.data), diagInfo ? slug : "").map((p) => (
+                {currentServiceChoices(withCrmService(products.data), (diagInfo || editingQuoteId) ? slug : "").map((p) => (
                   <option key={p.slug} value={p.slug}>
                     {p.title}
                   </option>
@@ -642,7 +669,7 @@ function PricingPage() {
                 onChange={(e) => setSlug(e.target.value)}
               >
                 <option value="">Escolha um serviço…</option>
-                {currentServiceChoices(withCrmService(products.data), diagInfo ? slug : "").map((p) => (
+                {currentServiceChoices(withCrmService(products.data), (diagInfo || editingQuoteId) ? slug : "").map((p) => (
                   <option key={p.slug} value={p.slug}>
                     {p.title}
                   </option>
@@ -879,7 +906,7 @@ function PricingPage() {
                 </p>
                 <Button onClick={generatePdf} disabled={busy === "pdf"}>
                   <FileDown className="size-4" />
-                  {busy === "pdf" ? "Gerando…" : "Gerar PDF do orçamento"}
+                  {busy === "pdf" ? "Gerando…" : editingQuoteId ? "Salvar alterações e atualizar PDF" : "Gerar PDF do orçamento"}
                 </Button>
               </div>
             </section>
@@ -909,6 +936,8 @@ function PricingPage() {
                   {new Date(q.created_at).toLocaleDateString("pt-BR")}
                 </p>
               </div>
+              <DocumentRevisions id={q.id} kind="Orçamento" />
+              <Button variant="outline" size="sm" onClick={() => openQuote(q)}>Abrir e editar</Button>
               <Button
                 variant="outline"
                 size="sm"

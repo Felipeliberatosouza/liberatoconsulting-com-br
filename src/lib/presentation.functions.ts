@@ -388,8 +388,13 @@ export const savePresentation = createServerFn({ method: "POST" })
     const id = data.id ?? crypto.randomUUID();
     const { Buffer } = await import("node:buffer");
     const bytes = (b64: string) => new Uint8Array(Buffer.from(b64, "base64"));
-    const pptx_path = `${id}/apresentacao.pptx`;
-    const pdf_path = `${id}/apresentacao.pdf`;
+    if (data.id) {
+      const previous = await context.supabase.from("project_presentations").select("id").eq("id",id).single();
+      if (previous.error) throw new Error("Apresentação não encontrada para edição.");
+    }
+    const version = crypto.randomUUID();
+    const pptx_path = `${id}/${version}/apresentacao.pptx`;
+    const pdf_path = `${id}/${version}/apresentacao.pdf`;
     const up = await Promise.all([
       supabaseAdmin.storage.from("presentations").upload(pptx_path, bytes(data.pptx), {
         upsert: true,
@@ -414,7 +419,9 @@ export const savePresentation = createServerFn({ method: "POST" })
       payload: data.payload,
       updated_at: new Date().toISOString(),
     };
-    const { error } = await (supabaseAdmin as any).from("project_presentations").upsert(row);
+    const { error } = data.id
+      ? await (context.supabase as any).from("project_presentations").update(row).eq("id",id)
+      : await (context.supabase as any).from("project_presentations").insert({ ...row, created_by: context.userId });
     if (error) throw new Error(error.message);
     return { ok: true as const, id };
   });

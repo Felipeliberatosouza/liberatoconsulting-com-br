@@ -539,6 +539,16 @@ export const saveLogo = createServerFn({ method: "POST" })
   });
 
 /** Volta para a logomarca padrão do projeto. */
+export const saveFechouLogo = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ dataUrl: z.string().regex(/^data:image\/png;base64,[A-Za-z0-9+/=]+$/).max(1400000) }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { error } = await context.supabase.from("site_settings").upsert({ key: "branding", value: { ...(await currentBranding(context)), fechouLogoUrl: data.dataUrl } }, { onConflict: "key" });
+    if (error) throw new Error("Não foi possível salvar a logomarca.");
+    return { ok: true };
+  });
+
 export const resetLogo = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {

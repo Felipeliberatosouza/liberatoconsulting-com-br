@@ -1670,16 +1670,19 @@ export type Database = {
       }
       fechou_workspaces: {
         Row: {
+          company_data: Json
           created_at: string
           id: string
           name: string
         }
         Insert: {
+          company_data?: Json
           created_at?: string
           id?: string
           name: string
         }
         Update: {
+          company_data?: Json
           created_at?: string
           id?: string
           name?: string
@@ -2344,6 +2347,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      project_document_revisions: {
+        Row: {
+          actor_id: string | null
+          changed_at: string
+          current_data: Json
+          document_id: string
+          id: string
+          kind: string
+          previous_data: Json
+        }
+        Insert: {
+          actor_id?: string | null
+          changed_at?: string
+          current_data: Json
+          document_id: string
+          id?: string
+          kind: string
+          previous_data: Json
+        }
+        Update: {
+          actor_id?: string | null
+          changed_at?: string
+          current_data?: Json
+          document_id?: string
+          id?: string
+          kind?: string
+          previous_data?: Json
+        }
+        Relationships: []
       }
       project_presentations: {
         Row: {
@@ -3031,6 +3064,7 @@ export type Database = {
         Returns: undefined
       }
       fechou_allow_ai: { Args: { p_workspace: string }; Returns: boolean }
+      fechou_create_company: { Args: { p_company: Json }; Returns: string }
       fechou_create_workspace: { Args: { p_name: string }; Returns: string }
       fechou_import_deals: {
         Args: { p_rows: Json; p_workspace: string }

@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Download, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
+import { DocumentRevisions } from "@/components/DocumentRevisions";
 import { AdminShell } from "@/components/AdminShell";
 import { ProspectKitCard } from "@/components/ProspectKitCard";
 import { deletePresentation, getPresentationFileUrl, listPresentations } from "@/lib/presentation.functions";
@@ -12,6 +13,11 @@ export const Route = createFileRoute("/admin/projetos_/apresentacoes")({
     meta: [
       { title: "Apresentações geradas — Painel Liberato Consulting" },
       { name: "robots", content: "noindex" },
+      { name: "description", content: "Abra, corrija e consulte o histórico das apresentações comerciais da Liberato Consulting." },
+      { property: "og:title", content: "Apresentações geradas — Liberato Consulting" },
+      { property: "og:description", content: "Apresentações comerciais e seu histórico de alterações." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: PresentationsList,
@@ -77,7 +83,7 @@ function PresentationsList() {
                 <tr key={r.id} className="border-t border-border">
                   <td className="p-3 whitespace-nowrap">{new Date(r.created_at).toLocaleString("pt-BR")}</td>
                   <td className="p-3">
-                    <div className="font-medium">{r.client_name}</div>
+                    <div className="font-medium">{r.client_name}</div><DocumentRevisions id={r.id} kind="Apresentação" />
                     {r.website ? <div className="text-xs text-muted-foreground">{r.website}</div> : null}
                   </td>
                   <td className="p-3">{r.service_title}</td>

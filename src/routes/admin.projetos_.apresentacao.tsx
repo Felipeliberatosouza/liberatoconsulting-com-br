@@ -5,6 +5,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Download, Globe, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
+import { DocumentRevisions } from "@/components/DocumentRevisions";
+import { useQueryClient } from "@tanstack/react-query";
 import { AdminShell } from "@/components/AdminShell";
 import {
   analyzeClientSite,
@@ -95,6 +97,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function PresentationPage() {
+  const qc = useQueryClient();
   const ctx = useQuery({ queryKey: ["presentation-context"], queryFn: () => getPresentationContext(), retry: false });
   const consultants = useQuery({ queryKey: ["presentation-consultants"], queryFn: () => listConsultants(), retry: false });
   const [consultantId, setConsultantId] = useState("");
@@ -158,8 +161,6 @@ function PresentationPage() {
   }, [ctx.data, flow.userId, search.id, clientOptions]);
   useEffect(() => {
     if (!search.id || loadedId === search.id) return;
-    const local = flow.context().drafts?.[4] as { savedId?: string } | undefined;
-    if (local?.savedId === search.id) { setLoadedId(search.id); return; }
     setLoadedId(search.id);
     void getPresentation({ data: { id: search.id } }).then((r) => {
       const p = r?.payload as any;
@@ -433,6 +434,8 @@ function PresentationPage() {
       });
       setSavedId(r.id);
       setSaved(true);
+      await qc.invalidateQueries({ queryKey: ["document-revisions", r.id] });
+      await qc.invalidateQueries({ queryKey: ["presentations"] });
       toast.success(savedId ? "Apresentação atualizada (PowerPoint e PDF)." : "Apresentação gerada (PowerPoint e PDF).");
     } catch (err) {
       console.error(err);
@@ -477,6 +480,7 @@ function PresentationPage() {
       requireAdmin
     >
       <ProjectFlowGuide current={4} onNavigate={target => flow.go(target, { clientName: name.trim(), serviceSlug, scopeId, diagId, quoteId: useQuote && quoteId !== "draft" ? quoteId : "", ...(savedId ? { presentationId: savedId } : {}) })} nextLabel="Avançar: NDA e Contrato" />
+      {savedId && <div className="mb-4 border-l-4 border-accent px-4 py-3"><p className="font-semibold">Apresentação de {name}</p><DocumentRevisions id={savedId} kind="Apresentação" /></div>}
       <Link to="/admin/projetos" className="mb-6 inline-flex items-center gap-1 text-sm text-accent hover:underline">
         <ArrowLeft className="size-4" /> Voltar para Projetos
       </Link>

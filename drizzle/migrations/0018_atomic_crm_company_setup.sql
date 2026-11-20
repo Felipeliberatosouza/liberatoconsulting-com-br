@@ -1,0 +1,3 @@
+CREATE FUNCTION public.fechou_create_company(p_company jsonb) RETURNS uuid LANGUAGE plpgsql SET search_path='' AS $$ DECLARE v_id uuid; v_name text; BEGIN IF jsonb_typeof(p_company) IS DISTINCT FROM 'object' THEN RAISE EXCEPTION 'Dados da empresa inválidos.'; END IF; v_name:=trim(p_company->>'name'); IF v_name IS NULL OR char_length(v_name) NOT BETWEEN 1 AND 120 THEN RAISE EXCEPTION 'Informe o nome da empresa.'; END IF; v_id:=public.fechou_create_workspace(v_name); UPDATE public.fechou_workspaces SET company_data=p_company WHERE id=v_id; RETURN v_id; END $$;
+REVOKE ALL ON FUNCTION public.fechou_create_company(jsonb) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.fechou_create_company(jsonb) TO authenticated,service_role;

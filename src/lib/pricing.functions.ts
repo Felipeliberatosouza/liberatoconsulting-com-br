@@ -326,6 +326,8 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z
       .object({
+        id: z.string().uuid().optional(),
+        pricingSettings: settingsSchema.optional(),
         slug: z.string().trim().min(1).max(120),
         serviceTitle: z.string().trim().min(1).max(300),
         clientName: z.string().trim().max(200).default(""),
@@ -358,12 +360,18 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
       };
     }
     try {
+      if (data.id) {
+        const previous = await context.supabase.from("quotes").select("id").eq("id", data.id).single();
+        if (previous.error) throw new Error("Orçamento não encontrado para edição.");
+      }
       const { data: cfg } = await context.supabase
         .from("site_settings")
         .select("value")
         .eq("key", "pricing")
         .maybeSingle();
-      const settings = { ...DEFAULT_PRICING, ...((cfg?.value ?? {}) as Partial<PricingSettings>) };
+      const candidate = data.pricingSettings ?? { ...DEFAULT_PRICING, ...((cfg?.value ?? {}) as Partial<PricingSettings>) };
+      const { aiSuggestion, ...baseSettings } = candidate;
+      const settings: PricingSettings = { ...baseSettings, ...(aiSuggestion ? { aiSuggestion } : {}) };
       const quote = buildQuote(data.activities, settings, data.options);
 
       const { renderQuotePdf } = await import("./pricing-pdf.server");
@@ -392,7 +400,7 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
         .from("content")
         .createSignedUrl(path, 3600, { download: fileName });
 
-      const { data: savedQuote, error: saveError } = await context.supabase.from("quotes").insert({
+      const record = {
         slug: data.slug,
         service_title: data.serviceTitle,
         client_name: data.clientName,
@@ -406,11 +414,14 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
         total_brl: quote.totalBrl,
         total_currency: quote.totalCurrency,
         fx_rate: data.options.fxRate,
-        payload: { quote, options: data.options, activities: data.activities, notes: data.notes, scenarios: data.scenarios },
+        payload: { quote, settings, options: data.options, activities: data.activities, notes: data.notes, scenarios: data.scenarios, serviceDescription: data.serviceDescription },
         file_path: path,
         file_name: fileName,
-        created_by: context.userId,
-      }).select("id").single();
+        updated_at: new Date().toISOString(),
+      };
+      const { data: savedQuote, error: saveError } = data.id
+        ? await context.supabase.from("quotes").update(record).eq("id", data.id).select("id").single()
+        : await context.supabase.from("quotes").insert({ ...record, created_by: context.userId }).select("id").single();
       if (saveError || !savedQuote) throw new Error(saveError?.message || "Não foi possível salvar o orçamento.");
 
       // Empresa do CRM com orçamento emitido passa automaticamente a "cliente".

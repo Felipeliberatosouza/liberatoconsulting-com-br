@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
+import fechouAsset from "@/assets/fechou-logo.png.asset.json";
 import { AdminShell } from "@/components/AdminShell";
 import { ScheduleSettings } from "@/components/ScheduleSettings";
 import { listEmailTemplates, saveEmailTemplate } from "@/lib/company.functions";
@@ -17,6 +19,7 @@ import {
   saveFavicon,
   saveAlertEmail,
   saveLogo,
+  saveFechouLogo,
   saveWhatsApp,
 } from "@/lib/admin.functions";
 import { useFieldErrors } from "@/hooks/useFieldErrors";
@@ -99,6 +102,7 @@ function SettingsPage() {
       </div>
 
       <BrandingBlock />
+      <FechouBrandingBlock />
       <ContactsBlock />
       <ScheduleSettings />
       <EmailTemplatesBlock />
@@ -469,4 +473,31 @@ function EmailTemplatesBlock() {
       </div>
     </div>
   );
+}
+
+function FechouBrandingBlock() {
+  const qc = useQueryClient();
+  const config = useQuery({ queryKey: ["fechou-branding"], queryFn: () => getSiteConfig() });
+  const [busy,setBusy] = useState(false);
+  const logo = config.data?.branding.fechouLogoUrl || fechouAsset.url;
+  return <section className="mt-8 max-w-xl border-t border-border pt-6">
+    <h2 className="font-display text-lg font-bold">Logomarca Fechou! CRM</h2>
+    <img src={logo} alt="Fechou! CRM" className="my-5 h-12 w-auto max-w-64 object-contain" />
+    <div className="flex flex-wrap items-center gap-3">
+      <label className="grid gap-2 text-sm">Enviar PNG (até 1 MB)
+        <input type="file" accept="image/png" disabled={busy} onChange={async e => {
+          const file=e.target.files?.[0]; e.target.value=""; if (!file) return;
+          if (file.type !== "image/png" || file.size > 1000000) { toast.error("Envie PNG de até 1 MB."); return; }
+          setBusy(true);
+          try {
+            const dataUrl=await new Promise<string>((resolve,reject) => { const r=new FileReader(); r.onload=()=>resolve(String(r.result)); r.onerror=reject; r.readAsDataURL(file); });
+            await saveFechouLogo({data:{dataUrl}});
+            await qc.invalidateQueries({ queryKey:["fechou-branding"] });
+            toast.success("Logomarca do Fechou! atualizada em toda a plataforma.");
+          } catch { toast.error("Não foi possível salvar a logomarca."); } finally { setBusy(false); }
+        }} />
+      </label>
+      <Button variant="outline" asChild><a href={logo} download="fechou-logo.png">Baixar PNG</a></Button>
+    </div>
+  </section>;
 }

@@ -1,4 +1,13 @@
 
+## Fechou! e reedição de documentos (20/11/2026)
+- [x] Marca PNG central editável pelo administrador e exibida junto à demonstração
+- [x] Reabrir orçamentos/apresentações nos mesmos campos e registrar todas as alterações
+- [x] Personalização manual com nome, cor, logomarca e dados da empresa na demo/CRM
+- [ ] Importação completa da marca/layout por site — Firecrawl sem conexão disponível e usuário sem permissão para criar; consulta segura de DNS indisponível no sandbox
+- [x] Preencher dados do usuário autenticado sem substituir edições manuais; testado com conta temporária
+- [x] 24 testes, botão com logomarca, upload/aplicação na demo e formulário PT/EN/ES/ZH em desktop/celular
+- [ ] Verificar gravação/reedição e criação de empresa pela UI com AAL2 — conta temporária não pode cadastrar segundo fator; sessão do usuário indisponível
+
 ## Projetos e catálogo — correções (20/11/2026)
 - [x] Passar automaticamente contexto e dados entre as seis etapas de Projetos
 - [x] Atualizar seletores de serviços preservando os registros históricos

@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { fechouCopy } from "@/lib/fechou-copy";
+import { FechouLogo } from "@/components/fechou/Logo";
 import { ArrowRight, Check } from "lucide-react";
 import { useLanguage } from "@/i18n";
 import { ServiceLeadForm } from "@/components/ServiceLeadForm";
@@ -85,7 +86,7 @@ function SolutionPage() {
         )}
         {s.slug === "crm-sob-medida" && (
           <Link to="/demo/crm" className="mb-8 block rounded-lg border border-border bg-secondary p-6 hover:border-accent">
-            <p className="font-bold">{fechouCopy[lang].demo} →</p>
+            <div className="flex flex-wrap items-center gap-4"><FechouLogo /><p className="font-bold">{fechouCopy[lang].demo} →</p></div>
           </Link>
         )}
         <ServiceLeadForm serviceSlug={s.slug} serviceTitle={pick(s.title, lang)} problem={pick(s.pain, lang).replace(/[“”"]/g, "")} />

@@ -1,4 +1,6 @@
 import { Prospecting } from "./Prospecting";
+import { FechouLogo } from "./Logo";
+export { FechouLogo } from "./Logo";
 import { Assistant } from "./Assistant";
 import { useState } from "react";
 import {
@@ -57,17 +59,6 @@ const fields = [
   ["founded_on", "Fundação da empresa"],
   ["birth_date", "Aniversário do contato"],
 ] as const;
-export function FechouLogo() {
-  return (
-    <span className="inline-flex items-center gap-2 text-xl font-extrabold">
-      <span className="grid size-9 place-items-center rounded-lg bg-fechou-mint text-ink">
-        <Check className="size-5" strokeWidth={3} />
-      </span>{" "}
-      Fechou! <span className="text-fechou-coral">CRM</span>
-    </span>
-  );
-}
-
 type Props = {
   name: string;
   user: Member;

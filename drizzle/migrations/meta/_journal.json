@@ -120,6 +120,20 @@
       "when": 1795192079364,
       "tag": "0016_ai_response_cache",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1795202823686,
+      "tag": "0017_document_revisions_and_crm_company",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1795203382446,
+      "tag": "0018_atomic_crm_company_setup",
+      "breakpoints": true
     }
   ]
 }

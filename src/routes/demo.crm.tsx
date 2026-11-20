@@ -1,11 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
+import { CompanyFields } from "@/components/fechou/CompanyFields";
+import { emptyCompanyBrand, companyBrandCopy, companyBrandSchema } from "@/lib/fechou-brand";
+import { useLanguage } from "@/i18n";
 import { Palette } from "lucide-react";
 import { Board } from "@/components/fechou/Board";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+
 import {
   demoDeals,
   demoMember,
@@ -37,12 +40,13 @@ export const Route = createFileRoute("/demo/crm")({
   component: Demo,
 });
 function Demo() {
+  const { lang } = useLanguage(); const copy = companyBrandCopy[lang];
   const [stages, setStages] = useState(demoStages);
   const [deals, setDeals] = useState(() => demoDeals(0));
   const [goals, setGoals] = useState<Goal[]>([]);
-  const [custom, setCustom] = useState(false);
+  const [custom, setCustom] = useState(true);
   const [error, setError] = useState("");
-  const [brand, setBrand] = useState({ name: "Empresa Exemplo", color: "#ff875e", logo: "" });
+  const [brand, setBrand] = useState({ ...emptyCompanyBrand });
   useEffect(() => {
     setDeals(demoDeals());
     setGoals([
@@ -62,9 +66,9 @@ function Demo() {
     entered_at: new Date().toISOString(),
   });
   return (
-    <div style={{ "--fechou-coral": brand.color } as CSSProperties}>
+    <div style={brand.color ? { "--fechou-coral": brand.color } as CSSProperties : undefined}>
       <Board
-        name={brand.name}
+        name={brand.name || "Empresa Exemplo"}
         branding={
           brand.logo && (
             <img
@@ -74,7 +78,7 @@ function Demo() {
             />
           )
         }
-        user={demoMember}
+        user={{ ...demoMember, name: brand.contact || demoMember.name }}
         stages={stages}
         deals={deals}
         goals={goals}
@@ -137,55 +141,28 @@ function Demo() {
         }
       />
       <Dialog open={custom} onOpenChange={setCustom}>
-        <DialogContent>
+        <DialogContent className="max-h-[90dvh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Personalizar demonstração</DialogTitle>
+            <DialogTitle>{copy.title}</DialogTitle>
           </DialogHeader>
           <form
             className="grid gap-3"
             onSubmit={async (e) => {
               e.preventDefault();
               setError("");
-              const form = new FormData(e.currentTarget);
-              const file = form.get("logo");
-              let logo = brand.logo;
-              if (file instanceof File && file.size) {
-                if (
-                  !["image/png", "image/jpeg", "image/webp"].includes(file.type) ||
-                  file.size > 2_000_000
-                ) {
-                  setError("Escolha uma imagem PNG, JPEG ou WebP de até 2 MB.");
-                  return;
-                }
-                logo = URL.createObjectURL(file);
-                if (brand.logo) URL.revokeObjectURL(brand.logo);
-              }
-              setBrand({
-                name: String(form.get("name")).trim() || "Empresa Exemplo",
-                color: String(form.get("color")),
-                logo,
-              });
+              const result = companyBrandSchema.safeParse(brand);
+              if (!result.success) { setError(result.error.issues[0]?.message || copy.manual); return; }
+              setBrand(result.data);
               setCustom(false);
             }}
           >
-            <label className="grid gap-1 text-sm">
-              Nome da empresa
-              <Input name="name" defaultValue={brand.name} maxLength={120} required />
-            </label>
-            <label className="grid gap-1 text-sm">
-              Cor da marca
-              <Input type="color" name="color" defaultValue={brand.color} />
-            </label>
-            <label className="grid gap-1 text-sm">
-              Logomarca
-              <Input name="logo" type="file" accept="image/png,image/jpeg,image/webp" />
-            </label>
+            <CompanyFields value={brand} onChange={setBrand} />
             {error && (
               <p role="alert" className="text-sm text-destructive">
                 {error}
               </p>
             )}
-            <Button>Aplicar marca</Button>
+            <Button>{copy.apply}</Button>
           </form>
         </DialogContent>
       </Dialog>
