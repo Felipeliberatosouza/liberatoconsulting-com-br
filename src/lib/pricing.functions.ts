@@ -392,7 +392,7 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
         .from("content")
         .createSignedUrl(path, 3600, { download: fileName });
 
-      await context.supabase.from("quotes").insert({
+      const { data: savedQuote, error: saveError } = await context.supabase.from("quotes").insert({
         slug: data.slug,
         service_title: data.serviceTitle,
         client_name: data.clientName,
@@ -406,11 +406,12 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
         total_brl: quote.totalBrl,
         total_currency: quote.totalCurrency,
         fx_rate: data.options.fxRate,
-        payload: { quote, options: data.options, notes: data.notes, scenarios: data.scenarios },
+        payload: { quote, options: data.options, activities: data.activities, notes: data.notes, scenarios: data.scenarios },
         file_path: path,
         file_name: fileName,
         created_by: context.userId,
-      });
+      }).select("id").single();
+      if (saveError || !savedQuote) throw new Error(saveError?.message || "Não foi possível salvar o orçamento.");
 
       // Empresa do CRM com orçamento emitido passa automaticamente a "cliente".
       const clientName = data.clientName.trim();
@@ -439,7 +440,7 @@ export const buildQuotePdf = createServerFn({ method: "POST" })
         }
       }
 
-      return { ok: true as const, url: signed?.signedUrl ?? "", name: fileName };
+      return { ok: true as const, id: savedQuote.id, url: signed?.signedUrl ?? "", name: fileName };
     } catch (err) {
       console.error("buildQuotePdf failed", err);
       return { ok: false as const, error: (err as Error).message };
@@ -454,10 +455,22 @@ export const listQuotes = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { data } = await context.supabase
       .from("quotes")
-      .select("id, slug, service_title, client_name, company_type, country, currency, total_currency, total_brl, created_at, file_path, file_name")
+      .select("id, slug, service_title, client_name, company_type, country, currency, total_currency, total_brl, start_date, end_date, discount_pct, payload, created_at, file_path, file_name")
       .order("created_at", { ascending: false })
       .limit(20);
     return data ?? [];
+  });
+
+/** Exact project quote, independent of the recent-documents list. */
+export const getProjectQuote = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./access.server");
+    await assertAdmin(context);
+    const { data: quote, error } = await context.supabase.from("quotes").select("*").eq("id", data.id).single();
+    if (error) throw new Error("Não foi possível carregar o orçamento deste projeto.");
+    return quote;
   });
 
 /** Link de download de um orçamento já gerado. */

@@ -1,4 +1,11 @@
 
+## Projetos e catálogo — correções (20/11/2026)
+- [x] Passar automaticamente contexto e dados entre as seis etapas de Projetos
+- [x] Atualizar seletores de serviços preservando os registros históricos
+- [x] Exibir Fechou! CRM no menu de serviços e como solução 08 na home nos quatro idiomas
+- [x] Validar regras de transição e catálogo com testes; páginas públicas nos quatro idiomas em computador/celular
+- [ ] Conferir transições completas com sessão administrativa AAL2 — usuário confirmou login, mas a sessão não foi disponibilizada ao navegador de teste; conta temporária não pode cadastrar autenticador
+
 ## Posicionamento — pendências (01/11/2026)
 - [x] Consolidar catálogo de consultoria e treinamentos conforme plano, preservando históricos
 - [x] Incluir Consultoria / Treinamento / Pacote nos formulários de Projetos

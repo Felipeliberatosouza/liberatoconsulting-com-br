@@ -22,6 +22,7 @@ import { findSimilarArticle } from "@/lib/article-match";
 import type { ArticleRecord } from "@/lib/site-config";
 import { READ_COUNT_BASE } from "@/lib/site-config";
 import { pt } from "@/i18n/pt";
+import { useLanguage } from "@/i18n";
 
 export const Route = createFileRoute("/admin/content")({
   head: () => ({
@@ -109,9 +110,8 @@ function readAsDataUrl(file: File): Promise<string> {
 function AdminContent() {
   const authReady = useAuthReady();
   const groups = pt.megaMenu.groups;
-  const services = groups.flatMap((g) =>
-    g.items.map((i) => ({ id: i.id, label: i.label, group: g.id })),
-  );
+  const { t } = useLanguage();
+  const services = t.serviceDetail.pages.map(p => ({ id: p.id, label: p.title, group: p.group }));
 
   const [items, setItems] = useState<ArticleRecord[]>([]);
   const [submissions, setSubmissions] = useState<
@@ -637,6 +637,7 @@ function AdminContent() {
               className={inputClass(errors["service"])}
             >
               <option value="">Nenhum</option>
+              {draft.service && !services.some(s => s.id === draft.service) ? <option value={draft.service}>{draft.service} (histórico)</option> : null}
               {services.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.label}

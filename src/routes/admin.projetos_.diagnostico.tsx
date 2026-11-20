@@ -1,6 +1,6 @@
 import { listScopeSubmissions } from "@/lib/projects.functions";
 import { ProjectFlowGuide } from "@/components/ProjectFlowGuide";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Copy, HelpCircle, Link as LinkIcon, Plus, Trash2 } from "lucide-react";
@@ -26,7 +26,9 @@ import {
 import { answerText, diagnosticLink, toEditable, type ClientAnswer, type EditableQuestion } from "@/lib/diagnostic-form";
 import { parseDiagnosticOptions } from "@/lib/diagnostic-options";
 import { PROJECT_KINDS, PROJECT_KIND_KEY, projectKindFromAnswers, projectKindText, type ProjectKind } from "@/lib/project-kind";
-import { CRM_DIAGNOSTIC, CRM_SERVICE_SLUG, withCrmService } from "@/lib/fechou-service";
+import { CRM_DIAGNOSTIC, CRM_SERVICE_SLUG, isCrmService, withCrmService } from "@/lib/fechou-service";
+import { currentServiceChoices } from "@/lib/portfolio-catalog";
+import { useProjectFlow } from "@/lib/project-flow";
 import { serviceMacro } from "@/lib/service-macro";
 import {
   DEFAULT_BUDGET,
@@ -65,7 +67,6 @@ const num = (v: number) => v.toLocaleString("pt-BR", { maximumFractionDigits: 2 
 
 function DiagnosticPage() {
   const qc = useQueryClient();
-  const navigate = useNavigate();
   const [id, setId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [clientName, setClientName] = useState("");
@@ -87,6 +88,13 @@ function DiagnosticPage() {
   const [tab, setTab] = useState("leiame");
   const [scopeId, setScopeId] = useState<string | null>(null);
   const { escopo } = Route.useSearch();
+  const flow = useProjectFlow(2, { id, title, clientName, serviceSlug, projectKind, answers, consultantNotes, scoreValues, scoreWhy, modules, budget, editQs, optionDrafts, token, clientAnswers, respondent, submittedAt, tab, scopeId }, d => {
+    keepQs.current = true;
+    setId(d.id); setTitle(d.title); setClientName(d.clientName); setServiceSlug(d.serviceSlug); setProjectKind(d.projectKind);
+    setAnswers(d.answers); setConsultantNotes(d.consultantNotes); setScoreValues(d.scoreValues); setScoreWhy(d.scoreWhy);
+    setModules(d.modules); setBudget(d.budget); setEditQs(d.editQs); setOptionDrafts(d.optionDrafts); setToken(d.token);
+    setClientAnswers(d.clientAnswers); setRespondent(d.respondent); setSubmittedAt(d.submittedAt); setTab(d.tab); setScopeId(d.scopeId);
+  });
   const scopes = useQuery({ queryKey: ["scope-submissions"], queryFn: () => listScopeSubmissions(), enabled: !!escopo, retry: false });
   // Vindo da etapa 1: o cliente do escopo já entra preenchido e o diagnóstico fica ligado a ele.
   useEffect(() => {
@@ -97,6 +105,9 @@ function DiagnosticPage() {
     setTitle((t) => t || `Diagnóstico — ${s.company}`);
     const kind = projectKindFromAnswers(s.answers);
     setProjectKind(current => current || kind);
+    setAnswers(current => ({ ...s.answers, ...current }));
+    setConsultantNotes(current => ({ ...s.comments, ...current, ...(s.notes ? { __scope: s.notes } : {}) }));
+    setTab("diagnostico");
     if (kind === "crm") setServiceSlug(CRM_SERVICE_SLUG);
   }, [escopo, scopes.data]);
   const keepQs = useRef(false);
@@ -114,7 +125,7 @@ function DiagnosticPage() {
 
   const allServices = withCrmService(services.data);
   const service = allServices.find((s) => s.slug === serviceSlug);
-  const visibleServices = allServices.filter((s) => s.slug === serviceSlug || (s.published && (!projectKind || projectKind === "pacote" || (projectKind === "crm" ? s.slug === CRM_SERVICE_SLUG : serviceMacro(s) === projectKind))));
+  const visibleServices = currentServiceChoices(allServices, id ? serviceSlug : "").filter((s) => (id && s.slug === serviceSlug) || !projectKind || projectKind === "pacote" || (projectKind === "crm" ? isCrmService(s.slug) : serviceMacro(s) === projectKind));
   const questions = useMemo(
     () => questionsForFamily(service?.family_id ?? ""),
     [service?.family_id],
@@ -122,7 +133,7 @@ function DiagnosticPage() {
 
   useEffect(() => {
     if (!serviceSlug && (services.data ?? []).length > 0) {
-      const first = services.data?.find((s) => s.published);
+      const first = currentServiceChoices(services.data ?? [])[0];
       if (first) setServiceSlug(first.slug);
     }
   }, [services.data, serviceSlug]);
@@ -133,7 +144,7 @@ function DiagnosticPage() {
       keepQs.current = false;
       return;
     }
-    setEditQs(serviceSlug === CRM_SERVICE_SLUG ? CRM_DIAGNOSTIC : toEditable(questions));
+    setEditQs(isCrmService(serviceSlug) ? CRM_DIAGNOSTIC : toEditable(questions));
     setOptionDrafts({});
   }, [questions, serviceSlug]);
 
@@ -265,11 +276,10 @@ function DiagnosticPage() {
         current={2}
         nextLabel="Salvar e avançar: Precificação"
         nextPending={save.isPending}
-        onNext={async () => {
-          // O planejamento salvo aqui vira o orçamento da etapa 3.
-          const res = await save.mutateAsync();
-          if (!res.ok) return;
-          void navigate({ to: "/admin/precificacao", search: { aba: "quote", diag: res.id } as never });
+        onNavigate={async target => {
+          const res = target.n > 2 ? await save.mutateAsync() : null;
+          if (res && !res.ok) return;
+          flow.go(target, { clientName, serviceSlug, ...(scopeId ? { scopeId } : {}), ...(res?.ok ? { diagId: res.id } : id ? { diagId: id } : {}) }, res?.ok ? { id: res.id } : {});
         }}
       />
       <Link
@@ -310,7 +320,7 @@ function DiagnosticPage() {
           <select id="diagnostic-project-kind" className="mb-3 h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={projectKind} onChange={(e) => {
             const kind = e.target.value as ProjectKind;
             setProjectKind(kind);
-            const next = allServices.find((s) => s.published && (kind === "pacote" || (kind === "crm" ? s.slug === CRM_SERVICE_SLUG : serviceMacro(s) === kind)));
+            const next = currentServiceChoices(allServices).find((s) => kind === "pacote" || (kind === "crm" ? isCrmService(s.slug) : serviceMacro(s) === kind));
             if (next && kind !== "pacote" && (kind === "crm" || !service || serviceMacro(service) !== kind || service.slug === CRM_SERVICE_SLUG)) setServiceSlug(next.slug);
           }}>
             <option value="">Selecione…</option>
@@ -663,7 +673,7 @@ function DiagnosticPage() {
               // Salva antes de seguir: o orçamento é montado a partir deste diagnóstico.
               const res = await save.mutateAsync();
               if (!res.ok) return;
-              void navigate({ to: "/admin/precificacao", search: { aba: "quote", diag: res.id } as never });
+              flow.go({ n: 3, to: "/admin/precificacao" }, { clientName, serviceSlug, ...(scopeId ? { scopeId } : {}), diagId: res.id }, { id: res.id });
             }}
             className="inline-block rounded-full bg-ink px-4 py-2 text-sm font-medium text-ink-foreground hover:bg-accent hover:text-accent-foreground"
           >

@@ -1,10 +1,11 @@
 import { SOLUTIONS, TRAININGS, type Solution, type Training } from "./solutions";
 import { EMPTY_PRODUCT, type ServiceProduct } from "./services-catalog";
 import type { Lang } from "@/i18n/config";
+import { deParaFor } from "./services-depara";
 
-const groups = ["empreendedorismo", "operacoes", "operacoes", "estrategia", "operacoes", "empreendedorismo", "pesquisas"];
-const families = ["negocios-decisoes", "operacoes-eficiencia", "operacoes-eficiencia", "estrategia-metas", "operacoes-eficiencia", "negocios-decisoes", "pesquisas-brasil"];
-const familyTitles = ["Empreendedorismo e Decisões", "Operações e Eficiência", "Operações e Eficiência", "Estratégia e Metas", "Operações e Eficiência", "Empreendedorismo e Decisões", "Pesquisas e Inteligência sobre o Brasil"];
+const groups = ["empreendedorismo", "operacoes", "operacoes", "estrategia", "operacoes", "empreendedorismo", "pesquisas", "estrategia"];
+const families = ["negocios-decisoes", "operacoes-eficiencia", "operacoes-eficiencia", "estrategia-metas", "operacoes-eficiencia", "negocios-decisoes", "pesquisas-brasil", "crm"];
+const familyTitles = ["Empreendedorismo e Decisões", "Operações e Eficiência", "Operações e Eficiência", "Estratégia e Metas", "Operações e Eficiência", "Empreendedorismo e Decisões", "Pesquisas e Inteligência sobre o Brasil", "Fechou! CRM personalizável"];
 
 /** Complete defaults can be registered once; never write data on page load. */
 export function portfolioDefaults(): ServiceProduct[] {
@@ -23,12 +24,17 @@ export function portfolioDefaults(): ServiceProduct[] {
     ...TRAININGS.map((t, i): ServiceProduct => ({
       ...EMPTY_PRODUCT, slug: t.slug, title: t.title.pt, lead: t.outcome.pt,
       body: t.outcome.pt, audience: t.audience.pt, group_id: "treinamento", groups: ["treinamento"],
-      family_id: "treinamento-in-company", family_title: "Treinamento in Company", position: i + 8,
+      family_id: "treinamento-in-company", family_title: "Treinamento in Company", position: i + SOLUTIONS.length + 1,
       translations: Object.fromEntries((["en", "es", "zh"] as const).map((lang) => [lang, {
         title: t.title[lang], lead: t.outcome[lang], body: t.outcome[lang], audience: t.audience[lang],
       }])),
     })),
   ];
+}
+
+/** New choices exclude archived/mapped services; editing history retains its exact ID. */
+export function currentServiceChoices<T extends { slug: string; published?: boolean }>(rows: T[], selectedSlug = ""): T[] {
+  return rows.filter(row => row.slug === selectedSlug || (row.published !== false && !deParaFor(row.slug)));
 }
 
 function localized<T extends string | string[]>(row: ServiceProduct, field: "title" | "lead" | "problem" | "body" | "audience" | "bullets" | "modules" | "results", fallback: Record<Lang, T>): Record<Lang, T> {

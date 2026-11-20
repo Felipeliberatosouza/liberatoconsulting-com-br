@@ -1,8 +1,7 @@
 import { ProjectFlowGuide } from "@/components/ProjectFlowGuide";
-import { useNavigate } from "@tanstack/react-router";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Download, Globe, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
@@ -19,6 +18,8 @@ import {
 } from "@/lib/presentation.functions";
 import { scopeQuestionsForKind } from "@/lib/scope-form-i18n";
 import { withCrmService } from "@/lib/fechou-service";
+import { currentServiceChoices } from "@/lib/portfolio-catalog";
+import { useProjectFlow, type ProjectFlow } from "@/lib/project-flow";
 import { projectKindFromAnswers } from "@/lib/project-kind";
 import { activeSignals } from "@/lib/scope-guide";
 import { BASE_BLOCKS, FAMILY_BLOCKS, DEFAULT_MODULES } from "@/lib/diagnostic-catalog";
@@ -26,6 +27,7 @@ import { listConsultants } from "@/lib/consultants.functions";
 import { buildDeckFiles, prepareImage, type DeckInput } from "@/lib/presentation-deck";
 import { presentationSize, referenceDuration, selectPresentationResources, STANDARD_NEXT_STEPS, type PresentationSize } from "@/lib/presentation-rules";
 import { buildProjectClients } from "@/lib/projects.functions";
+import { getProjectQuote } from "@/lib/pricing.functions";
 
 export const Route = createFileRoute("/admin/projetos_/apresentacao")({
   head: () => ({
@@ -97,7 +99,6 @@ function PresentationPage() {
   const consultants = useQuery({ queryKey: ["presentation-consultants"], queryFn: () => listConsultants(), retry: false });
   const [consultantId, setConsultantId] = useState("");
   const [site, setSite] = useState("");
-  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [clientSize, setClientSize] = useState<PresentationSize | "">("");
   const [sector, setSector] = useState("");
@@ -127,8 +128,38 @@ function PresentationPage() {
   const [savedId, setSavedId] = useState<string | undefined>(search.id);
   const [saved, setSaved] = useState(false);
   const [loadedId, setLoadedId] = useState("");
+  const [quoteDraft, setQuoteDraft] = useState<ProjectFlow["quoteDraft"]>();
+  const flow = useProjectFlow(4, { consultantId, site, name, clientSize, sector, location, description, offerings, highlights, audience, logo, serviceSlug, useQuote, quoteId, draft, pick, useScope, scopeId, useDiag, diagId, savedId, saved, quoteDraft }, d => {
+    if (search.id && d.savedId !== search.id) return;
+    setConsultantId(d.consultantId); setSite(d.site); setName(d.name); setClientSize(d.clientSize); setSector(d.sector); setLocation(d.location);
+    setDescription(d.description); setOfferings(d.offerings); setHighlights(d.highlights); setAudience(d.audience); setLogo(d.logo);
+    setServiceSlug(d.serviceSlug); setUseQuote(d.useQuote); setQuoteId(d.quoteId); setDraft(d.draft); setPick(d.pick);
+    setUseScope(d.useScope); setScopeId(d.scopeId); setUseDiag(d.useDiag); setDiagId(d.diagId); setSavedId(d.savedId); setSaved(d.saved); setQuoteDraft(d.quoteDraft);
+  });
+  const appliedFlow = useRef("");
+  const exactQuote = useQuery({ queryKey: ["project-quote", quoteId], queryFn: () => getProjectQuote({ data: { id: quoteId } }), enabled: !!quoteId && quoteId !== "draft", retry: false });
+  useEffect(() => {
+    if (!ctx.data || !flow.userId || search.id) return;
+    const carried = flow.context();
+    const key = JSON.stringify([carried.clientName, carried.serviceSlug, carried.scopeId, carried.diagId, carried.quoteId, carried.quoteDraft]);
+    if (appliedFlow.current === key) return;
+    appliedFlow.current = key;
+    if (carried.clientName) setName(carried.clientName);
+    if (carried.serviceSlug) setServiceSlug(carried.serviceSlug);
+    if (carried.scopeId) { setScopeId(carried.scopeId); setUseScope(true); }
+    if (carried.diagId) { setDiagId(carried.diagId); setUseDiag(true); }
+    if (carried.quoteId) { setQuoteId(carried.quoteId); setUseQuote(true); }
+    else if (carried.quoteDraft?.quote.phases.length) { setQuoteDraft(carried.quoteDraft); setQuoteId("draft"); setUseQuote(true); }
+    const client = clientOptions.find(c => c.name.trim().toLowerCase() === carried.clientName?.trim().toLowerCase());
+    if (client) {
+      setPick(client.key); setSector(client.sector || ""); setLocation(client.location || ""); setSite(client.website || "");
+      setClientSize(presentationSize(client.size || ""));
+    }
+  }, [ctx.data, flow.userId, search.id, clientOptions]);
   useEffect(() => {
     if (!search.id || loadedId === search.id) return;
+    const local = flow.context().drafts?.[4] as { savedId?: string } | undefined;
+    if (local?.savedId === search.id) { setLoadedId(search.id); return; }
     setLoadedId(search.id);
     void getPresentation({ data: { id: search.id } }).then((r) => {
       const p = r?.payload as any;
@@ -136,7 +167,7 @@ function PresentationPage() {
       setClientSize(p.clientSize ?? ""); setSite(p.site ?? ""); setName(p.name ?? ""); setSector(p.sector ?? ""); setLocation(p.location ?? "");
       setDescription(p.description ?? ""); setOfferings(p.offerings ?? ""); setHighlights(p.highlights ?? "");
       setAudience(p.audience ?? ""); setLogo(p.logo ?? ""); setServiceSlug(p.serviceSlug ?? "");
-      setUseQuote(!!p.useQuote); setQuoteId(p.quoteId ?? ""); setUseScope(!!p.useScope); setScopeId(p.scopeId ?? "");
+      setUseQuote(!!p.useQuote); setQuoteId(p.quoteId ?? ""); setQuoteDraft(p.quoteDraft); setUseScope(!!p.useScope); setScopeId(p.scopeId ?? "");
       setUseDiag(!!p.useDiag); setDiagId(p.diagId ?? ""); setDraft(p.draft ?? null); setConsultantId(p.consultantId ?? ""); setSavedId(search.id); setSaved(true);
       toast.success("Apresentação carregada para edição.");
     }).catch((e) => toast.error((e as Error).message));
@@ -213,17 +244,17 @@ function PresentationPage() {
   }
   const [busy, setBusy] = useState<"" | "site" | "draft" | "files">("");
 
-  const services = withCrmService(ctx.data?.services ?? []);
+  const services = currentServiceChoices(withCrmService(ctx.data?.services ?? []), (search.id || useDiag) ? serviceSlug : "");
   const service = services.find((s) => s.slug === serviceSlug);
   const quotes = useMemo(() => {
-    const all = ctx.data?.quotes ?? [];
+    const all = [...(ctx.data?.quotes ?? []).filter(q => q.id !== exactQuote.data?.id), ...(exactQuote.data ? [exactQuote.data] : []), ...(quoteDraft ? [{ id: "draft", slug: quoteDraft.slug, service_title: quoteDraft.title, client_name: quoteDraft.clientName, currency: quoteDraft.options.currency, total_currency: quoteDraft.quote.totalCurrency, total_brl: quoteDraft.quote.totalBrl, start_date: quoteDraft.quote.start, end_date: quoteDraft.quote.end, discount_pct: quoteDraft.options.discountPct, created_at: "", payload: { quote: quoteDraft.quote } }] : [])];
     const n = name.trim().toLowerCase();
     return [...all].sort((a, b) => {
       const ma = n && String(a.client_name).toLowerCase().includes(n) ? 0 : 1;
       const mb = n && String(b.client_name).toLowerCase().includes(n) ? 0 : 1;
       return ma - mb;
     });
-  }, [ctx.data?.quotes, name]);
+  }, [ctx.data?.quotes, exactQuote.data, name, quoteDraft]);
 
   async function readSite() {
     if (!site.trim()) { toast.error("Informe o site do cliente."); return; }
@@ -300,8 +331,10 @@ function PresentationPage() {
 
   async function generate() {
     if (!ctx.data || !service) { toast.error("Selecione o serviço."); return; }
-    if (!clientSize) { toast.error("Selecione o porte do cliente para definir a duração."); return; }
-    const duration = referenceDuration(service.duration ?? "", service.duration_corporate ?? "", clientSize);
+    if (!clientSize && !useQuote) { toast.error("Selecione o porte do cliente para definir a duração."); return; }
+    const selectedQuote = useQuote ? quotes.find(q => q.id === quoteId) : null;
+    const plannedDays = Number(selectedQuote?.payload?.quote?.totalDays) || 0;
+    const duration = plannedDays ? `${Math.ceil(plannedDays).toLocaleString("pt-BR")} dias úteis` : clientSize ? referenceDuration(service.duration ?? "", service.duration_corporate ?? "", clientSize) : "";
     if (!duration) { toast.error("Cadastre a duração deste serviço para o porte selecionado."); return; }
     const selectedResources = selectPresentationResources(ctx.data.tools, `${sector} ${description} ${offerings} ${service.title}`);
     if (!selectedResources.some(r => r.kind === "guide") || !selectedResources.some(r => r.kind === "tool")) { toast.error("Publique um guia e ao menos uma ferramenta para incluir na apresentação."); return; }
@@ -321,7 +354,7 @@ function PresentationPage() {
       ]);
       const cons = (consultants.data ?? []).find((c) => c.id === consultantId);
       const consPhoto = cons?.photo_url ? await prepareImage(cons.photo_url, false) : null;
-      const q = useQuote ? ctx.data.quotes.find((x) => x.id === quoteId) : null;
+      const q = selectedQuote;
       const payload = (q?.payload ?? {}) as any;
       const ratio = q && Number(q.total_brl) > 0 ? Number(q.total_currency) / Number(q.total_brl) : 1;
       const deck: DeckInput = {
@@ -395,7 +428,7 @@ function PresentationPage() {
           used_diagnostic: useDiag && !!diagId,
           pptx: files.pptx,
           pdf: files.pdf,
-          payload: { clientSize, site, name, sector, location, description, offerings, highlights, audience, logo, serviceSlug, useQuote, quoteId, useScope, scopeId, useDiag, diagId, consultantId, draft: d },
+          payload: { clientSize, site, name, sector, location, description, offerings, highlights, audience, logo, serviceSlug, useQuote, quoteId, quoteDraft, useScope, scopeId, useDiag, diagId, consultantId, draft: d },
         },
       });
       setSavedId(r.id);
@@ -443,7 +476,7 @@ function PresentationPage() {
       description="Etapa 4 · Gere uma apresentação comercial personalizada em PowerPoint e PDF."
       requireAdmin
     >
-      <ProjectFlowGuide current={4} onNext={() => void navigate({ to: "/admin/projetos/contratos", search: { cliente: name.trim() || undefined } as never })} nextLabel="Avançar: NDA e Contrato" />
+      <ProjectFlowGuide current={4} onNavigate={target => flow.go(target, { clientName: name.trim(), serviceSlug, scopeId, diagId, quoteId: useQuote && quoteId !== "draft" ? quoteId : "", ...(savedId ? { presentationId: savedId } : {}) })} nextLabel="Avançar: NDA e Contrato" />
       <Link to="/admin/projetos" className="mb-6 inline-flex items-center gap-1 text-sm text-accent hover:underline">
         <ArrowLeft className="size-4" /> Voltar para Projetos
       </Link>
@@ -537,14 +570,17 @@ function PresentationPage() {
                 Usar orçamento gerado em Projetos
               </label>
               {useQuote ? (
+                <>
                 <select className={input} value={quoteId} onChange={(e) => setQuoteId(e.target.value)}>
                   <option value="">Selecione o orçamento…</option>
                   {quotes.map((q) => (
                     <option key={q.id} value={q.id}>
-                      {q.client_name || "Sem cliente"} · {q.service_title} · {new Date(q.created_at).toLocaleDateString("pt-BR")}
+                      {q.client_name || "Sem cliente"} · {q.service_title} · {q.id === "draft" ? "Planejamento atual do orçamento" : new Date(q.created_at).toLocaleDateString("pt-BR")}
                     </option>
                   ))}
                 </select>
+                {quoteId === "draft" && quoteDraft ? <p className="text-sm font-medium">{Number(quoteDraft.quote.totalCurrency).toLocaleString("pt-BR", { style: "currency", currency: quoteDraft.options.currency })} · {Math.ceil(quoteDraft.quote.totalDays).toLocaleString("pt-BR")} dias úteis</p> : null}
+                </>
               ) : (
                 <p className="text-xs text-muted-foreground">Sem orçamento, o material terá um slide avisando que a proposta será enviada.</p>
               )}

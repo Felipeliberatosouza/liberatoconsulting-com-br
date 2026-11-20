@@ -2,7 +2,8 @@ import { EMPTY_PRODUCT, type ServiceProduct } from "./services-catalog";
 import { crmScopeQuestions, fechouCopy } from "./fechou-copy";
 import type { CatalogActivity } from "./pricing-catalog";
 
-export const CRM_SERVICE_SLUG = "crm";
+export const CRM_SERVICE_SLUG = "crm-sob-medida";
+export const isCrmService = (slug: string) => slug === CRM_SERVICE_SLUG || slug === "crm";
 export const CRM_SERVICE: ServiceProduct = {
   ...EMPTY_PRODUCT,
   slug: CRM_SERVICE_SLUG,
@@ -11,7 +12,7 @@ export const CRM_SERVICE: ServiceProduct = {
   family_id: "crm",
   family_title: "Gestão comercial",
   code: "CRM",
-  title: "Implantação do Fechou! CRM",
+  title: "Fechou! CRM sob Medida",
   lead: fechouCopy.pt.body,
   problem: fechouCopy.pt.title,
   body: "Mapeamento do processo comercial, parametrização do funil, migração de dados, definição de acessos e capacitação da equipe.",

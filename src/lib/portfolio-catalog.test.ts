@@ -1,7 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { portfolioDefaults, resolvePortfolio } from "./portfolio-catalog";
+import { currentServiceChoices, portfolioDefaults, resolvePortfolio } from "./portfolio-catalog";
 
 describe("current editable portfolio", () => {
+  it("includes CRM as solution number 8 in all four languages", () => {
+    const crm = resolvePortfolio(portfolioDefaults()).solutions.find(s => s.slug === "crm-sob-medida");
+    expect(crm?.n).toBe(8);
+    for (const lang of ["pt", "en", "es", "zh"] as const) expect(crm?.title[lang]).toContain("CRM");
+  });
+  it("excludes archived and replaced services from every new selector", () => {
+    const rows = [...portfolioDefaults(), { ...portfolioDefaults()[0], slug: "sprint-de-produtividade", published: true }, { ...portfolioDefaults()[0], slug: "old-service", published: false }];
+    const choices = currentServiceChoices(rows);
+    expect(choices).toHaveLength(14);
+    expect(choices.some(row => row.slug === "sprint-de-produtividade")).toBe(false);
+    expect(currentServiceChoices(rows, "old-service").some(row => row.slug === "old-service")).toBe(true);
+  });
   it("has eight solutions and six trainings", () => {
     const catalog = resolvePortfolio(portfolioDefaults());
     expect(catalog.solutions).toHaveLength(8);

@@ -6,10 +6,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Download, Printer } from "lucide-react";
 import { toast } from "sonner";
+import { useProjectFlow } from "@/lib/project-flow";
 
 import { AdminShell } from "@/components/AdminShell";
 import { getCompany } from "@/lib/company.functions";
-import { listQuotes, quoteFileUrl } from "@/lib/pricing.functions";
+import { getProjectQuote, listQuotes, quoteFileUrl } from "@/lib/pricing.functions";
 import { annexLines, buildContract, buildNda, type LegalDoc, type Party, type QuoteAnnex } from "@/lib/client-contracts";
 
 export const Route = createFileRoute("/admin/projetos_/contratos")({
@@ -51,6 +52,12 @@ function ContractsPage() {
   const [witnesses,setWitnesses]=useState([{name:"",cpf:"",email:""},{name:"",cpf:"",email:""}]);
   const [busy,setBusy]=useState(false);
   const [issued,setIssued]=useState<Awaited<ReturnType<typeof issueClientDocument>>|null>(null);
+  const flow = useProjectFlow(5, { doc, client, quoteId, city, date, ndaDate, payment, ndaId, approved, witnesses }, d => {
+    setDoc(d.doc); setClient(d.client); setQuoteId(d.quoteId); setCity(d.city); setDate(d.date); setNdaDate(d.ndaDate);
+    setPayment(d.payment); setNdaId(d.ndaId); setApproved(d.approved); setWitnesses(d.witnesses);
+  });
+  const carriedQuoteId = flow.context().quoteId;
+  const exactQuote = useQuery({ queryKey: ["project-quote", carriedQuoteId], queryFn: () => getProjectQuote({ data: { id: carriedQuoteId || "" } }), enabled: !!carriedQuoteId, retry: false });
   async function issue(){setBusy(true);try{const r=await issueClientDocument({data:{kind:doc,client,consultant,city,date,paymentTerms:payment,quoteId:doc==="contract"?quoteId:undefined,ndaId:doc==="contract"?ndaId:undefined,witnesses,quoteApproved:approved}});setIssued(r);void documents.refetch();toast.success("Documento emitido. Envie o convite de cada signatário.");}catch(e){toast.error(e instanceof Error?e.message:"Falha ao emitir documento.");}finally{setBusy(false);}}
 
 
@@ -70,7 +77,7 @@ function ContractsPage() {
     if (!city && c.address_city) setCity(`${c.address_city}/${c.address_state}`);
   }, [company.data]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const rows = quotes.data ?? [];
+  const rows = useMemo(() => [...(quotes.data ?? []).filter(q => q.id !== exactQuote.data?.id), ...(exactQuote.data ? [exactQuote.data] : [])], [quotes.data, exactQuote.data]);
   const selected = rows.find((q) => q.id === quoteId);
   const quote: QuoteAnnex | null = selected
     ? {
@@ -89,9 +96,10 @@ function ContractsPage() {
     if (!cliente) return;
     setClient((c) => (c.legal_name ? c : { ...c, legal_name: cliente }));
     const norm = (v: string) => v.trim().toLowerCase();
-    const latest = rows.find((r) => norm(r.client_name) === norm(cliente));
-    if (latest) setQuoteId((q) => q || latest.id);
-  }, [cliente, rows]);
+    const exact = flow.context().quoteId;
+    const latest = exact ? rows.find(r => r.id === exact) : rows.find((r) => norm(r.client_name) === norm(cliente));
+    if (latest) setQuoteId((q) => exact ? latest.id : q || latest.id);
+  }, [cliente, rows, flow.userId]);
 
   function pickQuote(id: string) {
     setQuoteId(id);
@@ -127,7 +135,7 @@ function ContractsPage() {
 
   return (
     <AdminShell title="5. NDA e Contrato" description="Primeiro o NDA, assinado antes de qualquer troca de informações. Depois o contrato de consultoria, com o orçamento aprovado como Anexo I." requireAdmin>
-      <div className="print:hidden"><ProjectFlowGuide current={5} /></div>
+      <div className="print:hidden"><ProjectFlowGuide current={5} onNavigate={target => flow.go(target, { clientName: client.legal_name, quoteId })} /></div>
       <div className="print:hidden">
         <div className="flex gap-2">
           {([["nda", "1. NDA (antes do escopo)"], ["contract", "2. Contrato de consultoria"]] as const).map(([k, l]) => (

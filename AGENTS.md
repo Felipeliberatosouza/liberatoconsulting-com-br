@@ -33,3 +33,5 @@
 - Fechou! CRM keeps commercial workspaces separate from the institutional CRM; workspace membership and AAL2 are checked in database policies so direct calls cannot bypass team and seller boundaries.
 - Fechou! CRM uses the same board for live and demo workflows with separate data adapters; demo edits and uploaded branding stay in the browser.
 - Fechou! CRM imports whole batches atomically through an invoker RPC and updates only by exact record ID; reports calculate allowed metrics locally and never send CRM rows to the assistant.
+- Project stage navigation snapshots drafts and carries client/scope/diagnostic/exact quote through an account-scoped query cache; all stage links use the same handoff to prevent blank forms and cross-client reuse.
+- Service selectors use currentServiceChoices, retaining only the selected historical service as an exception; the canonical CRM registry row feeds public copy and project configuration without duplicate CRM choices.

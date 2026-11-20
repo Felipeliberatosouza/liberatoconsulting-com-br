@@ -6,6 +6,7 @@
 export type DeParaTarget = { kind: "solucao" | "treinamento"; slug: string };
 
 export const SERVICES_DEPARA: Record<string, DeParaTarget> = {
+  "crm": { kind: "solucao", slug: "crm-sob-medida" },
   // Preço e lucro
   "precificacao-margem": { kind: "solucao", slug: "preco-certo-lucro-real" },
   "advisory-financeiro": { kind: "solucao", slug: "preco-certo-lucro-real" },

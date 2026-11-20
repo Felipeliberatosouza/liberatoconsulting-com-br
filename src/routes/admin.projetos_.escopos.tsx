@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { AdminShell } from "@/components/AdminShell";
 import { FormLinkBar } from "@/components/SendFormLinkDialog";
 import { Button } from "@/components/ui/button";
+import { useProjectFlow } from "@/lib/project-flow";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -52,6 +53,7 @@ function ScopesPage() {
   const [query, setQuery] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
+  const flow = useProjectFlow(1, { openId, notes }, d => { setOpenId(d.openId); setNotes(d.notes); });
 
   const list = useQuery({
     queryKey: ["scope-submissions"],
@@ -96,7 +98,10 @@ function ScopesPage() {
       description="Respostas enviadas pelo formulário público de escopo inicial, com o guia do consultor para leitura rápida."
       requireAdmin
     >
-      <ProjectFlowGuide current={1} />
+      <ProjectFlowGuide current={1} nextPending={saveNotes.isPending} onNavigate={async target => {
+        if (open && notes !== (open.notes ?? "")) await saveNotes.mutateAsync(open);
+        flow.go(target, open ? { scopeId: open.id, clientName: open.company } : {});
+      }} />
       <div className="mb-6"><FormLinkBar form="escopo" /></div>
       <Link
         to="/admin/projetos"
@@ -265,6 +270,13 @@ function ScopesPage() {
             <Link
               to="/admin/projetos/diagnostico"
               search={{ escopo: open.id } as never}
+              onClick={async e => {
+                e.preventDefault();
+                try {
+                  if (notes !== (open.notes ?? "")) await saveNotes.mutateAsync(open);
+                  flow.go({ n: 2, to: "/admin/projetos/diagnostico" }, { scopeId: open.id, clientName: open.company });
+                } catch (error) { toast.error(error instanceof Error ? error.message : "Não foi possível salvar as anotações."); }
+              }}
               className="mt-4 inline-block rounded-full bg-ink px-4 py-2 text-sm font-medium text-ink-foreground hover:bg-accent hover:text-accent-foreground"
             >
               Avançar para o diagnóstico deste cliente

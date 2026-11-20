@@ -1,7 +1,7 @@
 import { ProjectFlowGuide } from "@/components/ProjectFlowGuide";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { toast } from "sonner";
@@ -10,9 +10,10 @@ import { AdminShell } from "@/components/AdminShell";
 import { FormLinkBar } from "@/components/SendFormLinkDialog";
 import { deleteSatisfaction, listSatisfaction } from "@/lib/satisfaction.functions";
 import { summarize, type SurveyRow } from "@/lib/satisfaction";
+import { useProjectFlow } from "@/lib/project-flow";
 
 export const Route = createFileRoute("/admin/projetos_/satisfacao")({
-  head: () => ({ meta: [{ title: "Satisfação do cliente — Painel Liberato Consulting" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Satisfação do cliente — Painel Liberato Consulting" }, { name: "description", content: "Pesquisas e resultados de satisfação dos clientes da Liberato Consulting." }, { property: "og:title", content: "Satisfação do cliente — Liberato Consulting" }, { property: "og:description", content: "Avaliação dos serviços executados e das propostas comerciais." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] }),
   component: SatisfactionPage,
 });
 
@@ -38,6 +39,9 @@ function SatisfactionPage() {
   const q = useQuery({ queryKey: ["satisfaction"], queryFn: () => listSatisfaction(), retry: false });
   const [period, setPeriod] = useState("all");
   const [kindFilter, setKindFilter] = useState<"all" | "executado" | "nao_executado">("all");
+  const [clientName, setClientName] = useState("");
+  const flow = useProjectFlow(6, { period, kindFilter, clientName }, d => { setPeriod(d.period); setKindFilter(d.kindFilter); setClientName(d.clientName); });
+  useEffect(() => { if (flow.userId) setClientName(flow.context().clientName || ""); }, [flow.userId]);
   const rows = useMemo(() => {
     const all = q.data ?? [];
     if (period === "all") return all;
@@ -81,10 +85,11 @@ function SatisfactionPage() {
 
   return (
     <AdminShell title="6. Satisfação do Cliente" description="Dashboard das pesquisas de satisfação de serviços executados e não executados." requireAdmin>
-      <ProjectFlowGuide current={6} />
+      <ProjectFlowGuide current={6} onNavigate={target => flow.go(target, { clientName })} />
+      {clientName ? <p className="mb-4 font-semibold">Cliente: {clientName}</p> : null}
       <div className="grid gap-3">
-        <FormLinkBar form="executado" />
-        <FormLinkBar form="nao_executado" />
+        <FormLinkBar form="executado" clientName={clientName} />
+        <FormLinkBar form="nao_executado" clientName={clientName} />
       </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-2">

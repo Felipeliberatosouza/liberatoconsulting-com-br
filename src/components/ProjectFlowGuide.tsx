@@ -3,6 +3,8 @@ import { ArrowLeft, ArrowRight, Check, HelpCircle } from "lucide-react";
 import { useRef } from "react";
 import { AutoFieldHelp } from "@/components/AutoFieldHelp";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 /** The six Projects stages, in order. Each stage feeds the next one. */
 export const PROJECT_STAGES = [
@@ -37,18 +39,26 @@ export function ProjectFlowGuide({
   onNext,
   nextLabel,
   nextPending,
+  onNavigate,
 }: {
   current: 1 | 2 | 3 | 4 | 5 | 6;
   onNext?: () => void;
   nextLabel?: string;
   nextPending?: boolean;
+  onNavigate?: (stage: (typeof PROJECT_STAGES)[number]) => void | Promise<void>;
 }) {
   const stages: ReadonlyArray<(typeof PROJECT_STAGES)[number]> = PROJECT_STAGES;
-  const stage = stages[current - 1]!;
+  const stage = stages[current - 1];
   const prev = current > 1 ? stages[current - 2] : null;
   const next = current < 6 ? stages[current] : null;
   const navRef = useRef<HTMLElement | null>(null);
   const btn = "inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium";
+  if (!stage) return null;
+  async function move(target: (typeof PROJECT_STAGES)[number]) {
+    if (nextPending) return;
+    try { await onNavigate?.(target); }
+    catch (error) { toast.error(error instanceof Error ? error.message : "Não foi possível salvar os dados desta etapa."); }
+  }
   return (
     <nav ref={navRef} data-no-auto-help aria-label="Etapas do projeto" className="mb-8 rounded-2xl border border-border bg-background p-4">
       <ol className="flex flex-wrap items-center gap-2">
@@ -60,6 +70,7 @@ export function ProjectFlowGuide({
               <Link
                 to={s.to as never}
                 search={s.search as never}
+                onClick={onNavigate ? (e) => { e.preventDefault(); if (s.n !== current) void move(s); } : undefined}
                 className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium ${
                   active ? "border-accent bg-accent text-accent-foreground" : done ? "border-accent/40 text-foreground" : "border-border text-muted-foreground"
                 }`}
@@ -81,15 +92,15 @@ export function ProjectFlowGuide({
         </p>
         <div className="flex gap-2">
           {prev ? (
-            <Link to={prev.to as never} search={prev.search as never} className={`${btn} border border-border hover:bg-secondary`}>
+            <Link to={prev.to as never} search={prev.search as never} onClick={onNavigate ? (e) => { e.preventDefault(); void move(prev); } : undefined} className={`${btn} border border-border hover:bg-secondary`}>
               <ArrowLeft className="size-4" /> {prev.short}
             </Link>
           ) : null}
           {next ? (
-            onNext ? (
-              <button type="button" disabled={nextPending} onClick={onNext} className={`${btn} bg-ink text-ink-foreground hover:bg-accent hover:text-accent-foreground`}>
+            onNext || onNavigate ? (
+              <Button type="button" disabled={nextPending} onClick={onNext ?? (() => void move(next))} className={`${btn} bg-ink text-ink-foreground hover:bg-accent hover:text-accent-foreground`}>
                 {nextPending ? "Salvando…" : nextLabel ?? `Avançar: ${next.short}`} <ArrowRight className="size-4" />
-              </button>
+              </Button>
             ) : (
               <Link to={next.to as never} search={next.search as never} className={`${btn} bg-ink text-ink-foreground hover:bg-accent hover:text-accent-foreground`}>
                 Avançar: {next.short} <ArrowRight className="size-4" />

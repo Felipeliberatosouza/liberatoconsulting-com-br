@@ -15,7 +15,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CRM_ACTIVITIES, CRM_SERVICE_SLUG, withCrmService } from "@/lib/fechou-service";
+import { CRM_ACTIVITIES, isCrmService, withCrmService } from "@/lib/fechou-service";
+import { currentServiceChoices } from "@/lib/portfolio-catalog";
+import { useProjectFlow } from "@/lib/project-flow";
 import { listServiceProducts } from "@/lib/services.functions";
 import { listCrmCompanies } from "@/lib/crm.functions";
 import { listDiagnostics, listProjectClients, type DiagnosticRow } from "@/lib/projects.functions";
@@ -61,6 +63,11 @@ export const Route = createFileRoute("/admin/precificacao")({
   head: () => ({
     meta: [
       { title: "Precificação e Orçamento — Painel Liberato Consulting" },
+      { name: "description", content: "Precificação, cenários e cronogramas dos projetos da Liberato Consulting." },
+      { property: "og:title", content: "Precificação e Orçamento — Liberato Consulting" },
+      { property: "og:description", content: "Orçamentos e cronogramas com base no diagnóstico do cliente." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -115,6 +122,15 @@ function PricingPage() {
   const [clientName, setClientName] = useState("");
   const [clientId, setClientId] = useState("");
   const [fx, setFx] = useState({ rate: 1, source: "—" });
+  const [generatedQuote, setGeneratedQuote] = useState<{ id: string; fingerprint: string } | null>(null);
+  const flow = useProjectFlow(3, { settings, slug, activities, notes, rationale, porte, override, diagInfo, lastDiag, scenarios, country, currency, startDate, remoteOnly, discountPct, clientName, clientId, fx, generatedQuote }, d => {
+    skipServiceLoad.current = true;
+    appliedDiag.current = diag ?? null;
+    setSettings(d.settings); setSlug(d.slug); setActivities(d.activities); setNotes(d.notes); setRationale(d.rationale);
+    setPorte(d.porte); setOverride(d.override); setDiagInfo(d.diagInfo); setLastDiag(d.lastDiag); setScenarios(d.scenarios);
+    setCountry(d.country); setCurrency(d.currency); setStartDate(d.startDate); setRemoteOnly(d.remoteOnly); setDiscountPct(d.discountPct);
+    setClientName(d.clientName); setClientId(d.clientId); setFx(d.fx); setGeneratedQuote(d.generatedQuote);
+  });
 
   const products = useQuery({ queryKey: ["admin-service-products"], queryFn: () => listServiceProducts() });
   const stored = useQuery({ queryKey: ["pricing-settings"], queryFn: () => getPricingSettings() });
@@ -122,6 +138,14 @@ function PricingPage() {
   const crmCompanies = useQuery({ queryKey: ["crm-companies"], queryFn: () => listCrmCompanies() });
   const clientList = useQuery({ queryKey: ["project-clients"], queryFn: () => listProjectClients() });
   const diagnostics = useQuery({ queryKey: ["project-diagnostics"], queryFn: () => listDiagnostics() });
+  const initializedFlow = useRef(false);
+  useEffect(() => {
+    if (!flow.userId || initializedFlow.current) return;
+    initializedFlow.current = true;
+    const carried = flow.context();
+    if (carried.clientName) setClientName(carried.clientName);
+    if (carried.serviceSlug && !diag) setSlug(carried.serviceSlug);
+  }, [flow.userId, diag]);
 
   function applyDiagnostic(row: DiagnosticRow) {
     const conv = diagnosticToQuote(
@@ -175,7 +199,7 @@ function PricingPage() {
     }
     getServicePricing({ data: { slug } }).then((r) => {
       setActivities(
-        r.activities.length > 0 ? r.activities : (slug === CRM_SERVICE_SLUG ? CRM_ACTIVITIES.map((c) => fromCatalog(c, true)) : CATALOG.map((c) => fromCatalog(c, false))),
+        r.activities.length > 0 ? r.activities : (isCrmService(slug) ? CRM_ACTIVITIES.map((c) => fromCatalog(c, true)) : CATALOG.map((c) => fromCatalog(c, false))),
       );
       setNotes(r.notes);
       setRationale(r.aiRationale);
@@ -205,6 +229,7 @@ function PricingPage() {
   );
 
   const enabledCount = useMemo(() => activities.filter((a) => a.enabled).length, [activities]);
+  const fingerprint = JSON.stringify({ slug, clientName, quote, scenarios, notes });
 
   function patch(id: string, data: Partial<PricedActivity>) {
     setActivities((list) => list.map((a) => (a.id === id ? { ...a, ...data } : a)));
@@ -314,6 +339,7 @@ function PricingPage() {
       return;
     }
     window.open(res.url, "_blank");
+    setGeneratedQuote({ id: res.id, fingerprint });
     history.refetch();
     toast.success("Orçamento em PDF gerado.");
   }
@@ -326,7 +352,12 @@ function PricingPage() {
       description="Defina o valor do homem-hora, as etapas de cada serviço e gere o orçamento com cronograma em PDF para enviar ao cliente. O valor calculado alimenta automaticamente os preços do Cadastro de serviços."
       requireAdmin
     >
-      <ProjectFlowGuide current={3} />
+      <ProjectFlowGuide current={3} onNavigate={target => flow.go(target, {
+        clientName, serviceSlug: slug,
+        ...(diagInfo ? { diagId: diagInfo.id } : {}),
+        quoteId: generatedQuote?.fingerprint === fingerprint ? generatedQuote.id : "",
+        ...(product ? { quoteDraft: { slug, title: product.title, clientName, quote, options: { companyType, porte, ...(override ? { override } : {}), country, currency, startDate, remoteOnly, discountPct, fxRate: fx.rate }, notes, scenarios } } : {}),
+      })} />
       <Tabs defaultValue={aba ?? "rates"}>
         <TabsList className="mb-6 flex-wrap">
           <TabsTrigger value="rates">Valor do homem-hora</TabsTrigger>
@@ -485,7 +516,7 @@ function PricingPage() {
                 }}
               >
                 <option value="">Escolha um serviço…</option>
-                {withCrmService(products.data).filter((p) => p.published || p.slug === slug).map((p) => (
+                {currentServiceChoices(withCrmService(products.data), diagInfo ? slug : "").map((p) => (
                   <option key={p.slug} value={p.slug}>
                     {p.title}
                   </option>
@@ -611,7 +642,7 @@ function PricingPage() {
                 onChange={(e) => setSlug(e.target.value)}
               >
                 <option value="">Escolha um serviço…</option>
-                {withCrmService(products.data).filter((p) => p.published || p.slug === slug).map((p) => (
+                {currentServiceChoices(withCrmService(products.data), diagInfo ? slug : "").map((p) => (
                   <option key={p.slug} value={p.slug}>
                     {p.title}
                   </option>

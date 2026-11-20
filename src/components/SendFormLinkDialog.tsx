@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Copy, Mail, Send } from "lucide-react";
 import { toast } from "sonner";
 
@@ -19,7 +19,7 @@ const TITLES: Record<FormKind, string> = {
 };
 
 /** Link copiável + botão para enviar o link por e-mail aos contatos do CRM. */
-export function FormLinkBar({ form }: { form: FormKind }) {
+export function FormLinkBar({ form, clientName = "" }: { form: FormKind; clientName?: string }) {
   const link = form === "escopo" ? SCOPE_LINK : surveyLink(form);
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-dashed border-border bg-background p-4 text-sm">
@@ -35,7 +35,7 @@ export function FormLinkBar({ form }: { form: FormKind }) {
       >
         <Copy className="size-4" /> Copiar
       </button>
-      <SendFormLinkDialog form={form} />
+      <SendFormLinkDialog form={form} clientName={clientName} />
     </div>
   );
 }
@@ -43,7 +43,7 @@ export function FormLinkBar({ form }: { form: FormKind }) {
 const SOURCE_LABEL = { crm: "CRM", escopo: "Escopo Inicial", diagnostico: "Diagnóstico", site: "Site / WhatsApp" } as const;
 type Src = keyof typeof SOURCE_LABEL;
 
-export function SendFormLinkDialog({ form }: { form: FormKind }) {
+export function SendFormLinkDialog({ form, clientName = "" }: { form: FormKind; clientName?: string }) {
   const [open, setOpen] = useState(false);
   const [companyId, setCompanyId] = useState("");
   const [source, setSource] = useState<Src | "all">("all");
@@ -59,6 +59,11 @@ export function SendFormLinkDialog({ form }: { form: FormKind }) {
   );
   const company = recipients.data?.find((c) => c.id === companyId);
   const contacts = company?.contacts ?? [];
+  useEffect(() => {
+    if (!open || !clientName || companyId) return;
+    const match = recipients.data?.find(c => c.name.trim().toLowerCase() === clientName.trim().toLowerCase());
+    if (match) { setCompanyId(match.id); setSearch(clientName); }
+  }, [open, clientName, companyId, recipients.data]);
 
   const send = useMutation({
     mutationFn: () => {
