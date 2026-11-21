@@ -1,0 +1,1 @@
+GRANT UPDATE ON public.project_presentations TO authenticated;
